@@ -205,9 +205,6 @@ describe("classed", () => {
             it("error query", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?where=err_json`);
                 assert.equal(rep.statusCode, 107);
-
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?where={"id":{"$err":0}}`);
-                assert.equal(rep.statusCode, 102);
             });
 
             it("eq", () => {
@@ -223,9 +220,6 @@ describe("classed", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?where={"id":4,"age":15}`);
                 assert.equal(rep.statusCode, 200);
                 assert.deepEqual(rep.json(), []);
-
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?where={"id":{"$eq":4,"$ne":5}}`);
-                assert.equal(rep.statusCode, 102);
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?where={"id":{"$eq":4}}`);
                 assert.equal(rep.statusCode, 200);
@@ -449,6 +443,24 @@ describe("classed", () => {
                         "sex": "female",
                         "age": 14,
                         "id": 4
+                    },
+                    {
+                        "name": "frank",
+                        "sex": "male",
+                        "age": 15,
+                        "id": 5
+                    }
+                ]);
+            });
+
+            it("or", () => {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?where={"$or":[{"id":3},{"id":5}]}`);
+                assert.equal(rep.statusCode, 200);
+                assert.deepEqual(rep.json(), [{
+                        "name": "jack",
+                        "sex": "male",
+                        "age": 13,
+                        "id": 3
                     },
                     {
                         "name": "frank",
