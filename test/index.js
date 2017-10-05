@@ -537,6 +537,58 @@ describe("classed", () => {
                 }
             ]);
         });
+
+        it("count", () => {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?count=1`);
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "results": [{
+                        "name": "tom",
+                        "sex": "male",
+                        "age": 12,
+                        "id": 2
+                    },
+                    {
+                        "name": "jack",
+                        "sex": "male",
+                        "age": 13,
+                        "id": 3
+                    },
+                    {
+                        "name": "mike",
+                        "sex": "female",
+                        "age": 14,
+                        "id": 4
+                    },
+                    {
+                        "name": "frank",
+                        "sex": "male",
+                        "age": 15,
+                        "id": 5
+                    }
+                ],
+                "count": 4
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/pet?limit=2&count=1`);
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "results": [{
+                        "name": "tom",
+                        "sex": "male",
+                        "age": 12,
+                        "id": 2
+                    },
+                    {
+                        "name": "jack",
+                        "sex": "male",
+                        "age": 13,
+                        "id": 3
+                    }
+                ],
+                "count": 4
+            });
+        });
     })
 });
 
