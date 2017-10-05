@@ -1,29 +1,11 @@
 const http = require('http');
-const api = require('../');
-const orm = require('fib-orm');
+const App = require('../');
 
-function define(db) {
-    db.define('pet', {
-        name: String,
-        sex: ["male", "female"],
-        age: Number
-    }, {
-        methods: {
-            get_name: function () {
-                return this.name;
-            }
-        },
-        validations: {
-            age: orm.enforce.ranges.number(10, 18, "teenage")
-        }
-    });
+var app = App('sqlite:test.db', {});
+app.def(require('./defs/pet'));
+app.def(require('./defs/person'));
 
-    db.syncSync();
-}
-
-var root_server = {
-    '/1.0': api.server('sqlite:test.db', define)
-};
-
-var svr = new http.Server(8080, root_server);
+var svr = new http.Server(8080, {
+    '/1.0': app.handler
+});
 svr.run(() => {});

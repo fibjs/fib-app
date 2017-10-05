@@ -2,14 +2,28 @@ const classes = require('./lib/classes');
 const Pool = require('fib-pool');
 const orm = require('fib-orm');
 
-exports.server = (url, define) => {
-    const pool = Pool(() => {
-        const db = orm.connectSync(url);
-        define(db);
-        return db;
-    }, 10, 30 * 1000);
+module.exports = (url, opts) => {
+    var defs = [];
+    opts = opts || {};
+
+    const pool = Pool({
+        create: () => {
+            const db = orm.connectSync(url);
+
+            defs.forEach(def => def(db));
+            db.syncSync();
+
+            return db;
+        },
+        maxsize: opts.maxsize,
+        timeout: opts.timeout,
+        retry: opts.retry
+    });
 
     return {
-        '/classes': classes.api(pool)
+        def: def => defs.push(def),
+        handler: {
+            '/classes': classes(pool)
+        }
     };
 };
