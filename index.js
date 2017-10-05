@@ -21,7 +21,7 @@ module.exports = (url, opts) => {
     });
 
     return {
-        def: def => defs.push(def),
+        def: def => defs = defs.concat(def),
         handler: {
             '/classes': classes(pool)
         }
