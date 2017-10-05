@@ -75,17 +75,20 @@ describe("classed", () => {
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
             assert.equal(rep.statusCode, 200);
-            assert.equal(rep.json().id, id);
-            assert.equal(rep.json().name, 'lion');
-            assert.equal(rep.json().age, 16);
+            assert.deepEqual(rep.json(), {
+                "name": "lion",
+                "sex": "male",
+                "age": 16,
+                "id": 1
+            });
         });
 
         it("keys", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}?keys=age`);
             assert.equal(rep.statusCode, 200);
-            assert.notProperty(rep.json(), "id");
-            assert.notProperty(rep.json(), 'name');
-            assert.equal(rep.json().age, 16);
+            assert.deepEqual(rep.json(), {
+                "age": 16
+            });
         });
     });
 
@@ -106,12 +109,18 @@ describe("classed", () => {
             }
         });
         assert.equal(rep.statusCode, 200);
-        assert.equal(rep.json().id, id);
+        assert.deepEqual(rep.json(), {
+            "id": 1
+        });
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 200);
-        assert.equal(rep.json().id, id);
-        assert.equal(rep.json().name, 'xicilion');
+        assert.deepEqual(rep.json(), {
+            "name": "xicilion",
+            "sex": "male",
+            "age": 16,
+            "id": 1
+        });
     });
 
     it("del id", () => {
@@ -123,7 +132,9 @@ describe("classed", () => {
 
         var rep = http.del(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 200);
-        assert.equal(rep.json().id, id);
+        assert.deepEqual(rep.json(), {
+            "id": 1
+        });
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 101);
@@ -590,6 +601,32 @@ describe("classed", () => {
             });
         });
     })
+
+    it("method", () => {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person1/test`);
+        assert.equal(rep.statusCode, 103);
+
+        var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person/test`, {
+            json: {
+                name: 'lion'
+            }
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "message": "test",
+            "data": {
+                "name": "lion"
+            }
+        });
+
+        var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person/test1`);
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "message": "current result"
+        });
+    });
 });
 
 test.run(console.DEBUG);

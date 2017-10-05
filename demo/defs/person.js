@@ -1,7 +1,7 @@
 const orm = require('fib-orm');
 
 module.exports = db => {
-    db.define('person', {
+    var Person = db.define('person', {
         name: String,
         sex: ["male", "female"],
         age: Number
@@ -10,4 +10,18 @@ module.exports = db => {
             age: orm.enforce.ranges.number(10, 18, "teenage")
         }
     });
+
+    Person.methods = {
+        test: (req, data) => {
+            return {
+                message: "test",
+                data: data
+            }
+        },
+        test1: (req, data) => {
+            req.response.json({
+                message: "current result"
+            });
+        }
+    }
 };
