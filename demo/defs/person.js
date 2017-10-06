@@ -4,7 +4,9 @@ module.exports = db => {
     var Person = db.define('person', {
         name: String,
         sex: ["male", "female"],
-        age: Number
+        age: Number,
+        createAt: Date,
+        updateAt: Date
     }, {
         validations: {
             age: orm.enforce.ranges.number(10, 18, "teenage")

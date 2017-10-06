@@ -18,6 +18,20 @@ require('coroutine').sleep(100);
 
 const http = require('http');
 
+function check_result(res, data) {
+    if (Array.isArray(res))
+        res.forEach(r => {
+            delete r.createAt;
+            delete r.updateAt;
+        })
+    else {
+        delete res.createAt;
+        delete res.updateAt;
+    }
+
+    assert.deepEqual(res, data);
+}
+
 describe("classed", () => {
     var id;
 
@@ -39,7 +53,7 @@ describe("classed", () => {
             }
         });
         assert.equal(rep.statusCode, 201);
-        assert.deepEqual(rep.json(), {
+        check_result(rep.json(), {
             "id": 1
         });
         id = rep.json().id;
@@ -56,7 +70,7 @@ describe("classed", () => {
             }]
         });
 
-        assert.deepEqual(rep.json(), [{
+        check_result(rep.json(), [{
                 "id": 2
             },
             {
@@ -75,7 +89,7 @@ describe("classed", () => {
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), {
+            check_result(rep.json(), {
                 "name": "lion",
                 "sex": "male",
                 "age": 16,
@@ -86,7 +100,7 @@ describe("classed", () => {
         it("keys", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}?keys=age`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), {
+            check_result(rep.json(), {
                 "age": 16
             });
         });
@@ -109,13 +123,13 @@ describe("classed", () => {
             }
         });
         assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
+        check_result(rep.json(), {
             "id": 1
         });
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
+        check_result(rep.json(), {
             "name": "xicilion",
             "sex": "male",
             "age": 16,
@@ -132,7 +146,7 @@ describe("classed", () => {
 
         var rep = http.del(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
+        check_result(rep.json(), {
             "id": 1
         });
 
@@ -163,7 +177,7 @@ describe("classed", () => {
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), [{
+            check_result(rep.json(), [{
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
@@ -193,7 +207,7 @@ describe("classed", () => {
         it("keys", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?keys=id,name`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), [{
+            check_result(rep.json(), [{
                     "name": "tom",
                     "id": 2
                 },
@@ -221,7 +235,7 @@ describe("classed", () => {
             it("eq", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":4,"age":14}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
@@ -230,11 +244,11 @@ describe("classed", () => {
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":4,"age":15}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), []);
+                check_result(rep.json(), []);
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$eq":4}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
@@ -245,7 +259,7 @@ describe("classed", () => {
             it("ne", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$ne":4}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -269,7 +283,7 @@ describe("classed", () => {
             it("gt", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$gt":3}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
@@ -285,7 +299,7 @@ describe("classed", () => {
             it("gte", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$gte":4}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
@@ -301,7 +315,7 @@ describe("classed", () => {
             it("lt", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$lt":4}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -319,7 +333,7 @@ describe("classed", () => {
             it("lte", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$lte":3}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -337,7 +351,7 @@ describe("classed", () => {
             it("like", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"name":{"$like":"%k"}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
@@ -355,7 +369,7 @@ describe("classed", () => {
             it("not_like", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"name":{"$not_like":"%k"}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -373,7 +387,7 @@ describe("classed", () => {
             it("between", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$between":[2,4]}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -397,7 +411,7 @@ describe("classed", () => {
             it("not_between", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$not_between":[3,4]}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -415,7 +429,7 @@ describe("classed", () => {
             it("in", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":[1,2,3]}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -431,7 +445,7 @@ describe("classed", () => {
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$in":[1,2,3]}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
@@ -449,7 +463,7 @@ describe("classed", () => {
             it("not_in", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$not_in":[1,2,3]}}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "mike",
                         "sex": "female",
                         "age": 14,
@@ -467,7 +481,7 @@ describe("classed", () => {
             it("or", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"$or":[{"id":3},{"id":5}]}`);
                 assert.equal(rep.statusCode, 200);
-                assert.deepEqual(rep.json(), [{
+                check_result(rep.json(), [{
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
@@ -486,7 +500,7 @@ describe("classed", () => {
         it("skip", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?skip=2`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), [{
+            check_result(rep.json(), [{
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
@@ -504,7 +518,7 @@ describe("classed", () => {
         it("limit", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?limit=2`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), [{
+            check_result(rep.json(), [{
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
@@ -522,7 +536,7 @@ describe("classed", () => {
         it("order", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?order=-id`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), [{
+            check_result(rep.json(), [{
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
@@ -552,53 +566,51 @@ describe("classed", () => {
         it("count", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?count=1`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), {
-                "results": [{
-                        "name": "tom",
-                        "sex": "male",
-                        "age": 12,
-                        "id": 2
-                    },
-                    {
-                        "name": "jack",
-                        "sex": "male",
-                        "age": 13,
-                        "id": 3
-                    },
-                    {
-                        "name": "mike",
-                        "sex": "female",
-                        "age": 14,
-                        "id": 4
-                    },
-                    {
-                        "name": "frank",
-                        "sex": "male",
-                        "age": 15,
-                        "id": 5
-                    }
-                ],
-                "count": 4
-            });
+            var res = rep.json();
+            assert.equal(res.count, 4);
+            check_result(res.results, [{
+                    "name": "tom",
+                    "sex": "male",
+                    "age": 12,
+                    "id": 2
+                },
+                {
+                    "name": "jack",
+                    "sex": "male",
+                    "age": 13,
+                    "id": 3
+                },
+                {
+                    "name": "mike",
+                    "sex": "female",
+                    "age": 14,
+                    "id": 4
+                },
+                {
+                    "name": "frank",
+                    "sex": "male",
+                    "age": 15,
+                    "id": 5
+                }
+            ]);
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?limit=2&count=1`);
             assert.equal(rep.statusCode, 200);
-            assert.deepEqual(rep.json(), {
-                "results": [{
-                        "name": "tom",
-                        "sex": "male",
-                        "age": 12,
-                        "id": 2
-                    },
-                    {
-                        "name": "jack",
-                        "sex": "male",
-                        "age": 13,
-                        "id": 3
-                    }
-                ],
-                "count": 4
-            });
+            var res = rep.json();
+            assert.equal(res.count, 4);
+            check_result(res.results, [{
+                    "name": "tom",
+                    "sex": "male",
+                    "age": 12,
+                    "id": 2
+                },
+                {
+                    "name": "jack",
+                    "sex": "male",
+                    "age": 13,
+                    "id": 3
+                }
+            ]);
         });
     })
 
@@ -613,7 +625,7 @@ describe("classed", () => {
         });
 
         assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
+        check_result(rep.json(), {
             "message": "test",
             "data": {
                 "name": "lion"
@@ -623,7 +635,7 @@ describe("classed", () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person/test1`);
 
         assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
+        check_result(rep.json(), {
             "message": "current result"
         });
     });
