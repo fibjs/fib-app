@@ -1,4 +1,5 @@
 module.exports = [
     require('./pet'),
-    require('./person')
+    require('./person'),
+    require('./acl')
 ];
