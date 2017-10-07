@@ -99,7 +99,11 @@ describe("classed", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}?keys=age`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`, {
+                query: {
+                    keys: "age"
+                }
+            });
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), {
                 "age": 16
@@ -206,7 +210,11 @@ describe("classed", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?keys=id,name`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                query: {
+                    keys: 'id,name'
+                }
+            });
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "tom",
@@ -229,12 +237,20 @@ describe("classed", () => {
 
         describe("where", () => {
             it("error query", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where=err_json`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: "err_json"
+                    }
+                });
                 assert.equal(rep.statusCode, 107);
             });
 
             it("eq", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":4,"age":14}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":4,"age":14}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                     "name": "mike",
@@ -243,11 +259,19 @@ describe("classed", () => {
                     "id": 4
                 }]);
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":4,"age":15}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":4,"age":15}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), []);
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$eq":4}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$eq":4}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                     "name": "mike",
@@ -258,7 +282,11 @@ describe("classed", () => {
             });
 
             it("ne", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$ne":4}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$ne":4}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -282,7 +310,11 @@ describe("classed", () => {
             });
 
             it("gt", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$gt":3}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$gt":3}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                     "name": "mike",
@@ -298,7 +330,11 @@ describe("classed", () => {
             });
 
             it("gte", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$gte":4}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$gte":4}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                     "name": "mike",
@@ -314,7 +350,11 @@ describe("classed", () => {
             });
 
             it("lt", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$lt":4}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$lt":4}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -332,7 +372,11 @@ describe("classed", () => {
             });
 
             it("lte", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$lte":3}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$lte":3}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -350,7 +394,11 @@ describe("classed", () => {
             });
 
             it("like", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"name":{"$like":"%k"}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"name":{"$like":"%k"}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "jack",
@@ -368,7 +416,11 @@ describe("classed", () => {
             });
 
             it("not_like", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"name":{"$not_like":"%k"}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"name":{"$not_like":"%k"}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -386,7 +438,11 @@ describe("classed", () => {
             });
 
             it("between", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$between":[2,4]}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$between":[2,4]}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -410,7 +466,11 @@ describe("classed", () => {
             });
 
             it("not_between", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$not_between":[3,4]}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$not_between":[3,4]}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -428,7 +488,11 @@ describe("classed", () => {
             });
 
             it("in", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":[1,2,3]}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":[1,2,3]}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -444,7 +508,11 @@ describe("classed", () => {
                     }
                 ]);
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$in":[1,2,3]}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$in":[1,2,3]}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "tom",
@@ -462,7 +530,11 @@ describe("classed", () => {
             });
 
             it("not_in", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"id":{"$not_in":[1,2,3]}}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"id":{"$not_in":[1,2,3]}}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "mike",
@@ -480,7 +552,11 @@ describe("classed", () => {
             });
 
             it("or", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?where={"$or":[{"id":3},{"id":5}]}`);
+                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                    query: {
+                        where: '{"$or":[{"id":3},{"id":5}]}'
+                    }
+                });
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), [{
                         "name": "jack",
@@ -499,7 +575,11 @@ describe("classed", () => {
         });
 
         it("skip", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?skip=2`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                query: {
+                    skip: 2
+                }
+            });
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "mike",
@@ -517,7 +597,11 @@ describe("classed", () => {
         });
 
         it("limit", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?limit=2`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                query: {
+                    limit: 2
+                }
+            });
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "tom",
@@ -535,7 +619,11 @@ describe("classed", () => {
         });
 
         it("order", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?order=-id`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                query: {
+                    order: '-id'
+                }
+            });
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "frank",
@@ -565,7 +653,11 @@ describe("classed", () => {
         });
 
         it("count", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?count=1`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                query: {
+                    count: 1
+                }
+            });
             assert.equal(rep.statusCode, 200);
             var res = rep.json();
             assert.equal(res.count, 4);
@@ -595,7 +687,12 @@ describe("classed", () => {
                 }
             ]);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person?limit=2&count=1`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                query: {
+                    limit: 2,
+                    count: 1
+                }
+            });
             assert.equal(rep.statusCode, 200);
             var res = rep.json();
             assert.equal(res.count, 4);
