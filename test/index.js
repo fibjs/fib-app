@@ -615,7 +615,7 @@ describe("classed", () => {
         });
     })
 
-    it("method", () => {
+    it("function", () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person1/test`);
         assert.equal(rep.statusCode, 103);
 

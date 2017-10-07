@@ -8,20 +8,19 @@ module.exports = db => {
     }, {
         validations: {
             age: orm.enforce.ranges.number(10, 18, "teenage")
+        },
+        functions: {
+            test: (req, data) => {
+                return {
+                    message: "test",
+                    data: data
+                }
+            },
+            test1: (req, data) => {
+                req.response.json({
+                    message: "current result"
+                });
+            }
         }
     });
-
-    Person.methods = {
-        test: (req, data) => {
-            return {
-                message: "test",
-                data: data
-            }
-        },
-        test1: (req, data) => {
-            req.response.json({
-                message: "current result"
-            });
-        }
-    }
 };
