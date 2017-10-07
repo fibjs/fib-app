@@ -4,7 +4,7 @@ const Session = require('fib-session')
 const App = require('../');
 
 var app = App('sqlite:test.db', {});
-app.def(require('./defs'));
+app.db.use(require('./defs'));
 
 var session = new Session(new util.LruCache(20000), {
     timeout: 60 * 1000

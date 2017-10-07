@@ -23,6 +23,7 @@ function check_result(res, data) {
         res.forEach(r => {
             delete r.createAt;
             delete r.updateAt;
+            delete r.ACL;
         })
     else {
         delete res.createAt;
