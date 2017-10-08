@@ -16,6 +16,9 @@ module.exports = db => {
             },
             "9999": {
                 '*': false
+            },
+            ":owner": {
+                "*": true
             }
         }
     });
