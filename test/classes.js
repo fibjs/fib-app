@@ -101,7 +101,12 @@ describe("classes", () => {
         var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person1/${id}`);
         assert.equal(rep.statusCode, 103);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/9999`);
+        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/9999`, {
+            json: {
+                name: 'xicilion',
+                some_filed: 'skip'
+            }
+        });
         assert.equal(rep.statusCode, 101);
 
         var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
@@ -113,15 +118,12 @@ describe("classes", () => {
                 some_filed: 'skip'
             }
         });
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "id": 1
-        });
+        assert.equal(rep.statusCode, 101);
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 200);
         check_result(rep.json(), {
-            "name": "xicilion",
+            "name": "lion",
             "sex": "male",
             "age": 16,
             "id": 1

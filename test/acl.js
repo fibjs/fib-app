@@ -13,11 +13,27 @@ describe("acl", () => {
         assert.equal(rep.statusCode, 119);
     });
 
-    it("role allow all", () => {
-        var rep = http.post('http://127.0.0.1:8080/set_session', {
+    it("role allow act", () => {
+        http.post('http://127.0.0.1:8080/set_session', {
             json: {
                 id: 12345,
-                roles: ['r1']
+                roles: ['r2']
+            }
+        });
+
+        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+            json: {
+                name: "aaa"
+            }
+        });
+        assert.equal(rep.statusCode, 201);
+    });
+
+    it("role allow all", () => {
+        http.post('http://127.0.0.1:8080/set_session', {
+            json: {
+                id: 12345,
+                roles: ['r2']
             }
         });
 
@@ -37,12 +53,11 @@ describe("acl", () => {
         });
     });
 
-
     it("custom acl", () => {
-        var rep = http.post('http://127.0.0.1:8080/set_session', {
+        http.post('http://127.0.0.1:8080/set_session', {
             json: {
                 id: 12345,
-                roles: ['r1']
+                roles: ['r2']
             }
         });
 
@@ -51,7 +66,7 @@ describe("acl", () => {
                 name: "aaa",
                 ACL: {
                     '*': {
-                        '*': false
+                        '*': true
                     }
                 }
             }
@@ -62,13 +77,13 @@ describe("acl", () => {
         var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/${res.id}`);
         assert.deepEqual(rep.json().ACL, {
             "*": {
-                "*": false
+                "*": true
             }
         });
     });
 
-    it("role allow act", () => {
-        var rep = http.post('http://127.0.0.1:8080/set_session', {
+    it("object allow owner", () => {
+        http.post('http://127.0.0.1:8080/set_session', {
             json: {
                 id: 12345,
                 roles: ['r2']
@@ -81,10 +96,20 @@ describe("acl", () => {
             }
         });
         assert.equal(rep.statusCode, 201);
+        var res = rep.json();
+
+        http.post('http://127.0.0.1:8080/set_session', {
+            json: {
+                id: 12346
+            }
+        });
+
+        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/${res.id}`);
+        assert.equal(rep.statusCode, 119);
     });
 
     it("user disallow", () => {
-        var rep = http.post('http://127.0.0.1:8080/set_session', {
+        http.post('http://127.0.0.1:8080/set_session', {
             json: {
                 id: 9999,
                 roles: ['r1']
