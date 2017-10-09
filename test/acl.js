@@ -165,6 +165,21 @@ describe("acl", () => {
             "name": "aaa",
             "age": 123
         });
+
+        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl`, {
+            query: {
+                limit: 2
+            }
+        });
+        assert.deepEqual(rep.json(), [{
+                "name": "aaa",
+                "age": 123
+            },
+            {
+                "name": "aaa",
+                "age": 12
+            }
+        ]);
     });
 
 

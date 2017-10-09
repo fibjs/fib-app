@@ -21,7 +21,8 @@ module.exports = db => {
             },
             "role:r3": {
                 'read': ['name', 'age'],
-                'write': ['age']
+                'write': ['age'],
+                "find": true
             },
             ":owner": {
                 "*": true
