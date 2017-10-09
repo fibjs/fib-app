@@ -2,7 +2,9 @@ const orm = require('fib-orm');
 
 module.exports = db => {
     db.define('test_acl', {
-        name: String
+        name: String,
+        age: Number,
+        sex: String
     }, {
         ACL: {
             '*': {
@@ -16,6 +18,10 @@ module.exports = db => {
             },
             "9999": {
                 '*': false
+            },
+            "role:r3": {
+                'read': ['name', 'age'],
+                'write': ['age']
             },
             ":owner": {
                 "*": true

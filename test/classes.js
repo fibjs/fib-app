@@ -120,10 +120,17 @@ describe("classes", () => {
         });
         assert.equal(rep.statusCode, 101);
 
+        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/${id}`, {
+            json: {
+                name: 'xicilion'
+            }
+        });
+        assert.equal(rep.statusCode, 200);
+
         var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
         assert.equal(rep.statusCode, 200);
         check_result(rep.json(), {
-            "name": "lion",
+            "name": "xicilion",
             "sex": "male",
             "age": 16,
             "id": 1
