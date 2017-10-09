@@ -3,7 +3,7 @@ const util = require('util')
 const Session = require('fib-session')
 const App = require('../');
 
-var app = App('sqlite:test.db', {});
+var app = new App('sqlite:test.db', {});
 app.db.use(require('./defs'));
 
 var session = new Session(new util.LruCache(20000), {

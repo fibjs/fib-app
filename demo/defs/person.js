@@ -1,7 +1,7 @@
 const orm = require('fib-orm');
 
 module.exports = db => {
-    var Person = db.define('person', {
+    db.define('person', {
         name: String,
         sex: ["male", "female"],
         age: Number
