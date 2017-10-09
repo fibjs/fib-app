@@ -13,7 +13,7 @@ npm install fib-app [--save]
 fibjs test
 ```
 
-## 建立基础脚本
+## 建立基础脚本
 
 ```JavaScript
 const http = require('http');
@@ -68,7 +68,7 @@ module.exports = db => {
     db.define('blog', {
         title: String,
         detail: String，
-        note: String
+        note: String
     }, {
         ACL: {
             '*': {
@@ -85,9 +85,9 @@ module.exports = db => {
     });
 };
 ```
-定义了一个 Model，只允许 user 用户组的用户创建，作者本人可以读取所有字段，而其它任何人只允许读取 `title` 和 `detail` 两个字段。
+定义了一个 Model，只允许 user 用户组的用户创建，作者本人可以读取所有字段，而其它任何人只允许读取 `title` 和 `detail` 两个字段。
 
 ## Function
-可以为 Model 定义 api，对于复杂数据操作，可以通过自定义 Function 来完成。
+可以为 Model 定义 api，对于复杂数据操作，可以通过自定义 Function 来完成。
 
-绝大多数权限可以通过 ACL 控制完成，不需要通过 Function 来完成基于对象的权限。Function 可用于完成基于数据的权限，比如根据审批状态，赋予不同用户组权限。以及多项修改，比如需要修改多条数据库记录。
+绝大多数权限可以通过 ACL 控制完成，不需要通过 Function 来完成基于对象的权限。Function 可用于完成基于数据的权限，比如根据审批状态，赋予不同用户组权限。以及多项修改，比如需要修改多条数据库记录。
