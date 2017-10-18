@@ -2,26 +2,24 @@ const test = require('test');
 test.setup();
 
 const http = require('http');
+const util = require('util');
+
+function clen_result(res) {
+    if (util.isObject(res)) {
+        if (Array.isArray(res))
+            res.forEach(r => clen_result(r));
+        else {
+            delete res.createAt;
+            delete res.updateAt;
+            delete res.ACL;
+            for (var k in res)
+                clen_result(res[k]);
+        }
+    }
+}
 
 function check_result(res, data) {
-    if (Array.isArray(res))
-        res.forEach(r => {
-            delete r.createAt;
-            delete r.updateAt;
-            delete r.ACL;
-            var success = r.success;
-            if (success !== undefined) {
-                delete success.createAt;
-                delete success.updateAt;
-                delete success.ACL;
-            }
-        });
-    else {
-        delete res.createAt;
-        delete res.updateAt;
-        delete res.ACL;
-    }
-
+    clen_result(res);
     assert.deepEqual(res, data);
 }
 

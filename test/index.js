@@ -36,6 +36,7 @@ function check_result(res, data) {
 
 run('./classes');
 run('./acl');
+run('./relation');
 
 test.run(console.DEBUG);
 process.exit();
