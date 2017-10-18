@@ -9,7 +9,13 @@ function check_result(res, data) {
             delete r.createAt;
             delete r.updateAt;
             delete r.ACL;
-        })
+            var success = r.success;
+            if (success !== undefined) {
+                delete success.createAt;
+                delete success.updateAt;
+                delete success.ACL;
+            }
+        });
     else {
         delete res.createAt;
         delete res.updateAt;
@@ -705,7 +711,68 @@ describe("classes", () => {
                 }
             ]);
         });
-    })
+    });
+
+    it("batch", () => {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/classes`, {
+            json: {
+                requests: [{
+                    "method": "GET",
+                    "path": "/person/2"
+                }, {
+                    "method": "GET",
+                    "path": "/person/2?keys=name,sex"
+                }, {
+                    "method": "PUT",
+                    "path": "/person/2",
+                    "body": {
+                        age: 13
+                    }
+                }, {
+                    "method": "GET",
+                    "path": "/person/2"
+                }, {
+                    "method": "GET",
+                    "path": "/person/200"
+                }]
+            }
+        });
+
+        assert.equal(rep.statusCode, 200);
+        check_result(rep.json(), [{
+                "success": {
+                    "name": "tom",
+                    "sex": "male",
+                    "age": 12,
+                    "id": 2
+                }
+            }, {
+                "success": {
+                    "name": "tom",
+                    "sex": "male"
+                }
+            },
+            {
+                "success": {
+                    "id": 2
+                }
+            },
+            {
+                "success": {
+                    "name": "tom",
+                    "sex": "male",
+                    "age": 13,
+                    "id": 2
+                }
+            },
+            {
+                "error": {
+                    "code": 101,
+                    "descript": "ObjectNotFound"
+                }
+            }
+        ]);
+    });
 
     it("function", () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person1/test`);
