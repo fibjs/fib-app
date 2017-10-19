@@ -100,6 +100,25 @@ describe("relation", () => {
     });
 
     it('get relation', () => {
-        var rep = http.get('http://127.0.0.1:8080/1.0/classes/people/1');
+        var rep = http.get('http://127.0.0.1:8080/1.0/classes/people/1/wife?keys=name,age');
+        check_result(rep.json(), {
+            "name": "alice",
+            "age": 32
+        });
+
+        var rep = http.get('http://127.0.0.1:8080/1.0/classes/people/3/mother?keys=name,age');
+        check_result(rep.json(), {
+            "name": "alice",
+            "age": 32
+        });
+
+        var rep = http.get('http://127.0.0.1:8080/1.0/classes/people/1/childs?keys=name,age&order=age');
+        check_result(rep.json(), [{
+            "name": "lily",
+            "age": 4
+        }, {
+            "name": "jack",
+            "age": 8
+        }]);
     });
 });
