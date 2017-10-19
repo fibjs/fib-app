@@ -158,5 +158,8 @@ describe("relation", () => {
             "name": "lily",
             "age": 4
         }]);
+
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/1/childs/3`);
+        assert.equal(rep.statusCode, 200)
     });
 });
