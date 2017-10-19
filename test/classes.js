@@ -268,7 +268,7 @@ describe("classes", () => {
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$eq":4}}'
+                        where: '{"id":{"eq":4}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -283,7 +283,7 @@ describe("classes", () => {
             it("ne", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$ne":4}}'
+                        where: '{"id":{"ne":4}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -311,7 +311,7 @@ describe("classes", () => {
             it("gt", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$gt":3}}'
+                        where: '{"id":{"gt":3}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -331,7 +331,7 @@ describe("classes", () => {
             it("gte", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$gte":4}}'
+                        where: '{"id":{"gte":4}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -351,7 +351,7 @@ describe("classes", () => {
             it("lt", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$lt":4}}'
+                        where: '{"id":{"lt":4}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -373,7 +373,7 @@ describe("classes", () => {
             it("lte", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$lte":3}}'
+                        where: '{"id":{"lte":3}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -395,7 +395,7 @@ describe("classes", () => {
             it("like", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"name":{"$like":"%k"}}'
+                        where: '{"name":{"like":"%k"}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -417,7 +417,7 @@ describe("classes", () => {
             it("not_like", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"name":{"$not_like":"%k"}}'
+                        where: '{"name":{"not_like":"%k"}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -439,7 +439,7 @@ describe("classes", () => {
             it("between", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$between":[2,4]}}'
+                        where: '{"id":{"between":[2,4]}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -467,7 +467,7 @@ describe("classes", () => {
             it("not_between", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$not_between":[3,4]}}'
+                        where: '{"id":{"not_between":[3,4]}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -509,7 +509,7 @@ describe("classes", () => {
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$in":[1,2,3]}}'
+                        where: '{"id":{"in":[1,2,3]}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -531,7 +531,7 @@ describe("classes", () => {
             it("not_in", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"$not_in":[1,2,3]}}'
+                        where: '{"id":{"not_in":[1,2,3]}}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -553,7 +553,7 @@ describe("classes", () => {
             it("or", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"$or":[{"id":3},{"id":5}]}'
+                        where: '{"or":[{"id":3},{"id":5}]}'
                     }
                 });
                 assert.equal(rep.statusCode, 200);

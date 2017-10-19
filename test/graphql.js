@@ -129,7 +129,11 @@ describe("graphql", () => {
                         id,
                         name,
                         childs(
-                            where:"{\\"age\\":4}"
+                            where:{
+                                name: {
+                                    eq: "lily"
+                                }
+                            }
                         ){
                             id,
                             name
