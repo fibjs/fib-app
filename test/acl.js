@@ -5,7 +5,7 @@ const http = require('http');
 
 describe("acl", () => {
     it("forbidden", () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
                 age: 12
@@ -22,7 +22,7 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
                 age: 12
@@ -39,7 +39,7 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
                 age: 12
@@ -48,7 +48,7 @@ describe("acl", () => {
         assert.equal(rep.statusCode, 201);
         var res = rep.json();
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/${res.id}`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
         assert.deepEqual(rep.json().ACL, {
             12345: {
                 "*": true
@@ -64,7 +64,7 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
                 age: 12,
@@ -78,7 +78,7 @@ describe("acl", () => {
         assert.equal(rep.statusCode, 201);
         var res = rep.json();
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/${res.id}`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
         assert.deepEqual(rep.json().ACL, {
             "*": {
                 "*": true
@@ -94,7 +94,7 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
                 age: 12
@@ -109,7 +109,7 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/${res.id}`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
         assert.equal(rep.statusCode, 119);
     });
 
@@ -121,7 +121,7 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/test_acl', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
                 age: 12
@@ -138,13 +138,13 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/1`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/1`);
         assert.deepEqual(rep.json(), {
             "name": "aaa",
             "age": 12
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/1`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/1`, {
             query: {
                 keys: 'name,sex'
             }
@@ -153,20 +153,20 @@ describe("acl", () => {
             "name": "aaa"
         });
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/test_acl/1`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/1`, {
             json: {
                 name: "bbb",
                 age: 123
             }
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl/1`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/1`);
         assert.deepEqual(rep.json(), {
             "name": "aaa",
             "age": 123
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/test_acl`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl`, {
             query: {
                 limit: 2
             }

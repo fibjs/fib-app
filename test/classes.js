@@ -27,15 +27,15 @@ describe("classes", () => {
     var id;
 
     it("post new", () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/person1');
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/person1');
         assert.equal(rep.statusCode, 103);
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/person', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
             body: 'aaaa'
         });
         assert.equal(rep.statusCode, 107);
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/classes/person', {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
             json: {
                 name: 'lion',
                 sex: "male",
@@ -49,7 +49,7 @@ describe("classes", () => {
         });
         id = rep.json().id;
 
-        rep = http.post('http://127.0.0.1:8080/1.0/classes/person', {
+        rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
             json: [{
                 name: 'tom',
                 sex: "male",
@@ -72,13 +72,13 @@ describe("classes", () => {
 
     describe("get id", () => {
         it("simple", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person1/${id}`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
             assert.equal(rep.statusCode, 103);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/9999`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/9999`);
             assert.equal(rep.statusCode, 101);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), {
                 "name": "lion",
@@ -89,7 +89,7 @@ describe("classes", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
                 query: {
                     keys: "age"
                 }
@@ -102,10 +102,10 @@ describe("classes", () => {
     });
 
     it("put id", () => {
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person1/${id}`);
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
         assert.equal(rep.statusCode, 103);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/9999`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/9999`, {
             json: {
                 name: 'xicilion',
                 some_filed: 'skip'
@@ -113,10 +113,10 @@ describe("classes", () => {
         });
         assert.equal(rep.statusCode, 101);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`);
         assert.equal(rep.statusCode, 107);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/${id}`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
             json: {
                 name: 'xicilion',
                 some_filed: 'skip'
@@ -124,14 +124,14 @@ describe("classes", () => {
         });
         assert.equal(rep.statusCode, 101);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/classes/person/${id}`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
             json: {
                 name: 'xicilion'
             }
         });
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
         assert.equal(rep.statusCode, 200);
         check_result(rep.json(), {
             "name": "xicilion",
@@ -142,25 +142,25 @@ describe("classes", () => {
     });
 
     it("del id", () => {
-        var rep = http.del(`http://127.0.0.1:8080/1.0/classes/person1/${id}`);
+        var rep = http.del(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
         assert.equal(rep.statusCode, 103);
 
-        var rep = http.del(`http://127.0.0.1:8080/1.0/classes/person/9999`);
+        var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/9999`);
         assert.equal(rep.statusCode, 101);
 
-        var rep = http.del(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
+        var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/${id}`);
         assert.equal(rep.statusCode, 200);
         check_result(rep.json(), {
             "id": 1
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person/${id}`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
         assert.equal(rep.statusCode, 101);
     });
 
     describe("get list", () => {
         before(() => {
-            http.post('http://127.0.0.1:8080/1.0/classes/person', {
+            http.post('http://127.0.0.1:8080/1.0/app/person', {
                 json: [{
                         name: 'mike',
                         sex: "female",
@@ -176,10 +176,10 @@ describe("classes", () => {
         });
 
         it("simple", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person1`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1`);
             assert.equal(rep.statusCode, 103);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "tom",
@@ -209,7 +209,7 @@ describe("classes", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                 query: {
                     keys: 'id,name'
                 }
@@ -236,7 +236,7 @@ describe("classes", () => {
 
         describe("where", () => {
             it("error query", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: "err_json"
                     }
@@ -245,7 +245,7 @@ describe("classes", () => {
             });
 
             it("eq", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":4,"age":14}'
                     }
@@ -258,7 +258,7 @@ describe("classes", () => {
                     "id": 4
                 }]);
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":4,"age":15}'
                     }
@@ -266,7 +266,7 @@ describe("classes", () => {
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), []);
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$eq":4}}'
                     }
@@ -281,7 +281,7 @@ describe("classes", () => {
             });
 
             it("ne", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$ne":4}}'
                     }
@@ -309,7 +309,7 @@ describe("classes", () => {
             });
 
             it("gt", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$gt":3}}'
                     }
@@ -329,7 +329,7 @@ describe("classes", () => {
             });
 
             it("gte", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$gte":4}}'
                     }
@@ -349,7 +349,7 @@ describe("classes", () => {
             });
 
             it("lt", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$lt":4}}'
                     }
@@ -371,7 +371,7 @@ describe("classes", () => {
             });
 
             it("lte", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$lte":3}}'
                     }
@@ -393,7 +393,7 @@ describe("classes", () => {
             });
 
             it("like", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"name":{"$like":"%k"}}'
                     }
@@ -415,7 +415,7 @@ describe("classes", () => {
             });
 
             it("not_like", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"name":{"$not_like":"%k"}}'
                     }
@@ -437,7 +437,7 @@ describe("classes", () => {
             });
 
             it("between", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$between":[2,4]}}'
                     }
@@ -465,7 +465,7 @@ describe("classes", () => {
             });
 
             it("not_between", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$not_between":[3,4]}}'
                     }
@@ -487,7 +487,7 @@ describe("classes", () => {
             });
 
             it("in", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":[1,2,3]}'
                     }
@@ -507,7 +507,7 @@ describe("classes", () => {
                     }
                 ]);
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$in":[1,2,3]}}'
                     }
@@ -529,7 +529,7 @@ describe("classes", () => {
             });
 
             it("not_in", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"id":{"$not_in":[1,2,3]}}'
                     }
@@ -551,7 +551,7 @@ describe("classes", () => {
             });
 
             it("or", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
                         where: '{"$or":[{"id":3},{"id":5}]}'
                     }
@@ -574,7 +574,7 @@ describe("classes", () => {
         });
 
         it("skip", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                 query: {
                     skip: 2
                 }
@@ -596,7 +596,7 @@ describe("classes", () => {
         });
 
         it("limit", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                 query: {
                     limit: 2
                 }
@@ -618,7 +618,7 @@ describe("classes", () => {
         });
 
         it("order", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                 query: {
                     order: '-id'
                 }
@@ -652,7 +652,7 @@ describe("classes", () => {
         });
 
         it("count", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                 query: {
                     count: 1
                 }
@@ -686,7 +686,7 @@ describe("classes", () => {
                 }
             ]);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/classes/person`, {
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                 query: {
                     limit: 2,
                     count: 1
@@ -712,7 +712,7 @@ describe("classes", () => {
     });
 
     it("batch", () => {
-        var rep = http.post(`http://127.0.0.1:8080/1.0/classes`, {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
             json: {
                 requests: [{
                     "method": "GET",
@@ -773,10 +773,10 @@ describe("classes", () => {
     });
 
     it("function", () => {
-        var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person1/test`);
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person1/test`);
         assert.equal(rep.statusCode, 103);
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person/test`, {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person/test`, {
             json: {
                 name: 'lion'
             }
@@ -790,7 +790,7 @@ describe("classes", () => {
             }
         });
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/classes/person/test1`);
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person/test1`);
 
         assert.equal(rep.statusCode, 200);
         check_result(rep.json(), {

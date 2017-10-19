@@ -13,7 +13,7 @@ var session = new Session(new util.LruCache(20000), {
 var svr = new http.Server(8080, [
     session.cookie_filter,
     {
-        '/1.0': app.handler,
+        '/1.0/app': app.handler,
         '/set_session': req => {
             var data = req.json();
             req.session.id = data.id;
