@@ -27,4 +27,44 @@ describe("graphql", () => {
             }
         });
     });
+    it('hasOne', () => {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                people(id:3){
+                    id,
+                    name,
+                    mother{
+                        id,
+                        name,
+                        husband{
+                            id,
+                            name
+                        }
+                    }
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "data": {
+                "people": {
+                    "id": "3",
+                    "name": "jack",
+                    "mother": {
+                        "id": "2",
+                        "name": "alice",
+                        "husband": {
+                            "id": "1",
+                            "name": "tom"
+                        }
+                    }
+                }
+            }
+        });
+    });
+
 });
