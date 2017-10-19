@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fib-graphql": "^1.0.0",
     "fib-orm": "^1.2.0",
     "fib-pool": "^1.3.0"
   },

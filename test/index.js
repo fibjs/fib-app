@@ -21,6 +21,7 @@ const http = require('http');
 run('./classes');
 run('./acl');
 run('./relation');
+run('./graphql');
 
 test.run(console.DEBUG);
 process.exit();
