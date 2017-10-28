@@ -157,6 +157,28 @@ describe("relation", () => {
             "name": "jack",
             "age": 8
         }]);
+
+        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/childs/4', {
+            query: {
+                keys: 'name,age',
+                order: 'age'
+            }
+        });
+        check_result(rep.json(), {
+            "name": "lily",
+            "age": 4
+        });
+
+        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/childs/2', {
+            query: {
+                keys: 'name,age',
+                order: 'age'
+            }
+        });
+        check_result(rep.json(), {
+            "code": 101,
+            "descript": "ObjectNotFound"
+        });
     });
 
     it('delete relation', () => {
