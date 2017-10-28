@@ -61,7 +61,11 @@ describe("relation", () => {
     });
 
     it('init relation', () => {
-        var rep = http.put('http://127.0.0.1:8080/1.0/app/people/1/wife/2');
+        var rep = http.put('http://127.0.0.1:8080/1.0/app/people/1/wife', {
+            json: {
+                id: 2
+            }
+        });
         assert.equal(rep.statusCode, 200)
 
         var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1', {
@@ -73,14 +77,26 @@ describe("relation", () => {
             wife_id: 2
         });
 
-        var rep = http.put('http://127.0.0.1:8080/1.0/app/people/2/husband/1');
+        var rep = http.put('http://127.0.0.1:8080/1.0/app/people/2/husband', {
+            json: {
+                id: 1
+            }
+        });
         assert.equal(rep.statusCode, 200)
 
         function set_parents(id) {
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/father/1`);
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/father`, {
+                json: {
+                    id: 1
+                }
+            });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/mother/2`);
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/mother`, {
+                json: {
+                    id: 2
+                }
+            });
             assert.equal(rep.statusCode, 200)
         }
 
@@ -88,10 +104,18 @@ describe("relation", () => {
         set_parents(4);
 
         function add_childs(id) {
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs/3`);
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs`, {
+                json: {
+                    id: 3
+                }
+            });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs/4`);
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs`, {
+                json: {
+                    id: 4
+                }
+            });
             assert.equal(rep.statusCode, 200)
         }
 
@@ -159,7 +183,11 @@ describe("relation", () => {
             "age": 4
         }]);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/1/childs/3`);
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/1/childs`, {
+            json: {
+                id: 3
+            }
+        });
         assert.equal(rep.statusCode, 200)
     });
 });
