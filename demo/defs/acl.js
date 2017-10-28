@@ -6,27 +6,29 @@ module.exports = db => {
         age: Number,
         sex: String
     }, {
-        ACL: {
-            '*': {
-                '*': false
-            },
-            "role:r1": {
-                '*': true
-            },
-            "role:r2": {
-                'create': true
-            },
-            "9999": {
-                '*': false
-            },
-            "role:r3": {
-                'read': ['name', 'age'],
-                'write': ['age'],
-                "find": true
-            },
-            ":owner": {
-                "*": true
-            }
+        ACL: function () {
+            return {
+                '*': {
+                    '*': false
+                },
+                "role:r1": {
+                    '*': true
+                },
+                "role:r2": {
+                    'create': true
+                },
+                "9999": {
+                    '*': false
+                },
+                "role:r3": {
+                    'read': ['name', 'age'],
+                    'write': ['age'],
+                    "find": true
+                },
+                ":owner": {
+                    "*": true
+                }
+            };
         }
     });
 };
