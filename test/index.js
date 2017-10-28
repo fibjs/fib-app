@@ -14,7 +14,6 @@ try {
 } catch (e) {};
 
 run('../demo/app');
-require('coroutine').sleep(100);
 
 const http = require('http');
 

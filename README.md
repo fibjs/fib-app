@@ -52,11 +52,28 @@ module.exports = db => {
 
 完成这样的数据定义，便直接拥有了一整套符合 REST api 规范的接口调用，包括：
 ```sh
-POST /1.0/classes/person    // 创建对象
-GET /1.0/classes/${id}      // 读取对象
-PUT /1.0/classes/${id}      // 修改对象
-DELETE /1.0/classes/${id}   // 删除对象
-GET /1.0/classes            // 查询对象列表
+POST /person    // 创建对象
+GET /person/${id}      // 读取对象
+PUT /person/${id}      // 修改对象
+DELETE /person/${id}   // 删除对象
+GET /person            // 查询对象列表
+
+// ==== todo
+POST /person/${id}/child // 创建一个关系对象
+PUT /person/${id}/child/${rid} // 修改指定关系对象
+
+
+GET /person/${id}/child/${rid} // 查询 hasMany 关系其中一项
+GET /person/${id}/wife // 查询关系
+
+DELETE /person/${id}/wife/${rid} // 删除关系 ？？？
+
+PUT /person/${id}/wife // 添加关系
+
+
+POST /person/ // 批处理，或者 GraphQL 查询
+
+POST /person/${func} // 调用自定义函数
 ```
 
 ## ACL
