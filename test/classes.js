@@ -790,7 +790,9 @@ describe("classes", () => {
             }
         });
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person/test1`);
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person/test1`, {
+            json: {}
+        });
 
         assert.equal(rep.statusCode, 200);
         check_result(rep.json(), {

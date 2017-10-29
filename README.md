@@ -58,17 +58,13 @@ PUT /person/${id}      // 修改对象
 DELETE /person/${id}   // 删除对象
 GET /person            // 查询对象列表
 
-// ==== todo
-PUT /person/${id}/child/${rid} // 修改指定关系对象
 
-
+PUT /person/${id}/wife // 添加关系
 POST /person/${id}/child // 创建一个关系对象
 GET /person/${id}/child/${rid} // 查询 hasMany 关系其中一项
 GET /person/${id}/wife // 查询关系
-
+PUT /person/${id}/child/${rid} // 修改指定关系对象
 DELETE /person/${id}/wife/${rid} // 删除关系 ？？？
-
-PUT /person/${id}/wife // 添加关系
 
 
 POST /person/ // 批处理，或者 GraphQL 查询
