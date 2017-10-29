@@ -59,10 +59,10 @@ DELETE /person/${id}   // 删除对象
 GET /person            // 查询对象列表
 
 // ==== todo
-POST /person/${id}/child // 创建一个关系对象
 PUT /person/${id}/child/${rid} // 修改指定关系对象
 
 
+POST /person/${id}/child // 创建一个关系对象
 GET /person/${id}/child/${rid} // 查询 hasMany 关系其中一项
 GET /person/${id}/wife // 查询关系
 

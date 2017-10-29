@@ -212,4 +212,51 @@ describe("relation", () => {
         });
         assert.equal(rep.statusCode, 200)
     });
+
+    it('create relation object', () => {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/1/childs`, {
+            json: {
+                name: 'jack_li',
+                sex: "male",
+                age: 8
+            }
+        });
+        assert.equal(rep.statusCode, 200);
+
+        var rid = rep.json().id;
+
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/1/childs/${rid}`, {
+            query: {
+                keys: 'name,age'
+            }
+        });
+        assert.equal(rep.statusCode, 200);
+        check_result(rep.json(), {
+            "name": "jack_li",
+            "age": 8
+        });
+
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${rid}/wife`, {
+            json: {
+                name: 'ly_li',
+                sex: "famale",
+                age: 8
+            }
+        });
+        assert.equal(rep.statusCode, 200);
+
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${rid}/wife`, {
+            query: {
+                keys: 'name,age'
+            }
+        });
+        assert.equal(rep.statusCode, 200);
+        check_result(rep.json(), {
+            name: 'ly_li',
+            age: 8
+        });
+
+        rep = http.del(`http://127.0.0.1:8080/1.0/app/people/1/childs/${rid}`);
+        assert.equal(rep.statusCode, 200);
+    });
 });
