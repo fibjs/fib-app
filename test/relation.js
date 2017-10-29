@@ -231,7 +231,7 @@ describe("relation", () => {
                 age: 8
             }
         });
-        assert.equal(rep.statusCode, 200);
+        assert.equal(rep.statusCode, 201);
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`, {
             query: {
@@ -255,7 +255,7 @@ describe("relation", () => {
                 age: 9
             }]
         });
-        assert.equal(rep.statusCode, 200);
+        assert.equal(rep.statusCode, 201);
         check_result(rep.json(), [{
             id: 6
         }, {
@@ -280,7 +280,7 @@ describe("relation", () => {
                 age: 8
             }
         });
-        assert.equal(rep.statusCode, 200);
+        assert.equal(rep.statusCode, 201);
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/5/wife`, {
             query: {
