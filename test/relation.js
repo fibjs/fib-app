@@ -244,6 +244,35 @@ describe("relation", () => {
             "age": 8
         });
 
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/5/childs`, {
+            json: [{
+                name: 'jack_li_0',
+                sex: "male",
+                age: 8
+            }, {
+                name: 'jack_li_1',
+                sex: "male",
+                age: 9
+            }]
+        });
+        assert.equal(rep.statusCode, 200);
+        check_result(rep.json(), [{
+            id: 6
+        }, {
+            id: 7
+        }]);
+
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`, {
+            query: {
+                keys: 'name,age'
+            }
+        });
+        assert.equal(rep.statusCode, 200);
+        check_result(rep.json(), {
+            "name": "jack_li",
+            "age": 8
+        });
+
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/5/wife`, {
             json: {
                 name: 'ly_li',
