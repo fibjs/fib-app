@@ -11,7 +11,7 @@ describe("acl", () => {
                 age: 12
             }
         });
-        assert.equal(rep.statusCode, 119);
+        assert.equal(rep.statusCode, 403);
     });
 
     it("role allow act", () => {
@@ -110,7 +110,7 @@ describe("acl", () => {
         });
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
-        assert.equal(rep.statusCode, 119);
+        assert.equal(rep.statusCode, 403);
     });
 
     it("user disallow", () => {
@@ -127,7 +127,7 @@ describe("acl", () => {
                 age: 12
             }
         });
-        assert.equal(rep.statusCode, 119);
+        assert.equal(rep.statusCode, 403);
     });
 
     it("allow field", () => {

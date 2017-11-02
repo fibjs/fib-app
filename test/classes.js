@@ -27,13 +27,30 @@ describe("classes", () => {
     var id;
 
     it("post new", () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/person1');
-        assert.equal(rep.statusCode, 103);
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/person');
+        assert.equal(rep.statusCode, 400);
+        check_result(rep.json(), {
+            "code": 4000001,
+            "message": "POST request don't send any data."
+        });
 
         var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
             body: 'aaaa'
         });
-        assert.equal(rep.statusCode, 107);
+        assert.equal(rep.statusCode, 400);
+        check_result(rep.json(), {
+            "code": 4000002,
+            "message": "The data uploaded in the request is not legal JSON data."
+        });
+
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/person1', {
+            json: {}
+        });
+        assert.equal(rep.statusCode, 404);
+        check_result(rep.json(), {
+            "code": 4040001,
+            "message": "Missing or invalid classname 'person1'."
+        });
 
         var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
             json: {
@@ -73,10 +90,10 @@ describe("classes", () => {
     describe("get id", () => {
         it("simple", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
-            assert.equal(rep.statusCode, 103);
+            assert.equal(rep.statusCode, 404);
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/9999`);
-            assert.equal(rep.statusCode, 101);
+            assert.equal(rep.statusCode, 404);
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
             assert.equal(rep.statusCode, 200);
@@ -102,8 +119,10 @@ describe("classes", () => {
     });
 
     it("put id", () => {
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
-        assert.equal(rep.statusCode, 103);
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person1/${id}`, {
+            json: {}
+        });
+        assert.equal(rep.statusCode, 404);
 
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/9999`, {
             json: {
@@ -111,10 +130,10 @@ describe("classes", () => {
                 some_filed: 'skip'
             }
         });
-        assert.equal(rep.statusCode, 101);
+        assert.equal(rep.statusCode, 404);
 
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`);
-        assert.equal(rep.statusCode, 107);
+        assert.equal(rep.statusCode, 400);
 
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
             json: {
@@ -122,7 +141,7 @@ describe("classes", () => {
                 some_filed: 'skip'
             }
         });
-        assert.equal(rep.statusCode, 101);
+        assert.equal(rep.statusCode, 200);
 
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
             json: {
@@ -143,10 +162,10 @@ describe("classes", () => {
 
     it("del id", () => {
         var rep = http.del(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
-        assert.equal(rep.statusCode, 103);
+        assert.equal(rep.statusCode, 404);
 
         var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/9999`);
-        assert.equal(rep.statusCode, 101);
+        assert.equal(rep.statusCode, 404);
 
         var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/${id}`);
         assert.equal(rep.statusCode, 200);
@@ -155,7 +174,7 @@ describe("classes", () => {
         });
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
-        assert.equal(rep.statusCode, 101);
+        assert.equal(rep.statusCode, 404);
     });
 
     describe("get list", () => {
@@ -177,7 +196,7 @@ describe("classes", () => {
 
         it("simple", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1`);
-            assert.equal(rep.statusCode, 103);
+            assert.equal(rep.statusCode, 404);
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`);
             assert.equal(rep.statusCode, 200);
@@ -241,7 +260,7 @@ describe("classes", () => {
                         where: "err_json"
                     }
                 });
-                assert.equal(rep.statusCode, 107);
+                assert.equal(rep.statusCode, 400);
             });
 
             it("eq", () => {
@@ -765,16 +784,18 @@ describe("classes", () => {
             },
             {
                 "error": {
-                    "code": 101,
-                    "descript": "ObjectNotFound"
+                    "code": 4040202,
+                    "message": "Object '200' not found in class 'person'."
                 }
             }
         ]);
     });
 
     it("function", () => {
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person1/test`);
-        assert.equal(rep.statusCode, 103);
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person1/test`, {
+            json: {}
+        });
+        assert.equal(rep.statusCode, 404);
 
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/person/test`, {
             json: {
@@ -788,15 +809,6 @@ describe("classes", () => {
             "data": {
                 "name": "lion"
             }
-        });
-
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/person/test1`, {
-            json: {}
-        });
-
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "message": "current result"
         });
     });
 });

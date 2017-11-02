@@ -12,14 +12,11 @@ module.exports = db => {
         functions: {
             test: (req, data) => {
                 return {
-                    message: "test",
-                    data: data
+                    success: {
+                        message: "test",
+                        data: data
+                    }
                 }
-            },
-            test1: (req, data) => {
-                req.response.json({
-                    message: "current result"
-                });
             }
         }
     });

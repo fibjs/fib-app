@@ -186,8 +186,8 @@ describe("relation", () => {
             }
         });
         check_result(rep.json(), {
-            "code": 101,
-            "descript": "ObjectNotFound"
+            "code": 4040402,
+            "message": "Object '2' not found in class 'childs'."
         });
     });
 
@@ -200,7 +200,7 @@ describe("relation", () => {
                 keys: 'name,age'
             }
         });
-        assert.equal(rep.statusCode, 101);
+        assert.equal(rep.statusCode, 404);
 
         var rep = http.del('http://127.0.0.1:8080/1.0/app/people/1/childs/3');
         assert.equal(rep.statusCode, 200);
