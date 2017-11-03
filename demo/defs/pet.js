@@ -1,7 +1,11 @@
 const orm = require('fib-orm');
 
 module.exports = db => {
-    db.define('pet', {
+    var person = db.models.person;
+
+    var Pet = db.define('pet', {
         name: String
     });
+
+    Pet.hasOne('createBy', person);
 };

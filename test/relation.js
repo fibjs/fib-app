@@ -186,7 +186,7 @@ describe("relation", () => {
             }
         });
         check_result(rep.json(), {
-            "code": 4040402,
+            "code": 4040302,
             "message": "Object '2' not found in class 'childs'."
         });
     });

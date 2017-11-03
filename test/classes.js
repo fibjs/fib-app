@@ -87,6 +87,26 @@ describe("classes", () => {
         ]);
     });
 
+    it("new with createBy", () => {
+        http.post('http://127.0.0.1:8080/set_session', {
+            json: {
+                id: id
+            }
+        });
+
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/pet', {
+            json: {
+                name: 'tomcat'
+            }
+        });
+        assert.equal(rep.statusCode, 201);
+        var pid = rep.json().id;
+
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${pid}/createBy`);
+        assert.equal(rep.json().name, 'lion');
+
+    });
+
     describe("get id", () => {
         it("simple", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
@@ -784,7 +804,7 @@ describe("classes", () => {
             },
             {
                 "error": {
-                    "code": 4040202,
+                    "code": 4040102,
                     "message": "Object '200' not found in class 'person'."
                 }
             }
