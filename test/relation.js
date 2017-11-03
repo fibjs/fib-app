@@ -192,7 +192,7 @@ describe("relation", () => {
     });
 
     it('delete relation', () => {
-        var rep = http.del('http://127.0.0.1:8080/1.0/app/people/1/wife');
+        var rep = http.del('http://127.0.0.1:8080/1.0/app/people/1/wife/2');
         assert.equal(rep.statusCode, 200);
 
         var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/wife', {
