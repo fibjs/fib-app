@@ -4,4 +4,5 @@ module.exports = [
     require('./people'),
     require('./relation'),
     require('./pet'),
+    require('./chat')
 ];

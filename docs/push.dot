@@ -1,0 +1,31 @@
+digraph{
+    node [fontname = "Helvetica,sans-Serif", fontsize = 10];
+    edge [fontname = "Helvetica,sans-Serif", fontsize = 10];
+
+    empty [label="闲置", fontcolor="#ffffff", fillcolor="#666666", style=filled];
+    standby [label="待机", fillcolor="#99FF99", style=filled];
+    idle [label="休眠", fillcolor="#BBBBBB", style=filled];
+
+    empty -> standby [label="连接"];
+    standby -> standby [label="连接"];
+    standby -> idle [label="连接为零"];
+    idle -> standby [label="连接"];
+    idle -> empty [label="超时"];
+
+    accept [label="接收注册"];
+    connected [label="保持连接" shape="doublecircle"];
+
+    send_time [label="发送窗口时间" shape="rect"];
+    send_message [label="发送消息" shape="rect"];
+
+    is_in_window [label="上行时间戳在窗口内?" shape="diamond"];
+    has_message [label="有效消息?" shape="diamond"];
+
+    accept -> is_in_window;
+    is_in_window -> send_time [label="否"];
+    is_in_window -> has_message [label="是"];
+    send_time -> has_message;
+    has_message -> send_message [label="是"];
+    send_message -> connected;
+    has_message -> connected [label="否"];
+}

@@ -21,6 +21,8 @@ run('./classes');
 run('./acl');
 run('./relation');
 run('./graphql');
+run('./push');
+run('./chat');
 
 test.run(console.DEBUG);
 process.exit();

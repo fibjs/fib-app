@@ -6,6 +6,9 @@ module.exports = db => {
         age: Number,
         sex: String
     }, {
+        methods: {
+            // ACL: req => {}
+        },
         ACL: function () {
             return {
                 '*': {
