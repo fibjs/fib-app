@@ -4,6 +4,26 @@ test.setup();
 const http = require('http');
 const ws = require('ws');
 const coroutine = require('coroutine');
+const util = require('util');
+
+function clen_result(res) {
+    if (util.isObject(res)) {
+        if (Array.isArray(res))
+            res.forEach(r => clen_result(r));
+        else {
+            delete res.createAt;
+            delete res.updateAt;
+            delete res.ACL;
+            for (var k in res)
+                clen_result(res[k]);
+        }
+    }
+}
+
+function check_result(res, data) {
+    clen_result(res);
+    assert.deepEqual(res, data);
+}
 
 describe("chat", () => {
     var cid;
@@ -24,6 +44,13 @@ describe("chat", () => {
                 name: 'hellow, world.'
             }
         });
+
+        rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`);
+        check_result(rep.json(), [{
+            "name": "hellow, world.",
+            "id": 1,
+            "room_id": 1
+        }]);
     });
 
     it('push', () => {
