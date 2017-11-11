@@ -47,13 +47,6 @@ describe("acl", () => {
         });
         assert.equal(rep.statusCode, 201);
         var res = rep.json();
-
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
-        assert.deepEqual(rep.json().ACL, {
-            12345: {
-                "*": true
-            }
-        });
     });
 
     it("custom acl", () => {
@@ -77,13 +70,6 @@ describe("acl", () => {
         });
         assert.equal(rep.statusCode, 201);
         var res = rep.json();
-
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
-        assert.deepEqual(rep.json().ACL, {
-            "*": {
-                "*": true
-            }
-        });
     });
 
     it("object allow owner", () => {

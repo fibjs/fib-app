@@ -7,9 +7,9 @@ module.exports = db => {
         sex: String
     }, {
         methods: {
-            // ACL: req => {}
+            ACL: req => {}
         },
-        ACL: function () {
+        ACL: req => {
             return {
                 '*': {
                     '*': false
@@ -27,9 +27,6 @@ module.exports = db => {
                     'read': ['name', 'age'],
                     'write': ['age'],
                     "find": true
-                },
-                ":owner": {
-                    "*": true
                 }
             };
         }

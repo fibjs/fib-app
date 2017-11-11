@@ -1,4 +1,5 @@
 module.exports = [
+    require('./user'),
     require('./person'),
     require('./acl'),
     require('./people'),

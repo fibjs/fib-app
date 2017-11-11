@@ -15,14 +15,13 @@ try {
 
 run('../demo/app');
 
-const http = require('http');
-
-run('./classes');
-run('./acl');
-run('./relation');
-run('./graphql');
-run('./push');
-run('./chat');
+run('./user');
+// run('./classes');
+// run('./acl');
+// run('./relation');
+// run('./graphql');
+// run('./push');
+// run('./chat');
 
 test.run(console.DEBUG);
 process.exit();
