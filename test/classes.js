@@ -3,6 +3,7 @@ test.setup();
 
 const http = require('http');
 const util = require('util');
+const db = require('db');
 
 function clen_result(res) {
     if (util.isObject(res)) {
@@ -23,6 +24,12 @@ function check_result(res, data) {
 }
 
 describe("classes", () => {
+    var conn;
+
+    before(() => {
+        conn = db.open('sqlite:test.db');
+    });
+
     describe("post new", () => {
         var id;
 
@@ -120,21 +127,40 @@ describe("classes", () => {
         });
     });
 
-    xdescribe("get id", () => {
-        it("simple", () => {
+    describe("get id", () => {
+        var id;
+
+        before(() => {
+            try {
+                conn.execute('delete from person;');
+            } catch (e) {}
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                json: {
+                    name: 'lion',
+                    sex: "male",
+                    age: 16
+                }
+            });
+            id = rep.json().id;
+        });
+
+        it("error", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
             assert.equal(rep.statusCode, 404);
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/9999`);
             assert.equal(rep.statusCode, 404);
+        });
 
+        it("simple", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), {
                 "name": "lion",
                 "sex": "male",
                 "age": 16,
-                "id": 1
+                "id": id
             });
         });
 
@@ -151,69 +177,126 @@ describe("classes", () => {
         });
     });
 
-    xit("put id", () => {
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person1/${id}`, {
-            json: {}
-        });
-        assert.equal(rep.statusCode, 404);
+    describe("put id", () => {
+        var id;
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/9999`, {
-            json: {
-                name: 'xicilion',
-                some_filed: 'skip'
-            }
-        });
-        assert.equal(rep.statusCode, 404);
-
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`);
-        assert.equal(rep.statusCode, 400);
-
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
-            json: {
-                name: 'xicilion',
-                some_filed: 'skip'
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
-            json: {
-                name: 'xicilion'
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "name": "xicilion",
-            "sex": "male",
-            "age": 16,
-            "id": 1
-        });
-    });
-
-    xit("del id", () => {
-        var rep = http.del(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
-        assert.equal(rep.statusCode, 404);
-
-        var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/9999`);
-        assert.equal(rep.statusCode, 404);
-
-        var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/${id}`);
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "id": 1
-        });
-
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
-        assert.equal(rep.statusCode, 404);
-    });
-
-    xdescribe("get list", () => {
         before(() => {
-            http.post('http://127.0.0.1:8080/1.0/app/person', {
+            try {
+                conn.execute('delete from person;');
+            } catch (e) {}
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                json: {
+                    name: 'lion',
+                    sex: "male",
+                    age: 16
+                }
+            });
+            id = rep.json().id;
+        });
+
+        it("error", () => {
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/person1/${id}`, {
+                json: {}
+            });
+            assert.equal(rep.statusCode, 404);
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/9999`, {
+                json: {
+                    name: 'xicilion',
+                    some_filed: 'skip'
+                }
+            });
+            assert.equal(rep.statusCode, 404);
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`);
+            assert.equal(rep.statusCode, 400);
+        });
+
+        it("update", () => {
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
+                json: {
+                    name: 'xicilion',
+                    some_filed: 'skip'
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/person/${id}`, {
+                json: {
+                    name: 'xicilion'
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "name": "xicilion",
+                "sex": "male",
+                "age": 16,
+                "id": id
+            });
+        });
+    });
+
+    describe("del id", () => {
+        var id;
+
+        before(() => {
+            try {
+                conn.execute('delete from person;');
+            } catch (e) {}
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                json: {
+                    name: 'lion',
+                    sex: "male",
+                    age: 16
+                }
+            });
+            id = rep.json().id;
+        });
+
+        it("error", () => {
+            var rep = http.del(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
+            assert.equal(rep.statusCode, 404);
+
+            var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/9999`);
+            assert.equal(rep.statusCode, 404);
+        });
+
+        it("delete", () => {
+            var rep = http.del(`http://127.0.0.1:8080/1.0/app/person/${id}`);
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "id": id
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/person/${id}`);
+            assert.equal(rep.statusCode, 404);
+        })
+    });
+
+    describe("get list", () => {
+        var ids = [];
+
+        before(() => {
+            try {
+                conn.execute('delete from person;');
+            } catch (e) {}
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
                 json: [{
+                        "name": "tom",
+                        "sex": "male",
+                        "age": 12
+                    },
+                    {
+                        "name": "jack",
+                        "sex": "male",
+                        "age": 13
+                    }, {
                         name: 'mike',
                         sex: "female",
                         age: 14
@@ -225,6 +308,8 @@ describe("classes", () => {
                     }
                 ]
             });
+
+            rep.json().forEach(r => ids.push(r.id));
         });
 
         it("simple", () => {
@@ -237,25 +322,25 @@ describe("classes", () => {
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
-                    "id": 2
+                    "id": ids[0]
                 },
                 {
                     "name": "jack",
                     "sex": "male",
                     "age": 13,
-                    "id": 3
+                    "id": ids[1]
                 },
                 {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 },
                 {
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
-                    "id": 5
+                    "id": ids[3]
                 }
             ]);
         });
@@ -269,19 +354,19 @@ describe("classes", () => {
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "tom",
-                    "id": 2
+                    "id": ids[0]
                 },
                 {
                     "name": "jack",
-                    "id": 3
+                    "id": ids[1]
                 },
                 {
                     "name": "mike",
-                    "id": 4
+                    "id": ids[2]
                 },
                 {
                     "name": "frank",
-                    "id": 5
+                    "id": ids[3]
                 }
             ]);
         });
@@ -299,7 +384,7 @@ describe("classes", () => {
             it("eq", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":4,"age":14}'
+                        where: `{"id":"${ids[2]}","age":14}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -307,12 +392,12 @@ describe("classes", () => {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 }]);
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":4,"age":15}'
+                        where: `{"id":"${ids[2]}","age":15}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -320,7 +405,7 @@ describe("classes", () => {
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"eq":4}}'
+                        where: `{"id":{"eq":"${ids[2]}"}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -328,14 +413,14 @@ describe("classes", () => {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 }]);
             });
 
             it("ne", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"ne":4}}'
+                        where: `{"id":{"ne":"${ids[2]}"}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -343,19 +428,19 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     },
                     {
                         "name": "frank",
                         "sex": "male",
                         "age": 15,
-                        "id": 5
+                        "id": ids[3]
                     }
                 ]);
             });
@@ -363,7 +448,7 @@ describe("classes", () => {
             it("gt", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"gt":3}}'
+                        where: `{"id":{"gt":"${ids[1]}"}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -371,19 +456,19 @@ describe("classes", () => {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 }, {
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
-                    "id": 5
+                    "id": ids[3]
                 }]);
             });
 
             it("gte", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"gte":4}}'
+                        where: `{"id":{"gte":"${ids[2]}"}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -391,19 +476,19 @@ describe("classes", () => {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 }, {
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
-                    "id": 5
+                    "id": ids[3]
                 }]);
             });
 
             it("lt", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"lt":4}}'
+                        where: `{"id":{"lt":"${ids[2]}"}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -411,13 +496,13 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     }
                 ]);
             });
@@ -425,7 +510,7 @@ describe("classes", () => {
             it("lte", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"lte":3}}'
+                        where: `{"id":{"lte":"${ids[1]}"}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -433,13 +518,13 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     }
                 ]);
             });
@@ -455,13 +540,13 @@ describe("classes", () => {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     },
                     {
                         "name": "frank",
                         "sex": "male",
                         "age": 15,
-                        "id": 5
+                        "id": ids[3]
                     }
                 ]);
             });
@@ -477,13 +562,13 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "mike",
                         "sex": "female",
                         "age": 14,
-                        "id": 4
+                        "id": ids[2]
                     }
                 ]);
             });
@@ -491,7 +576,7 @@ describe("classes", () => {
             it("between", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"between":[2,4]}}'
+                        where: `{"id":{"between":["${ids[0]}","${ids[2]}"]}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -499,19 +584,19 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     },
                     {
                         "name": "mike",
                         "sex": "female",
                         "age": 14,
-                        "id": 4
+                        "id": ids[2]
                     }
                 ]);
             });
@@ -519,7 +604,7 @@ describe("classes", () => {
             it("not_between", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"not_between":[3,4]}}'
+                        where: `{"id":{"not_between":["${ids[1]}","${ids[2]}"]}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -527,13 +612,13 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "frank",
                         "sex": "male",
                         "age": 15,
-                        "id": 5
+                        "id": ids[3]
                     }
                 ]);
             });
@@ -541,7 +626,7 @@ describe("classes", () => {
             it("in", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":[1,2,3]}'
+                        where: `{"id":["123456","${ids[0]}","${ids[1]}"]}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -549,19 +634,19 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     }
                 ]);
 
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"in":[1,2,3]}}'
+                        where: `{"id":{"in":["123456","${ids[0]}","${ids[1]}"]}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -569,13 +654,13 @@ describe("classes", () => {
                         "name": "tom",
                         "sex": "male",
                         "age": 12,
-                        "id": 2
+                        "id": ids[0]
                     },
                     {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     }
                 ]);
             });
@@ -583,7 +668,7 @@ describe("classes", () => {
             it("not_in", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"id":{"not_in":[1,2,3]}}'
+                        where: `{"id":{"not_in":["123456","${ids[0]}","${ids[1]}"]}}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -591,13 +676,13 @@ describe("classes", () => {
                         "name": "mike",
                         "sex": "female",
                         "age": 14,
-                        "id": 4
+                        "id": ids[2]
                     },
                     {
                         "name": "frank",
                         "sex": "male",
                         "age": 15,
-                        "id": 5
+                        "id": ids[3]
                     }
                 ]);
             });
@@ -605,7 +690,7 @@ describe("classes", () => {
             it("or", () => {
                 var rep = http.get(`http://127.0.0.1:8080/1.0/app/person`, {
                     query: {
-                        where: '{"or":[{"id":3},{"id":5}]}'
+                        where: `{"or":[{"id":"${ids[1]}"},{"id":"${ids[3]}"}]}`
                     }
                 });
                 assert.equal(rep.statusCode, 200);
@@ -613,13 +698,13 @@ describe("classes", () => {
                         "name": "jack",
                         "sex": "male",
                         "age": 13,
-                        "id": 3
+                        "id": ids[1]
                     },
                     {
                         "name": "frank",
                         "sex": "male",
                         "age": 15,
-                        "id": 5
+                        "id": ids[3]
                     }
                 ]);
             });
@@ -636,13 +721,13 @@ describe("classes", () => {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 },
                 {
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
-                    "id": 5
+                    "id": ids[3]
                 }
             ]);
         });
@@ -658,13 +743,13 @@ describe("classes", () => {
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
-                    "id": 2
+                    "id": ids[0]
                 },
                 {
                     "name": "jack",
                     "sex": "male",
                     "age": 13,
-                    "id": 3
+                    "id": ids[1]
                 }
             ]);
         });
@@ -680,25 +765,25 @@ describe("classes", () => {
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
-                    "id": 5
+                    "id": ids[3]
                 },
                 {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 },
                 {
                     "name": "jack",
                     "sex": "male",
                     "age": 13,
-                    "id": 3
+                    "id": ids[1]
                 },
                 {
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
-                    "id": 2
+                    "id": ids[0]
                 }
             ]);
         });
@@ -716,25 +801,25 @@ describe("classes", () => {
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
-                    "id": 2
+                    "id": ids[0]
                 },
                 {
                     "name": "jack",
                     "sex": "male",
                     "age": 13,
-                    "id": 3
+                    "id": ids[1]
                 },
                 {
                     "name": "mike",
                     "sex": "female",
                     "age": 14,
-                    "id": 4
+                    "id": ids[2]
                 },
                 {
                     "name": "frank",
                     "sex": "male",
                     "age": 15,
-                    "id": 5
+                    "id": ids[3]
                 }
             ]);
 
@@ -751,36 +836,67 @@ describe("classes", () => {
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
-                    "id": 2
+                    "id": ids[0]
                 },
                 {
                     "name": "jack",
                     "sex": "male",
                     "age": 13,
-                    "id": 3
+                    "id": ids[1]
                 }
             ]);
         });
     });
 
-    xit("batch", () => {
+    it("batch", () => {
+        var ids = [];
+
+        try {
+            conn.execute('delete from person;');
+        } catch (e) {}
+
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+            json: [{
+                    "name": "tom",
+                    "sex": "male",
+                    "age": 12
+                },
+                {
+                    "name": "jack",
+                    "sex": "male",
+                    "age": 13
+                }, {
+                    name: 'mike',
+                    sex: "female",
+                    age: 14
+                },
+                {
+                    name: 'frank',
+                    sex: "male",
+                    age: 15
+                }
+            ]
+        });
+
+        rep.json().forEach(r => ids.push(r.id));
+
         var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
             json: {
                 requests: [{
                     "method": "GET",
-                    "path": "/person/2"
+                    "path": `/person/${ids[0]}`
                 }, {
                     "method": "GET",
-                    "path": "/person/2?keys=name,sex"
+                    "path": `/person/${ids[0]}?keys=name,sex`
                 }, {
                     "method": "PUT",
-                    "path": "/person/2",
+                    "path": `/person/${ids[0]}`,
                     "body": {
                         age: 13
                     }
                 }, {
                     "method": "GET",
-                    "path": "/person/2"
+                    "path": `/person/${ids[0]}`
                 }, {
                     "method": "GET",
                     "path": "/person/200"
@@ -794,7 +910,7 @@ describe("classes", () => {
                     "name": "tom",
                     "sex": "male",
                     "age": 12,
-                    "id": 2
+                    "id": ids[0]
                 }
             }, {
                 "success": {
@@ -804,7 +920,7 @@ describe("classes", () => {
             },
             {
                 "success": {
-                    "id": 2
+                    "id": ids[0]
                 }
             },
             {
@@ -812,19 +928,19 @@ describe("classes", () => {
                     "name": "tom",
                     "sex": "male",
                     "age": 13,
-                    "id": 2
+                    "id": ids[0]
                 }
             },
             {
                 "error": {
-                    "code": 4040102,
+                    "code": 4040202,
                     "message": "Object '200' not found in class 'person'."
                 }
             }
         ]);
     });
 
-    xit("function", () => {
+    it("function", () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/person1/test`, {
             json: {}
         });
