@@ -11,7 +11,6 @@ function clen_result(res) {
         else {
             delete res.createAt;
             delete res.updateAt;
-            delete res.ACL;
             for (var k in res)
                 clen_result(res[k]);
         }

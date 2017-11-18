@@ -11,7 +11,6 @@ function clen_result(res) {
         else {
             delete res.createAt;
             delete res.updateAt;
-            delete res.ACL;
             for (var k in res)
                 clen_result(res[k]);
         }
@@ -24,90 +23,104 @@ function check_result(res, data) {
 }
 
 describe("classes", () => {
-    var id;
+    describe("post new", () => {
+        var id;
 
-    it("post new", () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/person');
-        assert.equal(rep.statusCode, 400);
-        check_result(rep.json(), {
-            "code": 4000001,
-            "message": "POST request don't send any data."
-        });
-
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
-            body: 'aaaa'
-        });
-        assert.equal(rep.statusCode, 400);
-        check_result(rep.json(), {
-            "code": 4000002,
-            "message": "The data uploaded in the request is not legal JSON data."
+        it("error: empty body", () => {
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person');
+            assert.equal(rep.statusCode, 400);
+            check_result(rep.json(), {
+                "code": 4000001,
+                "message": "POST request don't send any data."
+            });
         });
 
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/person1', {
-            json: {}
-        });
-        assert.equal(rep.statusCode, 404);
-        check_result(rep.json(), {
-            "code": 4040001,
-            "message": "Missing or invalid classname 'person1'."
-        });
-
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
-            json: {
-                name: 'lion',
-                sex: "male",
-                age: 16,
-                some_filed: 'skip'
-            }
-        });
-        assert.equal(rep.statusCode, 201);
-        check_result(rep.json(), {
-            "id": 1
-        });
-        id = rep.json().id;
-
-        rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
-            json: [{
-                name: 'tom',
-                sex: "male",
-                age: 12
-            }, {
-                name: 'jack',
-                sex: "male",
-                age: 13
-            }]
+        it("error: bad body", () => {
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                body: 'aaaa'
+            });
+            assert.equal(rep.statusCode, 400);
+            check_result(rep.json(), {
+                "code": 4000002,
+                "message": "The data uploaded in the request is not legal JSON data."
+            });
         });
 
-        check_result(rep.json(), [{
-                "id": 2
-            },
-            {
-                "id": 3
-            }
-        ]);
+        it("error: bad class", () => {
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person1', {
+                json: {}
+            });
+            assert.equal(rep.statusCode, 404);
+            check_result(rep.json(), {
+                "code": 4040001,
+                "message": "Missing or invalid classname 'person1'."
+            });
+        });
+
+        it("create person", () => {
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                json: {
+                    name: 'lion',
+                    sex: "male",
+                    age: 16
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+            assert.property(rep.json(), "id");
+            id = rep.json().id;
+        });
+
+        it("create multi person", () => {
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                json: [{
+                        name: 'lion 1',
+                        sex: "male",
+                        age: 16
+                    },
+                    {
+                        name: 'lion 2',
+                        sex: "male",
+                        age: 16
+                    }
+                ]
+            });
+            assert.equal(rep.statusCode, 201);
+            assert.isArray(rep.json());
+        });
+
+        xit("error: bad field", () => {
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/person', {
+                json: {
+                    name: 'lion1',
+                    sex: "male",
+                    age: 16,
+                    password1: '123456'
+                }
+            });
+            assert.equal(rep.statusCode, 500);
+        });
+
+        it("new with createBy", () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: id
+                }
+            });
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/pet', {
+                json: {
+                    name: 'tomcat'
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+            var pid = rep.json().id;
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${pid}/createBy`);
+            assert.equal(rep.json().name, 'lion');
+        });
     });
 
-    it("new with createBy", () => {
-        http.post('http://127.0.0.1:8080/set_session', {
-            json: {
-                id: id
-            }
-        });
-
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/pet', {
-            json: {
-                name: 'tomcat'
-            }
-        });
-        assert.equal(rep.statusCode, 201);
-        var pid = rep.json().id;
-
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${pid}/createBy`);
-        assert.equal(rep.json().name, 'lion');
-
-    });
-
-    describe("get id", () => {
+    xdescribe("get id", () => {
         it("simple", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
             assert.equal(rep.statusCode, 404);
@@ -138,7 +151,7 @@ describe("classes", () => {
         });
     });
 
-    it("put id", () => {
+    xit("put id", () => {
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/person1/${id}`, {
             json: {}
         });
@@ -180,7 +193,7 @@ describe("classes", () => {
         });
     });
 
-    it("del id", () => {
+    xit("del id", () => {
         var rep = http.del(`http://127.0.0.1:8080/1.0/app/person1/${id}`);
         assert.equal(rep.statusCode, 404);
 
@@ -197,7 +210,7 @@ describe("classes", () => {
         assert.equal(rep.statusCode, 404);
     });
 
-    describe("get list", () => {
+    xdescribe("get list", () => {
         before(() => {
             http.post('http://127.0.0.1:8080/1.0/app/person', {
                 json: [{
@@ -750,7 +763,7 @@ describe("classes", () => {
         });
     });
 
-    it("batch", () => {
+    xit("batch", () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
             json: {
                 requests: [{
@@ -811,7 +824,7 @@ describe("classes", () => {
         ]);
     });
 
-    it("function", () => {
+    xit("function", () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/person1/test`, {
             json: {}
         });

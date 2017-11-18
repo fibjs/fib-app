@@ -15,13 +15,13 @@ try {
 
 run('../demo/app');
 
-run('./user');
-// run('./classes');
+run('./classes');
 // run('./acl');
 // run('./relation');
 // run('./graphql');
 // run('./push');
 // run('./chat');
+run('./user');
 
 test.run(console.DEBUG);
 process.exit();
