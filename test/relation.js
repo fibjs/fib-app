@@ -11,7 +11,6 @@ function clen_result(res) {
         else {
             delete res.createAt;
             delete res.updateAt;
-            delete res.ACL;
             for (var k in res)
                 clen_result(res[k]);
         }
@@ -24,6 +23,8 @@ function check_result(res, data) {
 }
 
 describe("relation", () => {
+    var ids = [];
+
     it('init data', () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/people', {
             json: [{
@@ -45,41 +46,29 @@ describe("relation", () => {
             }]
         });
 
-        check_result(rep.json(), [{
-                "id": 1
-            },
-            {
-                "id": 2
-            },
-            {
-                "id": 3
-            },
-            {
-                "id": 4
-            }
-        ]);
+        rep.json().forEach(r => ids.push(r.id));
     });
 
     it('init relation', () => {
-        var rep = http.put('http://127.0.0.1:8080/1.0/app/people/1/wife', {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
             json: {
-                id: 2
+                id: ids[1]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}`, {
             query: {
                 keys: 'wife_id'
             }
         });
         check_result(rep.json(), {
-            wife_id: 2
+            wife_id: ids[1]
         });
 
-        var rep = http.put('http://127.0.0.1:8080/1.0/app/people/2/husband', {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[1]}/husband`, {
             json: {
-                id: 1
+                id: ids[0]
             }
         });
         assert.equal(rep.statusCode, 200)
@@ -87,44 +76,44 @@ describe("relation", () => {
         function set_parents(id) {
             var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/father`, {
                 json: {
-                    id: 1
+                    id: ids[0]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
             var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/mother`, {
                 json: {
-                    id: 2
+                    id: ids[1]
                 }
             });
             assert.equal(rep.statusCode, 200)
         }
 
-        set_parents(3);
-        set_parents(4);
+        set_parents(ids[2]);
+        set_parents(ids[3]);
 
         function add_childs(id) {
             var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs`, {
                 json: {
-                    id: 3
+                    id: ids[2]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
             var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs`, {
                 json: {
-                    id: 4
+                    id: ids[3]
                 }
             });
             assert.equal(rep.statusCode, 200)
         }
 
-        add_childs(1);
-        add_childs(2);
+        add_childs(ids[0]);
+        add_childs(ids[1]);
     });
 
     it('get relation', () => {
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/wife', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
             }
@@ -134,7 +123,7 @@ describe("relation", () => {
             "age": 32
         });
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/wife/2', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife/${ids[1]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -144,7 +133,7 @@ describe("relation", () => {
             "age": 32
         });
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/3/mother', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[2]}/mother`, {
             query: {
                 keys: 'name,age'
             }
@@ -154,7 +143,7 @@ describe("relation", () => {
             "age": 32
         });
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/childs', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -168,7 +157,7 @@ describe("relation", () => {
             "age": 8
         }]);
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/childs/4', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[3]}`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -179,33 +168,33 @@ describe("relation", () => {
             "age": 4
         });
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/childs/2', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[1]}`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
             }
         });
         check_result(rep.json(), {
-            "code": 4040302,
-            "message": "Object '2' not found in class 'childs'."
+            "code": 4040402,
+            "message": `Object '${ids[1]}' not found in class 'childs'.`
         });
     });
 
     it('delete relation', () => {
-        var rep = http.del('http://127.0.0.1:8080/1.0/app/people/1/wife/2');
+        var rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife/${ids[1]}`);
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/wife', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
             }
         });
         assert.equal(rep.statusCode, 404);
 
-        var rep = http.del('http://127.0.0.1:8080/1.0/app/people/1/childs/3');
+        var rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[2]}`);
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get('http://127.0.0.1:8080/1.0/app/people/1/childs', {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
             query: {
                 keys: 'name,age'
             }
@@ -215,16 +204,16 @@ describe("relation", () => {
             "age": 4
         }]);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/1/childs`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
             json: {
-                id: 3
+                id: ids[2]
             }
         });
         assert.equal(rep.statusCode, 200)
     });
 
     it('create relation object', () => {
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/1/childs`, {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
             json: {
                 name: 'jack_li',
                 sex: "male",
@@ -232,8 +221,9 @@ describe("relation", () => {
             }
         });
         assert.equal(rep.statusCode, 201);
+        ids.push(rep.json().id);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -244,7 +234,7 @@ describe("relation", () => {
             "age": 8
         });
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/5/childs`, {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[4]}/childs`, {
             json: [{
                 name: 'jack_li_0',
                 sex: "male",
@@ -256,13 +246,9 @@ describe("relation", () => {
             }]
         });
         assert.equal(rep.statusCode, 201);
-        check_result(rep.json(), [{
-            id: 6
-        }, {
-            id: 7
-        }]);
+        rep.json().forEach(r => ids.push(r.id));
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -273,7 +259,7 @@ describe("relation", () => {
             "age": 8
         });
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/5/wife`, {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[4]}/wife`, {
             json: {
                 name: 'ly_li',
                 sex: "famale",
@@ -282,7 +268,7 @@ describe("relation", () => {
         });
         assert.equal(rep.statusCode, 201);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/5/wife`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[4]}/wife`, {
             query: {
                 keys: 'name,age'
             }
@@ -295,7 +281,7 @@ describe("relation", () => {
     });
 
     it('change relation object', () => {
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             json: {
                 name: 'jack_li',
                 sex: "male",
@@ -304,7 +290,7 @@ describe("relation", () => {
         });
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -315,7 +301,7 @@ describe("relation", () => {
             "age": 18
         });
 
-        rep = http.del(`http://127.0.0.1:8080/1.0/app/people/1/childs/5`);
+        rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`);
         assert.equal(rep.statusCode, 200);
     });
 });
