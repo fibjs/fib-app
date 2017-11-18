@@ -15,7 +15,7 @@ try {
 
 run('../demo/app');
 
-// run('./classes');
+run('./classes');
 run('./relation');
 // run('./acl');
 // run('./graphql');
