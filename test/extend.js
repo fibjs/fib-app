@@ -22,7 +22,7 @@ function check_result(res, data) {
     assert.deepEqual(res, data);
 }
 
-describe("relation", () => {
+describe("extend", () => {
     var ids = [];
 
     it('init data', () => {
@@ -49,7 +49,7 @@ describe("relation", () => {
         rep.json().forEach(r => ids.push(r.id));
     });
 
-    it('init relation', () => {
+    it('init extend', () => {
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
             json: {
                 id: ids[1]
@@ -112,7 +112,7 @@ describe("relation", () => {
         add_childs(ids[1]);
     });
 
-    it('get relation', () => {
+    it('get extend', () => {
         var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
@@ -180,7 +180,7 @@ describe("relation", () => {
         });
     });
 
-    it('delete relation', () => {
+    it('delete extend', () => {
         var rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife/${ids[1]}`);
         assert.equal(rep.statusCode, 200);
 
@@ -212,7 +212,7 @@ describe("relation", () => {
         assert.equal(rep.statusCode, 200)
     });
 
-    it('create relation object', () => {
+    it('create extend object', () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
             json: {
                 name: 'jack_li',
@@ -280,7 +280,7 @@ describe("relation", () => {
         });
     });
 
-    it('change relation object', () => {
+    it('change extend object', () => {
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             json: {
                 name: 'jack_li',

@@ -16,7 +16,7 @@ try {
 run('../demo/app');
 
 run('./classes');
-run('./relation');
+run('./extend');
 run('./reverse');
 
 run('./acl');

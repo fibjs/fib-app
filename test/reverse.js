@@ -187,7 +187,7 @@ describe("reverse", () => {
             user2_id = data[1].id;
         });
 
-        it("put relations", () => {
+        it("put extends", () => {
             var rep = http.put(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers`, {
                 json: {
                     id: user1_id
