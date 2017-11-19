@@ -5,7 +5,9 @@ const Session = require('fib-session')
 const App = require('../');
 const push = App.push;
 
-var app = new App('sqlite:test.db', {});
+var app = new App('sqlite:test.db', {
+    uuid: true
+});
 app.db.use(require('./defs'));
 
 var session = new Session(new util.LruCache(20000), {
