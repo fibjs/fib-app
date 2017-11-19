@@ -17,6 +17,7 @@ run('../demo/app');
 
 run('./classes');
 run('./relation');
+run('./reverse');
 // run('./acl');
 // run('./graphql');
 // run('./push');
