@@ -304,4 +304,24 @@ describe("relation", () => {
         rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`);
         assert.equal(rep.statusCode, 200);
     });
+
+    it("multi level create", () => {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/people', {
+            json: [{
+                name: 'tom',
+                sex: "male",
+                age: 35,
+                wife: {
+                    name: 'lily',
+                    sex: "famale",
+                    age: 35,
+                    childs: [{
+                        name: 'coco',
+                        sex: "famale",
+                        age: 12,
+                    }]
+                }
+            }]
+        });
+    })
 });
