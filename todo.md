@@ -8,16 +8,19 @@
 
 * create relation 自动创建
 
-------------------------------------
-
-* 异常错误抛出信息处理
-* relation acl
 * create acl 支持 field
+
+------------------------------------
+* relation acl
+* autoFetch acl
+* multi level update?
 * acl 抛错
   - create 抛错
   - read 抛错
   - update 抛错
   - find 抛错
+* 异常错误抛出信息处理
+
 * graphql 复用 api
 * batch 复用 api
 
