@@ -4,11 +4,14 @@ test.setup();
 const http = require('http');
 
 describe("acl", () => {
+    var id;
+
     it("forbidden", () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
-                age: 12
+                age: 12,
+                sex: "female"
             }
         });
         assert.equal(rep.statusCode, 403);
@@ -25,10 +28,12 @@ describe("acl", () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
-                age: 12
+                age: 12,
+                sex: "female"
             }
         });
         assert.equal(rep.statusCode, 201);
+        id = rep.json().id;
     });
 
     it("role allow all", () => {
@@ -42,30 +47,8 @@ describe("acl", () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
-                age: 12
-            }
-        });
-        assert.equal(rep.statusCode, 201);
-        var res = rep.json();
-    });
-
-    it("custom acl", () => {
-        http.post('http://127.0.0.1:8080/set_session', {
-            json: {
-                id: 12345,
-                roles: ['r2']
-            }
-        });
-
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
-            json: {
-                name: "aaa",
                 age: 12,
-                ACL: {
-                    '*': {
-                        '*': true
-                    }
-                }
+                sex: "female"
             }
         });
         assert.equal(rep.statusCode, 201);
@@ -83,7 +66,8 @@ describe("acl", () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
-                age: 12
+                age: 12,
+                sex: "female"
             }
         });
         assert.equal(rep.statusCode, 201);
@@ -110,7 +94,8 @@ describe("acl", () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
             json: {
                 name: "aaa",
-                age: 12
+                age: 12,
+                sex: "female"
             }
         });
         assert.equal(rep.statusCode, 403);
@@ -124,32 +109,33 @@ describe("acl", () => {
             }
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/1`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
         assert.deepEqual(rep.json(), {
-            "name": "aaa",
-            "age": 12
+            name: "aaa",
+            age: 12
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/1`, {
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`, {
             query: {
                 keys: 'name,sex'
             }
         });
         assert.deepEqual(rep.json(), {
-            "name": "aaa"
+            name: "aaa"
         });
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/1`, {
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`, {
             json: {
                 name: "bbb",
-                age: 123
+                age: 123,
+                sex: "female"
             }
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/1`);
+        var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
         assert.deepEqual(rep.json(), {
-            "name": "aaa",
-            "age": 123
+            name: "aaa",
+            age: 123
         });
 
         var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl`, {
@@ -158,12 +144,12 @@ describe("acl", () => {
             }
         });
         assert.deepEqual(rep.json(), [{
-                "name": "aaa",
-                "age": 123
+                name: "aaa",
+                age: 123
             },
             {
-                "name": "aaa",
-                "age": 12
+                name: "aaa",
+                age: 12
             }
         ]);
     });

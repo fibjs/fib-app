@@ -137,7 +137,6 @@ describe("reverse", () => {
                     id: room_id
                 }
             });
-            console.log(rep.json());
             assert.equal(rep.statusCode, 200);
 
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`);

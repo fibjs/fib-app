@@ -7,9 +7,9 @@ module.exports = db => {
         sex: String
     }, {
         methods: {
-            ACL: req => {}
+            ACL: function (session) {}
         },
-        ACL: req => {
+        ACL: function (session) {
             return {
                 '*': {
                     '*': false

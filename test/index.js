@@ -18,11 +18,15 @@ run('../demo/app');
 run('./classes');
 run('./relation');
 run('./reverse');
-// run('./acl');
+
+run('./acl');
 // run('./graphql');
-// run('./push');
+
+run('./push');
+
 // run('./chat');
-// run('./user');
+
+run('./user');
 
 test.run(console.DEBUG);
 process.exit();
