@@ -7,7 +7,15 @@ module.exports = db => {
         sex: String
     }, {
         methods: {
-            ACL: function (session) {}
+            ACL: function (session) {
+                if (session.id == '54321') {
+                    var acl = {};
+                    acl[session.id] = {
+                        "*": true
+                    };
+                    return acl;
+                }
+            }
         },
         ACL: function (session) {
             return {
@@ -24,6 +32,7 @@ module.exports = db => {
                     '*': false
                 },
                 "role:r3": {
+                    'create': ['name'],
                     'read': ['name', 'age'],
                     'write': ['age'],
                     "find": true
