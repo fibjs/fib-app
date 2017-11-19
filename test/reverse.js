@@ -150,7 +150,7 @@ describe("reverse", () => {
         });
     });
 
-    xdescribe("m:n", () => {
+    describe("m:n", () => {
         var room1_id;
         var room2_id;
         var user1_id;
@@ -188,6 +188,47 @@ describe("reverse", () => {
             user2_id = data[1].id;
         });
 
+        it("put relations", () => {
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers`, {
+                json: {
+                    id: user1_id
+                }
+            });
+            assert.equal(rep.statusCode, 200);
 
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/user/${user2_id}/rooms`, {
+                json: {
+                    id: room2_id
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+        });
+
+        it("del", () => {
+            var rep = http.del(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers/${user1_id}`);
+            assert.equal(rep.statusCode, 200);
+
+            var rep = http.del(`http://127.0.0.1:8080/1.0/app/user/${user2_id}/rooms/${room2_id}`);
+            assert.equal(rep.statusCode, 200);
+        });
+
+        it("create", () => {
+            var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers`, {
+                json: {
+                    name: 'lion 3',
+                    sex: "male",
+                    age: 16,
+                    password: '123456'
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+
+            var rep = http.post(`http://127.0.0.1:8080/1.0/app/user/${user2_id}/rooms`, {
+                json: {
+                    name: "room3"
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+        });
     });
 });
