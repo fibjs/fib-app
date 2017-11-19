@@ -1,8 +1,9 @@
 module.exports = [
+    require('./user'),
     require('./person'),
     require('./acl'),
     require('./people'),
-    require('./relation'),
+    require('./extend'),
     require('./pet'),
     require('./chat')
 ];

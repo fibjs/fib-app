@@ -2,12 +2,13 @@ const orm = require('fib-orm');
 const push = require('../../').push;
 
 module.exports = db => {
+    var user = db.models.user;
     var chatroom = db.define('chatroom', {
         name: String
     });
 
     var chatmessage = db.define('chatmessage', {
-        name: String
+        msg: String
     }, {
         hooks: {
             afterCreate: function () {
@@ -21,7 +22,15 @@ module.exports = db => {
         }
     });
 
+    chatmessage.hasOne('createBy', user);
+
+    // 1:n 双向
     chatmessage.hasOne("room", chatroom, {
         reverse: 'messages'
     });
+
+    // m:n 双向
+    chatroom.hasMany('mambers', user, {}, {
+        reverse: 'rooms'
+    })
 };
