@@ -204,6 +204,71 @@ describe("acl", () => {
     });
 
     describe("extend", () => {
+        var id;
+        var rid;
 
+        before(() => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r2']
+                }
+            });
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+                json: {
+                    name: "aaa",
+                    age: 12,
+                    sex: "female"
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+            id = rep.json().id;
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/ext_acl', {
+                json: {
+                    name: "aaa_ext"
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+            rid = rep.json().id;
+        });
+
+        it('link', () => {
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+                json: {
+                    id: rid
+                }
+            });
+            assert.equal(rep.statusCode, 403);
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r3']
+                }
+            });
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+                json: {
+                    id: rid
+                }
+            });
+            assert.equal(rep.statusCode, 403);
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r4']
+                }
+            });
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+                json: {
+                    id: rid
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+        });
     });
 });

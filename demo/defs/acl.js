@@ -1,7 +1,15 @@
 const orm = require('fib-orm');
 
 module.exports = db => {
-    db.define('test_acl', {
+    var ext = db.define('ext_acl', {
+        name: String
+    });
+
+    var ext1 = db.define('ext_acl1', {
+        name: String
+    });
+
+    var test = db.define('test_acl', {
         name: String,
         age: Number,
         sex: String
@@ -36,8 +44,18 @@ module.exports = db => {
                     'read': ['name', 'age'],
                     'write': ['age'],
                     "find": true
+                },
+                "role:r4": {
+                    'write': ['ext']
                 }
             };
         }
+    });
+
+    test.hasMany('ext', ext, {}, {
+        autoFetch: true
+    });
+    test.hasOne('ext1', ext1, {
+        autoFetch: true
     });
 };

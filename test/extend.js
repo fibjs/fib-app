@@ -175,7 +175,7 @@ describe("extend", () => {
             }
         });
         check_result(rep.json(), {
-            "code": 4040402,
+            "code": 4040602,
             "message": `Object '${ids[1]}' not found in class 'people.childs'.`
         });
     });

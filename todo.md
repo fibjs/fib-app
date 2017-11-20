@@ -26,3 +26,31 @@
 
 
 * 索引，orm 自建
+
+field：link 权限修改
+extend：二级对象权限
+无 extend：继承 rel_cls 缺省权限
+obj 权限优先
+
+elink
+field: write
+
+
+eput
+extend:cls: write
+
+
+epost
+extend:cls: create
+
+
+efind
+extend:cls: find
+
+
+eget
+extend:cls: read
+
+
+edel
+extend:cls: delete
