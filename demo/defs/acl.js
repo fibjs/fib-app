@@ -5,6 +5,17 @@ module.exports = db => {
         name: String,
         age: Number
     }, {
+        methods: {
+            ACL: function (session) {
+                if (session.id == '54321') {
+                    var acl = {};
+                    acl[session.id] = {
+                        "*": true
+                    };
+                    return acl;
+                }
+            }
+        },
         ACL: {
             '*': {
                 '*': false
@@ -78,6 +89,7 @@ module.exports = db => {
     test.hasMany('ext', ext, {}, {
         autoFetch: true
     });
+
     test.hasOne('ext1', ext1, {
         autoFetch: true
     });

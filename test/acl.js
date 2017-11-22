@@ -317,6 +317,19 @@ describe("acl", () => {
             check_result(rep.json(), {
                 name: 'aaa_ext'
             });
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 54321
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            check_result(rep.json(), {
+                id: rid,
+                name: 'aaa_ext',
+                age: null
+            });
         });
     });
 });
