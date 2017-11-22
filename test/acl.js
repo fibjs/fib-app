@@ -2,6 +2,25 @@ const test = require('test');
 test.setup();
 
 const http = require('http');
+const util = require('util');
+
+function clen_result(res) {
+    if (util.isObject(res)) {
+        if (Array.isArray(res))
+            res.forEach(r => clen_result(r));
+        else {
+            delete res.createAt;
+            delete res.updateAt;
+            for (var k in res)
+                clen_result(res[k]);
+        }
+    }
+}
+
+function check_result(res, data) {
+    clen_result(res);
+    assert.deepEqual(res, data);
+}
 
 describe("acl", () => {
     describe("basic", () => {
@@ -211,7 +230,7 @@ describe("acl", () => {
             http.post('http://127.0.0.1:8080/set_session', {
                 json: {
                     id: 12345,
-                    roles: ['r2']
+                    roles: ['admin']
                 }
             });
 
@@ -235,6 +254,12 @@ describe("acl", () => {
         });
 
         it('link', () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345
+                }
+            });
+
             var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
                 json: {
                     id: rid
@@ -259,7 +284,7 @@ describe("acl", () => {
             http.post('http://127.0.0.1:8080/set_session', {
                 json: {
                     id: 12345,
-                    roles: ['r4']
+                    roles: ['admin']
                 }
             });
 
@@ -269,6 +294,29 @@ describe("acl", () => {
                 }
             });
             assert.equal(rep.statusCode, 200);
+        });
+
+        it('read', () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            assert.equal(rep.statusCode, 403);
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r4']
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            check_result(rep.json(), {
+                name: 'aaa_ext'
+            });
         });
     });
 });

@@ -2,11 +2,24 @@ const orm = require('fib-orm');
 
 module.exports = db => {
     var ext = db.define('ext_acl', {
-        name: String
+        name: String,
+        age: Number
+    }, {
+        ACL: {
+            '*': {
+                '*': false
+            },
+            'roles': {
+                'admin': {
+                    '*': true
+                }
+            }
+        }
     });
 
     var ext1 = db.define('ext_acl1', {
-        name: String
+        name: String,
+        age: Number
     });
 
     var test = db.define('test_acl', {
@@ -30,6 +43,9 @@ module.exports = db => {
                 '*': {
                     '*': false
                 },
+                "9999": {
+                    '*': false
+                },
                 'roles': {
                     'r1': {
                         '*': true
@@ -44,11 +60,16 @@ module.exports = db => {
                         "find": true
                     },
                     'r4': {
-                        'write': ['ext']
+                        'write': ['ext'],
+                        'extends': {
+                            'ext': {
+                                'read': ['name']
+                            }
+                        }
+                    },
+                    'admin': {
+                        '*': true
                     }
-                },
-                "9999": {
-                    '*': false
                 }
             };
         }
