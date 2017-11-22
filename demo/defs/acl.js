@@ -30,23 +30,25 @@ module.exports = db => {
                 '*': {
                     '*': false
                 },
-                "role:r1": {
-                    '*': true
-                },
-                "role:r2": {
-                    'create': true
+                'roles': {
+                    'r1': {
+                        '*': true
+                    },
+                    'r2': {
+                        'create': true
+                    },
+                    'r3': {
+                        'create': ['name'],
+                        'read': ['name', 'age'],
+                        'write': ['age'],
+                        "find": true
+                    },
+                    'r4': {
+                        'write': ['ext']
+                    }
                 },
                 "9999": {
                     '*': false
-                },
-                "role:r3": {
-                    'create': ['name'],
-                    'read': ['name', 'age'],
-                    'write': ['age'],
-                    "find": true
-                },
-                "role:r4": {
-                    'write': ['ext']
                 }
             };
         }
