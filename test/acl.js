@@ -331,5 +331,55 @@ describe("acl", () => {
                 age: null
             });
         });
+
+        it('autoFetch', () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            check_result(rep.json(), {
+                "code": 4030501,
+                "message": "The operation isn’t allowed for clients due to class-level permissions."
+            });
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r4']
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            check_result(rep.json(), {
+                "name": "aaa",
+                "age": 12,
+                "ext": [{
+                    "name": "aaa_ext"
+                }]
+            });
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 54321
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            check_result(rep.json(), {
+                "id": id,
+                "name": "aaa",
+                "age": 12,
+                "sex": "female",
+                "ext1_id": null,
+                "ext": [{
+                    "id": rid,
+                    "name": "aaa_ext",
+                    "age": null
+                }]
+            });
+        });
     });
 });

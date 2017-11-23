@@ -72,6 +72,7 @@ module.exports = db => {
                     },
                     'r4': {
                         'write': ['ext'],
+                        'read': ['name', 'age', 'ext'],
                         'extends': {
                             'ext': {
                                 'read': ['name']
