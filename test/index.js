@@ -20,7 +20,7 @@ run('./extend');
 run('./reverse');
 
 run('./acl');
-// run('./graphql');
+run('./graphql');
 
 run('./push');
 
