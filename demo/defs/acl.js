@@ -78,7 +78,8 @@ module.exports = db => {
                                 'find': true,
                                 'read': ['name'],
                                 'write': ['age'],
-                                'create': ['age']
+                                'create': ['age'],
+                                'delete': true
                             }
                         }
                     },
