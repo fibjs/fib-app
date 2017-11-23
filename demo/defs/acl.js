@@ -75,6 +75,7 @@ module.exports = db => {
                         'read': ['name', 'age', 'ext'],
                         'extends': {
                             'ext': {
+                                'find': true,
                                 'read': ['name']
                             }
                         }
