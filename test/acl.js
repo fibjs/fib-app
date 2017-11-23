@@ -332,6 +332,52 @@ describe("acl", () => {
             });
         });
 
+        it('put', () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345
+                }
+            });
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`, {
+                json: {
+                    name: 'aaa_ext 1',
+                }
+            });
+            check_result(rep.json(), {
+                "code": 4030501,
+                "message": "The operation isn’t allowed for clients due to class-level permissions."
+            });
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r4']
+                }
+            });
+
+            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`, {
+                json: {
+                    name: 'aaa_ext 1',
+                    age: 123
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 54321
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            check_result(rep.json(), {
+                "id": rid,
+                "name": "aaa_ext",
+                "age": 123
+            });
+        });
+
         it('autoFetch', () => {
             http.post('http://127.0.0.1:8080/set_session', {
                 json: {
@@ -377,7 +423,7 @@ describe("acl", () => {
                 "ext": [{
                     "id": rid,
                     "name": "aaa_ext",
-                    "age": null
+                    "age": 123
                 }]
             });
         });
