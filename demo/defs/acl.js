@@ -72,12 +72,13 @@ module.exports = db => {
                     },
                     'r4': {
                         'write': ['ext'],
-                        'read': ['name', 'age', 'ext'],
+                        'read': ['name', 'age'],
                         'extends': {
                             'ext': {
                                 'find': true,
                                 'read': ['name'],
-                                'write': ['age']
+                                'write': ['age'],
+                                'create': ['age']
                             }
                         }
                     },
