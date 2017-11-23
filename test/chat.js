@@ -13,7 +13,6 @@ function clen_result(res) {
         else {
             delete res.createAt;
             delete res.updateAt;
-            delete res.ACL;
             for (var k in res)
                 clen_result(res[k]);
         }
@@ -27,6 +26,23 @@ function check_result(res, data) {
 
 describe("chat", () => {
     var cid;
+    var uid;
+
+    before(() => {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+            json: {
+                name: 'lion'
+            }
+        });
+
+        uid = rep.json().id;
+
+        http.post('http://127.0.0.1:8080/set_session', {
+            json: {
+                id: uid
+            }
+        });
+    });
 
     it('create room', () => {
         var rep = http.post('http://127.0.0.1:8080/1.0/app/chatroom', {
@@ -41,15 +57,17 @@ describe("chat", () => {
     it('post message', () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`, {
             json: {
-                name: 'hellow, world.'
+                msg: 'hellow, world.'
             }
         });
+        var mid = rep.json().id;
 
         rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`);
         check_result(rep.json(), [{
-            "name": "hellow, world.",
-            "id": 1,
-            "room_id": 1
+            "msg": "hellow, world.",
+            "id": mid,
+            "createby_id": uid,
+            "room_id": cid
         }]);
     });
 
@@ -58,7 +76,7 @@ describe("chat", () => {
         conn.onopen = () => {
             conn.send(JSON.stringify({
                 act: "on",
-                ch: "channel_1",
+                ch: `channel_${cid}`,
                 timestamp: 0
             }));
         }
@@ -73,7 +91,7 @@ describe("chat", () => {
 
         var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`, {
             json: {
-                name: 'hellow, world. again'
+                msg: 'hellow, world. again'
             }
         });
 
@@ -81,8 +99,9 @@ describe("chat", () => {
 
         conn.send(JSON.stringify({
             act: "off",
-            ch: "channel_1"
+            ch: `channel_${cid}`
         }));
+
 
         assert.equal(r.length, 2);
 
@@ -90,7 +109,7 @@ describe("chat", () => {
         assert.notProperty(r[0], "data");
 
         assert.property(r[1], "timestamp");
-        assert.equal(r[1].data.name, "hellow, world. again");
+        assert.equal(r[1].data.msg, "hellow, world. again");
     });
 
 
@@ -109,7 +128,7 @@ describe("chat", () => {
             conn.onopen = function () {
                 this.send(JSON.stringify({
                     act: "on",
-                    ch: "channel_1",
+                    ch: `channel_${cid}`,
                     timestamp: 0
                 }));
             }
@@ -124,7 +143,7 @@ describe("chat", () => {
             for (var i = 0; i < 100; i++) {
                 http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`, {
                     json: {
-                        name: 'hellow, world. ' + i
+                        msg: 'hellow, world. ' + i
                     }
                 });
             }

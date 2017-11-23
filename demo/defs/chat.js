@@ -11,12 +11,8 @@ module.exports = db => {
         msg: String
     }, {
         hooks: {
-            afterCreate: function () {
-                if (this.room_id)
-                    push.post(`channel_${this.room_id}`, this);
-            },
             afterSave: function () {
-                if (this.room_id)
+                if (this.createby_id && this.room_id)
                     push.post(`channel_${this.room_id}`, this);
             }
         }

@@ -24,7 +24,7 @@ run('./acl');
 
 run('./push');
 
-// run('./chat');
+run('./chat');
 
 run('./user');
 
