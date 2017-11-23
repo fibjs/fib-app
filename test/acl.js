@@ -225,6 +225,7 @@ describe("acl", () => {
     describe("extend", () => {
         var id;
         var rid;
+        var rid1;
 
         before(() => {
             http.post('http://127.0.0.1:8080/set_session', {
@@ -460,7 +461,7 @@ describe("acl", () => {
                 }
             });
             assert.equal(rep.statusCode, 201);
-            var rid = rep.json().id;
+            rid1 = rep.json().id;
 
             http.post('http://127.0.0.1:8080/set_session', {
                 json: {
@@ -468,13 +469,62 @@ describe("acl", () => {
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
-                "id": rid,
+                "id": rid1,
                 "name": null,
                 "age": 123
             });
 
+        });
+
+        it('find', () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            check_result(rep.json(), {
+                "code": 4030301,
+                "message": "The operation isn’t allowed for clients due to class-level permissions."
+            });
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 12345,
+                    roles: ['r4']
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            check_result(rep.json(), [{
+                    "name": "aaa_ext"
+                },
+                {
+                    "name": null
+                }
+            ]);
+
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: 54321
+                }
+            });
+
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            check_result(rep.json(), [{
+                    "id": rid,
+                    "name": "aaa_ext",
+                    "age": 123
+                },
+                {
+                    "id": rid1,
+                    "name": null,
+                    "age": 123
+                }
+            ]);
         });
     });
 });
