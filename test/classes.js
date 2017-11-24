@@ -10,8 +10,8 @@ function clen_result(res) {
         if (Array.isArray(res))
             res.forEach(r => clen_result(r));
         else {
-            delete res.createAt;
-            delete res.updateAt;
+            delete res.createdAt;
+            delete res.updatedAt;
             for (var k in res)
                 clen_result(res[k]);
         }
@@ -107,7 +107,7 @@ describe("classes", () => {
             assert.equal(rep.statusCode, 500);
         });
 
-        it("new with createBy", () => {
+        it("new with createdBy", () => {
             http.post('http://127.0.0.1:8080/set_session', {
                 json: {
                     id: id
@@ -122,7 +122,7 @@ describe("classes", () => {
             assert.equal(rep.statusCode, 201);
             var pid = rep.json().id;
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${pid}/createBy`);
+            var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${pid}/createdBy`);
             assert.equal(rep.json().name, 'lion');
         });
     });

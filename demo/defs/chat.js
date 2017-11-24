@@ -12,13 +12,13 @@ module.exports = db => {
     }, {
         hooks: {
             afterSave: function () {
-                if (this.createby_id && this.room_id)
+                if (this.createdby_id && this.room_id)
                     push.post(`channel_${this.room_id}`, this);
             }
         }
     });
 
-    chatmessage.hasOne('createBy', user);
+    chatmessage.hasOne('createdBy', user);
 
     // 1:n 双向
     chatmessage.hasOne("room", chatroom, {

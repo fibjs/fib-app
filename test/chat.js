@@ -11,8 +11,8 @@ function clen_result(res) {
         if (Array.isArray(res))
             res.forEach(r => clen_result(r));
         else {
-            delete res.createAt;
-            delete res.updateAt;
+            delete res.createdAt;
+            delete res.updatedAt;
             for (var k in res)
                 clen_result(res[k]);
         }
@@ -66,7 +66,7 @@ describe("chat", () => {
         check_result(rep.json(), [{
             "msg": "hellow, world.",
             "id": mid,
-            "createby_id": uid,
+            "createdby_id": uid,
             "room_id": cid
         }]);
     });

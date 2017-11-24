@@ -9,8 +9,8 @@ function clen_result(res) {
         if (Array.isArray(res))
             res.forEach(r => clen_result(r));
         else {
-            delete res.createAt;
-            delete res.updateAt;
+            delete res.createdAt;
+            delete res.updatedAt;
             for (var k in res)
                 clen_result(res[k]);
         }
@@ -70,7 +70,7 @@ describe("reverse", () => {
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello",
-                createby_id: user_id,
+                createdby_id: user_id,
                 room_id: room_id
             });
         });
@@ -88,7 +88,7 @@ describe("reverse", () => {
             check_result(rep.json(), [{
                 id: msg_id,
                 msg: "hello",
-                createby_id: user_id,
+                createdby_id: user_id,
                 room_id: room_id
             }]);
         });
@@ -105,7 +105,7 @@ describe("reverse", () => {
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 2",
-                createby_id: user_id,
+                createdby_id: user_id,
                 room_id: room_id
             });
         });
@@ -118,7 +118,7 @@ describe("reverse", () => {
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 2",
-                createby_id: user_id,
+                createdby_id: user_id,
                 room_id: room_id
             });
         });
@@ -143,7 +143,7 @@ describe("reverse", () => {
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 1",
-                createby_id: user_id,
+                createdby_id: user_id,
                 room_id: room_id
             });
         });

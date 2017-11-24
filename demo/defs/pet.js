@@ -7,5 +7,5 @@ module.exports = db => {
         name: String
     });
 
-    Pet.hasOne('createBy', person);
+    Pet.hasOne('createdBy', person);
 };
