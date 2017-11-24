@@ -97,7 +97,7 @@ code 编码分为三个部分，前三位 403 表示错误类型，05 表示数�
 ## 特殊字段
 对象数据中，有四个特殊含义的字段，是不允许通过 API 更改的。分别是 `id`, `updatedAt`, `createdAt`, `createdBy`。
 
-其中 `id`, `updatedAt`, `createdAt` 单个字段会自动创建和修改。`createdBy` 则需要自行指定类型。
+其中 `id`, `updatedAt`, `createdAt` 单个字段会自动创建和修改。`createdBy` 则需要自行指定类型。
 
 ## 基础对象访问 API
 完成这样的数据定义，便直接拥有了一整套符合 REST api 规范的接口调用：
@@ -211,6 +211,7 @@ curl -X GET \
 `where` 的值为一个 urlencode 后的 JSON 字符串，内容为：`{"name":"tom"}`
 
 除了完全匹配一个给定的值以外，`where` 也支持比较的方式，比如包含。`where` 参数支持如下选项：
+
 | key          | operation | sample                |
 |--------------|-----------|-----------------------|
 | eq           | 等于       | {"name":{"eq":"tom"}} 或者 {"name":"tom"} |
@@ -226,18 +227,19 @@ curl -X GET \
 | in           | 枚举       | {"name":{"in":["tom","lily"]}}   |
 | not\_in      | 枚举       | {"name":{"not_in":["tom","lily"]}}   |
 | or           | 或运算     | {"or":[{"name":"tom"},{"age":24}]}   |
+
 #### skip 跳过记录
-通过 `skip` 选项，可以跳过指定的记录数，达到翻页的效果。
+通过 `skip` 选项，可以跳过指定的记录数，达到翻页的效果。
 ```sh
 curl -X GET http://localhost/1.0/person?skip=100
 ```
 #### limit 跳过记录
-通过 `limit` 选项，可以限制返回记录数，`limit` 的有效数字为 1-1000，缺省为 100。
+通过 `limit` 选项，可以限制返回记录数，`limit` 的有效数字为 1-1000，缺省为 100。
 ```sh
 curl -X GET http://localhost/1.0/person?limit=100
 ```
 #### order 指定排序方式
-通过 `order` 选项，设定返回结果集的排序方式，字段名前包含 `-` 时为倒序。
+通过 `order` 选项，设定返回结果集的排序方式，字段名前包含 `-` 时为倒序。
 ```sh
 curl -X GET http://localhost/1.0/person?order=-id
 ```
