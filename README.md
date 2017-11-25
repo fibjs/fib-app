@@ -205,8 +205,7 @@ curl -X GET http://localhost/1.0/person
 
 `where` 参数的值应该是 JSON 编码过的。就是说，如果你查看真正被发出的 URL 请求，它应该是先被 JSON 编码过，然后又被 URL 编码过。最简单的使用 `where` 参数的方式就是包含应有的 key 和 value。例如，如果我们想要搜索名字为 tom 的用户，我们应该这样构造查询:
 ```sh
-curl -X GET \
-  http://localhost/1.0/person?where=%7B%22name%22%3A%22tom%22%7D
+curl -X GET http://localhost/1.0/person?where=%7B%22name%22%3A%22tom%22%7D
 ```
 `where` 的值为一个 urlencode 后的 JSON 字符串，内容为：`{"name":"tom"}`
 
@@ -264,15 +263,73 @@ curl -X GET http://localhost/1.0/person?count=1&limit=1
   ]
 }
 ```
+## 建立扩展对象
+通过 orm 定义 hasOne 和 hasMany，可以定义对象之间的关联关系，并在 API 上体现出来，例如：
+
+```JavaScript
+module.exports = db => {
+  var Person = db.models.person;
+
+  var Pet = db.define('pet', {
+    name: String
+  });
+
+  Person.hasMany('pets', Pet);
+};
+```
 ## 扩展对象访问 API
-| url                              | method | action        |
-|----------------------------------|--------|---------------|
+下面是扩展对象的 API 定义：
+| url                                  | method | action        |
+|--------------------------------------|--------|---------------|
 | /1.0/:className/:id/:extendName      | PUT    | 设置扩展对象    |
 | /1.0/:className/:id/:extendName      | POST   | 创建扩展对象    |
 | /1.0/:className/:id/:extendName/:rid | GET    | 读取扩展对象    |
 | /1.0/:className/:id/:extendName/:rid | PUT    | 修改扩展对象    |
 | /1.0/:className/:id/:extendName/:rid | DELETE | 删除扩展对象    |
 | /1.0/:className/:id/:extendName      | GET    | 查询扩展对象列表 |
+
+### 设置扩展对象
+设置扩展对象是将两个独立的对象建立联系。比如 tom 领养了一只叫 cat 的宠物，可以用下面的操作实现：
+```sh
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -d '{"id": "57fbbdb0a2400007"}' \
+  http://localhost/1.0/person/57fbbdb0a2400000/pets
+```
+在调用里需要在 body 内指定 cat 的 id。
+### 创建扩展对象
+直接创建扩展对象，可以在创建对象的同时，建立对象之间的联系。比如：
+```sh
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"name": "cat"}' \
+  http://localhost/1.0/person/57fbbdb0a2400000/pets
+```
+将创建一只名叫 cat 的宠物，并建立与 tom 的关联关系。
+
+### 读取扩展对象
+读取扩展对象与读取基础对象很相似，也同样支持 keys 选项：
+```sh
+curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+```
+### 修改扩展对象
+读取扩展对象与读取基础对象很相似：
+```sh
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -d '{"name": "cat 1"}' \
+  http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+```
+### 删除扩展对象
+删除扩展对象不会删除对象本身，只会解除对象之间的关系：
+```sh
+curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+```
+### 查询扩展对象列表
+查询扩展对象列表与查询基础对象列表很相似，也同样支持 keys 以及条件过滤等选项：
+```sh
+curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets
+```
 
 ## ACL
 可以通过定义 Model 的 ACL 控制数据权限，根据需求可以精确到对象属性级别的控制。比如:
