@@ -279,6 +279,7 @@ module.exports = db => {
 ```
 ## 扩展对象访问 API
 下面是扩展对象的 API 定义：
+
 | url                                  | method | action        |
 |--------------------------------------|--------|---------------|
 | /1.0/:className/:id/:extendName      | PUT    | 设置扩展对象    |
@@ -298,7 +299,7 @@ curl -X PUT \
 ```
 在调用里需要在 body 内指定 cat 的 id。
 ### 创建扩展对象
-直接创建扩展对象，可以在创建对象的同时，建立对象之间的联系。比如：
+直接创建扩展对象，可以在创建对象的同时，建立对象之间的联系。比如：
 ```sh
 curl -X POST \
   -H "Content-Type: application/json" \
