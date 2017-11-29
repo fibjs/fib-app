@@ -364,11 +364,13 @@ module.exports = db => {
 如果定义 Model 时未指定 ACL，则等同于设定了缺省权限：
 ```JavaScript
 {
-  "*": true
+  "*": {
+      "*": true
+    }
 }
 ```
 ### 主体
-ACL 主体描述有三种，用户 `id`，用户 `role` 和 `*`，`id` 表示一个具体的用户，`role` 表示具有某个角色的用户，`*` 表示所有用：
+ACL 主体描述有三种，用户 `id`，用户 `role` 和 `*`，`id` 表示一个具体的用户，`role` 表示具有某个角色的用户，`*` 表示所有用户：
 
 | 主体   | 描述        | 优先级 |
 |-------|-------------|-------|
@@ -398,7 +400,8 @@ ACL 根据 API 行为将权限分类五种：
 ```JavaScript
 {
   "*": {
-    "*": ['title']
+    "*": false,
+    "read": ['title']
   },
   "57fbbdb0a2400000": {
     "*": true
@@ -410,6 +413,38 @@ ACL 根据 API 行为将权限分类五种：
   }
 }
 ```
+
+### 对象权限
+在 Model 上设定的是整个类的权限，如果需要对具体的对象设定权限，可以用以下方式：
+```JavaScript
+module.exports = db => {
+    db.define('person', {
+        name: String,
+        sex: ["male", "female"],
+        age: Number
+    }, {
+      methods: {
+        ACL: function(session) {
+          var _acl = {};
+          if(this.id === session.id)
+            _acl[session.id] = {
+              "*": true
+            };
+
+          return _acl;
+        }
+      },
+      ACL: function(session) {
+        return {
+          "*": {
+            "*": true
+          }
+        }
+      }
+    });
+};
+```
+在这个例子中，当访问者是对象本人时，将被允许全部操作，否则禁止一切访问。
 
 ## Function
 可以为 Model 定义 api，对于复杂数据操作，可以通过自定义 Function 来完成。
