@@ -437,14 +437,14 @@ module.exports = db => {
       ACL: function(session) {
         return {
           "*": {
-            "*": true
-          }
+            "*": false
+          }
         }
       }
     });
 };
 ```
-在这个例子中，当访问者是对象本人时，将被允许全部操作，否则禁止一切访问。
+在这个例子中，当访问者是对象本人时，将被允许全部操作，否则禁止一切访问。
 
 ## Function
 可以为 Model 定义 api，对于复杂数据操作，可以通过自定义 Function 来完成。
