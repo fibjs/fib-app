@@ -22,30 +22,30 @@ const Session = require('fib-session')
 const App = require('../');
 
 var app = new App('sqlite:test.db', {
-    uuid: true
+  uuid: true
 });
 app.db.use(require('./defs/person'));
 
 var session = new Session(new util.LruCache(20000), {
-    timeout: 60 * 1000
+  timeout: 60 * 1000
 });
 
 var svr = new http.Server(8080, [
-    session.cookie_filter,
-    {
-        '/1.0': app.handler
-    }
+  session.cookie_filter,
+  {
+    '/1.0': app.handler
+  }
 ]);
 svr.run();
 ```
 其中 `person` 是 Model 定义模块，内容如下：
 ```JavaScript
 module.exports = db => {
-    db.define('person', {
-        name: String,
-        sex: ["male", "female"],
-        age: Number
-    });
+  db.define('person', {
+    name: String,
+    sex: ["male", "female"],
+    age: Number
+  });
 };
 ```
 这是一个标准的 orm 定义，同样可以使用 orm 的其它功能，比如类型检查，事件等。
@@ -65,8 +65,8 @@ curl -X PUT \
 一个请求是否成功是由 HTTP 状态码标明的。一个 2XX 的状态码表示成功，而一个 4XX 表示请求失败。当一个请求失败时响应的主体仍然是一个 JSON 对象，但是总是会包含 code 和 message 这两个字段，你可以用它们来进行调试。举个例子，如果一个请求权限认证失败，会返回以下信息：
 ```JavaScript
 {
-    "code": 4030501,
-    "message": "The operation isn’t allowed for clients due to class-level permissions."
+  "code": 4030501,
+  "message": "The operation isn’t allowed for clients due to class-level permissions."
 }
 ```
 code 编码分为三个部分，前三位 403 表示错误类型，05 表示数据表编号，01 表示详细错误编码。
@@ -253,12 +253,12 @@ curl -X GET http://localhost/1.0/person?count=1&limit=1
   "count": 2,
   "results": [
     {
-        "name": "tom",
-        "sex": "male",
-        "age": 23,
-        "createdAt": "2017-11-25T01:39:35.931Z",
-        "updatedAt": "2017-11-25T01:39:35.931Z",
-        "id": "57fbbdb0a2400000"
+      "name": "tom",
+      "sex": "male",
+      "age": 23,
+      "createdAt": "2017-11-25T01:39:35.931Z",
+      "updatedAt": "2017-11-25T01:39:35.931Z",
+      "id": "57fbbdb0a2400000"
     }
   ]
 }
@@ -338,35 +338,35 @@ curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets
 const orm = require('fib-orm');
 
 module.exports = db => {
-    db.define('blog', {
-        title: String,
-        detail: String，
-        note: String
-    }, {
-        ACL: function(session) {
-          return {
-            "*": {
-              "*": false
-            },
-            "57fbbdb0a2400000": {
-              "*": true
-            },
-            "roles": {
-              "user": {
-                "read": true
-              }
-            }
-          };
+  db.define('blog', {
+    title: String,
+    detail: String，
+    note: String
+  }, {
+    ACL: function(session) {
+      return {
+        "*": {
+          "*": false
+        },
+        "57fbbdb0a2400000": {
+          "*": true
+        },
+        "roles": {
+          "user": {
+            "read": true
+          }
         }
-    });
+      };
+    }
+  });
 };
 ```
 如果定义 Model 时未指定 ACL，则等同于设定了缺省权限：
 ```JavaScript
 {
   "*": {
-      "*": true
-    }
+    "*": true
+  }
 }
 ```
 ### 主体
@@ -419,28 +419,28 @@ ACL 根据 API 行为将权限分类五种：
 在 Model 上设定的是整个类的权限，如果需要对具体的对象设定权限，可以通过设置 OACL 来实现：
 ```JavaScript
 module.exports = db => {
-    db.define('person', {
-        name: String,
-        sex: ["male", "female"],
-        age: Number
-    }, {
-      ACL: function(session) {
-        return {
-          "*": {
-            "*": false
-          }
+  db.define('person', {
+    name: String,
+    sex: ["male", "female"],
+    age: Number
+  }, {
+    ACL: function(session) {
+      return {
+        "*": {
+          "*": false
         }
-      },
-      OACL: function(session) {
-        var _acl = {};
-        if(this.id === session.id)
-          _acl[session.id] = {
-            "*": true
-          };
-
-        return _acl;
       }
-    });
+    },
+    OACL: function(session) {
+      var _acl = {};
+      if(this.id === session.id)
+        _acl[session.id] = {
+          "*": true
+        };
+
+      return _acl;
+    }
+  });
 };
 ```
 在这个例子中，当访问者是对象本人时，将被允许全部操作，否则禁止一切访问。
