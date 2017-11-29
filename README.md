@@ -392,10 +392,11 @@ ACL 根据 API 行为将权限分类五种：
 | write  | 修改对象    | true / false / array |
 | delete | 删除对象    | true / false         |
 | find   | 查询对象列表 | true / false         |
+| *      | 匹配所有权限 | true / false / array |
 
-权限制定 `true` 为允许访问，为 `false` 为禁止访问，为 `array` 为只允许指定的字段的访问。`delete` 和 `find` 不接受 `array`，如果设置了 `array` 则视同为 `true`。
+权限制定 `true` 为允许访问，为 `false` 为禁止访问，为 `array` 为只允许指定的字段的访问。`delete` 和 `find` 不接受 `array`，如果设置了 `array` 则视同为 `true`。如果指定的权限不存在，则匹配同主体下的 `*` 权限。若都不存在，再一次查询下一优先级的主体。
 
-比如以上例子，如果需要设定 `user` 不允许读取 `note`，其他人可以读取  `title`，则可以这样设定：
+比如以上例子，如果需要设定 `user` 只允许读取 `title` 和 `detail`，其他人可以读取  `title`，则可以这样设定：
 
 ```JavaScript
 {
@@ -415,7 +416,7 @@ ACL 根据 API 行为将权限分类五种：
 ```
 
 ### 对象权限
-在 Model 上设定的是整个类的权限，如果需要对具体的对象设定权限，可以用以下方式：
+在 Model 上设定的是整个类的权限，如果需要对具体的对象设定权限，可以通过设置 OACL 来实现：
 ```JavaScript
 module.exports = db => {
     db.define('person', {
@@ -423,23 +424,21 @@ module.exports = db => {
         sex: ["male", "female"],
         age: Number
     }, {
-      methods: {
-        ACL: function(session) {
-          var _acl = {};
-          if(this.id === session.id)
-            _acl[session.id] = {
-              "*": true
-            };
-
-          return _acl;
-        }
-      },
       ACL: function(session) {
         return {
           "*": {
             "*": false
           }
         }
+      },
+      OACL: function(session) {
+        var _acl = {};
+        if(this.id === session.id)
+          _acl[session.id] = {
+            "*": true
+          };
+
+        return _acl;
       }
     });
 };

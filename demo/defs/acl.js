@@ -5,17 +5,6 @@ module.exports = db => {
         name: String,
         age: Number
     }, {
-        methods: {
-            ACL: function (session) {
-                if (session.id == '54321') {
-                    var acl = {};
-                    acl[session.id] = {
-                        "*": true
-                    };
-                    return acl;
-                }
-            }
-        },
         ACL: {
             '*': {
                 '*': false
@@ -24,6 +13,15 @@ module.exports = db => {
                 'admin': {
                     '*': true
                 }
+            }
+        },
+        OACL: function (session) {
+            if (session.id == '54321') {
+                var acl = {};
+                acl[session.id] = {
+                    "*": true
+                };
+                return acl;
             }
         }
     });
@@ -38,17 +36,6 @@ module.exports = db => {
         age: Number,
         sex: String
     }, {
-        methods: {
-            ACL: function (session) {
-                if (session.id == '54321') {
-                    var acl = {};
-                    acl[session.id] = {
-                        "*": true
-                    };
-                    return acl;
-                }
-            }
-        },
         ACL: function (session) {
             return {
                 '*': {
@@ -88,6 +75,15 @@ module.exports = db => {
                     }
                 }
             };
+        },
+        OACL: function (session) {
+            if (session.id == '54321') {
+                var acl = {};
+                acl[session.id] = {
+                    "*": true
+                };
+                return acl;
+            }
         }
     });
 
