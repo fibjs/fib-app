@@ -141,7 +141,7 @@ curl -X GET http://localhost/1.0/person/57fbbdb0a2400000
   "id": "57fbbdb0a2400000"
 }
 ```
-通过设置返回字段，可以定制返回的内容：
+通过设置返回字段 `keys`，可以定制返回的内容，`keys` 的内容是一个以 `,` 分割的字段名称字符串，：
 ```sh
 curl -X GET http://localhost/1.0/person/57fbbdb0a2400000?keys=name%2Csex
 ```
@@ -199,7 +199,12 @@ curl -X GET http://localhost/1.0/person
 ]
 ```
 #### keys 字段定制
-与对象查询一样，查询列表时可以通过设定 `keys` 来定制返回结果所包含的字段。
+与对象查询一样，查询列表时可以通过设定 `keys` 来定制返回结果所包含的字段。`keys` 的内容是一个以 `,` 分割的字段名称字符串，例如：
+```sh
+curl -X GET http://localhost/1.0/person?keys=name%2Cage
+```
+将指定只返回 `name` 和 `age` 两个字段。
+
 #### where 过滤条件
 通过 `where` 参数的形式可以对查询对象做出约束。
 
@@ -232,7 +237,7 @@ curl -X GET http://localhost/1.0/person?where=%7B%22name%22%3A%22tom%22%7D
 ```sh
 curl -X GET http://localhost/1.0/person?skip=100
 ```
-#### limit 跳过记录
+#### limit 返回记录限制
 通过 `limit` 选项，可以限制返回记录数，`limit` 的有效数字为 1-1000，缺省为 100。
 ```sh
 curl -X GET http://localhost/1.0/person?limit=100
@@ -443,7 +448,66 @@ module.exports = db => {
   });
 };
 ```
-在这个例子中，当访问者是对象本人时，将被允许全部操作，否则禁止一切访问。
+在这个例子中，当访问者是对象本人时，将被允许全部操作，否则禁止一切访问。会按照以下步骤检查权限：
+* `person[57fbbdb0a2400000]` => `OACL`
+* `person` => `ACL`
+
+### 扩展对象权限
+扩展对象的访问权限控制和几处对象权限相似，唯一不同的是在 ACL 需要单独指定：
+```JavaScript
+module.exports = db => {
+  var Person = db.define('person', {
+    name: String,
+    sex: ["male", "female"],
+    age: Number
+  },{
+    ACL: function(session) {
+      return {
+        "*": {
+          "read": ['name', 'sex'],
+          "extends": {
+            "pets": {
+              "read": true,
+              "find": true
+            }
+          }
+        }
+      }
+    },
+    OACL: function(session) {
+      var _acl = {};
+      if(this.id === session.id)
+        _acl[session.id] = {
+          "*": true,
+          "extends": {
+            "pets": {
+              "*": true
+            }
+          }
+        };
+
+      return _acl;
+    }
+  });
+
+  var Pet = db.define('pet', {
+    name: String
+  });
+
+  Person.hasMany('pets', Pet);
+};
+```
+这个定义中，任何人都可以查阅个人信息的 `name` 和 `sex`，并自由查阅和搜索他的 `pets`，用户本人可以操作自己的所有数据，以及拥有自己宠物信息的全部权限。
+
+在检查扩展对象的访问权限时，会分别检查对象权限和扩展对象权限。比如以下请求：
+```sh
+curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+```
+会按照以下步骤检查权限：
+* `pets[57fbbdb0a2400007]` => `OACL`
+* `person[57fbbdb0a2400000]` => `OACL` => `extends` => `pets`
+* `person` => `ACL` => `extends` => `pets`
+* `pets` => `ACL`
 
 ## Function
 可以为 Model 定义 api，对于复杂数据操作，可以通过自定义 Function 来完成。
