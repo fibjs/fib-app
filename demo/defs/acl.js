@@ -80,7 +80,10 @@ module.exports = db => {
             if (session.id == '54321') {
                 var acl = {};
                 acl[session.id] = {
-                    "*": true
+                    "*": true,
+                    "extends": {
+                        "*": true
+                    }
                 };
                 return acl;
             }
