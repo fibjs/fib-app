@@ -513,3 +513,7 @@ curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
 可以为 Model 定义 api，对于复杂数据操作，可以通过自定义 Function 来完成。
 
 绝大多数权限可以通过 ACL 控制完成，不需要通过 Function 来完成基于对象的权限。Function 可用于完成基于数据的权限，比如根据审批状态，赋予不同用户组权限。以及多项修改，比如需要修改多条数据库记录。
+
+## 绘制数据模型
+在完成数据定义以后，可以使用 `app.diagram()` 绘制数据模型的 `svg` 格式类图，保存至文件会得到类似下面的图像：
+![diagram](./demo/diagram.svg)

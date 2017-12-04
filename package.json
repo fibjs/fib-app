@@ -1,6 +1,6 @@
 {
   "name": "fib-app",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "",
   "main": "lib/app",
   "scripts": {
@@ -15,6 +15,7 @@
     "graphql-type-json": "^0.1.4"
   },
   "devDependencies": {
-    "fib-session": "^0.1.1"
+    "fib-session": "^0.1.1",
+    "viz.js": "^1.8.0"
   }
 }

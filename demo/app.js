@@ -1,6 +1,8 @@
 const http = require('http');
 const ws = require('ws');
-const util = require('util')
+const fs = require('fs');
+const util = require('util');
+const path = require('path');
 const Session = require('fib-session')
 const App = require('../');
 const push = App.push;
@@ -9,6 +11,8 @@ var app = new App('sqlite:test.db', {
     uuid: true
 });
 app.db.use(require('./defs'));
+
+fs.writeTextFile(path.join(__dirname, 'diagram.svg'), app.diagram());
 
 var session = new Session(new util.LruCache(20000), {
     timeout: 60 * 1000
