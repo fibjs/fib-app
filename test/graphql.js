@@ -344,4 +344,30 @@ describe("graphql", () => {
             });
         });
     });
+
+    it("error", () => {
+        http.post('http://127.0.0.1:8080/set_session', {
+            json: {
+                id: 12345
+            }
+        });
+
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                test_acl(id:"${ids[0]}"){
+                    id,
+                    name,
+                    ext{
+                        id,
+                        name
+                    }
+                }
+            }`
+        });
+
+        assert.equal(rep.json().errors[0].message, `Object '${ids[0]}' not found in class 'test_acl'.`);
+    });
 });
