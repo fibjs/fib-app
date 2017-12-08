@@ -221,7 +221,7 @@
 <g id="edge10" class="edge">
 <title>chatroom&#45;&gt;chatmessage</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M36.1781,-137.274C33.6371,-123.4267 33.3531,-108.0054 39.431,-95 42.3453,-88.7641 46.3238,-82.9742 50.9021,-77.6664"/>
-<polygon fill="none" stroke="#000000" points="53.6168,-79.8913 57.9851,-70.2389 48.5509,-75.0604 53.6168,-79.8913"/>
+<polygon fill="#000000" stroke="#000000" points="53.6168,-79.8913 57.9851,-70.2389 48.5509,-75.0604 53.6168,-79.8913"/>
 <text text-anchor="middle" x="62.7785" y="-98" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">messages</text>
 </g>
 <!-- chatmessage&#45;&gt;user -->
@@ -235,7 +235,7 @@
 <g id="edge13" class="edge">
 <title>chatmessage&#45;&gt;chatroom</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M96.0457,-76.6124C92.8202,-86.6243 89.0559,-97.3252 84.996,-107 82.1011,-113.8986 78.7621,-121.0373 75.3093,-127.9852"/>
-<polygon fill="#000000" stroke="#000000" points="71.9841,-126.8019 70.5614,-137.3008 78.2207,-129.9806 71.9841,-126.8019"/>
+<polygon fill="none" stroke="#000000" points="71.9841,-126.8019 70.5614,-137.3008 78.2207,-129.9806 71.9841,-126.8019"/>
 <text text-anchor="middle" x="101.384" y="-98" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">room</text>
 </g>
 </g>
