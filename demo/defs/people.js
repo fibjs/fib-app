@@ -5,5 +5,19 @@ module.exports = db => {
         name: String,
         sex: ["male", "female"],
         age: Number
+    }, {
+        ACL: {
+            '*': {
+                '*': true,
+                'extends': {
+                    '*': true
+                }
+            },
+            'roles': {
+                'test': {
+                    'read': ['name', 'sex', 'mother_id']
+                }
+            }
+        }
     });
 };

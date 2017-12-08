@@ -370,4 +370,39 @@ describe("graphql", () => {
 
         assert.equal(rep.json().errors[0].message, `Object '${ids[0]}' not found in class 'test_acl'.`);
     });
+
+    it('acl field error', () => {
+        http.post('http://127.0.0.1:8080/set_session', {
+            json: {
+                id: 123457,
+                roles: ['test']
+            }
+        });
+
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                people(id:"${ids[2]}"){
+                    name,
+                    mother{
+                        name
+                    }
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "data": {
+                "people": {
+                    "name": "jack",
+                    "mother": {
+                        "name": "alice"
+                    }
+                }
+            }
+        });
+    });
 });
