@@ -122,11 +122,12 @@ describe("graphql", () => {
             body: `{
                 find_people(
                     where:{
-                        name: {
-                            eq: "lily"
+                        id: {
+                            eq: "${ids[0]}"
                         }
                     }
                 ){
+                    id,
                     name
                 }
             }`
@@ -135,10 +136,10 @@ describe("graphql", () => {
         assert.equal(rep.statusCode, 200);
         assert.deepEqual(rep.json(), {
             "data": {
-                "people": {
+                "find_people": [{
                     "id": ids[0],
                     "name": "tom"
-                }
+                }]
             }
         });
     });
