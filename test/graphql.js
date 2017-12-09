@@ -114,6 +114,35 @@ describe("graphql", () => {
         });
     });
 
+    it('find', () => {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                find_people(
+                    where:{
+                        name: {
+                            eq: "lily"
+                        }
+                    }
+                ){
+                    name
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "data": {
+                "people": {
+                    "id": ids[0],
+                    "name": "tom"
+                }
+            }
+        });
+    });
+
     it('hasOne', () => {
         var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
             headers: {

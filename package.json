@@ -1,6 +1,6 @@
 {
   "name": "fib-app",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "",
   "main": "lib/app",
   "scripts": {
@@ -12,7 +12,8 @@
     "fib-graphql": "^1.0.0",
     "fib-orm": "^1.2.0",
     "fib-pool": "^1.3.0",
-    "graphql-type-json": "^0.1.4"
+    "graphql-type-json": "^0.1.4",
+    "inflected": "^2.0.3"
   },
   "devDependencies": {
     "fib-session": "^0.1.1",
