@@ -125,6 +125,31 @@ describe("classes", () => {
             var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${pid}/createdBy`);
             assert.equal(rep.json().name, 'lion');
         });
+
+        it("multi with createdBy", () => {
+            http.post('http://127.0.0.1:8080/set_session', {
+                json: {
+                    id: id
+                }
+            });
+
+            var rep = http.post('http://127.0.0.1:8080/1.0/app/pet', {
+                json: [{
+                        name: 'tomcat'
+                    }, {
+                        name: 'tom'
+                    },
+                    {
+                        name: 'jerry'
+                    }
+                ]
+            });
+            assert.equal(rep.statusCode, 201);
+            rep.json().forEach(r => {
+                var rep = http.get(`http://127.0.0.1:8080/1.0/app/pet/${r.id}/createdBy`);
+                assert.equal(rep.json().name, 'lion');
+            });
+        });
     });
 
     describe("get id", () => {
