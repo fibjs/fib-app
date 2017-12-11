@@ -22,8 +22,6 @@ run('./reverse');
 run('./acl');
 run('./graphql');
 
-run('./push');
-
 run('./chat');
 
 run('./user');

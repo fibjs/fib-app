@@ -1,5 +1,5 @@
 const orm = require('fib-orm');
-const push = require('../../').push;
+const push = require('fib-push');
 
 module.exports = db => {
     var user = db.models.user;

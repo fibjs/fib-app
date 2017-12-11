@@ -4,8 +4,8 @@ const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const Session = require('fib-session')
+const push = require('fib-push');
 const App = require('../');
-const push = App.push;
 
 var app = new App('sqlite:test.db', {
     uuid: true
