@@ -13,7 +13,7 @@ try {
     fs.unlink("test.db-wal");
 } catch (e) {};
 
-run('../demo/app');
+run('../app');
 
 run('./classes');
 run('./extend');

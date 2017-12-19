@@ -10,7 +10,7 @@ npm install fib-app [--save]
 ## Test
 
 ```sh
-fibjs test
+npm test
 ```
 
 ## 建立基础脚本
