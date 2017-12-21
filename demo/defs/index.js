@@ -5,5 +5,6 @@ module.exports = [
     require('./people'),
     require('./extend'),
     require('./pet'),
-    require('./chat')
+    require('./chat'),
+    require('./json')
 ];

@@ -435,4 +435,42 @@ describe("graphql", () => {
             }
         });
     });
+
+    it('json data', () => {
+        var rep = http.post('http://127.0.0.1:8080/1.0/app/json', {
+            json: {
+                name: 'tom',
+                profile: {
+                    a: 100,
+                    b: 200
+                }
+            }
+        });
+
+        var id = rep.json().id;
+
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                json(id:"${id}"){
+                    name,
+                    profile
+                }
+            }`
+        });
+
+        assert.deepEqual(rep.json(), {
+            "data": {
+                "json": {
+                    "name": "tom",
+                    "profile": {
+                        "a": 100,
+                        "b": 200
+                    }
+                }
+            }
+        });
+    });
 });
