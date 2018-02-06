@@ -1,6 +1,6 @@
 {
   "name": "fib-app",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "description": "",
   "main": "lib/app",
   "scripts": {
