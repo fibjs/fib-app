@@ -456,12 +456,17 @@ describe("graphql", () => {
             body: `{
                 json(id:"${id}"){
                     name,
-                    profile
+                    profile,
+                    createdAt
                 }
             }`
         });
 
-        assert.deepEqual(rep.json(), {
+        let r = rep.json();
+        assert.equal(r.data.json.createdAt.toString().slice(-1), "Z");
+        assert.notEqual(new Date(r.data.json.createdAt).getTime() % 1000, 0);
+        delete r.data.json.createdAt;
+        assert.deepEqual(r, {
             "data": {
                 "json": {
                     "name": "tom",
