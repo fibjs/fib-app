@@ -453,7 +453,7 @@ module.exports = db => {
 * `person` => `ACL`
 
 ### 扩展对象权限
-扩展对象的访问权限控制和几处对象权限相似，唯一不同的是在 ACL 需要单独指定：
+扩展对象的访问权限控制和基础对象权限相似，唯一不同的是在 ACL 需要单独指定：
 ```JavaScript
 module.exports = db => {
   var Person = db.define('person', {
