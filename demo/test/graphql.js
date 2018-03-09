@@ -398,6 +398,8 @@ describe("graphql", () => {
             }`
         });
 
+        assert.equal(rep.statusCode, 404);
+        assert.equal(rep.json().errors[0].code, 4040002);
         assert.equal(rep.json().errors[0].message, `Object '${ids[0]}' not found in class 'test_acl'.`);
     });
 
