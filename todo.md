@@ -1,4 +1,5 @@
 * 重写用例，用例独立运行, uuid
+  - 修正 uuid 模式下, 关联模型用 id 关联时, 关联字段在 mysql 中分配长度过小的问题.
 
 * reverse 测试
   - hasOne 测试
