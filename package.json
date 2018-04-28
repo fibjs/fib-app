@@ -18,6 +18,6 @@
   "devDependencies": {
     "fib-push": "^1.0.0",
     "fib-session": "^0.1.1",
-    "viz.js": "^1.8.0"
+    "viz.js": "1.8.0"
   }
 }
