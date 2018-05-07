@@ -24,7 +24,13 @@ describe("graphql", () => {
                 name: 'lily',
                 sex: "famale",
                 age: 4
-            }]
+            },
+            {
+                name: 'mike',
+                sex: "male",
+                age: 65
+            }
+        ]
         });
 
         rep.json().forEach(r => ids.push(r.id));
@@ -34,6 +40,13 @@ describe("graphql", () => {
         var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
             json: {
                 id: ids[1]
+            }
+        });
+        assert.equal(rep.statusCode, 200)
+
+        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/father`, {
+            json: {
+                id: ids[4]
             }
         });
         assert.equal(rep.statusCode, 200)
@@ -182,6 +195,43 @@ describe("graphql", () => {
                 }
             }
         });
+    });
+
+    it('hasOne with null', () => {
+        var rep = http.post(`http://127.0.0.1:8080/1.0/app`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                people(id:"${ids[0]}"){
+                    id,
+                    name,
+                    father{
+                        id,
+                        name
+                    },
+                    mother{
+                        id,
+                        name
+                    }
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "data": {
+              "people": {
+                "id": ids[0],
+                "name": "tom",
+                "father": {
+                  "id": ids[4],
+                  "name": "mike"
+                },
+                "mother": null
+              }
+            }
+          });
     });
 
     describe('hasMany', () => {
