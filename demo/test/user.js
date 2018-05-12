@@ -1,6 +1,8 @@
 const test = require('test');
 test.setup();
 
+const { serverBase } = require('../')
+
 const http = require('http');
 const util = require('util');
 
@@ -27,7 +29,7 @@ describe("user", () => {
 
     describe("post new", () => {
         it("error: empty body", () => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user');
+            var rep = http.post(serverBase + '/1.0/app/user');
             assert.equal(rep.statusCode, 400);
             check_result(rep.json(), {
                 "code": 4000001,
@@ -36,7 +38,7 @@ describe("user", () => {
         });
 
         it("error: bad body", () => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+            var rep = http.post(serverBase + '/1.0/app/user', {
                 body: 'aaaa'
             });
             assert.equal(rep.statusCode, 400);
@@ -47,7 +49,7 @@ describe("user", () => {
         });
 
         it("error: bad class", () => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user1', {
+            var rep = http.post(serverBase + '/1.0/app/user1', {
                 json: {}
             });
             assert.equal(rep.statusCode, 404);
@@ -58,7 +60,7 @@ describe("user", () => {
         });
 
         it("create user", () => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+            var rep = http.post(serverBase + '/1.0/app/user', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -72,7 +74,7 @@ describe("user", () => {
         });
 
         xit("error: bad field", () => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+            var rep = http.post(serverBase + '/1.0/app/user', {
                 json: {
                     name: 'lion1',
                     sex: "male",
@@ -86,17 +88,17 @@ describe("user", () => {
 
     describe("get by id", () => {
         it("bad class", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/user1/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/user1/${id}`);
             assert.equal(rep.statusCode, 404);
         });
 
         it("bad id", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/user/9999`);
+            var rep = http.get(serverBase + `/1.0/app/user/9999`);
             assert.equal(rep.statusCode, 404);
         });
 
         it("simple", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/user/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/user/${id}`);
             assert.equal(rep.statusCode, 200);
             var data = rep.json();
             delete data.salt;
@@ -110,7 +112,7 @@ describe("user", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/user/${id}`, {
+            var rep = http.get(serverBase + `/1.0/app/user/${id}`, {
                 query: {
                     keys: "age"
                 }

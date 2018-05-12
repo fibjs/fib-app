@@ -1,6 +1,8 @@
 const test = require('test');
 test.setup();
 
+const { serverBase } = require('../')
+
 const http = require('http');
 const util = require('util');
 
@@ -29,7 +31,7 @@ describe("reverse", () => {
         var user_id;
 
         before(() => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/chatroom', {
+            var rep = http.post(serverBase + '/1.0/app/chatroom', {
                 json: {
                     name: "room1"
                 }
@@ -37,7 +39,7 @@ describe("reverse", () => {
 
             room_id = rep.json().id;
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+            var rep = http.post(serverBase + '/1.0/app/user', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -48,7 +50,7 @@ describe("reverse", () => {
 
             user_id = rep.json().id;
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: user_id
                 }
@@ -56,7 +58,7 @@ describe("reverse", () => {
         });
 
         it("create message", () => {
-            var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages`, {
+            var rep = http.post(serverBase + `/1.0/app/chatroom/${room_id}/messages`, {
                 json: {
                     msg: "hello"
                 }
@@ -66,7 +68,7 @@ describe("reverse", () => {
         });
 
         it("get", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(serverBase + `/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello",
@@ -76,7 +78,7 @@ describe("reverse", () => {
         });
 
         it("get reserve", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatmessage/${msg_id}/room/${room_id}`);
+            var rep = http.get(serverBase + `/1.0/app/chatmessage/${msg_id}/room/${room_id}`);
             check_result(rep.json(), {
                 id: room_id,
                 name: "room1"
@@ -84,7 +86,7 @@ describe("reverse", () => {
         });
 
         it("list", () => {
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages`);
+            var rep = http.get(serverBase + `/1.0/app/chatroom/${room_id}/messages`);
             check_result(rep.json(), [{
                 id: msg_id,
                 msg: "hello",
@@ -94,14 +96,14 @@ describe("reverse", () => {
         });
 
         it("update", () => {
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`, {
+            var rep = http.put(serverBase + `/1.0/app/chatroom/${room_id}/messages/${msg_id}`, {
                 json: {
                     msg: 'hello 2'
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(serverBase + `/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 2",
@@ -111,10 +113,10 @@ describe("reverse", () => {
         });
 
         xit("delete", () => {
-            var rep = http.del(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.del(serverBase + `/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(serverBase + `/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 2",
@@ -124,7 +126,7 @@ describe("reverse", () => {
         });
 
         it("link reserve", () => {
-            var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatmessage`, {
+            var rep = http.post(serverBase + `/1.0/app/chatmessage`, {
                 json: {
                     msg: "hello 1"
                 }
@@ -132,14 +134,14 @@ describe("reverse", () => {
 
             var msg_id = rep.json().id;
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/chatmessage/${msg_id}/room`, {
+            var rep = http.put(serverBase + `/1.0/app/chatmessage/${msg_id}/room`, {
                 json: {
                     id: room_id
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(serverBase + `/1.0/app/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 1",
@@ -156,7 +158,7 @@ describe("reverse", () => {
         var user2_id;
 
         before(() => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/chatroom', {
+            var rep = http.post(serverBase + '/1.0/app/chatroom', {
                 json: [{
                     name: "room1"
                 }, {
@@ -168,7 +170,7 @@ describe("reverse", () => {
             room1_id = data[0].id;
             room2_id = data[1].id;
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+            var rep = http.post(serverBase + '/1.0/app/user', {
                 json: [{
                     name: 'lion 1',
                     sex: "male",
@@ -188,14 +190,14 @@ describe("reverse", () => {
         });
 
         it("put extends", () => {
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers`, {
+            var rep = http.put(serverBase + `/1.0/app/chatroom/${room1_id}/mambers`, {
                 json: {
                     id: user1_id
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/user/${user2_id}/rooms`, {
+            var rep = http.put(serverBase + `/1.0/app/user/${user2_id}/rooms`, {
                 json: {
                     id: room2_id
                 }
@@ -204,15 +206,15 @@ describe("reverse", () => {
         });
 
         it("del", () => {
-            var rep = http.del(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers/${user1_id}`);
+            var rep = http.del(serverBase + `/1.0/app/chatroom/${room1_id}/mambers/${user1_id}`);
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.del(`http://127.0.0.1:8080/1.0/app/user/${user2_id}/rooms/${room2_id}`);
+            var rep = http.del(serverBase + `/1.0/app/user/${user2_id}/rooms/${room2_id}`);
             assert.equal(rep.statusCode, 200);
         });
 
         it("create", () => {
-            var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${room1_id}/mambers`, {
+            var rep = http.post(serverBase + `/1.0/app/chatroom/${room1_id}/mambers`, {
                 json: {
                     name: 'lion 3',
                     sex: "male",
@@ -222,7 +224,7 @@ describe("reverse", () => {
             });
             assert.equal(rep.statusCode, 201);
 
-            var rep = http.post(`http://127.0.0.1:8080/1.0/app/user/${user2_id}/rooms`, {
+            var rep = http.post(serverBase + `/1.0/app/user/${user2_id}/rooms`, {
                 json: {
                     name: "room3"
                 }

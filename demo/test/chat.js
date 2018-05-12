@@ -1,6 +1,9 @@
 const test = require('test');
 test.setup();
 
+const { serverBase } = require('../')
+const wsBase = serverBase.replace('http://', 'ws://')
+
 const http = require('http');
 const ws = require('ws');
 const coroutine = require('coroutine');
@@ -29,7 +32,7 @@ describe("chat", () => {
     var uid;
 
     before(() => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/user', {
+        var rep = http.post(serverBase + '/1.0/app/user', {
             json: {
                 name: 'lion'
             }
@@ -37,7 +40,7 @@ describe("chat", () => {
 
         uid = rep.json().id;
 
-        http.post('http://127.0.0.1:8080/set_session', {
+        http.post(serverBase + '/set_session', {
             json: {
                 id: uid
             }
@@ -45,7 +48,7 @@ describe("chat", () => {
     });
 
     it('create room', () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/chatroom', {
+        var rep = http.post(serverBase + '/1.0/app/chatroom', {
             json: {
                 name: 'room1'
             }
@@ -55,14 +58,14 @@ describe("chat", () => {
     });
 
     it('post message', () => {
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`, {
+        var rep = http.post(serverBase + `/1.0/app/chatroom/${cid}/messages`, {
             json: {
                 msg: 'hellow, world.'
             }
         });
         var mid = rep.json().id;
 
-        rep = http.get(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`);
+        rep = http.get(serverBase + `/1.0/app/chatroom/${cid}/messages`);
         check_result(rep.json(), [{
             "msg": "hellow, world.",
             "id": mid,
@@ -72,7 +75,7 @@ describe("chat", () => {
     });
 
     it('push', () => {
-        var conn = new ws.Socket('ws://127.0.0.1:8080/push');
+        var conn = new ws.Socket(wsBase + '/push');
         conn.onopen = () => {
             conn.send(JSON.stringify({
                 act: "on",
@@ -89,7 +92,7 @@ describe("chat", () => {
 
         coroutine.sleep(100);
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`, {
+        var rep = http.post(serverBase + `/1.0/app/chatroom/${cid}/messages`, {
             json: {
                 msg: 'hellow, world. again'
             }
@@ -124,7 +127,7 @@ describe("chat", () => {
         var conns = [];
 
         for (var i = 0; i < 200; i++) {
-            var conn = new ws.Socket('ws://127.0.0.1:8080/push');
+            var conn = new ws.Socket(wsBase + '/push');
             conn.onopen = function () {
                 this.send(JSON.stringify({
                     act: "on",
@@ -141,7 +144,7 @@ describe("chat", () => {
         console.time('chat performance');
         coroutine.parallel(() => {
             for (var i = 0; i < 100; i++) {
-                http.post(`http://127.0.0.1:8080/1.0/app/chatroom/${cid}/messages`, {
+                http.post(serverBase + `/1.0/app/chatroom/${cid}/messages`, {
                     json: {
                         msg: 'hellow, world. ' + i
                     }
