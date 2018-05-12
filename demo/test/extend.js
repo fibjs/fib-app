@@ -1,6 +1,8 @@
 const test = require('test');
 test.setup();
 
+const { serverBase } = require('../')
+
 const http = require('http');
 const util = require('util');
 
@@ -26,7 +28,7 @@ describe("extend", () => {
     var ids = [];
 
     it('init data', () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/people', {
+        var rep = http.post(serverBase + '/1.0/app/people', {
             json: [{
                 name: 'tom',
                 sex: "male",
@@ -50,14 +52,14 @@ describe("extend", () => {
     });
 
     it('init extend', () => {
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
+        var rep = http.put(serverBase + `/1.0/app/people/${ids[0]}/wife`, {
             json: {
                 id: ids[1]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}`, {
             query: {
                 keys: 'wife_id'
             }
@@ -66,7 +68,7 @@ describe("extend", () => {
             wife_id: ids[1]
         });
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[1]}/husband`, {
+        var rep = http.put(serverBase + `/1.0/app/people/${ids[1]}/husband`, {
             json: {
                 id: ids[0]
             }
@@ -74,14 +76,14 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 200)
 
         function set_parents(id) {
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/father`, {
+            var rep = http.put(serverBase + `/1.0/app/people/${id}/father`, {
                 json: {
                     id: ids[0]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/mother`, {
+            var rep = http.put(serverBase + `/1.0/app/people/${id}/mother`, {
                 json: {
                     id: ids[1]
                 }
@@ -93,14 +95,14 @@ describe("extend", () => {
         set_parents(ids[3]);
 
         function add_childs(id) {
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs`, {
+            var rep = http.put(serverBase + `/1.0/app/people/${id}/childs`, {
                 json: {
                     id: ids[2]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${id}/childs`, {
+            var rep = http.put(serverBase + `/1.0/app/people/${id}/childs`, {
                 json: {
                     id: ids[3]
                 }
@@ -113,7 +115,7 @@ describe("extend", () => {
     });
 
     it('get extend', () => {
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
             }
@@ -123,7 +125,7 @@ describe("extend", () => {
             "age": 32
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife/${ids[1]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/wife/${ids[1]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -133,7 +135,7 @@ describe("extend", () => {
             "age": 32
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[2]}/mother`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[2]}/mother`, {
             query: {
                 keys: 'name,age'
             }
@@ -143,7 +145,7 @@ describe("extend", () => {
             "age": 32
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -157,7 +159,7 @@ describe("extend", () => {
             "age": 8
         }]);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[3]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[3]}`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -168,7 +170,7 @@ describe("extend", () => {
             "age": 4
         });
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[1]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[1]}`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -181,20 +183,20 @@ describe("extend", () => {
     });
 
     it('delete extend', () => {
-        var rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife/${ids[1]}`);
+        var rep = http.del(serverBase + `/1.0/app/people/${ids[0]}/wife/${ids[1]}`);
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/wife`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
             }
         });
         assert.equal(rep.statusCode, 404);
 
-        var rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[2]}`);
+        var rep = http.del(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[2]}`);
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs`, {
             query: {
                 keys: 'name,age'
             }
@@ -204,7 +206,7 @@ describe("extend", () => {
             "age": 4
         }]);
 
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
+        var rep = http.put(serverBase + `/1.0/app/people/${ids[0]}/childs`, {
             json: {
                 id: ids[2]
             }
@@ -213,7 +215,7 @@ describe("extend", () => {
     });
 
     it('create extend object', () => {
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs`, {
+        var rep = http.post(serverBase + `/1.0/app/people/${ids[0]}/childs`, {
             json: {
                 name: 'jack_li',
                 sex: "male",
@@ -223,7 +225,7 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 201);
         ids.push(rep.json().id);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -234,7 +236,7 @@ describe("extend", () => {
             "age": 8
         });
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[4]}/childs`, {
+        var rep = http.post(serverBase + `/1.0/app/people/${ids[4]}/childs`, {
             json: [{
                 name: 'jack_li_0',
                 sex: "male",
@@ -248,7 +250,7 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 201);
         rep.json().forEach(r => ids.push(r.id));
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -259,7 +261,7 @@ describe("extend", () => {
             "age": 8
         });
 
-        var rep = http.post(`http://127.0.0.1:8080/1.0/app/people/${ids[4]}/wife`, {
+        var rep = http.post(serverBase + `/1.0/app/people/${ids[4]}/wife`, {
             json: {
                 name: 'ly_li',
                 sex: "famale",
@@ -268,7 +270,7 @@ describe("extend", () => {
         });
         assert.equal(rep.statusCode, 201);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[4]}/wife`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[4]}/wife`, {
             query: {
                 keys: 'name,age'
             }
@@ -281,7 +283,7 @@ describe("extend", () => {
     });
 
     it('change extend object', () => {
-        var rep = http.put(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.put(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             json: {
                 name: 'jack_li',
                 sex: "male",
@@ -290,7 +292,7 @@ describe("extend", () => {
         });
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -301,12 +303,12 @@ describe("extend", () => {
             "age": 18
         });
 
-        rep = http.del(`http://127.0.0.1:8080/1.0/app/people/${ids[0]}/childs/${ids[4]}`);
+        rep = http.del(serverBase + `/1.0/app/people/${ids[0]}/childs/${ids[4]}`);
         assert.equal(rep.statusCode, 200);
     });
 
     it("multi level create", () => {
-        var rep = http.post('http://127.0.0.1:8080/1.0/app/people', {
+        var rep = http.post(serverBase + '/1.0/app/people', {
             json: [{
                 name: 'tom',
                 sex: "male",

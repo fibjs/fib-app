@@ -1,6 +1,8 @@
 const test = require('test');
 test.setup();
 
+const { serverBase } = require('../')
+
 const http = require('http');
 const util = require('util');
 
@@ -27,7 +29,7 @@ describe("acl", () => {
         var id;
 
         it("forbidden", () => {
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+            var rep = http.post(serverBase + '/1.0/app/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -38,14 +40,14 @@ describe("acl", () => {
         });
 
         it("role allow act", () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r2']
                 }
             });
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+            var rep = http.post(serverBase + '/1.0/app/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -57,34 +59,34 @@ describe("acl", () => {
         });
 
         it("object act", () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
             assert.equal(rep.statusCode, 403);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
             assert.equal(rep.statusCode, 200);
         });
 
         it("role allow all", () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r2']
                 }
             });
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+            var rep = http.post(serverBase + '/1.0/app/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -96,14 +98,14 @@ describe("acl", () => {
         });
 
         it("object allow owner", () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r2']
                 }
             });
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+            var rep = http.post(serverBase + '/1.0/app/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -113,25 +115,25 @@ describe("acl", () => {
             assert.equal(rep.statusCode, 201);
             var res = rep.json();
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12346
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${res.id}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${res.id}`);
             assert.equal(rep.statusCode, 403);
         });
 
         it("user disallow", () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 9999,
                     roles: ['r1']
                 }
             });
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+            var rep = http.post(serverBase + '/1.0/app/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -143,7 +145,7 @@ describe("acl", () => {
 
         describe("allow field", () => {
             before(() => {
-                http.post('http://127.0.0.1:8080/set_session', {
+                http.post(serverBase + '/set_session', {
                     json: {
                         id: 123,
                         roles: ['r3']
@@ -152,7 +154,7 @@ describe("acl", () => {
             });
 
             it("create", () => {
-                var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+                var rep = http.post(serverBase + '/1.0/app/test_acl', {
                     json: {
                         name: "aaa",
                         age: 12,
@@ -162,7 +164,7 @@ describe("acl", () => {
 
                 var id = rep.json().id;
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+                var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
                 assert.deepEqual(rep.json(), {
                     name: "aaa",
                     age: null
@@ -170,13 +172,13 @@ describe("acl", () => {
             });
 
             it("get", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+                var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
                 assert.deepEqual(rep.json(), {
                     name: "aaa",
                     age: 12
                 });
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`, {
+                var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`, {
                     query: {
                         keys: 'name,sex'
                     }
@@ -187,7 +189,7 @@ describe("acl", () => {
             });
 
             it("update", () => {
-                var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`, {
+                var rep = http.put(serverBase + `/1.0/app/test_acl/${id}`, {
                     json: {
                         name: "bbb",
                         age: 123,
@@ -195,7 +197,7 @@ describe("acl", () => {
                     }
                 });
 
-                var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+                var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
                 assert.deepEqual(rep.json(), {
                     name: "aaa",
                     age: 123
@@ -204,7 +206,7 @@ describe("acl", () => {
             });
 
             it("find", () => {
-                var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl`, {
+                var rep = http.get(serverBase + `/1.0/app/test_acl`, {
                     query: {
                         limit: 2
                     }
@@ -228,14 +230,14 @@ describe("acl", () => {
         var rid1;
 
         before(() => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['admin']
                 }
             });
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/test_acl', {
+            var rep = http.post(serverBase + '/1.0/app/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -245,7 +247,7 @@ describe("acl", () => {
             assert.equal(rep.statusCode, 201);
             id = rep.json().id;
 
-            var rep = http.post('http://127.0.0.1:8080/1.0/app/ext_acl', {
+            var rep = http.post(serverBase + '/1.0/app/ext_acl', {
                 json: {
                     name: "aaa_ext"
                 }
@@ -255,41 +257,41 @@ describe("acl", () => {
         });
 
         it('link', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+            var rep = http.put(serverBase + `/1.0/app/test_acl/${id}/ext`, {
                 json: {
                     id: rid
                 }
             });
             assert.equal(rep.statusCode, 403);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r3']
                 }
             });
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+            var rep = http.put(serverBase + `/1.0/app/test_acl/${id}/ext`, {
                 json: {
                     id: rid
                 }
             });
             assert.equal(rep.statusCode, 403);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['admin']
                 }
             });
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+            var rep = http.put(serverBase + `/1.0/app/test_acl/${id}/ext`, {
                 json: {
                     id: rid
                 }
@@ -298,34 +300,34 @@ describe("acl", () => {
         });
 
         it('read', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext/${rid}`);
             assert.equal(rep.statusCode, 403);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext/${rid}`);
             check_result(rep.json(), {
                 name: 'aaa_ext'
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext/${rid}`);
             check_result(rep.json(), {
                 id: rid,
                 name: 'aaa_ext',
@@ -334,13 +336,13 @@ describe("acl", () => {
         });
 
         it('put', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`, {
+            var rep = http.put(serverBase + `/1.0/app/test_acl/${id}/ext/${rid}`, {
                 json: {
                     name: 'aaa_ext 1',
                 }
@@ -350,14 +352,14 @@ describe("acl", () => {
                 "message": "The operation isn’t allowed for clients due to class-level permissions."
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.put(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`, {
+            var rep = http.put(serverBase + `/1.0/app/test_acl/${id}/ext/${rid}`, {
                 json: {
                     name: 'aaa_ext 1',
                     age: 123
@@ -365,13 +367,13 @@ describe("acl", () => {
             });
             assert.equal(rep.statusCode, 200);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext/${rid}`);
             check_result(rep.json(), {
                 "id": rid,
                 "name": "aaa_ext",
@@ -380,26 +382,26 @@ describe("acl", () => {
         });
 
         it('autoFetch', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
             check_result(rep.json(), {
                 "code": 4030501,
                 "message": "The operation isn’t allowed for clients due to class-level permissions."
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
             check_result(rep.json(), {
                 "name": "aaa",
                 "age": 12,
@@ -408,13 +410,13 @@ describe("acl", () => {
                 }]
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}`);
             check_result(rep.json(), {
                 "id": id,
                 "name": "aaa",
@@ -430,13 +432,13 @@ describe("acl", () => {
         });
 
         it('create', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.post(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+            var rep = http.post(serverBase + `/1.0/app/test_acl/${id}/ext`, {
                 json: {
                     name: 'new name',
                     age: 123
@@ -447,14 +449,14 @@ describe("acl", () => {
                 "message": "The operation isn’t allowed for clients due to class-level permissions."
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.post(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`, {
+            var rep = http.post(serverBase + `/1.0/app/test_acl/${id}/ext`, {
                 json: {
                     name: 'new name',
                     age: 123
@@ -463,13 +465,13 @@ describe("acl", () => {
             assert.equal(rep.statusCode, 201);
             rid1 = rep.json().id;
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid1}`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
                 "id": rid1,
                 "name": null,
@@ -479,26 +481,26 @@ describe("acl", () => {
         });
 
         it('find', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext`);
             check_result(rep.json(), {
                 "code": 4030301,
                 "message": "The operation isn’t allowed for clients due to class-level permissions."
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext`);
             check_result(rep.json(), [{
                     "name": "aaa_ext"
                 },
@@ -507,13 +509,13 @@ describe("acl", () => {
                 }
             ]);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext`);
             check_result(rep.json(), [{
                     "id": rid,
                     "name": "aaa_ext",
@@ -528,34 +530,34 @@ describe("acl", () => {
         });
 
         it('delete', () => {
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.del(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid1}`);
+            var rep = http.del(serverBase + `/1.0/app/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
                 "code": 4030301,
                 "message": "The operation isn’t allowed for clients due to class-level permissions."
             });
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
-            var rep = http.del(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext/${rid1}`);
+            var rep = http.del(serverBase + `/1.0/app/test_acl/${id}/ext/${rid1}`);
             assert.equal(rep.statusCode, 200);
 
-            http.post('http://127.0.0.1:8080/set_session', {
+            http.post(serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(`http://127.0.0.1:8080/1.0/app/test_acl/${id}/ext`);
+            var rep = http.get(serverBase + `/1.0/app/test_acl/${id}/ext`);
             check_result(rep.json(), [{
                 "id": rid,
                 "name": "aaa_ext",

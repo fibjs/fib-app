@@ -18,7 +18,8 @@ var session = new Session(new util.LruCache(20000), {
     timeout: 60 * 1000
 });
 
-var svr = new http.Server(8080, [
+var { port } = require('./')
+var svr = new http.Server(port, [
     session.cookie_filter,
     {
         '/1.0/app': app,
