@@ -1,53 +1,68 @@
 /// <reference path="../../@types/index.d.ts" />
-Object.defineProperty(exports, "__esModule", { value: true });
+
+import { Model as ORMModel } from "orm";
+
 const util = require('util');
-const err_info_1 = require("../utils/err_info");
-const { check_obj_acl, check_robj_acl } = require('./check_acl');
-exports._get = function (cls, id, session, act) {
-    var obj = {
-        data: cls.find().where({
+import err_info from '../utils/err_info';
+import { FibAppInternalCommObj, FibAppInternalCommExtendObj } from "../../@types/app";
+const {
+    check_obj_acl,
+    check_robj_acl
+} = require('./check_acl');
+
+export const _get = function (cls: ORMModel, id: AppIdType, session: FibAppSession, act?: ACLActString): FibAppInternalCommObj {
+    var obj: FibAppInternalCommObj = {
+        data: (cls as any).find().where({
             id: id
         }).firstSync()
     };
+
     if (obj.data === null)
-        return err_info_1.default(4040002, {
+        return err_info(4040002, {
             id: id,
             classname: cls.model_name
         }, cls.cid);
+
     if (act) {
         var acl = check_obj_acl(session, act, obj.data);
         if (!acl)
-            return err_info_1.default(4030001, {}, cls.cid);
+            return err_info(4030001, {}, cls.cid);
         obj.acl = acl;
     }
+
     return obj;
 };
-exports._eget = function (cls, id, extend, rid, session, act) {
+
+export const _eget = function (cls: ORMModel, id: IdPayloadVar, extend: ACLExtendModelNameType, rid: AppIdType, session: FibAppSession, act: ACLActString): FibAppInternalCommExtendObj {
     var rel_model = cls.extends[extend];
     if (rel_model === undefined)
-        return err_info_1.default(4040001, {
+        return err_info(4040001, {
             classname: extend
         }, cls.cid);
+
     var obj;
+
     if (util.isObject(id)) {
         obj = {
             data: id
         };
-        id = id.id;
-    }
-    else {
+        id = (id as any).id;
+    } else {
         obj = {
-            data: cls.find().where({
+            data: (cls as any).find().where({
                 id: id
             }).firstSync()
         };
+
         if (obj.data === null)
-            return err_info_1.default(4040002, {
+            return err_info(4040002, {
                 id: id,
                 classname: cls.model_name
             }, cls.cid);
     }
+
     var __opt;
+
     if (rel_model.type === 'hasOne') {
         if (rel_model.reversed)
             __opt = obj.data[obj.data.__opts.one_associations.find(a => a.name === extend).getAccessor].call(obj.data);
@@ -56,31 +71,34 @@ exports._eget = function (cls, id, extend, rid, session, act) {
             if (rid === undefined)
                 rid = rid1;
             else if (rid != rid1)
-                return err_info_1.default(4040002, {
+                return err_info(4040002, {
                     id: rid,
                     classname: `${cls.model_name}.${extend}`
                 }, rel_model.model.cid);
             __opt = rel_model.model.find();
         }
-    }
-    else
+    } else
         __opt = obj.data[obj.data.__opts.many_associations.find(a => a.name === extend).getAccessor].call(obj.data);
-    var robj = {
+
+    var robj: FibAppInternalCommExtendObj = {
         base: obj.data,
         data: __opt.where({
             id: rid
         }).firstSync()
     };
+
     if (robj.data === null)
-        return err_info_1.default(4040002, {
+        return err_info(4040002, {
             id: rid,
             classname: `${cls.model_name}.${extend}`
         }, rel_model.model.cid);
+
     if (act) {
         var acl = check_robj_acl(session, act, obj.data, robj.data, extend);
         if (!acl)
-            return err_info_1.default(4030001, {}, rel_model.model.cid);
+            return err_info(4030001, {}, rel_model.model.cid);
         robj.acl = acl;
     }
+
     return robj;
 };

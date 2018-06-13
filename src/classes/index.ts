@@ -1,69 +1,84 @@
-Object.defineProperty(exports, "__esModule", { value: true });
-const mq = require("mq");
-const http = require("http");
-const json = require("json");
-const err_info_1 = require("../utils/err_info");
-const check_acl_1 = require("../utils/check_acl");
-const _extend = require("./extend");
-const _base = require("./base");
+import { FibAppClass, FibAppSetupChainFn, FibAppHttpRequest, FibAppDb, FibAppReq, FibDataPayload } from "../../@types/app";
+import * as FibOrmNS from 'orm'
+
+import mq = require('mq');
+import http = require('http');
+import json = require('json');
+import err_info, { APPError } from '../utils/err_info';
+
+import { check_acl } from '../utils/check_acl';
+import * as _extend from './extend';
+import * as _base from './base';
+
 const _slice = Array.prototype.slice;
-exports.bind = (app) => {
+
+export const bind = (app: FibAppClass) => {
     var pool = app.db;
     app.api = {};
-    function fill_error(req, e) {
+
+    function fill_error(req: FibAppHttpRequest, e: { error: APPError }) {
         var code = e.error.code;
+
         req.response.statusCode = code / 10000;
         req.response.json({
             code: e.error.cls ? code + e.error.cls * 100 : code,
             message: e.error.message
         });
     }
-    const _ = function (req, classname, ...args) {
+
+    const _: FibAppSetupChainFn = function (req: FibAppHttpRequest, classname: string, ...args: any[]) {
         var arglen = arguments.length;
         var earg = _slice.call(arguments, 2, arglen - 1);
         var func = arguments[arglen - 1];
-        pool((db) => {
+
+        pool((db: FibAppDb) => {
             var data;
+
             // check empty data
             if (req.length == 0 && func.length === arglen + 1)
-                return fill_error(req, err_info_1.default(4000001, {
-                    method: req.method
-                }));
+                return fill_error(req,
+                    err_info(4000001, {
+                        method: req.method
+                    }));
+
             // decode json data
             if (req.length > 0)
                 try {
                     data = req.json();
+                } catch (e) {
+                    return fill_error(req, err_info(4000002));
                 }
-                catch (e) {
-                    return fill_error(req, err_info_1.default(4000002));
-                }
+
             // check classname
             const cls = db.models[classname];
             if (cls === undefined)
-                return fill_error(req, err_info_1.default(4040001, {
-                    classname: classname
-                }));
-            var _req = {
+                return fill_error(req,
+                    err_info(4040001, {
+                        classname: classname
+                    }));
+
+            var _req: FibAppReq = {
                 session: req.session,
                 query: req.query.toJSON(),
                 request: req
             };
+
             var where = _req.query.where;
             if (where !== undefined)
                 try {
-                    _req.query.where = json.decode(where);
+                    _req.query.where = json.decode(where as string);
+                } catch (e) {
+                    return fill_error(req, err_info(4000003));
                 }
-                catch (e) {
-                    return fill_error(req, err_info_1.default(4000003));
-                }
+
             var keys = _req.query.keys;
             if (keys !== undefined && typeof keys === 'string')
                 _req.query.keys = keys.split(',');
+
             var result;
             try {
                 result = func.apply(undefined, [_req, db, cls].concat(earg, [data]));
-            }
-            catch (e) {
+            } catch (e) {
                 console.error(e.stack);
                 if (e.type === 'validation') {
                     result = {
@@ -72,9 +87,8 @@ exports.bind = (app) => {
                             message: e.msg
                         }
                     };
-                }
-                else {
-                    return fill_error(req, err_info_1.default(5000002, {
+                } else {
+                    return fill_error(req, err_info(5000002, {
                         function: "func",
                         classname: classname,
                         message: e.message
@@ -85,29 +99,31 @@ exports.bind = (app) => {
                 if (result.status)
                     req.response.statusCode = result.status;
                 req.response.json(result.success);
-            }
-            else
+            } else
                 fill_error(req, result);
         });
-    };
+    }
+
     _base.bind(_, app);
     _extend.bind(_, app);
-    app.post('/:classname/:func', (req, classname, func) => {
-        _(req, classname, (_req, db, cls, data) => {
-            if (!check_acl_1.check_acl(_req.session, func, cls.ACL))
-                return err_info_1.default(4030001, {}, cls.cid);
+
+    app.post('/:classname/:func', (req: FibAppHttpRequest, classname: string, func: string) => {
+        _(req, classname, (_req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, data: FibDataPayload) => {
+            if (!check_acl(_req.session, func, cls.ACL))
+                return err_info(4030001, {}, cls.cid);
+
             const f = cls.functions[func];
             if (f === undefined)
-                return err_info_1.default(4040004, {
+                return err_info(4040004, {
                     function: func,
                     classname: classname
                 }, cls.cid);
+
             try {
                 return f(_req, data);
-            }
-            catch (e) {
+            } catch (e) {
                 console.error(e.stack);
-                return err_info_1.default(5000002, {
+                return err_info(5000002, {
                     function: func,
                     classname: classname,
                     message: e.message
@@ -115,37 +131,40 @@ exports.bind = (app) => {
             }
         });
     });
-    app.post('/', (req) => {
+
+    app.post('/', (req: FibAppHttpRequest) => {
         if (req.firstHeader('Content-Type').split(';')[0] === 'application/graphql') {
-            pool((db) => {
+            pool((db: FibAppDb) => {
                 var data = "";
                 try {
                     data = req.data.toString();
-                }
-                catch (e) { }
+                } catch (e) {}
+
                 req.response.json(db.graphql(data, req));
             });
-        }
-        else {
+        } else {
             var querys;
             try {
                 querys = req.json().requests;
-            }
-            catch (e) {
-                return fill_error(req, err_info_1.default(4000002));
+            } catch (e) {
+                return fill_error(req, err_info(4000002));
             }
             if (!Array.isArray(querys))
-                return fill_error(req, err_info_1.default(4000004));
+                return fill_error(req, err_info(4000004));
+
             var results = querys.map(q => {
-                var r = new http.Request();
+                var r = new (http as any).Request();
                 r.method = q.method;
+
                 var a = q.path.split('?');
                 r.address = r.value = a[0];
                 r.queryString = a[1];
+
                 r.session = req.session;
                 if (q.body)
                     r.json(q.body);
                 mq.invoke(app, r);
+
                 var p = r.response;
                 if (p.statusCode / 100 !== 2)
                     return {
@@ -156,6 +175,7 @@ exports.bind = (app) => {
                         'success': p.json()
                     };
             });
+
             req.response.json(results);
         }
     });
