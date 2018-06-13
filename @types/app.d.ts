@@ -90,7 +90,7 @@ interface FibAppHttpRequest extends HttpRequest {
     session: FibAppSession
 }
 
-interface FibAppReqQuery extends Class__object {
+interface FibAppReqQuery {
     where?: string | ReqWhere
     keys?: string|string[]
     skip?: number
@@ -99,7 +99,10 @@ interface FibAppReqQuery extends Class__object {
     order?: string
     // it's numberType, but it's designed as boolean
     count?: number
+
+    [extraField: string]: any;
 }
+interface FibAppReqQueryObject extends FibAppReqQuery, Class__object {}
 
 interface FibAppReq {
     session: FibAppSession
