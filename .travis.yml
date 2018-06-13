@@ -1,0 +1,14 @@
+language: node_js
+node_js: '6'
+env:
+  - VERSION=0.21.0
+  - VERSION=0.22.0
+  - VERSION=0.23.0
+  - VERSION=0.24.0
+script:
+  - npm i
+  - mkdir -p ./node_modules/.bin
+  - curl -SL "https://github.com/fibjs/fibjs/releases/download/v${VERSION}/fibjs-v${VERSION}-linux-x64.xz" -o ./node_modules/.bin/fibjs.xz
+  - xz -d ./node_modules/.bin/fibjs.xz
+  - chmod a+x ./node_modules/.bin/fibjs
+  - npm run ci

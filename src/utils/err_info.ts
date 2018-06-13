@@ -1,4 +1,5 @@
-Object.defineProperty(exports, "__esModule", { value: true });
+import { FibModelCountTypeMACRO } from "../../@types/app";
+
 var infos = {
     "4000001": "${method} request don't send any data.",
     "4000002": "The data uploaded in the request is not legal JSON data.",
@@ -11,27 +12,37 @@ var infos = {
     "4040004": "Function '${function}' not found in class '${classname}'.",
     "5000002": "Function '${function}' in class '${classname}' throws error '${message}', please contact the administrator."
 };
-class APPError extends Error {
-    constructor(code, message, cls) {
+
+
+export class APPError extends Error {
+    name: string = 'APPError';
+    
+    code: number;
+    message: string;
+    cls?: FibModelCountTypeMACRO;
+    
+    constructor (code: number, message: string, cls?: FibModelCountTypeMACRO) {
         super();
-        this.name = 'APPError';
         Error.call(this);
-        Error.captureStackTrace(this, this.constructor);
+        (Error as any).captureStackTrace(this, this.constructor);
+
         this.message = message;
         this.code = code;
         this.cls = cls;
     }
-    toString() {
+
+    toString () {
         return this.code + ': ' + this.message;
     }
 }
-exports.APPError = APPError;
+
 APPError.prototype = Object.create(Error.prototype);
 APPError.prototype.constructor = APPError;
 APPError.prototype.name = 'APPError';
 APPError.prototype.toString = function () {
     return this.code + ': ' + this.message;
-};
-exports.default = (code, data, cls) => ({
+}
+
+export default (code: number, data?: object, cls?: FibModelCountTypeMACRO) => ({
     error: new APPError(code, infos[code].replace(/\${(.+?)}/g, (s1, s2) => data[s2]), cls)
 });

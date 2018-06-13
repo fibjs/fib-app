@@ -1,33 +1,53 @@
-Object.defineProperty(exports, "__esModule", { value: true });
 const util = require('util');
-const check_acl_1 = require("../utils/check_acl");
-const filter_1 = require("../utils/filter");
-const find_1 = require("../utils/find");
-const err_info_1 = require("../utils/err_info");
-const get_1 = require("../utils/get");
-exports.bind = (_, app) => {
+import {
+    check_acl,
+    check_obj_acl
+} from '../utils/check_acl';
+import {
+    filter,
+    filter_ext
+} from '../utils/filter';
+import _find from '../utils/find';
+import err_info from '../utils/err_info';
+import {
+    _get,
+    _eget
+} from '../utils/get';
+import { FibAppClass, FibAppDb, FibDataPayload, FibAppHttpRequest, FibAppSetupChainFn, FibAppReq } from '../../@types/app';
+import FibOrmNS from 'orm';
+
+export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
     var api = app.api;
-    api.eput = (req, db, cls, id, extend, rid, data) => {
+
+    api.eput = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: IdPayloadVar, extend: ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload) => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
-            return err_info_1.default(4040001, {
+            return err_info(4040001, {
                 classname: extend
             });
-        var robj = get_1._eget(cls, id, extend, rid, req.session, "write");
+
+        var robj = _eget(cls, id, extend, rid, req.session, "write");
         if (robj.error)
             return robj;
-        data = filter_1.filter(data, robj.acl);
+
+        data = filter(data, robj.acl);
+
         var rdata;
+
         for (var k in rel_model.model.extends) {
             var r = data[k];
+
             if (r !== undefined) {
                 rdata[k] = r;
                 delete data[k];
             }
         }
+
         for (var k in data)
             robj.data[k] = data[k];
+
         robj.data.saveSync();
+
         return {
             success: {
                 id: robj.data.id,
@@ -35,32 +55,40 @@ exports.bind = (_, app) => {
             }
         };
     };
-    api.elink = (req, db, cls, id, extend, data) => {
+
+    api.elink = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload) => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
-            return err_info_1.default(4040001, {
+            return err_info(4040001, {
                 classname: extend
             });
-        var obj = get_1._get(cls, id, req.session, "write");
+
+        var obj = _get(cls, id, req.session, "write");
         if (obj.error)
             return obj;
+
         if (Array.isArray(obj.acl) && obj.acl.indexOf(extend) === -1)
-            return err_info_1.default(4030001, {}, cls.cid);
+            return err_info(4030001, {}, cls.cid);
+
         var rid = data.id;
         if (rid === undefined)
-            return err_info_1.default(4040002, {
+            return err_info(4040002, {
                 id: rid,
                 classname: extend
             }, rel_model.model.cid);
-        var robj = get_1._get(rel_model.model, rid, req.session, "read");
+
+        var robj = _get(rel_model.model, rid, req.session, "read");
         if (robj.error)
             return robj;
+
         var _opt;
         if (rel_model.type === 'hasOne')
             _opt = obj.data.__opts.one_associations.find(a => a.name === extend).setAccessor;
         else
             _opt = obj.data.__opts.many_associations.find(a => a.name === extend).addAccessor;
+
         obj.data[_opt + 'Sync'].call(obj.data, robj.data);
+
         return {
             success: {
                 id: obj.data.id,
@@ -68,59 +96,71 @@ exports.bind = (_, app) => {
             }
         };
     };
-    api.epost = (req, db, cls, id, extend, data) => {
+
+    api.epost = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: IdPayloadVar, extend: ACLExtendModelNameType, data: FibDataPayload) => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
-            return err_info_1.default(4040001, {
+            return err_info(4040001, {
                 classname: extend
             });
+
         var obj;
+
         if (util.isObject(id)) {
             obj = {
                 data: id
             };
-            id = id.id;
-        }
-        else {
-            obj = get_1._get(cls, id, req.session);
+            id = (id as ObjectWithIdField).id;
+        } else {
+            obj = _get(cls, id as AppIdType, req.session);
             if (obj.error)
                 return obj;
         }
-        var acl = check_acl_1.check_obj_acl(req.session, 'create', obj.data, extend);
+
+        var acl = check_obj_acl(req.session, 'create', obj.data, extend);
         if (!acl)
-            return err_info_1.default(4030001, {}, cls.cid);
+            return err_info(4030001, {}, cls.cid);
+
         var _createBy = rel_model.model.extends['createdBy'];
         var _opt;
         var robj;
         var rdata = [];
+
         function _create(d) {
-            d = filter_1.filter(d, acl);
+            d = filter(d, acl);
+
             var rd = {};
             for (var k in cls.extends) {
                 var r = d[k];
+
                 if (r !== undefined) {
                     rd[k] = r;
                     delete d[k];
                 }
             }
             rdata.push(rd);
+
             var ro = new rel_model.model(d);
+
             if (_createBy !== undefined) {
                 _opt = Object.keys(ro.__opts.one_associations.find(a => a.name === 'createdBy').field)[0];
                 ro[_opt] = req.session.id;
             }
+
             if (rel_model.reversed) {
                 obj.data[extend] = ro;
                 obj.data.saveSync();
-            }
-            else
+            } else
                 ro.saveSync();
+
             return ro;
         }
+
         if (Array.isArray(data))
             robj = data.map(d => _create(d));
         else
             robj = [_create(data)];
+
         rdata.forEach((rd, i) => {
             for (var k in rd) {
                 var res = api.epost(req, db, cls, robj[i], k, rd[k]);
@@ -128,14 +168,17 @@ exports.bind = (_, app) => {
                     return res;
             }
         });
+
         if (!rel_model.reversed) {
             var _opt;
             if (rel_model.type === 'hasOne')
                 _opt = obj.data.__opts.one_associations.find(a => a.name === extend).setAccessor;
             else
                 _opt = obj.data.__opts.many_associations.find(a => a.name === extend).addAccessor;
+
             robj.forEach(ro => obj.data[_opt + 'Sync'].call(obj.data, ro));
         }
+
         if (Array.isArray(data)) {
             return {
                 status: 201,
@@ -146,8 +189,7 @@ exports.bind = (_, app) => {
                     };
                 })
             };
-        }
-        else
+        } else
             return {
                 status: 201,
                 success: {
@@ -156,52 +198,64 @@ exports.bind = (_, app) => {
                 }
             };
     };
-    api.efind = (req, db, cls, id, extend) => {
+
+    api.efind = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: IdPayloadVar, extend: ACLExtendModelNameType) => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
-            return err_info_1.default(4040001, {
+            return err_info(4040001, {
                 classname: extend
             });
+
         if (rel_model.type === 'hasOne' && !rel_model.reversed)
-            return api.eget(req, db, cls, id, extend);
+            return api.eget(req, db, cls, id as AppIdType, extend);
+
         var obj;
+
         if (util.isObject(id)) {
             obj = {
                 data: id
             };
-            id = id.id;
-        }
-        else {
-            obj = get_1._get(cls, id, req.session);
+            id = (id as ObjectWithIdField).id;
+        } else {
+            obj = _get(cls, id as AppIdType, req.session);
             if (obj.error)
                 return obj;
         }
-        if (!check_acl_1.check_obj_acl(req.session, 'find', obj.data, extend))
-            return err_info_1.default(4030001, {}, rel_model.model.cid);
+
+        if (!check_obj_acl(req.session, 'find', obj.data, extend))
+            return err_info(4030001, {}, rel_model.model.cid);
+
         var _association;
         if (rel_model.type === 'hasOne')
             _association = obj.data.__opts.one_associations.find(a => a.name === extend);
         else
             _association = obj.data.__opts.many_associations.find(a => a.name === extend);
+
         return {
-            success: find_1.default(req, obj.data[_association.getAccessor].call(obj.data), obj.data, extend)
+            success: _find(req, obj.data[_association.getAccessor].call(obj.data), obj.data, extend)
         };
     };
-    api.eget = (req, db, cls, id, extend, rid) => {
-        var robj = get_1._eget(cls, id, extend, rid, req.session, "read");
+
+    api.eget = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType) => {
+        var robj = _eget(cls, id, extend, rid, req.session, "read");
         if (robj.error)
             return robj;
+
         return {
-            success: filter_1.filter(filter_1.filter_ext(req.session, robj.data), req.query.keys, robj.acl)
+            success: filter(filter_ext(req.session, robj.data), req.query.keys, robj.acl)
         };
     };
-    api.edel = (req, db, cls, id, extend, rid) => {
-        var robj = get_1._eget(cls, id, extend, rid, req.session, "delete");
+
+    api.edel = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType) => {
+        var robj = _eget(cls, id, extend, rid, req.session, "delete");
         if (robj.error)
             return robj;
+
         var rel_model = cls.extends[extend];
+
         if (rel_model.type === 'hasMany') {
             robj.base[robj.base.__opts.many_associations.find(a => a.name === extend).delAccessor + 'Sync'].call(robj.base, robj.data);
+
             return {
                 success: {
                     id: robj.base.id,
@@ -209,8 +263,10 @@ exports.bind = (_, app) => {
                 }
             };
         }
+
         if (rel_model.type === 'hasOne') {
             robj.base[robj.base.__opts.one_associations.find(a => a.name === extend).delAccessor + 'Sync'].call(robj.base);
+
             return {
                 success: {
                     id: robj.base.id,
@@ -219,10 +275,11 @@ exports.bind = (_, app) => {
             };
         }
     };
-    app.put('/:classname/:id/:extend', (req, classname, id, extend) => _(req, classname, id, extend, api.elink));
-    app.put('/:classname/:id/:extend/:rid', (req, classname, id, extend, rid) => _(req, classname, id, extend, rid, api.eput));
-    app.post('/:classname/:id/:extend', (req, classname, id, extend) => _(req, classname, id, extend, api.epost));
-    app.get('/:classname/:id/:extend', (req, classname, id, extend) => _(req, classname, id, extend, api.efind));
-    app.get('/:classname/:id/:extend/:rid', (req, classname, id, extend, rid) => _(req, classname, id, extend, rid, api.eget));
-    app.del('/:classname/:id/:extend/:rid', (req, classname, id, extend, rid) => _(req, classname, id, extend, rid, api.edel));
+
+    app.put('/:classname/:id/:extend', (req: FibAppHttpRequest, classname: string, id: AppIdType, extend: ACLExtendModelNameType) => _(req, classname, id, extend, api.elink));
+    app.put('/:classname/:id/:extend/:rid', (req: FibAppHttpRequest, classname: string, id: AppIdType, extend: ACLExtendModelNameType, rid) => _(req, classname, id, extend, rid, api.eput));
+    app.post('/:classname/:id/:extend', (req: FibAppHttpRequest, classname: string, id: AppIdType, extend: ACLExtendModelNameType) => _(req, classname, id, extend, api.epost));
+    app.get('/:classname/:id/:extend', (req: FibAppHttpRequest, classname: string, id: AppIdType, extend: ACLExtendModelNameType) => _(req, classname, id, extend, api.efind));
+    app.get('/:classname/:id/:extend/:rid', (req: FibAppHttpRequest, classname: string, id: AppIdType, extend: ACLExtendModelNameType, rid) => _(req, classname, id, extend, rid, api.eget));
+    app.del('/:classname/:id/:extend/:rid', (req: FibAppHttpRequest, classname: string, id: AppIdType, extend: ACLExtendModelNameType, rid) => _(req, classname, id, extend, rid, api.edel));
 };
