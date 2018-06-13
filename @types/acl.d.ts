@@ -47,7 +47,7 @@ type OACLDescriptor = OACLDescriptorStruct | boolean
 type ACLGeneratorFn = (sess: FibAppSession) => ACLDefinition
 type OACLGeneratorFn = (sess: FibAppSession) => OACLDefinition
 type FibACLDef = ACLGeneratorFn | ACLDefinition
-type FibOACLDef = ACLGeneratorFn | ACLDefinition
+type FibOACLDef = OACLGeneratorFn | OACLDefinition
 
 type FibACLDefResult = ACLDefinition
 
