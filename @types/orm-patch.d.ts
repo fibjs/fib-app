@@ -27,8 +27,8 @@ interface OrigORMDefProperties {
 }
 
 interface FibAppOrmModelDefOptions extends FibOrmNS.FibOrmFixedModelOptions {
-    ACL?: ACLGeneratorFn
-    OACL?: OACLGeneratorFn
+    ACL?: FibACLDef
+    OACL?: FibOACLDef
     functions?: {
         [funcName: string]: FibAppWebApiFunctionInModel
     }
