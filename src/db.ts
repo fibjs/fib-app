@@ -1,4 +1,4 @@
-import { FibAppClass, FibAppDbSetupOptsl, FibAppDb, AppDBPool } from '../@types/app';
+import { FibAppDbSetupOptsl, FibAppDb, AppDBPool, FibAppOrmDefineFn } from '../@types/app';
 import { FibAppORMModel, FibAppOrmModelDefOptions, OrigORMDefProperties } from '../@types/orm-patch';
 import * as orm from 'fib-orm';
 import FibOrmNS from 'orm';
@@ -160,7 +160,7 @@ export default (app: App, url: string, opts: FibAppDbSetupOptsl): AppDBPool<FibA
         retry: opts.retry
     });
 
-    db.use = (def: OrigORMDefProperties) => defs = defs.concat(def);
+    db.use = (def: FibAppOrmDefineFn|FibAppOrmDefineFn[]) => defs = defs.concat(def);
 
     return db;
 };

@@ -11,8 +11,12 @@ type FibModelCountTypeMACRO = number;
 type FibModelExtendORMFuncName = string;
 
 type FibPoolFn<T> = (cb: (o: T) => any) => T
+
+interface FibAppOrmDefineFn {
+    (db: FibAppDb): FibAppORMModel
+}
 interface AppDBPool<T> extends FibPoolFn<T> {
-    use(def: OrigORMDefProperties): OrigORMDefProperties[];
+    use(defs: FibAppOrmDefineFn|FibAppOrmDefineFn[]): OrigORMDefProperties[];
 }
 
 interface FBDataPayload {
