@@ -1,6 +1,6 @@
 {
   "name": "fib-app",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "description": "",
   "main": "lib/app",
   "types": "@types/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@fibjs/ci": "^2.0.0",
-    "@types/fibjs": "github:fibjs/fib-types#v1.0.4",
+    "@types/fibjs": "github:fibjs/fib-types#v1.0.6",
     "fib-orm": "^1.4.2",
     "fib-push": "^1.0.0",
     "fib-session": "^0.1.1",
@@ -33,7 +33,8 @@
       "0.21.0",
       "0.22.0",
       "0.23.0",
-      "0.24.0"
+      "0.24.0",
+      "0.25.0"
     ]
   }
 }
