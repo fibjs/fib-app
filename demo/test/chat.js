@@ -1,7 +1,9 @@
 const test = require('test');
 test.setup();
 
-const { serverBase } = require('../')
+const {
+    serverBase
+} = require('../')
 const wsBase = serverBase.replace('http://', 'ws://')
 
 const http = require('http');
