@@ -92,7 +92,7 @@ describe("chat", () => {
 
         coroutine.sleep(100);
 
-        var rep = http.post(serverBase + `/1.0/app/chatroom/${cid}/messages`, {
+        http.post(serverBase + `/1.0/app/chatroom/${cid}/messages`, {
             json: {
                 msg: 'hellow, world. again'
             }
@@ -105,14 +105,16 @@ describe("chat", () => {
             ch: `channel_${cid}`
         }));
 
-
-        assert.equal(r.length, 2);
+        assert.equal(r.length, 3);
 
         assert.property(r[0], "timestamp");
         assert.notProperty(r[0], "data");
 
         assert.property(r[1], "timestamp");
-        assert.equal(r[1].data.msg, "hellow, world. again");
+        assert.equal(r[1].data.msg, "hellow, world.");
+
+        assert.property(r[2], "timestamp");
+        assert.equal(r[2].data.msg, "hellow, world. again");
     });
 
 
