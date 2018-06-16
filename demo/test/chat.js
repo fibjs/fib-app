@@ -1,7 +1,9 @@
 const test = require('test');
 test.setup();
 
-const { serverBase } = require('../')
+const {
+    serverBase
+} = require('../')
 const wsBase = serverBase.replace('http://', 'ws://')
 
 const http = require('http');
@@ -106,13 +108,13 @@ describe("chat", () => {
         }));
 
 
-        assert.equal(r.length, 2);
+        assert.equal(r.length, 3);
 
         assert.property(r[0], "timestamp");
         assert.notProperty(r[0], "data");
 
         assert.property(r[1], "timestamp");
-        assert.equal(r[1].data.msg, "hellow, world. again");
+        assert.equal(r[1].data.msg, "hellow, world.");
     });
 
 
