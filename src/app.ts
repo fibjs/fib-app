@@ -4,7 +4,7 @@ import * as mq from 'mq';
 import { FibAppApi, AppDBPool, FibAppDb, FibAppOpts, FibAppClass } from '../@types/app';
 
 import classes = require('./classes');
-import setupDb from './db';
+import setupDb = require('./db');
 import diagram from './utils/diagram';
 
 class App extends mq.Routing implements FibAppClass {
@@ -20,8 +20,8 @@ class App extends mq.Routing implements FibAppClass {
         this.diagram = diagram;
     }
 
-    // [extraMember: string]: any;
-};
+    [extraMember: string]: any;
+}
 
 module.exports = App;
 export = App;

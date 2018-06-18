@@ -153,7 +153,7 @@ export const bind = (app: FibAppClass) => {
                 return fill_error(req, err_info(4000004));
 
             var results = querys.map(q => {
-                var r = new (http as any).Request();
+                var r = new http.Request() as FibAppHttpRequest;
                 r.method = q.method;
 
                 var a = q.path.split('?');

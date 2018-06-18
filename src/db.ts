@@ -13,7 +13,7 @@ import App from './app';
 
 const slice = Array.prototype.slice;
 
-export default (app: App, url: string, opts: FibAppDbSetupOptsl): AppDBPool<FibAppDb> => {
+export = (app: App, url: string, opts: FibAppDbSetupOptsl): AppDBPool<FibAppDb> => {
     var defs = [];
     opts = opts || {};
     var sync_lock = new coroutine.Lock();
