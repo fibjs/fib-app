@@ -2,9 +2,11 @@ import * as mq from 'mq'
 import FibGraphQL = require('fib-graphql')
 
 import FibOrmNs from 'orm';
-import { HttpRequest } from 'http';
+import * as http from 'http';
 import { APPError } from '../src/utils/err_info';
 import { FibAppOrmModelDefOptions, FibAppORMModel, ORMFindResult, OrigORMDefProperties } from './orm-patch';
+
+import FibSessionNS = require('fib-session/@types/export');
 
 type FibModelCountTypeMACRO = number;
 
@@ -90,8 +92,8 @@ interface FibAppSetupChainFn {
     (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, rid: AppIdType, efunc: Function): void;
 }
 
-interface FibAppHttpRequest extends HttpRequest {
-    session: FibAppSession
+interface FibAppHttpRequest extends http.Request, FibSessionNS.FibSessionHttpRequest {
+    session: ProxyHandler<FibAppSession>
 }
 
 interface FibAppReqQuery {
@@ -155,6 +157,7 @@ interface FibAppClass extends mq.Routing {
      *  [METHOD](pattern: string, ...args: any[]): Class_Routing
      * in 'fib-types'
      */
+    all(pattern: string, ...args: any[]): Class_Routing
     get(pattern: string, ...args: any[]): Class_Routing
     post(pattern: string, ...args: any[]): Class_Routing
     del(pattern: string, ...args: any[]): Class_Routing
