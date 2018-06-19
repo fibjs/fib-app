@@ -23,5 +23,4 @@ class App extends mq.Routing implements FibAppClass {
     [extraMember: string]: any;
 }
 
-module.exports = App;
 export = App;
