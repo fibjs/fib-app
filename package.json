@@ -1,6 +1,6 @@
 {
   "name": "fib-app",
-  "version": "1.11.2",
+  "version": "1.11.3",
   "description": "",
   "main": "lib/app",
   "types": "@types/index.d.ts",
