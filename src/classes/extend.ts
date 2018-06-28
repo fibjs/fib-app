@@ -32,7 +32,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
 
         data = filter(data, robj.acl);
 
-        var rdata;
+        var rdata = {};
 
         for (var k in rel_model.model.extends) {
             var r = data[k];
