@@ -1,6 +1,6 @@
 import FibOrmNS from 'orm'
 import App from "../app";
-import { FibAppDb, FibModelExtendORMFuncName, FibAppApiCommnPayload_hasManyArgs, FibAppReq, FibAppReqQuery } from "../../@types/app";
+import { FibAppDb, FibModelExtendORMFuncName, FibAppApiCommnPayload_hasManyArgs, FibAppReq, FibAppReqQuery, FibAppHttpRequest } from "../../@types/app";
 
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
@@ -194,7 +194,7 @@ export default (app: App, db: FibAppDb) => {
         })
     });
 
-    db.graphql = (query, req) => {
+    db.graphql = (query: FibAppReq, req: FibAppHttpRequest) => {
         var res = graphql.graphqlSync(Schema, query, {}, req);
 
         if (req.error) {

@@ -1,6 +1,6 @@
 {
   "name": "fib-app",
-  "version": "1.11.3",
+  "version": "1.11.4",
   "description": "",
   "main": "lib/app",
   "types": "@types/index.d.ts",
@@ -10,6 +10,12 @@
     "ci": "fibjs ./demo/test/index.js"
   },
   "author": "Liu Hu <lion@9465.net>",
+  "contributors": [
+    {
+      "name": "Richardo",
+      "email": "richardo2016@gmail.com"
+    }
+  ],
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
   "dependencies": {
@@ -20,7 +26,7 @@
   "devDependencies": {
     "@fibjs/ci": "^2.0.0",
     "@fibjs/detect-port": "^1.0.1",
-    "@types/fibjs": "github:fibjs/fib-types#v1.0.7",
+    "@types/fibjs": "^0.25.2",
     "fib-orm": "^1.4.2",
     "fib-pool": "^1.4.1",
     "fib-push": "^1.3.0",

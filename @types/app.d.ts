@@ -80,8 +80,11 @@ interface AppInternalCommunicationExtendObj extends AppInternalCommunicationObj 
 }
 type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 
+interface FibAppDbGraphQLHandler {
+    (query: FibAppReq, req: FibAppHttpRequest): any
+}
 interface FibAppDb extends FibOrmNs.FibORM {
-    graphql?: typeof FibGraphQL
+    graphql?: FibAppDbGraphQLHandler
 
     define(name: string, properties: OrigORMDefProperties, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
 }
@@ -93,6 +96,7 @@ interface FibAppSetupChainFn {
 }
 
 interface FibAppHttpRequest extends http.Request, FibSessionNS.FibSessionHttpRequest {
+    error: FibAppFinalError
     session: ProxyHandler<FibAppSession>
 }
 
