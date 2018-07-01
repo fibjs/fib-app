@@ -1,7 +1,27 @@
 
-v1.11.3 / 2018-06-19
+v1.11.5 / 2018-07-01
 ==================
 
+  * fix computation of `p.statusCode` in root batching request.
+  * fix implement of 'app.put'
+  * fix type about FibAppSession
+  * update build npm script.
+  * little type fix about graphql.
+  * Release v1.11.4
+  * upgrade version of '@types/fibjs', fix implement of `app.eput`
+
+v1.11.4 / 2018-06-29
+====================
+
+  * Release v1.11.4
+  * upgrade version of '@types/fibjs', fix implement of `app.eput`
+  * add src to .npmignore
+  * Merge pull request #17 from richardo2016/master
+
+v1.11.3 / 2018-06-19
+====================
+
+  * Release v1.11.3
   * upgrade 'fib-session', and do little code clean.
   * upgrade dependency
   * Merge pull request #16 from richardo2016/master
