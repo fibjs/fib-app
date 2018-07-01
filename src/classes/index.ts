@@ -166,7 +166,7 @@ export const bind = (app: FibAppClass) => {
                 mq.invoke(app, r);
 
                 var p = r.response;
-                if (p.statusCode / 100 !== 2)
+                if (Math.floor(p.statusCode / 100) !== 2)
                     return {
                         'error': p.json()
                     };
