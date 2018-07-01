@@ -95,7 +95,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
 
         data = filter(data, obj.acl);
 
-        var rdata;
+        var rdata = {};
 
         for (var k in cls.extends) {
             var r = data[k];

@@ -1,11 +1,11 @@
 {
   "name": "fib-app",
-  "version": "1.11.4",
+  "version": "1.11.5",
   "description": "",
   "main": "lib/app",
   "types": "@types/index.d.ts",
   "scripts": {
-    "build": "fibjs ./build.js",
+    "build": "fib-typify src -o lib -c .typifyrc.json",
     "test": "fibjs ./demo/test/index.js",
     "ci": "fibjs ./demo/test/index.js"
   },

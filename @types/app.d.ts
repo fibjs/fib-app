@@ -80,8 +80,9 @@ interface AppInternalCommunicationExtendObj extends AppInternalCommunicationObj 
 }
 type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 
+type GraphQLString = string
 interface FibAppDbGraphQLHandler {
-    (query: FibAppReq, req: FibAppHttpRequest): any
+    (query: GraphQLString, req: FibAppHttpRequest): any
 }
 interface FibAppDb extends FibOrmNs.FibORM {
     graphql?: FibAppDbGraphQLHandler
@@ -96,8 +97,7 @@ interface FibAppSetupChainFn {
 }
 
 interface FibAppHttpRequest extends http.Request, FibSessionNS.FibSessionHttpRequest {
-    error: FibAppFinalError
-    session: ProxyHandler<FibAppSession>
+    error?: FibAppFinalError
 }
 
 interface FibAppReqQuery {
