@@ -1,4 +1,4 @@
-import { FibAppClass, FibAppSetupChainFn, FibAppHttpRequest, FibAppDb, FibAppReq, FibDataPayload } from "../../@types/app";
+import { FibAppClass, FibAppSetupChainFn, FibAppHttpRequest, FibAppDb, FibAppReq, FibDataPayload, GraphQLString } from "../../@types/app";
 import * as FibOrmNS from 'orm'
 
 import mq = require('mq');
@@ -135,7 +135,7 @@ export const bind = (app: FibAppClass) => {
     app.post('/', (req: FibAppHttpRequest) => {
         if (req.firstHeader('Content-Type').split(';')[0] === 'application/graphql') {
             pool((db: FibAppDb) => {
-                var data = "";
+                var data: GraphQLString = "";
                 try {
                     data = req.data.toString();
                 } catch (e) {}

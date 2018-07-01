@@ -97,8 +97,7 @@ interface FibAppSetupChainFn {
 }
 
 interface FibAppHttpRequest extends http.Request, FibSessionNS.FibSessionHttpRequest {
-    error: FibAppFinalError
-    session: ProxyHandler<FibAppSession>
+    error?: FibAppFinalError
 }
 
 interface FibAppReqQuery {
