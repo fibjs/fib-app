@@ -126,7 +126,7 @@ interface FibAppReqData {
 }
 
 interface FibAppWebApiFunctionInModel {
-    (requstInfo: FibAppReq, data: FibAppWebApiFunctionInModel): any;
+    (requstInfo: FibAppReq, data: FibAppReqData): any;
 }
 
 interface FibAppDbSetupOptsl {
