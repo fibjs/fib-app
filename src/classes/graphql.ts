@@ -1,6 +1,8 @@
+import util = require('util')
+
 import FibOrmNS from 'orm'
 import App from "../app";
-import { FibAppDb, FibModelExtendORMFuncName, FibAppApiCommnPayload_hasManyArgs, FibAppReq, FibAppReqQuery, FibAppHttpRequest, GraphQLString } from "../../@types/app";
+import { FibAppDb, FibModelExtendORMFuncName, FibAppApiCommnPayload_hasManyArgs, FibAppReq, FibAppReqQuery, FibAppHttpRequest, FibAppGraphQLTypeMap, GraphQLQueryString } from "../../@types/app";
 
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
@@ -42,6 +44,7 @@ const hasManyArgs: FibAppApiCommnPayload_hasManyArgs = {
 
 export default (app: App, db: FibAppDb) => {
     var types = {};
+    var graphqlTypeMap: FibAppGraphQLTypeMap = util.extend(app.graphqlTypeMap, TypeMap)
 
     function get_resolve(m: FibOrmNS.FibOrmFixedModel) {
         return function (parent, args, req) {
@@ -133,10 +136,17 @@ export default (app: App, db: FibAppDb) => {
             var fields = {}
 
             var properties = m.properties;
-            for (var f in properties)
-                fields[f] = {
-                    type: TypeMap[properties[f].type]
+            for (var p in properties) {
+                var type = graphqlTypeMap[properties[p].type]
+
+                if (!type) {
+                    throw `valid type required for model ${m.name}'s field ${p}`
+                }
+
+                fields[p] = {
+                    type: type
                 };
+            }
 
             var _extends = m.extends;
             for (var f in _extends) {
@@ -198,7 +208,7 @@ export default (app: App, db: FibAppDb) => {
         })
     });
 
-    db.graphql = (query: GraphQLString, req: FibAppHttpRequest) => {
+    db.graphql = (query: GraphQLQueryString, req: FibAppHttpRequest) => {
         var res = graphql.graphqlSync(Schema, query, {}, req);
 
         if (req.error) {

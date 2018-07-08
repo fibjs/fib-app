@@ -80,9 +80,9 @@ interface AppInternalCommunicationExtendObj extends AppInternalCommunicationObj 
 }
 type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 
-type GraphQLString = string
+type GraphQLQueryString = string
 interface FibAppDbGraphQLHandler {
-    (query: GraphQLString, req: FibAppHttpRequest): any
+    (query: GraphQLQueryString, req: FibAppHttpRequest): any
 }
 interface FibAppDb extends FibOrmNs.FibORM {
     graphql?: FibAppDbGraphQLHandler
@@ -129,13 +129,19 @@ interface FibAppWebApiFunctionInModel {
     (requstInfo: FibAppReq, data: FibAppReqData): any;
 }
 
-interface FibAppDbSetupOptsl {
+interface FibAppGraphQLTypeMap {
+    [typeName: string]: any
+}
+
+interface FibAppDbSetupOpts {
     uuid?: boolean
     maxsize?: number
     timeout?: number
     retry?: boolean
+
+    graphqlTypeMap?: FibAppGraphQLTypeMap
 }
-type FibAppOpts = FibAppDbSetupOptsl
+type FibAppOpts = FibAppDbSetupOpts
 
 // interface FibTypesFixForRouting {
 //     /**
@@ -169,3 +175,6 @@ interface FibAppClass extends mq.Routing {
     patch(pattern: string, ...args: any[]): Class_Routing
     find(pattern: string, ...args: any[]): Class_Routing
 }
+
+type FibAppOnTypeString =
+    'graphql:fix-orm-type'
