@@ -112,7 +112,10 @@ export = (app: App, url: string, opts: FibAppDbSetupOptsl): AppDBPool<FibAppDb> 
 
                     next();
                 });
-
+                
+                var { no_graphql = false } = orm_define_opts || {}
+                m.no_graphql = no_graphql
+                
                 m.extends = {};
 
                 var _hasOne = m.hasOne;
@@ -153,7 +156,9 @@ export = (app: App, url: string, opts: FibAppDbSetupOptsl): AppDBPool<FibAppDb> 
                 sync_lock.release();
             }
 
-            return graphql(app, odb);
+            odb = graphql(app, odb);
+
+            return odb;
         },
         maxsize: opts.maxsize,
         timeout: opts.timeout,

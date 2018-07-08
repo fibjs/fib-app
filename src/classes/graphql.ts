@@ -161,6 +161,10 @@ export default (app: App, db: FibAppDb) => {
     for (var k in db.models) {
         var m = db.models[k];
 
+        if (m.no_graphql) {
+            continue ;
+        }
+
         types[k] = {
             type: new graphql.GraphQLObjectType({
                 name: k,

@@ -6,5 +6,6 @@ module.exports = [
     require('./extend'),
     require('./pet'),
     require('./chat'),
-    require('./json')
+    require('./json'),
+    require('./nographql')
 ];
