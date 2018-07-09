@@ -257,7 +257,7 @@
 <g id="node11" class="node">
 <title>nographql</title>
 <g id="a_node11"><a xlink:title="nographql">
-<polygon fill="#ffffff" stroke="#000000" points="956,-292.5 956,-380.5 1053.992,-380.5 1053.992,-292.5 956,-292.5"/>
+<polygon fill="#d3d3d3" stroke="#000000" points="956,-292.5 956,-380.5 1053.992,-380.5 1053.992,-292.5 956,-292.5"/>
 <text text-anchor="middle" x="1004.996" y="-367.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">nographql</text>
 <polyline fill="none" stroke="#000000" points="956,-360.5 1053.992,-360.5 "/>
 <text text-anchor="start" x="964" y="-347.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>

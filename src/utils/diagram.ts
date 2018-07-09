@@ -1,5 +1,7 @@
 var Viz = require('viz.js');
 
+const NO_GRAPHQL_COLOR = 'lightgray'// '#ec8888'
+
 export default function () {
     var models = [];
     var exts = [];
@@ -15,11 +17,13 @@ export default function () {
                 ks.push(`+ ${k} : ${m.properties[k].type}`);
             }
 
-            models.push(`${m.model_name} [tooltip="${m.model_name}", label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
+            var is_nographql = m.no_graphql
+
+            models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
             for (var e in m.extends) {
                 m1 = m.extends[e];
                 var one = m1.type === "hasOne" && !m1.reversed;
-                exts.push(`${m.model_name} -> ${m1.model.model_name} [label=${e} ${one?"arrowhead=empty":""}];`);
+                exts.push(`${m.model_name} -> ${m1.model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
             }
         }
     });
