@@ -1,7 +1,19 @@
 
-v1.11.5 / 2018-07-01
+v1.12.0 / 2018-07-09
 ==================
 
+  * mark model with special style when generate viz in `app.diagram`
+  * support option 'graphqlTypeMap'
+  * support 'no_graphql' for FibAppOrmModelDefOptions
+  * little type fix.
+  * Merge pull request #19 from richardo2016/master
+  * Merge remote-tracking branch 'orig/master'
+  * Merge pull request #18 from richardo2016/master
+
+v1.11.5 / 2018-07-01
+====================
+
+  * Release v1.11.5
   * fix computation of `p.statusCode` in root batching request.
   * fix implement of 'app.put'
   * fix type about FibAppSession

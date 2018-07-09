@@ -31,13 +31,15 @@ interface FibAppOrmModelDefOptions extends FibOrmNS.FibOrmFixedModelOptions {
     OACL?: FibOACLDef
     functions?: {
         [funcName: string]: FibAppWebApiFunctionInModel
-    }
+    },
+    no_graphql?: boolean
 }
 interface FibAppORMModel extends FibOrmNS.FibOrmFixedModel {
     // globally unique class id
     cid: number
     model_name: string;
-    functions: FibAppORMModelFunctions
     ACL: FibACLDef// ACLDefinition
     OACL: FibOACLDef// OACLDefinition
+    functions: FibAppORMModelFunctions
+    no_graphql: boolean
 }
