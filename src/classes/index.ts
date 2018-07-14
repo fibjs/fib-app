@@ -156,13 +156,24 @@ export const bind = (app: FibAppClass) => {
                 var r = new http.Request() as FibAppHttpRequest;
                 r.method = q.method;
 
+                if (typeof q.headers === 'object' && Object.keys(q.headers).length) {
+                    r.setHeader(q.headers)
+                }
+
                 var a = q.path.split('?');
                 r.address = r.value = a[0];
                 r.queryString = a[1];
 
                 r.session = req.session;
-                if (q.body)
-                    r.json(q.body);
+                if (q.body) {
+                    if (r.firstHeader('Content-Type') === 'application/graphql') {
+                        /* support graphql */
+                        r.write(q.body);
+                    } else {
+                        /* default for json format */
+                        r.json(q.body);
+                    }
+                }
                 mq.invoke(app, r);
 
                 var p = r.response;
