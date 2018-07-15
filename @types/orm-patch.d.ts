@@ -42,4 +42,12 @@ interface FibAppORMModel extends FibOrmNS.FibOrmFixedModel {
     OACL: FibOACLDef// OACLDefinition
     functions: FibAppORMModelFunctions
     no_graphql: boolean
+
+    extends: { [extendModel: string]: FibAppFixedOrmExtendModelWrapper };
+}
+
+interface FibAppFixedOrmExtendModelWrapper extends FibOrmNS.ExtendModelWrapper {
+    extraProperties: {
+        [modelName: string]: FibAppORMModel
+    }
 }
