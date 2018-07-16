@@ -1,3 +1,6 @@
 node_modules
 test.db*
 package-lock.json
+
+cov-out
+*.lcov

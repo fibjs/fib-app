@@ -6,13 +6,13 @@
   "types": "@types/index.d.ts",
   "scripts": {
     "build": "fib-typify src -o lib -c .typifyrc.json",
-    "test": "fibjs ./demo/test/index.js",
+    "test": "fibjs --cov ./demo/test/index.js",
     "ci": "fibjs ./demo/test/index.js"
   },
   "author": "Liu Hu <lion@9465.net>",
   "contributors": [
     {
-      "name": "Richardo",
+      "name": "Richard",
       "email": "richardo2016@gmail.com"
     }
   ],
