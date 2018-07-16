@@ -5,7 +5,7 @@ import { FibAppApi, AppDBPool, FibAppDb, FibAppOpts, FibAppClass, FibAppOnTypeSt
 
 import classes = require('./classes');
 import setupDb = require('./db');
-import diagram from './utils/diagram';
+import diagram = require('./utils/diagram');
 
 class App extends mq.Routing implements FibAppClass {
     api: FibAppApi;

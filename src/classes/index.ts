@@ -4,11 +4,12 @@ import * as FibOrmNS from 'orm'
 import mq = require('mq');
 import http = require('http');
 import json = require('json');
-import err_info, { APPError } from '../utils/err_info';
-
-import { check_acl } from '../utils/check_acl';
+import * as err_info from '../utils/err_info';
 import * as _extend from './extend';
 import * as _base from './base';
+
+const { APPError } = require('../utils/err_info');
+const { check_acl } = require('../utils/check_acl');
 
 const _slice = Array.prototype.slice;
 

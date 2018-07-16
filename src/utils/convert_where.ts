@@ -52,4 +52,4 @@ var convert_where = function (where: ReqWhere) {
     return where1;
 };
 
-export default convert_where;
+export = convert_where;

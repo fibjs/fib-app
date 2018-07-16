@@ -1,17 +1,18 @@
 import FibOrmNS from 'orm';
 
-import convert_where from './convert_where';
-import {
+const {
     check_obj_acl,
     check_robj_acl
-} from './check_acl';
-import {
+} = require('./check_acl');
+const {
     filter,
     filter_ext
-} from './filter';
+} = require('./filter');
+
+import convert_where = require('./convert_where');
 import { FibAppReq } from '../../@types/app';
 
-export default function (req: FibAppReq, exec: FibOrmNS.IChainFibORMFind, bobj?: FibOrmNS.FibOrmFixedModelInstance, extend?: ACLExtendModelNameType) {
+export = function (req: FibAppReq, exec: FibOrmNS.IChainFibORMFind, bobj?: FibOrmNS.FibOrmFixedModelInstance, extend?: ACLExtendModelNameType) {
     var query = req.query;
 
     var keys = query.keys;

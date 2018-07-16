@@ -2,10 +2,10 @@ import FibOrmNS from 'orm';
 import { FibDataPayload } from '../../@types/app';
 import util = require('util');
 
-import {
+const {
     check_obj_acl,
     check_robj_acl
-} from './check_acl';
+} = require('./check_acl');
 
 export const filter = function (obj: FibDataPayload, keys: boolean | string | string[], keys1?: string[]) {
     if (Array.isArray(keys)) {

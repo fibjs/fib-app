@@ -43,6 +43,6 @@ APPError.prototype.toString = function () {
     return this.code + ': ' + this.message;
 }
 
-export default (code: number, data?: object, cls?: FibModelCountTypeMACRO) => ({
+export = (code: number, data?: object, cls?: FibModelCountTypeMACRO) => ({
     error: new APPError(code, infos[code].replace(/\${(.+?)}/g, (s1, s2) => data[s2]), cls)
 });
