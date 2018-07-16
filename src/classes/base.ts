@@ -1,9 +1,10 @@
-import err_info from '../utils/err_info';
-import { check_acl  } from '../utils/check_acl';
+import * as err_info from '../utils/err_info';
+import * as _find from '../utils/find'
 
-import { filter, filter_ext } from '../utils/filter';
-import _find from '../utils/find'
-import { _get } from '../utils/get';
+const { filter, filter_ext } = require('../utils/filter');
+const { _get } = require('../utils/get');
+const { check_acl  } = require('../utils/check_acl');
+
 import { FibAppClass, FBDataPayload, FibAppDb, FibAppSetupChainFn, FibAppHttpRequest, FibAppReq, FibAppInternalCommObj, FibAppFinalOutputResult } from '../../@types/app';
 import OrmNS from 'orm';
 

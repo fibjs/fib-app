@@ -8,7 +8,7 @@ import coroutine = require('coroutine');
 
 import Pool = require('fib-pool');
 
-import graphql from './classes/graphql';
+import * as graphql from './classes/graphql';
 import App from './app';
 
 const slice = Array.prototype.slice;

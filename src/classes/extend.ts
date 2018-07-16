@@ -1,20 +1,21 @@
-const util = require('util');
-import {
-    check_acl,
-    check_obj_acl
-} from '../utils/check_acl';
-import {
-    filter,
-    filter_ext
-} from '../utils/filter';
-import _find from '../utils/find';
-import err_info from '../utils/err_info';
-import {
-    _get,
-    _eget
-} from '../utils/get';
+import * as _find from '../utils/find';
+import * as err_info from '../utils/err_info';
 import { FibAppClass, FibAppDb, FibDataPayload, FibAppHttpRequest, FibAppSetupChainFn, FibAppReq } from '../../@types/app';
 import FibOrmNS from 'orm';
+
+const util = require('util');
+const {
+    check_acl,
+    check_obj_acl
+} = require('../utils/check_acl');
+const {
+    filter,
+    filter_ext
+} = require('../utils/filter');
+const {
+    _get,
+    _eget
+} = require('../utils/get');
 
 export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
     var api = app.api;

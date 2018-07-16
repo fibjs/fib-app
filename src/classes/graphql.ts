@@ -42,7 +42,7 @@ const hasManyArgs: FibAppApiCommnPayload_hasManyArgs = {
     }
 };
 
-export default (app: App, db: FibAppDb) => {
+export = (app: App, db: FibAppDb) => {
     var types = {};
     var graphqlTypeMap: FibAppGraphQLTypeMap = util.extend(app.graphqlTypeMap, TypeMap)
 
