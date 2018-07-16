@@ -85,8 +85,11 @@ interface FibAppDbGraphQLHandler {
     (query: GraphQLQueryString, req: FibAppHttpRequest): any
 }
 interface FibAppDb extends FibOrmNs.FibORM {
-    graphql?: FibAppDbGraphQLHandler
+    /* override :start */
+    models: { [key: string]: FibAppORMModel };
+    /* override :end */
 
+    graphql?: FibAppDbGraphQLHandler
     define(name: string, properties: OrigORMDefProperties, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
 }
 interface FibAppSetupChainFn {

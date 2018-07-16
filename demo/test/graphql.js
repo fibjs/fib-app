@@ -557,4 +557,70 @@ describe("graphql", () => {
             }
         });
     });
+
+    it('batch request: rest/graphql', () => {
+        var testName = 'GeziFighter' + Date.now()
+        var rep = http.post(serverBase + '/1.0/app', {
+            json: {
+                requests: [
+                    {
+                        method: 'POST',
+                        path: '/json',
+                        body: {
+                            name: testName,
+                            profile: {
+                                a: 100,
+                                b: 200
+                            }
+                        } 
+                    },
+                    {
+                        method: 'POST',
+                        path: '/',
+                        headers: {
+                            'Content-Type': 'application/graphql'
+                        },
+                        body: `{
+                            find_json(
+                                where: {
+                                    name:"${testName}"
+                                }
+                            ){
+                                id,
+                                name,
+                                profile,
+                                createdAt
+                            }
+                        }`
+                    }
+                ]
+            }
+        });
+
+        var response = rep.json();
+        assert.property(response[0], 'success');
+        assert.property(response[1], 'success');
+        var createR = response[0].success;
+        assert.property(response[1].success, 'data');
+        assert.property(response[1].success.data, 'find_json');
+
+        var queryR = response[1].success.data.find_json[0];
+
+        assert.equal(createR.id, queryR.id)
+
+        var id = createR.id;
+
+        assert.equal(queryR.createdAt.toString().slice(-1), "Z");
+        assert.notEqual(new Date(queryR.createdAt).getTime() % 1000, 0);
+        delete queryR.createdAt;
+
+        assert.deepEqual(queryR, {
+            "id": createR.id,
+            "name": testName,
+            "profile": {
+                "a": 100,
+                "b": 200
+            }
+        });
+    });
 });

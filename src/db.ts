@@ -122,7 +122,9 @@ export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> =
                 m.hasOne = function (name, model, orm_hasOne_opts) {
                     m.extends[name] = {
                         type: 'hasOne',
-                        model: model
+                        model: model,
+                        // it's meaningless, just keep same format with `hasMany`
+                        extraProperties: {}
                     };
 
                     if (orm_hasOne_opts !== undefined && orm_hasOne_opts.reversed)
@@ -133,10 +135,22 @@ export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> =
 
                 var _hasMany = m.hasMany;
                 m.hasMany = function (name, model) {
+                    var extraProperties = {}, orm_hasMany_opts = {};
+                    if (arguments.length >= 4) {
+                        extraProperties = arguments[2]
+                        orm_hasMany_opts = arguments[3]
+                    } else {
+                        extraProperties = {}
+                        orm_hasMany_opts = arguments[2]
+                    }
                     m.extends[name] = {
                         type: 'hasMany',
-                        model: model
-                    };
+                        model: model,
+                        extraProperties: extraProperties
+                    } as FibAppFixedOrmExtendModelWrapper;
+
+                    if (orm_hasMany_opts && orm_hasMany_opts.reversed)
+                        m.extends[name].reversed = true;
 
                     return _hasMany.apply(this, slice.call(arguments));
                 }
