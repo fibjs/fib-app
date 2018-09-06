@@ -66,7 +66,7 @@ export const check_acl = function (session: FibAppSession, act: ArgActVarWhenChe
     }
 
     /**
-     * in `_check_acl_role`, no matter how arg `_act_role` is, 
+     * in `_check_acl_role`, no matter what arg `_act_role` is, 
      * it finally led to one explicit **arg** with type 'ArgAclRoleValueTypeWhenCheck(ACLPermissionBooleanOrArrayType)',
      * 
      * then, return the the **result** `_check_acl_act(arg)`

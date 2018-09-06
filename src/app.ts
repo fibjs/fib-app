@@ -1,7 +1,7 @@
 /// <reference path="../@types/app.d.ts" />
 
 import * as mq from 'mq';
-import { FibAppApi, AppDBPool, FibAppDb, FibAppOpts, FibAppClass, FibAppOnTypeString } from '../@types/app';
+import { FibAppApi, AppDBPool, FibAppDb, FibAppOpts, FibAppClass, FibAppOnTypeString, FibAppSetupChainFn } from '../@types/app';
 
 import classes = require('./classes');
 import setupDb = require('./db');
@@ -10,6 +10,8 @@ import diagram = require('./utils/diagram');
 class App extends mq.Routing implements FibAppClass {
     api: FibAppApi;
     db: AppDBPool<FibAppDb>;
+    dbPool: AppDBPool<FibAppDb>;
+    filterRequest: FibAppSetupChainFn;
     diagram: any;
 
     graphqlTypeMap: any;
@@ -18,7 +20,7 @@ class App extends mq.Routing implements FibAppClass {
         super();
 
         this.graphqlTypeMap = opts.graphqlTypeMap || {}
-        this.db = setupDb(this, url, opts);
+        this.dbPool = this.db = setupDb(this, url, opts);
         classes.bind(this);
         this.diagram = diagram;
     }

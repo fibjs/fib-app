@@ -2,7 +2,11 @@
 /// <reference path="req.d.ts" />
 
 import FibOrmNS, { FibORM } from 'orm';
-import { FibAppReq, FibAppWebApiFunctionInModel } from './app';
+import { FibAppReq, FibAppWebApiFunctionInModel, FibAppReqData, FibAppORMModelFunction } from './app';
+
+interface FibAppORMModelFunctions {
+    [fnName: string]: FibAppORMModelFunction
+}
 
 interface FibAppOrmInstance extends FibOrmNS.FibOrmFixedModelInstance {
     acl: ACLDefinition
@@ -10,10 +14,6 @@ interface FibAppOrmInstance extends FibOrmNS.FibOrmFixedModelInstance {
 }
 
 type ORMFindResult = FibOrmNS.FibOrmFixedModelInstance
-
-interface FibAppORMModelFunctions {
-    [fnName: string]: (req: FibAppReq, data: any) => FibAppResponse
-}
 
 // keep compatible with definition in 'orm'
 interface AppSpecialDateProperty extends FibOrmNS.OrigDetailedModelProperty {

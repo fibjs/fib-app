@@ -18,11 +18,8 @@ interface FibAppOrmDefineFn {
     (db: FibAppDb): FibAppORMModel
 }
 interface AppDBPool<T> extends FibPoolFn<T> {
-    use(defs: FibAppOrmDefineFn|FibAppOrmDefineFn[]): OrigORMDefProperties[];
-}
-
-interface FBDataPayload {
-    [key: string]: any;
+    app: FibAppClass
+    use(defs: FibAppOrmDefineFn | FibAppOrmDefineFn[]): OrigORMDefProperties[];
 }
 
 // constant type
@@ -46,25 +43,57 @@ interface FibAppGraphQlPayload_Field {
 interface FibDataPayload {
     [key: string]: any;
 }
-
-interface FibAppApi {
-    post?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, data: FBDataPayload) => FibAppResponse;
-    get?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType) => FibAppResponse;
-    find?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel) => FibAppResponse;
-    put?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, data: FBDataPayload) => FibAppResponse;
-    del?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType) => FibAppResponse;
-
-    eget?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid?: AppIdType) => FibAppResponse;
-    efind?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType) => FibAppResponse;
-    epost?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload) => FibAppResponse;
-    eput?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload) => FibAppResponse;
-    edel?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType) => FibAppResponse;
-    elink?: (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload) => FibAppResponse;
+interface FibAppIneternalApiFunction__NullModel {
+    (req: FibAppReq, db: FibAppDb, cls: null, data: FibAppReqData): FibAppApiFunctionResponse;
 }
-interface FibAppFinalOutputResult {
-    success?: any
-    error?: any
+interface FibAppIneternalApiFunction__Get {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType): FibAppApiFunctionResponse;
 }
+interface FibAppIneternalApiFunction__Post {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, data: FibAppReqData): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Find {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Put {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, data: FibAppReqData): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Del {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Eget {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid?: AppIdType): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Efind {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Epost {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Eput {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Edel {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType): FibAppApiFunctionResponse;
+}
+interface FibAppIneternalApiFunction__Elink {
+    (req: FibAppReq, db: FibAppDb, cls: FibOrmNs.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse;
+}
+
+interface FibAppInternalApis {
+    get?: FibAppIneternalApiFunction__Get
+    post?: FibAppIneternalApiFunction__Post
+    find?: FibAppIneternalApiFunction__Find
+    put?: FibAppIneternalApiFunction__Put
+    del?: FibAppIneternalApiFunction__Del
+    eget?: FibAppIneternalApiFunction__Eget
+    efind?: FibAppIneternalApiFunction__Efind
+    epost?: FibAppIneternalApiFunction__Epost
+    eput?: FibAppIneternalApiFunction__Eput
+    edel?: FibAppIneternalApiFunction__Edel
+    elink?: FibAppIneternalApiFunction__Elink
+}
+type FibAppApi = FibAppInternalApis
 
 interface AppInternalCommunicationObj {
     data?: ORMFindResult
@@ -84,7 +113,8 @@ type GraphQLQueryString = string
 interface FibAppDbGraphQLHandler {
     (query: GraphQLQueryString, req: FibAppHttpRequest): any
 }
-interface FibAppDb extends FibOrmNs.FibORM {
+interface FibAppORM extends FibOrmNs.FibORM {
+    app: FibAppClass
     /* override :start */
     models: { [key: string]: FibAppORMModel };
     /* override :end */
@@ -92,11 +122,31 @@ interface FibAppDb extends FibOrmNs.FibORM {
     graphql?: FibAppDbGraphQLHandler
     define(name: string, properties: OrigORMDefProperties, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
 }
+type FibAppDb = FibAppORM
+
+interface FibAppORMModelFunction {
+    (req: FibAppReq, data: FibAppReqData): FibAppModelFunctionResponse
+}
+
+type FibAppInternalApiFunction =
+    | FibAppIneternalApiFunction__Get
+    | FibAppIneternalApiFunction__Find
+    | FibAppIneternalApiFunction__Post
+    | FibAppIneternalApiFunction__Put
+    | FibAppIneternalApiFunction__Del
+    | FibAppIneternalApiFunction__Eget
+    | FibAppIneternalApiFunction__Efind
+    | FibAppIneternalApiFunction__Epost
+    | FibAppIneternalApiFunction__Eput
+    | FibAppIneternalApiFunction__Edel
+    | FibAppIneternalApiFunction__Elink
+
 interface FibAppSetupChainFn {
-    (origReq: FibAppHttpRequest, classname: string, func: Function): void;
-    (origReq: FibAppHttpRequest, classname: string, id: AppIdType, func: Function): void;
-    (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, efunc: Function): void;
-    (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, rid: AppIdType, efunc: Function): void;
+    (origReq: FibAppHttpRequest, classname: string, func: FibAppIneternalApiFunction__NullModel): void;
+    (origReq: FibAppHttpRequest, classname: string, func: FibAppORMModelFunction): void;
+    (origReq: FibAppHttpRequest, classname: string, id: AppIdType, func: FibAppInternalApiFunction): void;
+    (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, efunc: FibAppInternalApiFunction): void;
+    (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, rid: AppIdType, efunc: FibAppInternalApiFunction): void;
 }
 
 interface FibAppHttpRequest extends http.Request, FibSessionNS.FibSessionHttpRequest {
@@ -105,7 +155,7 @@ interface FibAppHttpRequest extends http.Request, FibSessionNS.FibSessionHttpReq
 
 interface FibAppReqQuery {
     where?: string | ReqWhere
-    keys?: string|string[]
+    keys?: string | string[]
     skip?: number
     limit?: number
     // such as '-id', 'person_id'
@@ -115,7 +165,7 @@ interface FibAppReqQuery {
 
     [extraField: string]: any;
 }
-interface FibAppReqQueryObject extends FibAppReqQuery, Class__object {}
+interface FibAppReqQueryObject extends FibAppReqQuery, Class__object { }
 
 interface FibAppReq {
     session: FibAppSession
@@ -162,21 +212,25 @@ type FibAppOpts = FibAppDbSetupOpts
 
 interface FibAppClass extends mq.Routing {
     api: FibAppApi;
+    dbPool: AppDBPool<FibAppDb>;
+    // alias of 'dbPool'
     db: AppDBPool<FibAppDb>;
+
     diagram: any;
+    filterRequest: FibAppSetupChainFn;
 
     /**
      * fix lack of
      *  [METHOD](pattern: string, ...args: any[]): Class_Routing
      * in 'fib-types'
      */
-    all(pattern: string, ...args: any[]): Class_Routing
-    get(pattern: string, ...args: any[]): Class_Routing
-    post(pattern: string, ...args: any[]): Class_Routing
-    del(pattern: string, ...args: any[]): Class_Routing
-    put(pattern: string, ...args: any[]): Class_Routing
-    patch(pattern: string, ...args: any[]): Class_Routing
-    find(pattern: string, ...args: any[]): Class_Routing
+    all(pattern: string | object, ...args: any[]): Class_Routing
+    get(pattern: string | object, ...args: any[]): Class_Routing
+    post(pattern: string | object, ...args: any[]): Class_Routing
+    del(pattern: string | object, ...args: any[]): Class_Routing
+    put(pattern: string | object, ...args: any[]): Class_Routing
+    patch(pattern: string | object, ...args: any[]): Class_Routing
+    find(pattern: string | object, ...args: any[]): Class_Routing
 }
 
 type FibAppOnTypeString =

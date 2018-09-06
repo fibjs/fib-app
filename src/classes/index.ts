@@ -1,14 +1,13 @@
-import { FibAppClass, FibAppSetupChainFn, FibAppHttpRequest, FibAppDb, FibAppReq, FibDataPayload, GraphQLString } from "../../@types/app";
+import { FibAppClass, FibAppHttpRequest, FibAppDb, FibAppReq, FibDataPayload, GraphQLQueryString, FibAppORMModelFunction } from "../../@types/app";
 import * as FibOrmNS from 'orm'
 
 import mq = require('mq');
 import http = require('http');
 import json = require('json');
-import * as err_info from '../utils/err_info';
+const { err_info, fill_error } = require('../utils/err_info');
 import * as _extend from './extend';
 import * as _base from './base';
 
-const { APPError } = require('../utils/err_info');
 const { check_acl } = require('../utils/check_acl');
 
 const _slice = Array.prototype.slice;
@@ -17,22 +16,12 @@ export const bind = (app: FibAppClass) => {
     var pool = app.db;
     app.api = {};
 
-    function fill_error(req: FibAppHttpRequest, e: { error: APPError }) {
-        var code = e.error.code;
-
-        req.response.statusCode = code / 10000;
-        req.response.json({
-            code: e.error.cls ? code + e.error.cls * 100 : code,
-            message: e.error.message
-        });
-    }
-
-    const _: FibAppSetupChainFn = function (req: FibAppHttpRequest, classname: string, ...args: any[]) {
+    app.filterRequest = function (req: FibAppHttpRequest, classname: string) {
         var arglen = arguments.length;
         var earg = _slice.call(arguments, 2, arglen - 1);
         var func = arguments[arglen - 1];
 
-        pool((db: FibAppDb) => {
+        return pool((db: FibAppDb) => {
             var data;
 
             // check empty data
@@ -51,15 +40,18 @@ export const bind = (app: FibAppClass) => {
                 }
 
             // check classname
-            const cls = db.models[classname];
-            if (cls === undefined)
-                return fill_error(req,
-                    err_info(4040001, {
-                        classname: classname
-                    }));
+            let cls  = null
+            if (classname) {
+                cls = db.models[classname];
+                if (cls === undefined)
+                    return fill_error(req,
+                        err_info(4040001, {
+                            classname: classname
+                        }));
+            }
 
             var _req: FibAppReq = {
-                session: req.session,
+                session: req.session as FibAppSession,
                 query: req.query.toJSON(),
                 request: req
             };
@@ -93,7 +85,7 @@ export const bind = (app: FibAppClass) => {
                         function: "func",
                         classname: classname,
                         message: e.message
-                    }, cls.cid));
+                    }, cls ? cls.cid : '-1'));
                 }
             }
             if (result.success) {
@@ -105,15 +97,15 @@ export const bind = (app: FibAppClass) => {
         });
     }
 
-    _base.bind(_, app);
-    _extend.bind(_, app);
+    _base.bind(app.filterRequest, app);
+    _extend.bind(app.filterRequest, app);
 
     app.post('/:classname/:func', (req: FibAppHttpRequest, classname: string, func: string) => {
-        _(req, classname, (_req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, data: FibDataPayload) => {
+        app.filterRequest(req, classname, (_req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, data: FibDataPayload) => {
             if (!check_acl(_req.session, func, cls.ACL))
                 return err_info(4030001, {}, cls.cid);
 
-            const f = cls.functions[func];
+            const f: FibAppORMModelFunction = cls.functions[func];
             if (f === undefined)
                 return err_info(4040004, {
                     function: func,
@@ -136,7 +128,7 @@ export const bind = (app: FibAppClass) => {
     app.post('/', (req: FibAppHttpRequest) => {
         if (req.firstHeader('Content-Type').split(';')[0] === 'application/graphql') {
             pool((db: FibAppDb) => {
-                var data: GraphQLString = "";
+                var data: GraphQLQueryString = "";
                 try {
                     data = req.data.toString();
                 } catch (e) {}

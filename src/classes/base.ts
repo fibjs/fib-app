@@ -1,17 +1,18 @@
-import * as err_info from '../utils/err_info';
-import * as _find from '../utils/find'
+const { err_info } = require('../utils/err_info');
+import _find = require('../utils/find');
 
 const { filter, filter_ext } = require('../utils/filter');
 const { _get } = require('../utils/get');
 const { check_acl  } = require('../utils/check_acl');
 
-import { FibAppClass, FBDataPayload, FibAppDb, FibAppSetupChainFn, FibAppHttpRequest, FibAppReq, FibAppInternalCommObj, FibAppFinalOutputResult } from '../../@types/app';
+import { FibAppClass, FibAppReqData, FibAppDb, FibAppSetupChainFn, FibAppHttpRequest, FibAppReq, FibAppInternalCommObj } from '../../@types/app';
 import OrmNS from 'orm';
+import { FibAppORMModel } from '../../@types/orm-patch';
 
 export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
     var api = app.api;
 
-    api.post = (req: FibAppReq, db: FibAppDb, cls: OrmNS.FibOrmFixedModel, data: FBDataPayload) => {
+    api.post = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, data: FibAppReqData) => {
         var acl: ModelACLCheckResult = check_acl(req.session, "create", cls.ACL);
         if (!acl)
             return err_info(4030001, {}, cls.cid);
@@ -79,7 +80,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
             };
     };
 
-    api.get = (req: FibAppReq, db: FibAppDb, cls: OrmNS.FibOrmFixedModel, id: AppIdType): FibAppFinalOutputResult => {
+    api.get = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: AppIdType): FibAppApiFunctionResponse => {
         var obj: FibAppInternalCommObj = _get(cls, id, req.session, "read");
         if (obj.error)
             return obj;
@@ -89,7 +90,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.put = (req: FibAppReq, db: FibAppDb, cls: OrmNS.FibOrmFixedModel, id: AppIdType, data: FBDataPayload) => {
+    api.put = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: AppIdType, data: FibAppReqData): FibAppApiFunctionResponse => {
         var obj = _get(cls, id, req.session, "write");
         if (obj.error)
             return obj;
@@ -120,7 +121,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.del = (req: FibAppReq, db: FibAppDb, cls: OrmNS.FibOrmFixedModel, id: AppIdType) => {
+    api.del = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: AppIdType): FibAppApiFunctionResponse => {
         var obj = _get(cls, id, req.session, "delete");
         if (obj.error)
             return obj;
@@ -134,7 +135,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.find = (req: FibAppReq, db: FibAppDb, cls: OrmNS.FibOrmFixedModel) => {
+    api.find = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel): FibAppApiFunctionResponse => {
         if (!check_acl(req.session, "find", cls.ACL))
             return err_info(4030001, {}, cls.cid);
 

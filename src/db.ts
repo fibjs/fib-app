@@ -8,7 +8,7 @@ import coroutine = require('coroutine');
 
 import Pool = require('fib-pool');
 
-import * as graphql from './classes/graphql';
+import graphql = require('./classes/graphql');
 import App from './app';
 
 const slice = Array.prototype.slice;
@@ -26,6 +26,7 @@ export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> =
             var _define = odb.define;
             var cls_id = 1;
 
+            odb.app = app;
             odb.define = function (name: string, properties: OrigORMDefProperties, orm_define_opts: FibAppOrmModelDefOptions): FibAppORMModel {
                 var old_properties = properties;
 
@@ -179,6 +180,7 @@ export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> =
         retry: opts.retry
     });
 
+    db.app = app;
     db.use = (def: FibAppOrmDefineFn|FibAppOrmDefineFn[]) => defs = defs.concat(def);
 
     return db;

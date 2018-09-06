@@ -1,26 +1,17 @@
-import * as _find from '../utils/find';
-import * as err_info from '../utils/err_info';
+import _find = require('../utils/find');
+const { err_info } = require('../utils/err_info');
 import { FibAppClass, FibAppDb, FibDataPayload, FibAppHttpRequest, FibAppSetupChainFn, FibAppReq } from '../../@types/app';
-import FibOrmNS from 'orm';
+import { FibAppORMModel } from '../../@types/orm-patch';
 
-const util = require('util');
-const {
-    check_acl,
-    check_obj_acl
-} = require('../utils/check_acl');
-const {
-    filter,
-    filter_ext
-} = require('../utils/filter');
-const {
-    _get,
-    _eget
-} = require('../utils/get');
+import util = require('util');
+const { check_obj_acl } = require('../utils/check_acl');
+const { filter, filter_ext } = require('../utils/filter');
+const { _get, _eget } = require('../utils/get');
 
 export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
     var api = app.api;
 
-    api.eput = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: IdPayloadVar, extend: ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload) => {
+    api.eput = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: IdPayloadVar, extend: ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload): FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -57,7 +48,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.elink = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload) => {
+    api.elink = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: AppIdType, extend: ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -98,7 +89,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.epost = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: IdPayloadVar, extend: ACLExtendModelNameType, data: FibDataPayload) => {
+    api.epost = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: IdPayloadVar, extend: ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -200,7 +191,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
             };
     };
 
-    api.efind = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: IdPayloadVar, extend: ACLExtendModelNameType) => {
+    api.efind = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: IdPayloadVar, extend: ACLExtendModelNameType): FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -237,7 +228,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.eget = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType) => {
+    api.eget = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType): FibAppApiFunctionResponse => {
         var robj = _eget(cls, id, extend, rid, req.session, "read");
         if (robj.error)
             return robj;
@@ -247,7 +238,7 @@ export const bind = (_: FibAppSetupChainFn, app: FibAppClass) => {
         };
     };
 
-    api.edel = (req: FibAppReq, db: FibAppDb, cls: FibOrmNS.FibOrmFixedModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType) => {
+    api.edel = (req: FibAppReq, db: FibAppDb, cls: FibAppORMModel, id: AppIdType, extend: ACLExtendModelNameType, rid: AppIdType): FibAppApiFunctionResponse => {
         var robj = _eget(cls, id, extend, rid, req.session, "delete");
         if (robj.error)
             return robj;

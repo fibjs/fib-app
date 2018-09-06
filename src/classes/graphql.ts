@@ -7,7 +7,6 @@ import { FibAppDb, FibModelExtendORMFuncName, FibAppApiCommnPayload_hasManyArgs,
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
 const GraphQLDATE = require('graphql-iso-date');
-const convert_where = require('../utils/convert_where');
 const {
     check_acl,
     check_obj_acl
@@ -42,7 +41,7 @@ const hasManyArgs: FibAppApiCommnPayload_hasManyArgs = {
     }
 };
 
-export = (app: App, db: FibAppDb) => {
+export = function (app: App, db: FibAppDb) {
     var types = {};
     var graphqlTypeMap: FibAppGraphQLTypeMap = util.extend(app.graphqlTypeMap, TypeMap)
 
