@@ -5,9 +5,8 @@
 
 /// <reference path="./app.d.ts" />
 
-import App from '../src/app';
+import { FibAppClass } from "./app";
 
 declare module "fib-app" {
-    // export = FibAppClass;
-    export = App
+    export = FibAppClass;
 }

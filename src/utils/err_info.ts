@@ -1,4 +1,4 @@
-import { FibModelCountTypeMACRO } from "../../@types/app";
+import { FibModelCountTypeMACRO, FibAppHttpRequest } from "../../@types/app";
 
 var infos = {
     "4000001": "${method} request don't send any data.",
@@ -14,7 +14,7 @@ var infos = {
 };
 
 
-export class APPError extends Error {
+export class APPError extends Error implements FibAppFinalError {
     name: string = 'APPError';
     
     code: number;
@@ -43,6 +43,16 @@ APPError.prototype.toString = function () {
     return this.code + ': ' + this.message;
 }
 
-export = (code: number, data?: object, cls?: FibModelCountTypeMACRO) => ({
+export const err_info = (code: number, data?: object, cls?: FibModelCountTypeMACRO) => ({
     error: new APPError(code, infos[code].replace(/\${(.+?)}/g, (s1, s2) => data[s2]), cls)
 });
+
+export function fill_error(req: FibAppHttpRequest, e: { error: APPError }) {
+    var code = e.error.code;
+
+    req.response.statusCode = code / 10000;
+    req.response.json({
+        code: e.error.cls ? code + e.error.cls * 100 : code,
+        message: e.error.message
+    });
+}

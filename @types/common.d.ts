@@ -18,11 +18,14 @@ interface FibAppErrorResponse {
     error: any;
 }
 
-interface FibAppResponse {
+interface FibAppResponse<SDT = any> {
     status?: number;
-    success?: any;
+    success?: SDT;
     error?: FibAppFinalError;
 }
+
+type FibAppApiFunctionResponse<DT = any> = FibAppResponse<DT>
+type FibAppModelFunctionResponse<DT = any> = FibAppResponse<{data: DT, message: string}>
 
 interface FibAppFinalError {
     code: number;
@@ -36,5 +39,3 @@ interface ObjectWithIdField {
 }
 
 type IdPayloadVar = ObjectWithIdField | AppIdType
-
-// type FibAppResponse = FibAppSuccessResponse | FibAppErrorResponse

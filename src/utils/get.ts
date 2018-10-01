@@ -3,7 +3,7 @@
 import { Model as ORMModel } from "orm";
 
 import util = require('util');
-import * as err_info from '../utils/err_info';
+const { err_info } = require('../utils/err_info');
 import { FibAppInternalCommObj, FibAppInternalCommExtendObj } from "../../@types/app";
 const {
     check_obj_acl,

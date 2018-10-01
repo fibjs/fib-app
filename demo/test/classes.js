@@ -986,5 +986,23 @@ describe("classes", () => {
                 "name": "lion"
             }
         });
+
+        var rep = http.post(serverBase + `/1.0/app/person/getPersonByName`, {
+            json: {
+                name: 'tom',
+                foo: 'male',
+                bar: 18
+            }
+        });
+
+        assert.equal(rep.statusCode, 200);
+        check_result(rep.json(), {
+            "message": "ok",
+            "data": [
+                {
+                    "name": "tom",
+                }
+            ]
+        });
     });
 });
