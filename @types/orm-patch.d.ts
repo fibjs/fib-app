@@ -1,7 +1,7 @@
 /// <reference path="acl.d.ts" />
 /// <reference path="req.d.ts" />
 
-import FibOrmNS, { FibORM } from 'orm';
+import FibOrmNS from 'orm';
 import { FibAppReq, FibAppWebApiFunctionInModel, FibAppReqData, FibAppORMModelFunction } from './app';
 
 interface FibAppORMModelFunctions {

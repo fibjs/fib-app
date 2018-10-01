@@ -1,9 +1,7 @@
 import * as mq from 'mq'
-import FibGraphQL = require('fib-graphql')
 
 import FibOrmNs from 'orm';
 import * as http from 'http';
-import { APPError } from '../src/utils/err_info';
 import { FibAppOrmModelDefOptions, FibAppORMModel, ORMFindResult, OrigORMDefProperties } from './orm-patch';
 
 import FibSessionNS = require('fib-session/@types/export');
@@ -98,10 +96,10 @@ type FibAppApi = FibAppInternalApis
 interface AppInternalCommunicationObj {
     data?: ORMFindResult
     acl?: ACLActStringList
-    error?: APPError
+    error?: FibAppFinalError
 }
 interface AppInternalCommunicationError {
-    error: APPError
+    error: FibAppFinalError
 }
 type FibAppInternalCommObj = AppInternalCommunicationObj
 interface AppInternalCommunicationExtendObj extends AppInternalCommunicationObj {
@@ -171,7 +169,7 @@ interface FibAppReq {
     session: FibAppSession
     query: FibAppReqQuery
     request?: FibAppHttpRequest
-    error?: APPError
+    error?: FibAppFinalError
 }
 
 interface FibAppReqData {
@@ -195,20 +193,6 @@ interface FibAppDbSetupOpts {
     graphqlTypeMap?: FibAppGraphQLTypeMap
 }
 type FibAppOpts = FibAppDbSetupOpts
-
-// interface FibTypesFixForRouting {
-//     /**
-//      * fix lack of
-//      *  [METHOD](pattern: string, ...args: any[]): Class_Routing
-//      * in 'fib-types'
-//      */
-//     get(pattern: string, ...args: any[]): Class_Routing
-//     post(pattern: string, ...args: any[]): Class_Routing
-//     del(pattern: string, ...args: any[]): Class_Routing
-//     put(pattern: string, ...args: any[]): Class_Routing
-//     patch(pattern: string, ...args: any[]): Class_Routing
-//     find(pattern: string, ...args: any[]): Class_Routing
-// }
 
 interface FibAppClass extends mq.Routing {
     api: FibAppApi;

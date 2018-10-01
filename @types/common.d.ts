@@ -39,5 +39,3 @@ interface ObjectWithIdField {
 }
 
 type IdPayloadVar = ObjectWithIdField | AppIdType
-
-// type FibAppResponse = FibAppSuccessResponse | FibAppErrorResponse
