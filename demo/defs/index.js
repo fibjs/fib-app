@@ -6,6 +6,7 @@ module.exports = [
     require('./extend'),
     require('./pet'),
     require('./chat'),
+    require('./fields_type'),
     require('./json'),
     require('./nographql')
 ];

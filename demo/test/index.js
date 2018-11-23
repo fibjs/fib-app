@@ -1,31 +1,32 @@
 const test = require('test');
 test.setup();
 
-var fs = require('fs');
+const FIBJS_LTE_21 = require('util').buildInfo().fibjs <= '0.21.0'
+if (FIBJS_LTE_21) {
+    require.main = module
+}
 
-try {
-    fs.unlink("test.db");
-} catch (e) {};
-try {
-    fs.unlink("test.db-shm");
-} catch (e) {};
-try {
-    fs.unlink("test.db-wal");
-} catch (e) {};
+run('./app-apis');
 
-run('../app');
+if (!process.env.FIBAPP_NO_APP_SPEC) {
+    run('./classes');
+    run('./extend');
+    run('./reverse');
+    
+    run('./acl');
+    run('./graphql');
+    run('./nographql');
+    
+    run('./chat');
+    
+    run('./user');
+}
 
-run('./classes');
-run('./extend');
-run('./reverse');
+if (!process.env.FIBAPP_NO_MODEL_SPEC) {
+    run('../defs/acl/model.spec')
+}
 
-run('./acl');
-run('./graphql');
-run('./nographql');
-
-run('./chat');
-
-run('./user');
-
-test.run(console.DEBUG);
-process.exit();
+if (require.main === module) {
+    test.run(console.DEBUG);
+    process.exit();
+}

@@ -1,5 +1,5 @@
-const orm = require('fib-orm');
-const util = require('util');
+import orm = require('@fxjs/orm');
+import util = require('util');
 
 const ops = {
     "like": orm.like,
@@ -13,7 +13,7 @@ const ops = {
     "not_in": orm.not_in
 };
 
-var convert_where = function (where: ReqWhere) {
+var convert_where = function (where: FibApp.ReqWhere) {
     var where1 = {};
     var or = where["or"];
 

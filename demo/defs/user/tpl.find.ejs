@@ -1,0 +1,56 @@
+<div class="user-info-table">
+    <div style="margin-bottom: 12px;">found users info:</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>name</th>
+                <th>sex</th>
+                <th>age</th>
+                <th>password</th>
+                <th>salt</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(function(user){ %>
+            <tr>
+                <td data-field="name">
+                    <a href="/1.0/app/user/<%= user.id %>"><%= user.name %></a>
+                </td>
+                <td data-field="sex"><%= user.sex %></td>
+                <td data-field="age"><%= user.age %></td>
+                <td data-field="password"><%= user.password %></td>
+                <td data-field="salt"><%= user.salt %></td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+</div>
+<style>
+    .user-info-table {
+        max-width: 100vw;
+    }
+
+    .user-info-table > table {
+        width: 100%;
+        /* table-layout: fixed; */
+    }
+    
+    .user-info-table, .user-info-table > table {
+        box-sizing: border-box;
+        overflow-x: auto;
+    }
+
+    .user-info-table td, .user-info-table th {
+        padding: 0 12px;
+    }
+
+    .user-info-table td[data-field] {
+        max-width: 24em;
+        white-space: normal;
+        word-wrap: break-word;
+        /* text-overflow: ellipsis; */
+        /* overflow: hidden; */
+        border: 1px solid #9a8686;
+    }
+</style>

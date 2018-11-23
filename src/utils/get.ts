@@ -1,17 +1,11 @@
 /// <reference path="../../@types/index.d.ts" />
 
-import { Model as ORMModel } from "orm";
-
 import util = require('util');
-import * as err_info from '../utils/err_info';
-import { FibAppInternalCommObj, FibAppInternalCommExtendObj } from "../../@types/app";
-const {
-    check_obj_acl,
-    check_robj_acl
-} = require('./check_acl');
+import { err_info } from '../utils/err_info';
+import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 
-export const _get = function (cls: ORMModel, id: AppIdType, session: FibAppSession, act?: ACLActString): FibAppInternalCommObj {
-    var obj: FibAppInternalCommObj = {
+export const _get = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
+    var obj: FibApp.FibAppInternalCommObj = {
         data: (cls as any).find().where({
             id: id
         }).firstSync()
@@ -24,7 +18,7 @@ export const _get = function (cls: ORMModel, id: AppIdType, session: FibAppSessi
         }, cls.cid);
 
     if (act) {
-        var acl = check_obj_acl(session, act, obj.data);
+        var acl = checkout_obj_acl(session, act, obj.data);
         if (!acl)
             return err_info(4030001, {}, cls.cid);
         obj.acl = acl;
@@ -33,7 +27,7 @@ export const _get = function (cls: ORMModel, id: AppIdType, session: FibAppSessi
     return obj;
 };
 
-export const _eget = function (cls: ORMModel, id: IdPayloadVar, extend: ACLExtendModelNameType, rid: AppIdType, session: FibAppSession, act: ACLActString): FibAppInternalCommExtendObj {
+export const _eget = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
     var rel_model = cls.extends[extend];
     if (rel_model === undefined)
         return err_info(4040001, {
@@ -80,7 +74,7 @@ export const _eget = function (cls: ORMModel, id: IdPayloadVar, extend: ACLExten
     } else
         __opt = obj.data[obj.data.__opts.many_associations.find(a => a.name === extend).getAccessor].call(obj.data);
 
-    var robj: FibAppInternalCommExtendObj = {
+    var robj: FibApp.FibAppInternalCommExtendObj = {
         base: obj.data,
         data: __opt.where({
             id: rid
@@ -94,7 +88,7 @@ export const _eget = function (cls: ORMModel, id: IdPayloadVar, extend: ACLExten
         }, rel_model.model.cid);
 
     if (act) {
-        var acl = check_robj_acl(session, act, obj.data, robj.data, extend);
+        var acl = checkout_robj_acl(session, act, obj.data, robj.data, extend);
         if (!acl)
             return err_info(4030001, {}, rel_model.model.cid);
         robj.acl = acl;

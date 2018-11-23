@@ -6,8 +6,10 @@
   "types": "@types/index.d.ts",
   "scripts": {
     "build": "fib-typify src -o lib -c .typifyrc.json",
-    "test": "fibjs --cov ./demo/test/index.js",
-    "ci": "fibjs ./demo/test/index.js"
+    "test:cov": "fibjs --cov ./demo/test/index.js",
+    "test": "fibjs ./demo/test/index.js",
+    "ci": "npm run build && npm run test",
+    "prepublishOnly": "npm run build"
   },
   "author": "Liu Hu <lion@9465.net>",
   "contributors": [
@@ -19,20 +21,24 @@
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
   "dependencies": {
+    "@fxjs/orm": "^1.6.3",
     "fib-graphql": "^1.0.0",
-    "graphql-iso-date": "^3.4.0",
-    "graphql-type-json": "^0.1.4"
-  },
-  "devDependencies": {
-    "@fibjs/ci": "^2.0.0",
-    "@fibjs/detect-port": "^1.0.1",
-    "@types/fibjs": "^0.25.2",
-    "fib-orm": "^1.4.2",
     "fib-pool": "^1.4.1",
     "fib-push": "^1.3.0",
-    "fib-session": "^0.3.2",
-    "fib-typify": "^0.2.0",
+    "fib-session": "^0.4.0",
+    "graphql-iso-date": "^3.4.0",
+    "graphql-type-json": "^0.1.4",
     "viz.js": "1.8.0"
+  },
+  "devDependencies": {
+    "@fibjs/ci": "^2.1.0",
+    "@fibjs/detect-port": "^1.0.1",
+    "@types/fibjs": "^0.26.5",
+    "cheerio": "^1.0.0-rc.2",
+    "ejs": "^2.6.1",
+    "faker": "^4.1.0",
+    "fib-pug": "0.0.2",
+    "fib-typify": "^0.4.1"
   },
   "ci": {
     "type": "travis",
@@ -41,7 +47,9 @@
       "0.22.0",
       "0.23.0",
       "0.24.0",
-      "0.25.0"
+      "0.25.0",
+      "0.26.0",
+      "0.26.1"
     ]
   }
 }

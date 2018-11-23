@@ -1,13 +1,11 @@
-import FibOrmNS from 'orm';
-import { FibDataPayload } from '../../@types/app';
 import util = require('util');
 
-const {
-    check_obj_acl,
-    check_robj_acl
-} = require('./check_acl');
+import {
+    checkout_obj_acl,
+    checkout_robj_acl
+} from './checkout_acl';
 
-export const filter = function (obj: FibDataPayload, keys: boolean | string | string[], keys1?: string[]) {
+export function filter (obj: FxOrmNS.FibOrmFixedModelInstance | FibApp.FibDataPayload, keys: boolean | string | string[], keys1?: FibAppACL.ModelACLCheckResult) {
     if (Array.isArray(keys)) {
         if (Array.isArray(keys1)) {
             keys = util.intersection(keys, keys1)
@@ -19,21 +17,35 @@ export const filter = function (obj: FibDataPayload, keys: boolean | string | st
     if (!Array.isArray(keys)) {
         return obj;
     }
+    let objModelProperties = Object.keys(obj)
+    /**
+     * there may be 'extra' prop in `obj`, we must try to get real properties in obj which defined by its model class(access it by calling `obj.model()`)
+     */
+    if (typeof obj.model === 'function') {
+        const cls = obj.model()
+        if (cls && cls.allProperties) {
+            objModelProperties = Object.keys(cls.allProperties)
+        }
+    }
 
-    var ekeys = util.difference(Object.keys(obj), keys);
+    const ekeys = util.difference(objModelProperties, keys);
 
     ekeys.forEach(k => {
-        obj[k] = undefined;
+        try {
+            obj[k] = undefined;
+        } catch (e) {
+            throw `error occured when trying to set obj['${k}'] = undefined`
+        }
         delete obj[k];
     });
     return obj;
 };
 
-export const filter_ext = function (session: FibAppSession, obj: FibOrmNS.FibOrmFixedModelInstance) {
+export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmNS.FibOrmFixedModelInstance) {
     var cls = obj.model();
 
-    function _do_ext(robj: FibOrmNS.FibOrmFixedModelInstance, extend: ACLExtendModelNameType) {
-        var acl = check_robj_acl(session, 'read', obj, robj, extend);
+    function _do_ext(robj: FxOrmNS.FibOrmFixedModelInstance, extend: FibAppACL.ACLExtendModelNameType) {
+        var acl = checkout_robj_acl(session, 'read', obj, robj, extend);
         if (!acl) {
             return undefined;
         }
@@ -45,7 +57,7 @@ export const filter_ext = function (session: FibAppSession, obj: FibOrmNS.FibOrm
 
         if (robj !== undefined) {
             if (Array.isArray(robj)) {
-                if (check_obj_acl(session, 'find', obj, k)) {
+                if (checkout_obj_acl(session, 'find', obj, k)) {
                     obj[k] = robj.map(r => _do_ext(r, k));
                 } else {
                     obj[k] = undefined;
