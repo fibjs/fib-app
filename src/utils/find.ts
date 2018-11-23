@@ -1,40 +1,25 @@
-import FibOrmNS from 'orm';
-
-const {
-    check_obj_acl,
-    check_robj_acl
-} = require('./check_acl');
-const {
-    filter,
-    filter_ext
-} = require('./filter');
+import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
+import { filter, filter_ext } from './filter';
 
 import convert_where = require('./convert_where');
-import { FibAppReq } from '../../@types/app';
+import { filterSkip, filterLimit, filterWhere, isCountOnly } from './query';
 
-export = function (req: FibAppReq, exec: FibOrmNS.IChainFibORMFind, bobj?: FibOrmNS.FibOrmFixedModelInstance, extend?: ACLExtendModelNameType) {
+export = function (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFibORMFind, bobj?: FxOrmNS.FibOrmFixedModelInstance, extend?: FibAppACL.ACLExtendModelNameType) {
     var query = req.query;
 
     var keys = query.keys;
     if (keys !== undefined)
         exec = exec.only(keys);
 
-    var where = query.where;
-    if (where !== undefined)
-        where = convert_where(where as ReqWhere);
-    else where = {};
+    var where = filterWhere(query);
 
-    var exec = exec.where(where) as FibOrmNS.IChainFibORMFind;
+    var exec = exec.where(where) as FxOrmNS.IChainFibORMFind;
 
-    var skip = +query.skip;
-    if (isNaN(skip) || skip < 0)
-        skip = 0;
-    exec = exec.offset(skip) as FibOrmNS.IChainFibORMFind;
+    var skip = filterSkip(query)
+    exec = exec.offset(skip) as FxOrmNS.IChainFibORMFind;
 
-    var limit = +query.limit;
-    if (isNaN(limit) || limit < 0 || limit > 1000)
-        limit = 100;
-    exec = exec.limit(limit) as FibOrmNS.IChainFibORMFind;
+    var limit = filterLimit(query)
+    exec = exec.limit(limit) as FxOrmNS.IChainFibORMFind;
 
     var order = query.order;
     if (order !== undefined)
@@ -48,16 +33,16 @@ export = function (req: FibAppReq, exec: FibOrmNS.IChainFibORMFind, bobj?: FibOr
     objs = objs.map(obj => {
         var a
         if (extend !== undefined)
-            a = check_robj_acl(req.session, 'read', bobj, obj, extend);
+            a = checkout_robj_acl(req.session, 'read', bobj, obj, extend);
         else
-            a = check_obj_acl(req.session, 'read', obj);
+            a = checkout_obj_acl(req.session, 'read', obj);
         if (!a)
             return null;
 
         return filter(filter_ext(req.session, obj), keys, a);
     });
 
-    if (query.count == 1)
+    if (isCountOnly(query))
         return {
             results: objs,
             count: exec.countSync()

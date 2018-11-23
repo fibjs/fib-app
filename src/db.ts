@@ -1,31 +1,29 @@
-import { FibAppDbSetupOpts, FibAppDb, AppDBPool, FibAppOrmDefineFn } from '../@types/app'
-import { FibAppORMModel, FibAppOrmModelDefOptions, OrigORMDefProperties } from '../@types/orm-patch';
-import * as orm from 'fib-orm';
-import FibOrmNS from 'orm';
+import orm = require('@fxjs/orm');
 
 import uuid = require('uuid');
 import coroutine = require('coroutine');
 
 import Pool = require('fib-pool');
 
-import * as graphql from './classes/graphql';
+import graphql = require('./http/graphql');
 import App from './app';
 
 const slice = Array.prototype.slice;
 
-export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> => {
+export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppDBPool<FibApp.FibAppDb> => {
     var defs = [];
     opts = opts || {};
     var sync_lock = new coroutine.Lock();
     var syned = false;
     var use_uuid = opts.uuid;
 
-    var db: AppDBPool<FibAppDb> = Pool({
+    var db: FibApp.AppDBPool<FibApp.FibAppDb> = Pool({
         create: function () {
-            var odb: FibAppDb = (orm as typeof FibOrmNS).connectSync(url) as FibAppDb;
+            var odb: FibAppDb = orm.connectSync(connStr) as FibAppDb;
             var _define = odb.define;
             var cls_id = 1;
 
+            odb.app = app;
             odb.define = function (name: string, properties: OrigORMDefProperties, orm_define_opts: FibAppOrmModelDefOptions): FibAppORMModel {
                 var old_properties = properties;
 
@@ -67,9 +65,13 @@ export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> =
                     }
 
                     m.functions = orm_define_opts.functions;
+                    m.viewFunctions = orm_define_opts.viewFunctions;
                     m.ACL = orm_define_opts.ACL;
                     m.OACL = orm_define_opts.OACL;
                 }
+
+                m.functions = m.functions || {};
+                m.viewFunctions = m.viewFunctions || {};
 
                 if (m.ACL === undefined)
                     m.ACL = {
@@ -179,6 +181,7 @@ export = (app: App, url: string, opts: FibAppDbSetupOpts): AppDBPool<FibAppDb> =
         retry: opts.retry
     });
 
+    db.app = app;
     db.use = (def: FibAppOrmDefineFn|FibAppOrmDefineFn[]) => defs = defs.concat(def);
 
     return db;

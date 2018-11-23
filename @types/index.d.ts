@@ -1,3 +1,7 @@
+/// <reference types="fibjs" />
+/// <reference types="@fxjs/orm" />
+/// <reference types="fib-session" />
+
 /// <reference path="./common.d.ts" />
 /// <reference path="./acl.d.ts" />
 /// <reference path="./req.d.ts" />
@@ -5,9 +9,8 @@
 
 /// <reference path="./app.d.ts" />
 
-import App from '../src/app';
+/// <reference path="./test.d.ts" />
 
 declare module "fib-app" {
-    // export = FibAppClass;
-    export = App
+    export = FibApp.FibAppClass;
 }

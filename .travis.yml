@@ -1,15 +1,70 @@
 language: node_js
 node_js: '6'
-env:
-  - VERSION=0.21.0
-  - VERSION=0.22.0
-  - VERSION=0.23.0
-  - VERSION=0.24.0
-  - VERSION=0.25.0
+matrix:
+  include:
+    - os: linux
+      env:
+        - VERSION=0.21.0
+    - os: linux
+      env:
+        - VERSION=0.22.0
+    - os: linux
+      env:
+        - VERSION=0.23.0
+    - os: linux
+      env:
+        - VERSION=0.24.0
+    - os: linux
+      env:
+        - VERSION=0.25.0
+    - os: linux
+      env:
+        - VERSION=0.26.0
+    - os: linux
+      env:
+        - VERSION=0.26.1
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.21.0
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.22.0
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.23.0
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.24.0
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.25.0
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.26.0
+    - os: osx
+      osx_image: xcode9
+      env:
+        - VERSION=0.26.1
+before_install:
+  - OS=linux
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      rvm install ruby-2.4.0;
+      rvm --default use 2.4.0;
+      ruby -v;
+      brew update;
+      brew install xz;
+      OS=darwin;
+    fi
 script:
   - npm i
   - mkdir -p ./node_modules/.bin
-  - curl -SL "https://github.com/fibjs/fibjs/releases/download/v${VERSION}/fibjs-v${VERSION}-linux-x64.xz" -o ./node_modules/.bin/fibjs.xz
+  - curl -SL "https://github.com/fibjs/fibjs/releases/download/v${VERSION}/fibjs-v${VERSION}-${OS}-x64.xz" -o ./node_modules/.bin/fibjs.xz
   - xz -d ./node_modules/.bin/fibjs.xz
   - chmod a+x ./node_modules/.bin/fibjs
   - npm run ci

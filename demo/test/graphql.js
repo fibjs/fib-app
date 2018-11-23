@@ -1,15 +1,18 @@
 const test = require('test');
 test.setup();
 
-const { serverBase } = require('../')
+const testAppInfo = require('../').getRandomSqliteBasedApp();
+const testSrvInfo = require('../').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
+testSrvInfo.server.run(() => void 0)
 
 const http = require('http');
 
 describe("graphql", () => {
     var ids = [];
+    after(() => testAppInfo.cleanSqliteDB())
 
     it('init data', () => {
-        var rep = http.post(serverBase + '/1.0/app/people', {
+        var rep = http.post(testSrvInfo.appUrlBase + '/people', {
             json: [{
                 name: 'tom',
                 sex: "male",
@@ -39,28 +42,28 @@ describe("graphql", () => {
     });
 
     it('init extend', () => {
-        var rep = http.put(serverBase + `/1.0/app/people/${ids[0]}/wife`, {
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
             json: {
                 id: ids[1]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.put(serverBase + `/1.0/app/people/${ids[0]}/father`, {
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/father`, {
             json: {
                 id: ids[4]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.get(serverBase + `/1.0/app/people/${ids[0]}`, {
+        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}`, {
             query: {
                 keys: 'wife_id'
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.put(serverBase + `/1.0/app/people/${ids[1]}/husband`, {
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
             json: {
                 id: ids[0]
             }
@@ -68,14 +71,14 @@ describe("graphql", () => {
         assert.equal(rep.statusCode, 200)
 
         function set_parents(id) {
-            var rep = http.put(serverBase + `/1.0/app/people/${id}/father`, {
+            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/father`, {
                 json: {
                     id: ids[0]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(serverBase + `/1.0/app/people/${id}/mother`, {
+            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/mother`, {
                 json: {
                     id: ids[1]
                 }
@@ -87,14 +90,14 @@ describe("graphql", () => {
         set_parents(ids[3]);
 
         function add_childs(id) {
-            var rep = http.put(serverBase + `/1.0/app/people/${id}/childs`, {
+            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
                 json: {
                     id: ids[2]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(serverBase + `/1.0/app/people/${id}/childs`, {
+            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
                 json: {
                     id: ids[3]
                 }
@@ -107,7 +110,7 @@ describe("graphql", () => {
     });
 
     it('simple', () => {
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -131,7 +134,7 @@ describe("graphql", () => {
     });
 
     it('find', () => {
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -161,7 +164,7 @@ describe("graphql", () => {
     });
 
     it('count', () => {
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -185,7 +188,7 @@ describe("graphql", () => {
     });
 
     it('hasOne', () => {
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -225,7 +228,7 @@ describe("graphql", () => {
     });
 
     it('hasOne with null', () => {
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -263,7 +266,7 @@ describe("graphql", () => {
 
     describe('hasMany', () => {
         it('simple', () => {
-            var rep = http.post(serverBase + `/1.0/app`, {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -313,7 +316,7 @@ describe("graphql", () => {
 
 
         it('where', () => {
-            var rep = http.post(serverBase + `/1.0/app`, {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -351,7 +354,7 @@ describe("graphql", () => {
         });
 
         it('skip', () => {
-            var rep = http.post(serverBase + `/1.0/app`, {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -383,7 +386,7 @@ describe("graphql", () => {
         });
 
         it('limit', () => {
-            var rep = http.post(serverBase + `/1.0/app`, {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -415,7 +418,7 @@ describe("graphql", () => {
         });
 
         it('order', () => {
-            var rep = http.post(serverBase + `/1.0/app`, {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -453,13 +456,13 @@ describe("graphql", () => {
     });
 
     it("error", () => {
-        http.post(serverBase + '/set_session', {
+        http.post(testSrvInfo.serverBase + '/set_session', {
             json: {
                 id: 12345
             }
         });
-
-        var rep = http.post(serverBase + `/1.0/app`, {
+    
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -481,14 +484,14 @@ describe("graphql", () => {
     });
 
     it('acl field error', () => {
-        http.post(serverBase + '/set_session', {
+        http.post(testSrvInfo.serverBase + '/set_session', {
             json: {
                 id: 123457,
                 roles: ['test']
             }
         });
 
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -516,7 +519,7 @@ describe("graphql", () => {
     });
 
     it('json data', () => {
-        var rep = http.post(serverBase + '/1.0/app/json', {
+        var rep = http.post(testSrvInfo.appUrlBase + '/json', {
             json: {
                 name: 'tom',
                 profile: {
@@ -528,7 +531,7 @@ describe("graphql", () => {
 
         var id = rep.json().id;
 
-        var rep = http.post(serverBase + `/1.0/app`, {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -560,7 +563,7 @@ describe("graphql", () => {
 
     it('batch request: rest/graphql', () => {
         var testName = 'GeziFighter' + Date.now()
-        var rep = http.post(serverBase + '/1.0/app', {
+        var rep = http.post(testSrvInfo.appUrlBase + '', {
             json: {
                 requests: [
                     {
@@ -624,3 +627,8 @@ describe("graphql", () => {
         });
     });
 });
+
+if (require.main === module) {
+    test.run(console.DEBUG);
+    process.exit();
+}
