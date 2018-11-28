@@ -135,7 +135,7 @@ declare namespace FibApp {
     type FibAppHttpApiCollectionType = FibAppInternalApis | FibAppInternalViewApis
 
     interface AppInternalCommunicationObj {
-        data?: ORMFindResult
+        data?: FxOrmNS.FibOrmFixedModelInstance
         acl?: FibAppACL.ModelACLCheckResult // ACLActStringList
         error?: FibAppFinalError
     }
@@ -144,7 +144,7 @@ declare namespace FibApp {
     }
     type FibAppInternalCommObj = AppInternalCommunicationObj
     interface AppInternalCommunicationExtendObj extends AppInternalCommunicationObj {
-        base?: ORMFindResult
+        base?: FxOrmNS.FibOrmFixedModelInstance
     }
     type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 

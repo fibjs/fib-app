@@ -29,8 +29,6 @@ declare namespace FibApp {
         oacl: FibAppACL.OACLDefinition
     }
 
-    type ORMFindResult = FxOrmNS.FibOrmFixedModelInstance
-
     // keep compatible with definition in '@fxjs/orm'
     interface AppSpecialDateProperty extends FxOrmNS.OrigDetailedModelProperty {
         type: 'date'
