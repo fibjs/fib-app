@@ -1,7 +1,26 @@
 
-v1.12.0 / 2018-07-09
+v1.13.0 / 2018-11-28
 ==================
 
+  * add appveyor ci config.
+  * checkout back from '@fxjs/webx'
+  * v1.12.1
+
+v1.12.1 / 2018-07-16
+====================
+
+  * Merge pull request #22 from richardo2016/feat/beautify_code
+  * feat: beautify internal structure.
+  * Merge pull request #21 from richardo2016/master
+  * testcase: for batch tasks
+  * feat: save 'extraProperties' information when generating one db model.
+  * feat: support graphql query in batch-task
+  * Merge pull request #20 from richardo2016/master
+
+v1.12.0 / 2018-07-09
+====================
+
+  * Release v1.12.0
   * mark model with special style when generate viz in `app.diagram`
   * support option 'graphqlTypeMap'
   * support 'no_graphql' for FibAppOrmModelDefOptions

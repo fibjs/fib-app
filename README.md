@@ -1,7 +1,8 @@
 # fib-app
 
-[![Build Status](https://travis-ci.org/fibjs/fib-app.svg)](https://travis-ci.org/fibjs/fib-app)
 [![NPM version](https://img.shields.io/npm/v/fib-app.svg)](https://www.npmjs.org/package/fib-app)
+[![Build Status](https://travis-ci.org/fibjs/fib-app.svg)](https://travis-ci.org/fibjs/fib-app)
+[![Build status](https://ci.appveyor.com/api/projects/status/0ugsg3ttk1tuca25?svg=true)](https://ci.appveyor.com/project/richardo2016/fib-app)
 
 fibjs fib-app 应用程序 api/视图和扩展资源框架
 
