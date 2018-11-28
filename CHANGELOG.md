@@ -1,7 +1,13 @@
 
-v1.13.1 / 2018-11-29
+v1.13.2 / 2018-11-29
 ==================
 
+  * normalize acl about typo.
+
+v1.13.1 / 2018-11-29
+====================
+
+  * Release v1.13.1
   * add hidden property 'associated_instances' to `this` object in OACL.
   * typo and README.md normalization.
   * better variable declaration.
