@@ -2,7 +2,7 @@
   "name": "fib-app",
   "version": "1.13.0",
   "description": "",
-  "main": "lib/app",
+  "main": "./lib",
   "types": "@types/index.d.ts",
   "scripts": {
     "build": "fib-typify src -o lib -c .typifyrc.json",
