@@ -22,6 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "@fxjs/orm": "^1.6.3",
+    "@types/fibjs": "^0.26.5",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.4.1",
     "fib-push": "^1.3.0",
@@ -33,7 +34,6 @@
   "devDependencies": {
     "@fibjs/ci": "^2.1.0",
     "@fibjs/detect-port": "^1.0.1",
-    "@types/fibjs": "^0.26.5",
     "cheerio": "^1.0.0-rc.2",
     "ejs": "^2.6.1",
     "faker": "^4.1.0",
