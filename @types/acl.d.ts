@@ -2,66 +2,48 @@
 /// <reference path="common.d.ts" />
 
 declare namespace FibAppACL {
-    type ACLAct = 'create' | 'read' | 'write' | 'delete' | 'find'
+    type ACLAct = 'create' | 'read' | 'write' | 'delete' | 'find' | string
     type ACLAllAct = '*'
 
     type ACLActString = ACLAct | ACLAllAct
-    type ACLActStringList = /* ACLAct | ACLAllAct |  */string[]
 
-    type ExtendModelNameType = string
+    type AclPermisionAllowedFieldListType = ACLActString[]
+    type AclPermisionBooleanType = boolean
+    type AclPermissionType = boolean | AclPermisionAllowedFieldListType
+    type Undefinable<T> = T | undefined
 
-    type OrmFieldName = string
-    type ACLPermisionAllowedFieldListType = OrmFieldName[]
-    type ACLPermissionBooleanOrArrayType = boolean | ACLPermisionAllowedFieldListType
-    type ACLPermisionBooleanOrActActStringListType = boolean | ACLActStringList
-    type ACLPermisionBooleanType = boolean
+    type AclPermissionType__Create = Undefinable<AclPermissionType>;
+    type AclPermissionType__Read = Undefinable<AclPermissionType>;
+    type AclPermissionType__Write = Undefinable<AclPermissionType>;
+    type AclPermissionType__Delete = Undefinable<AclPermisionBooleanType>;
+    type AclPermissionType__Find = Undefinable<AclPermisionBooleanType>;
 
-    type AClPermissionDescriptorKey = string | '*'
-
+    type AclPermissionDescriptorKey = keyof RoleActDescriptorStruct
+    interface AssociationModelACLDefinitionHash {
+        [extendModelName: string]: RoleActDescriptor
+    }
     interface RoleActDescriptorStruct {
-        /* with key AClPermissionDescriptorKey :start */
-        create?: ACLPermissionBooleanOrArrayType
-        read?: ACLPermissionBooleanOrArrayType;
-        write?: ACLPermissionBooleanOrArrayType;
-        delete?: ACLPermisionBooleanType;
-        find?: ACLPermisionBooleanType;
-        '*'?: ACLPermisionBooleanOrActActStringListType
-        /* with key AClPermissionDescriptorKey :end */
+        '*'?: Undefinable<AclPermisionBooleanType>;
+        create?: AclPermissionType__Create;
+        read?: AclPermissionType__Read;
+        write?: AclPermissionType__Write;
+        delete?: AclPermissionType__Delete;
+        find?: AclPermissionType__Find;
 
-        // invalid for entry{[id], roles}
-        extends?: HashOfAssociationModelACLDefinition
+        extends?: AssociationModelACLDefinitionHash
     }
-    type RoleActDescriptor = RoleActDescriptorStruct | boolean
+    interface OACLDescriptorStruct extends RoleActDescriptorStruct {}
 
-    type RoleKeyInRoleActDescriptionHash = string
-    interface RoleActDescriptorHash {
-        [roleName: string/* RoleKeyInRoleActDescriptionHash */]: RoleActDescriptor
-    }
-    interface HashOfAssociationModelACLDefinition {
-        // MODEL_NAME, '*'
-        // [extendModelName: string]: ACLDefinition | boolean
-        [extendModelName: string]: RoleActDescriptor | boolean
-    }
-
-    interface OACLDescriptorStruct extends RoleActDescriptorStruct {
-    }
+    type RoleActDescriptor = RoleActDescriptorStruct | boolean | undefined | AclPermisionAllowedFieldListType
     type OACLDescriptor = OACLDescriptorStruct | boolean
 
     type ACLGeneratorFn = (sess: FibApp.FibAppSession) => ACLDefinition
     type OACLGeneratorFn = (sess: FibApp.FibAppSession) => OACLDefinition
+
     type FibACLDef = ACLGeneratorFn | ACLDefinition
     type FibOACLDef = OACLGeneratorFn | OACLDefinition
-
-    type FibACLDefResult = ACLDefinition
-
-    type ACLExtendModelNameType = string;
-    interface ACLToExntedModel {
-    }
-
-    // '*', [ID], 'roles'
-    type ACLDefineSubjectName = '*' | 'roles' | string
-
-    // key is ACLDefineSubjectName
+    
+    type AclDefinitionKeyname = keyof ACLDefinition
     interface ACLDefinition {
         // judge guest(all) visitor
         '*'?: RoleActDescriptor
@@ -70,34 +52,13 @@ declare namespace FibAppACL {
         // judge visitor with id = uid 
         [uid: string]: RoleActDescriptor
     }
+    interface RoleActDescriptorHash {
+        [roleName: string]: RoleActDescriptor
+    }
 
     interface OACLDefinition extends ACLDefinition {}
 
-    type ArgActVarWhenCheck = 
-        /**
-         * for init, or undefined result
-         */
-        undefined |
-        /**
-         * for act to checkt
-         */
-        string |
-        /**
-         * for final access control check result
-         */
-        boolean |
-        /**
-         * for filter, when
-         */
-        RoleActDescriptor|
-        /**
-         * for filter, when `Array.isArray(acl) === true && act === 'read'`
-         */
-        ACLPermisionAllowedFieldListType
-    type ModelACLCheckResult = /* ArgActVarWhenCheck */boolean | string | ACLPermisionAllowedFieldListType
+    type ACLExtendModelNameType = string;
 
-    type ResultPayloadACLActWhenCheck = undefined | ACLPermissionBooleanOrArrayType
-
-    type ArgAclRoleValueTypeWhenCheck = undefined | ACLPermissionBooleanOrArrayType | RoleActDescriptor
-    type ACLRoleVarHostType = RoleActDescriptor
+    type CheckoutActValueType = Undefinable<AclPermissionType>
 }

@@ -51,86 +51,81 @@ function setAssociatedInstance (obj: FxOrmNS.FibOrmFixedModelInstance, robj: FxO
 /**
  * funnel style functions
  */
-export const checkout_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ArgActVarWhenCheck, acl: FibAppACL.FibACLDef, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.ModelACLCheckResult {
-    var aclAct: FibAppACL.ResultPayloadACLActWhenCheck = undefined;
+export const checkout_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, acl: FibAppACL.FibACLDef, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
+    var aclAct: FibAppACL.CheckoutActValueType = undefined;
 
     var _is_read = act === 'read';
 
     /**
      * 
-     * @param _acl_role type of _acl_role is one description item in RoleActDescriptionHash's ACLPermissionBooleanOrArrayType
+     * @param _acl_role type of _acl_role is one description choice of CheckoutActValueType
      * 
-     * @returns undefined | boolean
+     * @returns FibAppACL.CheckoutActValueType
      */
-    function _checkout_acl_acthash(_acl_role: FibAppACL.ArgAclRoleValueTypeWhenCheck): boolean {
+    function _checkout_aclhash(_acl_role: FibAppACL.RoleActDescriptor): FibAppACL.CheckoutActValueType {
         if (_acl_role === undefined)
             return;
 
         /*
-            first, check whether _acl_role is ACLPermissionBooleanOrArrayType
+            first, check whether _acl_role is AclPermissionType
             {
                 'read': true,
                 'create': ['field1', 'field2', 'field3', ...]
             }
         */
         if (_acl_role === false || _acl_role === true || Array.isArray(_acl_role)) {
-            aclAct = _acl_role as FibAppACL.ACLPermisionBooleanOrActActStringListType;
+            aclAct = _acl_role as FibAppACL.AclPermissionType;
             return true;
         }
 
         /*
             now, 
-                - _acl_role is (should be) RoleActDescriptionHash
-                - act made sense, (expected to be) FibAppACL.RoleKeyInRoleActDescriptionHash
-            check whether AClPermissionDescriptorKey `act` exists.
+                - act made sense, (expected to be) string
+            check whether AclPermissionDescriptorKey `act` exists.
             {
                 'role1234': {
                     'read': true
                 }
             }
         */
-        aclAct = (
-            _acl_role as FibAppACL.RoleActDescriptorHash
-        )[act as FibAppACL.RoleKeyInRoleActDescriptionHash] as (/* RoleActDescriptor ->*/boolean | undefined);
+        aclAct = _acl_role[act];
         if (aclAct !== undefined)
             return _is_read ? aclAct : true;
 
         /*
-            check whether AClPermissionDescriptorKey '*' exists.
+            check whether AclPermissionDescriptorKey '*' exists.
             {
                 'role1234': {
                     '*': true
                 }
             }
         */
-        aclAct = _acl_role['*'] as (/* RoleActDescriptor->*/boolean | undefined);
+        aclAct = _acl_role['*'];
         if (aclAct !== undefined)
             return true;
     }
 
     /**
      * in `_checkout_acl_role`, no matter what arg `_act_role` is, 
-     * it finally led to one explicit **arg** with type 'FibAppACL.ArgAclRoleValueTypeWhenCheck(ACLPermissionBooleanOrArrayType)',
-     * 
-     * then, return the the **result** `_checkout_acl_acthash(arg)`
+     * it finally led to one explicit FibAppACL.AclPermissionType
      * 
      * @param _acl_role 
      * 
-     * @returns FibAppACL.ArgAclRoleValueTypeWhenCheck
+     * @returns FibAppACL.AclPermissionType
      */
-    function _checkout_acl_role(_acl_role: FibAppACL.ACLRoleVarHostType | FibAppACL.ArgAclRoleValueTypeWhenCheck): boolean {
+    function _checkout_acl_role(_acl_role: FibAppACL.RoleActDescriptor): FibAppACL.CheckoutActValueType {
         if (_acl_role === undefined)
             return;
 
-        /* now, _acl_role is(should be) FibAppACL.ArgAclRoleValueTypeWhenCheck */
+        /* now, _acl_role is(should be) FibAppACL.CheckoutActValueType */
         if (extend === undefined)
-            return _checkout_acl_acthash(_acl_role as FibAppACL.ArgAclRoleValueTypeWhenCheck);
+            return _checkout_aclhash(_acl_role);
 
-        /* now, _acl_role is(should be) FibAppACL.ACLRoleVarHostType */
-        var exts: FibAppACL.HashOfAssociationModelACLDefinition | undefined = (_acl_role as FibAppACL.RoleActDescriptorStruct).extends;
+        /* now, _acl_role is(should be) FibAppACL.RoleActDescriptor */
+        var exts: FibAppACL.AssociationModelACLDefinitionHash | undefined = (_acl_role as FibAppACL.RoleActDescriptorStruct).extends;
         if (exts !== undefined) {
             /*
-                check whether AClPermissionDescriptorKey `extend` exists in parent-AClPermissionDescriptor's 'extends' hash.
+                check whether AclPermissionDescriptorKey `extend` exists in parent-AClPermissionDescriptor's 'extends' hash.
                 {
                     '1234': {
                         'extends': {
@@ -139,11 +134,11 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
                     }
                 }
             */
-            if (_checkout_acl_acthash(exts[extend]))
+            if (_checkout_aclhash(exts[extend]))
                 return true;
 
             /*
-                check whether AClPermissionDescriptorKey `*` exists in parent-AClPermissionDescriptor's 'extends' hash.
+                check whether AclPermissionDescriptorKey `*` exists in parent-AClPermissionDescriptor's 'extends' hash.
                 {
                     '1234': {
                         'extends': {
@@ -152,7 +147,7 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
                     }
                 }
             */
-            return _checkout_acl_acthash(exts['*']);
+            return _checkout_aclhash(exts['*']);
         }
     }
 
@@ -199,10 +194,10 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
     return;
 }
 
-export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ArgActVarWhenCheck, obj: FxOrmNS.FibOrmFixedModelInstance, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.ModelACLCheckResult {
+export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, obj: FxOrmNS.FibOrmFixedModelInstance, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
     var cls: FxOrmNS.FibOrmFixedModel = obj.model();
 
-    var acl: FibAppACL.ArgActVarWhenCheck;
+    var acl: FibAppACL.RoleActDescriptor;
 
     var _oacl: FibAppACL.FibACLDef = cls.OACL;
     if (util.isFunction(_oacl))
@@ -218,10 +213,10 @@ export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: Fi
     return acl;
 }
 
-export const checkout_robj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ArgActVarWhenCheck, obj: FxOrmNS.FibOrmFixedModelInstance, robj: FxOrmNS.FibOrmFixedModelInstance, extend: FibAppACL.ACLExtendModelNameType): FibAppACL.ModelACLCheckResult {
+export const checkout_robj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, obj: FxOrmNS.FibOrmFixedModelInstance, robj: FxOrmNS.FibOrmFixedModelInstance, extend: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
     var rcls: FxOrmNS.FibOrmFixedModel = robj.model();
 
-    var acl: FibAppACL.ArgActVarWhenCheck;
+    var acl: FibAppACL.RoleActDescriptor;
 
     var _oacl = rcls.OACL;
     if (util.isFunction(_oacl)) {

@@ -136,7 +136,7 @@ declare namespace FibApp {
 
     interface AppInternalCommunicationObj {
         data?: FxOrmNS.FibOrmFixedModelInstance
-        acl?: FibAppACL.ModelACLCheckResult // ACLActStringList
+        acl?: FibAppACL.RoleActDescriptor
         error?: FibAppFinalError
     }
     interface AppInternalCommunicationError {

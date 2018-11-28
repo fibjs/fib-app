@@ -5,7 +5,7 @@ import {
     checkout_robj_acl
 } from './checkout_acl';
 
-export function filter (obj: FxOrmNS.FibOrmFixedModelInstance | FibApp.FibDataPayload, keys: boolean | string | string[], keys1?: FibAppACL.ModelACLCheckResult) {
+export function filter (obj: FxOrmNS.FibOrmFixedModelInstance | FibApp.FibDataPayload, keys: boolean | string | string[], keys1?: FibAppACL.RoleActDescriptor) {
     if (Array.isArray(keys)) {
         if (Array.isArray(keys1)) {
             keys = util.intersection(keys, keys1)
@@ -45,7 +45,7 @@ export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmNS.FibOrmFi
     var cls = obj.model();
 
     function _do_ext(robj: FxOrmNS.FibOrmFixedModelInstance, extend: FibAppACL.ACLExtendModelNameType) {
-        var acl = checkout_robj_acl(session, 'read', obj, robj, extend);
+        var acl = checkout_robj_acl(session, 'read', obj, robj, extend) as FibAppACL.AclPermissionType__Read;
         if (!acl) {
             return undefined;
         }

@@ -19,7 +19,7 @@ export function setup (app: FibApp.FibAppClass) {
         if (robj.error)
             return robj;
 
-        data = filter(data, robj.acl);
+        data = filter(data, robj.acl as FibAppACL.AclPermissionType__Write);
 
         var rdata = {};
 
@@ -111,7 +111,7 @@ export function setup (app: FibApp.FibAppClass) {
                 return obj;
         }
 
-        var acl = checkout_obj_acl(req.session, 'create', obj.data, extend);
+        var acl = checkout_obj_acl(req.session, 'create', obj.data, extend) as FibAppACL.AclPermissionType__Create;
         if (!acl)
             return err_info(4030001, {}, cls.cid);
 

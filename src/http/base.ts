@@ -9,7 +9,7 @@ export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
 
     api.post = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, data: FibApp.FibAppReqData) => {
-        var acl: FibAppACL.ModelACLCheckResult = checkout_acl(req.session, 'create', cls.ACL);
+        var acl = checkout_acl(req.session, 'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
         if (!acl)
             return err_info(4030001, {}, cls.cid);
 
@@ -91,7 +91,7 @@ export function setup (app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
 
-        data = filter(data, obj.acl);
+        data = filter(data, obj.acl as FibAppACL.AclPermissionType__Write);
 
         var rdata = {};
 
