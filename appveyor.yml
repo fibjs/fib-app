@@ -1,0 +1,22 @@
+environment:
+  nodejs_version: '6'
+  matrix:
+    - VERSION: 0.21.0
+    - VERSION: 0.22.0
+    - VERSION: 0.23.0
+    - VERSION: 0.24.0
+    - VERSION: 0.25.0
+    - VERSION: 0.26.0
+    - VERSION: 0.26.1
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm i
+  - If Not Exist "node_modules\.bin" (mkdir node_modules\.bin)
+  - curl -fsSL -o node_modules\.bin\fibjs.cab "https://github.com/fibjs/fibjs/releases/download/v%VERSION%/fibjs-v%VERSION%-windows-x64.cab"
+  - expand node_modules\.bin\fibjs.cab node_modules\.bin\fibjs.exe
+
+test_script:
+  - npm run ci
+
+build: off
