@@ -55,16 +55,17 @@ export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmNS.FibOrmFi
     for (var k in cls.extends) {
         var robj = obj[k];
 
-        if (robj !== undefined) {
-            if (Array.isArray(robj)) {
-                if (checkout_obj_acl(session, 'find', obj, k)) {
-                    obj[k] = robj.map(r => _do_ext(r, k));
-                } else {
-                    obj[k] = undefined;
-                }
+        if (robj === undefined)
+            continue
+
+        if (Array.isArray(robj)) {
+            if (checkout_obj_acl(session, 'find', obj, k)) {
+                obj[k] = robj.map(r => _do_ext(r, k));
             } else {
-                obj[k] = _do_ext(robj, k);
+                obj[k] = undefined;
             }
+        } else {
+            obj[k] = _do_ext(robj, k);
         }
     }
 

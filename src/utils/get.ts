@@ -5,26 +5,26 @@ import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 
 export const _get = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
-    var obj: FibApp.FibAppInternalCommObj = {
+    var iobj: FibApp.FibAppInternalCommObj = {
         data: (cls as any).find().where({
             id: id
         }).firstSync()
     };
 
-    if (obj.data === null)
+    if (iobj.data === null)
         return err_info(4040002, {
             id: id,
             classname: cls.model_name
         }, cls.cid);
 
     if (act) {
-        var acl = checkout_obj_acl(session, act, obj.data);
+        var acl = checkout_obj_acl(session, act, iobj.data);
         if (!acl)
             return err_info(4030001, {}, cls.cid);
-        obj.acl = acl;
+        iobj.acl = acl;
     }
 
-    return obj;
+    return iobj;
 };
 
 export const _eget = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
@@ -34,21 +34,21 @@ export const _eget = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.IdPaylo
             classname: extend
         }, cls.cid);
 
-    var obj;
+    var iobj;
 
     if (util.isObject(id)) {
-        obj = {
+        iobj = {
             data: id
         };
         id = (id as any).id;
     } else {
-        obj = {
+        iobj = {
             data: (cls as any).find().where({
                 id: id
             }).firstSync()
         };
 
-        if (obj.data === null)
+        if (iobj.data === null)
             return err_info(4040002, {
                 id: id,
                 classname: cls.model_name
@@ -59,9 +59,9 @@ export const _eget = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.IdPaylo
 
     if (rel_model.type === 'hasOne') {
         if (rel_model.reversed)
-            __opt = obj.data[obj.data.__opts.one_associations.find(a => a.name === extend).getAccessor].call(obj.data);
+            __opt = iobj.data[iobj.data.__opts.one_associations.find(a => a.name === extend).getAccessor].call(iobj.data);
         else {
-            var rid1 = obj.data[Object.keys(obj.data.__opts.one_associations.find(a => a.name === extend).field)[0]];
+            var rid1 = iobj.data[Object.keys(iobj.data.__opts.one_associations.find(a => a.name === extend).field)[0]];
             if (rid === undefined)
                 rid = rid1;
             else if (rid != rid1)
@@ -72,27 +72,27 @@ export const _eget = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.IdPaylo
             __opt = rel_model.model.find();
         }
     } else
-        __opt = obj.data[obj.data.__opts.many_associations.find(a => a.name === extend).getAccessor].call(obj.data);
+        __opt = iobj.data[iobj.data.__opts.many_associations.find(a => a.name === extend).getAccessor].call(iobj.data);
 
-    var robj: FibApp.FibAppInternalCommExtendObj = {
-        base: obj.data,
+    var riobj: FibApp.FibAppInternalCommExtendObj = {
+        base: iobj.data,
         data: __opt.where({
             id: rid
         }).firstSync()
     };
 
-    if (robj.data === null)
+    if (riobj.data === null)
         return err_info(4040002, {
             id: rid,
             classname: `${cls.model_name}.${extend}`
         }, rel_model.model.cid);
 
     if (act) {
-        var acl = checkout_robj_acl(session, act, obj.data, robj.data, extend);
+        var acl = checkout_robj_acl(session, act, iobj.data, riobj.data, extend);
         if (!acl)
             return err_info(4030001, {}, rel_model.model.cid);
-        robj.acl = acl;
+        riobj.acl = acl;
     }
 
-    return robj;
+    return riobj;
 };
