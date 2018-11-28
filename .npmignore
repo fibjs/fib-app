@@ -4,3 +4,5 @@ docs
 test.db*
 
 src
+
+/lib.ts
