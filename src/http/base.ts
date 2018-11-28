@@ -9,7 +9,7 @@ export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
 
     api.post = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, data: FibApp.FibAppReqData) => {
-        var acl: FibAppACL.ModelACLCheckResult = checkout_acl(req.session, "create", cls.ACL);
+        var acl: FibAppACL.ModelACLCheckResult = checkout_acl(req.session, 'create', cls.ACL);
         if (!acl)
             return err_info(4030001, {}, cls.cid);
 
@@ -77,7 +77,7 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.get = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
-        var obj: FibApp.FibAppInternalCommObj = _get(cls, id, req.session, "read");
+        var obj: FibApp.FibAppInternalCommObj = _get(cls, id, req.session, 'read');
         if (obj.error)
             return obj;
 
@@ -87,7 +87,7 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.put = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, data: FibApp.FibAppReqData): FibApp.FibAppApiFunctionResponse => {
-        var obj = _get(cls, id, req.session, "write");
+        var obj = _get(cls, id, req.session, 'write');
         if (obj.error)
             return obj;
 
@@ -118,7 +118,7 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.del = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
-        var obj = _get(cls, id, req.session, "delete");
+        var obj = _get(cls, id, req.session, 'delete');
         if (obj.error)
             return obj;
 
@@ -132,7 +132,7 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.find = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel): FibApp.FibAppApiFunctionResponse => {
-        if (!checkout_acl(req.session, "find", cls.ACL))
+        if (!checkout_acl(req.session, 'find', cls.ACL))
             return err_info(4030001, {}, cls.cid);
 
         return {

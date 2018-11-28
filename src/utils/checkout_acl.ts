@@ -4,10 +4,53 @@
 
 import * as util from 'util';
 
+function computeACLDef (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmNS.FibOrmFixedModelInstance): FibAppACL.ACLDefinition | FibAppACL.OACLDefinition {
+    if (!util.isFunction(def))
+        return def as any
+
+    const acl_def = def as FibAppACL.ACLGeneratorFn
+    let acl = null
+    if (inst) {
+        acl = acl_def.call(inst, session)
+    } else {
+        acl = acl_def.call(null, session)
+    }
+
+    return acl
+}
+
+function computeOACLDef (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmNS.FibOrmFixedModelInstance): FibAppACL.OACLDefinition {
+    mountAssociatedInstanceHash(inst)
+    return computeACLDef(def, session, inst)
+}
+
+function mountAssociatedInstanceHash (robj: FxOrmNS.FibOrmFixedModelInstance) {
+    // TODO: validate if extend in one association type between obj and robj in DEBUG mode.
+    if (!robj.hasOwnProperty('$associated_instances')) {
+        Object.defineProperty(robj, '$associated_instances', {
+            configurable: true,
+            writable: false,
+            value: {}
+        })
+    }
+}
+
+function setAssociatedInstance (obj: FxOrmNS.FibOrmFixedModelInstance, robj: FxOrmNS.FibOrmFixedModelInstance, extend: FibAppACL.ACLExtendModelNameType) {
+    if (!extend || !obj)
+        return
+    
+    // TODO: validate if extend in one association type between obj and robj in DEBUG mode.
+    mountAssociatedInstanceHash(robj)
+
+    if (obj) {
+        var oname = obj.model().model_name
+        robj.$associated_instances[`${oname}@${extend}`] = obj
+    }
+}
+
 /**
  * funnel style functions
  */
-
 export const checkout_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ArgActVarWhenCheck, acl: FibAppACL.FibACLDef, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.ModelACLCheckResult {
     var aclAct: FibAppACL.ResultPayloadACLActWhenCheck = undefined;
 
@@ -113,9 +156,9 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
         }
     }
 
-    if (util.isFunction(acl)) {
-        acl = (acl as FibAppACL.ACLGeneratorFn)(session);
-    }
+    if (util.isFunction(acl))
+        acl = computeACLDef(acl, session);
+
     if (acl === null || acl === undefined)
         return;
 
@@ -163,7 +206,7 @@ export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: Fi
 
     var _oacl: FibAppACL.FibACLDef = cls.OACL;
     if (util.isFunction(_oacl))
-        _oacl = (_oacl as FibAppACL.ACLGeneratorFn).call(obj, session);
+        _oacl = computeOACLDef(_oacl, session, obj);
 
     acl = checkout_acl(session, act, _oacl, extend);
     if (acl === undefined)
@@ -176,14 +219,15 @@ export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: Fi
 }
 
 export const checkout_robj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ArgActVarWhenCheck, obj: FxOrmNS.FibOrmFixedModelInstance, robj: FxOrmNS.FibOrmFixedModelInstance, extend: FibAppACL.ACLExtendModelNameType): FibAppACL.ModelACLCheckResult {
-    var cls: FxOrmNS.FibOrmFixedModel = obj.model();
     var rcls: FxOrmNS.FibOrmFixedModel = robj.model();
 
     var acl: FibAppACL.ArgActVarWhenCheck;
 
     var _oacl = rcls.OACL;
-    if (util.isFunction(_oacl))
-        _oacl = _oacl.call(robj, session);
+    if (util.isFunction(_oacl)) {
+        setAssociatedInstance(obj, robj, extend)
+        _oacl = computeOACLDef(_oacl, session, robj);
+    }
 
     acl = checkout_acl(session, act, _oacl);
 
