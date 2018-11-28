@@ -1,7 +1,17 @@
 
-v1.13.0 / 2018-11-28
+v1.13.1 / 2018-11-29
 ==================
 
+  * add hidden property 'associated_instances' to `this` object in OACL.
+  * typo and README.md normalization.
+  * better variable declaration.
+  * make fib-app ts-debugable
+  * make '@types/fibjs' as distribution dependencies.
+
+v1.13.0 / 2018-11-28
+====================
+
+  * Release v1.13.0
   * add appveyor ci config.
   * checkout back from '@fxjs/webx'
   * v1.12.1
