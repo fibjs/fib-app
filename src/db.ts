@@ -22,7 +22,8 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
     var db: FibApp.AppDBPool<FibApp.FibAppORM> = Pool({
         create: function () {
             var ormInstance: FibApp.FibAppORM = orm.connectSync(connStr) as FibApp.FibAppORM;
-            ormUtils.setOrmDefaultSettings(orm)
+            ormUtils.setOrmDefaultSettings(ormInstance)
+
             var spec_keys = {
                 createdAt: ormUtils.getCreatedAtField(ormInstance.settings),
                 updatedAt: ormUtils.getUpdatedAtField(ormInstance.settings),
