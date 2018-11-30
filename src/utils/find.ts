@@ -4,7 +4,7 @@ import { filter, filter_ext } from './filter';
 import convert_where = require('./convert_where');
 import { filterSkip, filterLimit, filterWhere, isCountOnly } from './query';
 
-export = function (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFibORMFind, bobj?: FxOrmNS.FibOrmFixedModelInstance, extend?: FibAppACL.ACLExtendModelNameType) {
+export = function (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFibORMFind, bobj?: FxOrmNS.Instance, extend?: FibAppACL.ACLExtendModelNameType) {
     var query = req.query;
 
     var keys = query.keys;

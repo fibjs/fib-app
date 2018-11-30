@@ -56,51 +56,51 @@ declare namespace FibApp {
 
     /* internal api function :start */
     interface FibAppInternalTypedApi__Get<RT = any> {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType): RT;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType): RT;
     }
     type FibAppIneternalApiFunction__Get = FibAppInternalTypedApi__Get<FibAppApiFunctionResponse>
 
     interface FibAppIneternalApiFunction__Post {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, data: FibAppReqData): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, data: FibAppReqData): FibAppApiFunctionResponse;
     }
 
     interface FibAppInternalTypedApi__Find<RT = any> {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel): RT;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model): RT;
     }
     type FibAppIneternalApiFunction__Find = FibAppInternalTypedApi__Find<FibAppApiFunctionResponse>
 
     interface FibAppIneternalApiFunction__Put {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, data: FibAppReqData): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, data: FibAppReqData): FibAppApiFunctionResponse;
     }
 
     interface FibAppIneternalApiFunction__Del {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType): FibAppApiFunctionResponse;
     }
 
     interface FibAppInternalTypedApi__Eget<RT = any> {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid?: AppIdType): RT;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid?: AppIdType): RT;
     }
     type FibAppIneternalApiFunction__Eget = FibAppInternalTypedApi__Eget<FibAppApiFunctionResponse>
 
     interface FibAppInternalTypedApi__Efind<RT = any> {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType): RT;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType): RT;
     }
     type FibAppIneternalApiFunction__Efind = FibAppInternalTypedApi__Efind<FibAppApiFunctionResponse>
 
     interface FibAppIneternalApiFunction__Epost {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse;
     }
 
     interface FibAppIneternalApiFunction__Eput {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: AppIdType, data: FibDataPayload): FibAppApiFunctionResponse;
     }
 
     interface FibAppIneternalApiFunction__Edel {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: AppIdType): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: AppIdType): FibAppApiFunctionResponse;
     }
 
     interface FibAppIneternalApiFunction__Elink {
-        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.FibOrmFixedModel, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse;
+        (req: FibAppReq, db: FibAppDb, cls: FxOrmNS.Model, id: AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibDataPayload): FibAppApiFunctionResponse;
     }
     /* internal api function :end */
 
@@ -135,7 +135,7 @@ declare namespace FibApp {
     type FibAppHttpApiCollectionType = FibAppInternalApis | FibAppInternalViewApis
 
     interface AppInternalCommunicationObj {
-        data?: FxOrmNS.FibOrmFixedModelInstance
+        data?: FxOrmNS.Instance
         acl?: FibAppACL.RoleActDescriptor
         error?: FibAppFinalError
     }
@@ -144,7 +144,7 @@ declare namespace FibApp {
     }
     type FibAppInternalCommObj = AppInternalCommunicationObj
     interface AppInternalCommunicationExtendObj extends AppInternalCommunicationObj {
-        base?: FxOrmNS.FibOrmFixedModelInstance
+        base?: FxOrmNS.Instance
     }
     type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 

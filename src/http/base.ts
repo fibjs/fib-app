@@ -33,7 +33,7 @@ export function setup (app: FibApp.FibAppClass) {
 
             rdata.push(rd);
 
-            var o: FxOrmNS.FibOrmFixedModelInstance = new cls(d);
+            var o: FxOrmNS.Instance = new cls(d);
             if (_createBy !== undefined) {
                 _opt = Object.keys(o.__opts.one_associations.find(a => a.name === 'createdBy').field)[0];
                 o[_opt] = req.session.id;

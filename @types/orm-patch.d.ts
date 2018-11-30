@@ -24,7 +24,7 @@ declare namespace FibApp {
         [fnName: string]: FibAppOrmModelViewFunctionDefinition
     }
 
-    interface FibAppOrmInstance extends FxOrmNS.FibOrmFixedModelInstance {
+    interface FibAppOrmInstance extends FxOrmNS.Instance {
         acl: FibAppACL.ACLDefinition
         oacl: FibAppACL.OACLDefinition
     }
@@ -40,14 +40,14 @@ declare namespace FibApp {
         [key: string]: FxOrmNS.OrigModelPropertyDefinition
     }
 
-    interface FibAppOrmModelDefOptions extends FxOrmNS.FibOrmFixedModelOptions {
+    interface FibAppOrmModelDefOptions extends FxOrmNS.ModelOptions {
         ACL?: FibAppACL.FibACLDef
         OACL?: FibAppACL.FibOACLDef
         functions?: FibAppOrmModelFunctionHash
         viewFunctions?: FibAppOrmModelViewFunctionHash
         no_graphql?: boolean
     }
-    interface FibAppORMModel extends FxOrmNS.FibOrmFixedModel {
+    interface FibAppORMModel extends FxOrmNS.Model {
         // globally unique class id
         cid: number
         model_name: string;

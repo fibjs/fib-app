@@ -38,7 +38,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
     var types = {};
     var graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
 
-    function get_resolve(m: FxOrmNS.FibOrmFixedModel) {
+    function get_resolve(m: FxOrmNS.Model) {
         return (
             function (parent, args, req) {
                 var res = debugFunctionWrapper(app.api.get)({
@@ -56,7 +56,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function find_resolve(m: FxOrmNS.FibOrmFixedModel) {
+    function find_resolve(m: FxOrmNS.Model) {
         return (
             function (parent, args, req) {
                 var res = debugFunctionWrapper(app.api.find)({
@@ -74,7 +74,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function count_resolve(m: FxOrmNS.FibOrmFixedModel) {
+    function count_resolve(m: FxOrmNS.Model) {
         return (
             function (parent, args, req) {
                 args.count = 1
@@ -94,7 +94,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function get_resolve_one(m: FxOrmNS.FibOrmFixedModel, f: FibApp.FibAppModelExtendORMFuncName) {
+    function get_resolve_one(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
             function (parent: FibApp.AppIdType, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 var res = debugFunctionWrapper(app.api.eget)({
@@ -115,7 +115,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function get_resolve_many(m: FxOrmNS.FibOrmFixedModel, f: FibApp.FibAppModelExtendORMFuncName) {
+    function get_resolve_many(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
             function (parent: FibApp.AppIdType, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 var res = debugFunctionWrapper(app.api.efind)({
@@ -133,7 +133,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function get_fields(m: FxOrmNS.FibOrmFixedModel) {
+    function get_fields(m: FxOrmNS.Model) {
         return (
             function () {
                 var fields = {}
