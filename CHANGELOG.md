@@ -1,7 +1,15 @@
 
-v1.13.2 / 2018-11-29
+v1.13.3 / 2018-11-30
 ==================
 
+  * make common property's name customizable.
+  * support intercerpt association fields in rest api's extend-operation.
+  * upgrade orm dependency.
+
+v1.13.2 / 2018-11-29
+====================
+
+  * Release v1.13.2
   * normalize acl about typo.
 
 v1.13.1 / 2018-11-29
