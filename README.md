@@ -522,6 +522,10 @@ curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
 * `person` => `ACL` => `extends` => `pets`
 * `pets` => `ACL`
 
+## ACL/OACL 详解
+
+参考[ACL/OACL](./docs/app-acl.md)
+
 ## Utils
 
 ### 类型

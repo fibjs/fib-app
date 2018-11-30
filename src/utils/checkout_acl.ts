@@ -1,3 +1,4 @@
+/// <reference types="@fxjs/orm" />
 /// <reference path="../../@types/acl.d.ts" />
 /// <reference path="../../@types/req.d.ts" />
 /// <reference path="../../@types/common.d.ts" />
@@ -52,17 +53,17 @@ function setAssociatedInstance (obj: FxOrmNS.Instance, robj: FxOrmNS.Instance, e
  * funnel style functions
  */
 export const checkout_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, acl: FibAppACL.FibACLDef, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
-    var aclAct: FibAppACL.CheckoutActValueType = undefined;
+    var aclAct: FibAppACL.ActCheckoutStatusType = undefined;
 
     var _is_read = act === 'read';
 
     /**
      * 
-     * @param _acl_role type of _acl_role is one description choice of CheckoutActValueType
+     * @param _acl_role type of _acl_role is one description choice of ActCheckoutStatusType
      * 
-     * @returns FibAppACL.CheckoutActValueType
+     * @returns FibAppACL.ActCheckoutStatusType
      */
-    function _checkout_aclhash(_acl_role: FibAppACL.RoleActDescriptor): FibAppACL.CheckoutActValueType {
+    function _checkout_aclhash(_acl_role: FibAppACL.RoleActDescriptor): FibAppACL.ActCheckoutStatusType {
         if (_acl_role === undefined)
             return;
 
@@ -113,11 +114,11 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
      * 
      * @returns FibAppACL.AclPermissionType
      */
-    function _checkout_acl_role(_acl_role: FibAppACL.RoleActDescriptor): FibAppACL.CheckoutActValueType {
+    function _checkout_acl_role(_acl_role: FibAppACL.RoleActDescriptor): FibAppACL.ActCheckoutStatusType {
         if (_acl_role === undefined)
             return;
 
-        /* now, _acl_role is(should be) FibAppACL.CheckoutActValueType */
+        /* now, _acl_role is(should be) FibAppACL.ActCheckoutStatusType */
         if (extend === undefined)
             return _checkout_aclhash(_acl_role);
 

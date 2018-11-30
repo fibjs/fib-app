@@ -60,5 +60,6 @@ declare namespace FibAppACL {
 
     type ACLExtendModelNameType = string;
 
-    type CheckoutActValueType = Undefinable<AclPermissionType>
+    type IsCheckoutValue = boolean;
+    type ActCheckoutStatusType = Undefinable<IsCheckoutValue | AclPermisionAllowedFieldListType>
 }

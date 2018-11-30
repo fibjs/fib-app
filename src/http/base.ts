@@ -1,3 +1,5 @@
+/// <reference types="@fxjs/orm" />
+
 import { err_info } from '../utils/err_info';
 import _find = require('../utils/find');
 
@@ -45,7 +47,7 @@ export function setup (app: FibApp.FibAppClass) {
                 o[_opt] = req.session.id;
             }
             o.saveSync();
-
+            
             return o;
         }
 
