@@ -18,6 +18,7 @@ export function setup (app: FibApp.FibAppClass) {
         var rdata = [];
         var obj;
 
+        let delr = !db.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
         function _create(d) {
             d = filter(d, acl);
 
@@ -27,7 +28,8 @@ export function setup (app: FibApp.FibAppClass) {
 
                 if (r !== undefined) {
                     rd[k] = r;
-                    delete d[k];
+                    if (delr)
+                        delete d[k];
                 }
             }
 
@@ -95,12 +97,14 @@ export function setup (app: FibApp.FibAppClass) {
 
         var rdata = {};
 
+        let delr = !db.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
         for (var k in cls.extends) {
             var r = data[k];
 
             if (r !== undefined) {
                 rdata[k] = r;
-                delete data[k];
+                if (delr)
+                    delete data[k];
             }
         }
 

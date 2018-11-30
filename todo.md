@@ -1,8 +1,3 @@
-* [x] 重写用例，用例独立运行, uuid
-  - 修正 uuid 模式下, 关联模型用 id 关联时, 关联字段在 mysql 中分配长度过小的问题.
-
-* [ ] 写覆盖 OACL 为 Function 的测试
-
 * reverse 测试
   - hasOne 测试
   - hasMany 测试
@@ -57,3 +52,17 @@ extend:cls: read
 
 edel
 extend:cls: delete
+
+## use cases
+
+* [x] 重写用例，用例独立运行, uuid
+  - 修正 uuid 模式下, 关联模型用 id 关联时, 关联字段在 mysql 中分配长度过小的问题.
+
+* [ ] 写覆盖 OACL 为 Function 的测试
+* [ ] orm.settings[get/set]
+    - `rest.model.${cls.model_name}.extend.keep_association_beforewrite`: 在 rest api 对 extend 操作时, 保持实例的关联对象对象信息
+
+## new features
+
+* [ ] support built-in rpc feature
+* [ ] support built-in emitter
