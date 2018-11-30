@@ -8,23 +8,31 @@ import Pool = require('fib-pool');
 import graphql = require('./http/graphql');
 import App from './app';
 
+import ormUtils = require('./utils/orm')
+
 const slice = Array.prototype.slice;
 
-export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppDBPool<FibApp.FibAppDb> => {
+export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppDBPool<FibApp.FibAppORM> => {
     var defs = [];
     opts = opts || {};
     var sync_lock = new coroutine.Lock();
     var syned = false;
     var use_uuid = opts.uuid;
 
-    var db: FibApp.AppDBPool<FibApp.FibAppDb> = Pool({
+    var db: FibApp.AppDBPool<FibApp.FibAppORM> = Pool({
         create: function () {
-            var odb: FibAppDb = orm.connectSync(connStr) as FibAppDb;
-            var _define = odb.define;
+            var ormInstance: FibApp.FibAppORM = orm.connectSync(connStr) as FibApp.FibAppORM;
+            ormUtils.setOrmDefaultSettings(orm)
+            var spec_keys = {
+                createdAt: ormUtils.getCreatedAtField(ormInstance.settings),
+                updatedAt: ormUtils.getUpdatedAtField(ormInstance.settings),
+            }
+            
+            var _define = ormInstance.define;
             var cls_id = 1;
 
-            odb.app = app;
-            odb.define = function (name: string, properties: OrigORMDefProperties, orm_define_opts: FibAppOrmModelDefOptions): FibAppORMModel {
+            ormInstance.app = app;
+            ormInstance.define = function (name: string, properties: OrigORMDefProperties, orm_define_opts: FibAppOrmModelDefOptions) {
                 var old_properties = properties;
 
                 if (use_uuid)
@@ -40,13 +48,13 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
                     if (k !== 'id')
                         properties[k] = old_properties[k];
 
-                if (properties.createdAt === undefined)
-                    properties.createdAt = { type: 'date' };
-                properties.createdAt.time = true; //change the field type to datetime in MySQL
+                if (properties[spec_keys.createdAt] === undefined)
+                    properties[spec_keys.createdAt] = { type: 'date' };
+                properties[spec_keys.createdAt].time = true; //change the field type to datetime in MySQL
 
-                if (properties.updatedAt === undefined)
-                    properties.updatedAt = { type: 'date' };
-                properties.updatedAt.time = true; //change the field type to datetime in MySQL
+                if (properties[spec_keys.updatedAt] === undefined)
+                    properties[spec_keys.updatedAt] = { type: 'date' };
+                properties[spec_keys.updatedAt].time = true; //change the field type to datetime in MySQL
 
                 var m: FibAppORMModel = _define.call(this, name, properties, orm_define_opts);
                 m.cid = cls_id++;
@@ -86,7 +94,7 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
                     };
 
                 m.beforeCreate(function (next) {
-                    this.updatedAt = this.createdAt = new Date();
+                    this[spec_keys.updatedAt] = this[spec_keys.createdAt] = new Date();
 
                     if (use_uuid)
                         this.id = uuid.snowflake().hex();
@@ -102,8 +110,8 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
 
                 m.beforeSave(function (next) {
                     if (this.__opts.changes.length > 0) {
-                        delete this.createdAt;
-                        this.updatedAt = new Date();
+                        delete this[spec_keys.createdAt];
+                        this[spec_keys.updatedAt] = new Date();
                     }
 
                     if (_beforeSave) {
@@ -160,21 +168,21 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
                 return m;
             }
 
-            defs.forEach(def => def(odb));
+            defs.forEach(def => def(ormInstance));
 
             sync_lock.acquire();
             try {
                 if (!syned) {
-                    odb.syncSync();
+                    ormInstance.syncSync();
                     syned = true;
                 }
             } finally {
                 sync_lock.release();
             }
 
-            odb = graphql(app, odb);
+            ormInstance = graphql(app, ormInstance);
 
-            return odb;
+            return ormInstance;
         },
         maxsize: opts.maxsize,
         timeout: opts.timeout,
