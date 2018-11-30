@@ -65,4 +65,12 @@ declare namespace FibApp {
             [modelName: string]: FibAppORMModel
         }
     }
+
+    interface FibAppOrmSettings {
+        'app.orm.common_fields.createdBy': string
+        'app.orm.common_fields.createdAt': string
+        'app.orm.common_fields.updatedAt': string
+
+        [extend_property: string]: any
+    }
 }

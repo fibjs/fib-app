@@ -4,11 +4,12 @@ import util = require('util');
 import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget } from '../utils/get';
+import ormUtils = require('../utils/orm');
 
 export function setup (app: FibApp.FibAppClass) {
     var api = app.api;
 
-    api.eput = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.eput = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -23,7 +24,7 @@ export function setup (app: FibApp.FibAppClass) {
 
         var rdata = {};
 
-        let delrr = !db.settings.get(`rest.model.${rel_model.model.model_name}.extend.keep_association_beforewrite`)
+        let delrr = !orm.settings.get(`rest.model.${rel_model.model.model_name}.extend.keep_association_beforewrite`)
         for (var k in rel_model.model.extends) {
             var r = data[k];
 
@@ -47,7 +48,7 @@ export function setup (app: FibApp.FibAppClass) {
         };
     };
 
-    api.elink = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.elink = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -93,7 +94,7 @@ export function setup (app: FibApp.FibAppClass) {
         };
     };
 
-    api.epost = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -117,7 +118,10 @@ export function setup (app: FibApp.FibAppClass) {
         if (!acl)
             return err_info(4030001, {}, cls.cid);
 
-        var _createBy = rel_model.model.extends['createdBy'];
+        var spec_keys = {
+            createdBy: ormUtils.getCreatedByField(orm.settings),
+        }
+        var _createBy = rel_model.model.extends[spec_keys['createdBy']];
         var _opt;
         var robj;
         var rdata = [];
@@ -127,7 +131,7 @@ export function setup (app: FibApp.FibAppClass) {
 
             var rd = {};
 
-            let delr = !db.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
+            let delr = !orm.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
             for (var k in cls.extends) {
                 var r = d[k];
 
@@ -142,7 +146,7 @@ export function setup (app: FibApp.FibAppClass) {
             var ro = new rel_model.model(d);
 
             if (_createBy !== undefined) {
-                _opt = Object.keys(ro.__opts.one_associations.find(a => a.name === 'createdBy').field)[0];
+                _opt = Object.keys(ro.__opts.one_associations.find(a => a.name === spec_keys['createdBy']).field)[0];
                 ro[_opt] = req.session.id;
             }
 
@@ -162,7 +166,7 @@ export function setup (app: FibApp.FibAppClass) {
 
         rdata.forEach((rd, i) => {
             for (var k in rd) {
-                var res = api.epost(req, db, cls, robj[i], k, rd[k]);
+                var res = api.epost(req, orm, cls, robj[i], k, rd[k]);
                 if (res.error)
                     return res;
             }
@@ -198,7 +202,7 @@ export function setup (app: FibApp.FibAppClass) {
             };
     };
 
-    api.efind = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType): FibApp.FibAppApiFunctionResponse => {
+    api.efind = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType): FibApp.FibAppApiFunctionResponse => {
         var rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -206,7 +210,7 @@ export function setup (app: FibApp.FibAppClass) {
             });
 
         if (rel_model.type === 'hasOne' && !rel_model.reversed)
-            return api.eget(req, db, cls, id as FibApp.AppIdType, extend);
+            return api.eget(req, orm, cls, id as FibApp.AppIdType, extend);
 
         var obj;
 
@@ -235,7 +239,7 @@ export function setup (app: FibApp.FibAppClass) {
         };
     };
 
-    api.eget = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
+    api.eget = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
         var robj = _eget(cls, id, extend, rid, req.session, "read");
         if (robj.error)
             return robj;
@@ -245,7 +249,7 @@ export function setup (app: FibApp.FibAppClass) {
         };
     };
 
-    api.edel = (req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
+    api.edel = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
         var robj = _eget(cls, id, extend, rid, req.session, "delete");
         if (robj.error)
             return robj;
