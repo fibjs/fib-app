@@ -23,7 +23,7 @@ module.exports = db => {
        *          - request.sessionid
        * 
        * @param fibAppReqData
-       *    来自 POST 请求, `request.json()`, 默认为 {}
+       *    来自 POST 请求, `request.json()`, 默认为 {}
        */
       getUserByNicknames (fibAppReq, fibAppReqData) {
         // rest get 操作
