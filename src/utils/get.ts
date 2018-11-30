@@ -4,7 +4,7 @@ import util = require('util');
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 
-export const _get = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
+export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj: FibApp.FibAppInternalCommObj = {
         data: (cls as any).find().where({
             id: id
@@ -27,7 +27,7 @@ export const _get = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.AppIdTyp
     return iobj;
 };
 
-export const _eget = function (cls: FxOrmNS.FibOrmFixedModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
+export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
     var rel_model = cls.extends[extend];
     if (rel_model === undefined)
         return err_info(4040001, {
