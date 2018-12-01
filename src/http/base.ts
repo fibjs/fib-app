@@ -7,6 +7,7 @@ import { filter, filter_ext } from '../utils/filter';
 import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
+import { getInstanceOneAssociation } from '../utils/orm-assoc';
 
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
@@ -43,7 +44,7 @@ export function setup (app: FibApp.FibAppClass) {
 
             var o: FxOrmNS.Instance = new cls(d);
             if (_createBy !== undefined) {
-                _opt = Object.keys(o.__opts.one_associations.find(a => a.name === spec_keys['createdBy']).field)[0];
+                _opt = Object.keys(getInstanceOneAssociation(o, spec_keys['createdBy']).field)[0];
                 o[_opt] = req.session.id;
             }
             o.saveSync();

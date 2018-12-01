@@ -61,8 +61,12 @@ extend:cls: delete
 * [ ] 写覆盖 OACL 为 Function 的测试
 * [ ] orm.settings[get/set]
     - `rest.model.${cls.model_name}.extend.keep_association_beforewrite`: 在 rest api 对 extend 操作时, 保持实例的关联对象对象信息
-
+* [x] graphql extra 查询的测试用例
 ## new features
 
+* [x] support graphql hasMany extra query
+* [ ] support hasMany-extend operation
+    - [ ] epost
+    - [ ] eput
 * [ ] support built-in rpc feature
 * [ ] support built-in emitter

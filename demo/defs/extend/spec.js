@@ -323,6 +323,122 @@ describe("extend", () => {
             }]
         });
     })
+
+    it("graphql query hasMany-extend with extra", () => {
+        var rep = null;
+        function assertInstance(people) {
+            assert.property(people, 'id')
+            assert.property(people, 'name')
+            assert.property(people, 'sex')
+            assert.property(people, 'age')
+            assert.property(people, 'createdAt')
+        }
+
+        var testdata = {
+            name: 'tom_with_friend',
+            sex: "male",
+            age: 35,
+            friends: [
+                {
+                    name: 'friend_of_tom',
+                    sex: "famale",
+                    age: 35,
+                    extra: {
+                        hobby: 'train',
+                        meeting_time: Date.now()
+                    },
+                    childs: [
+                        {
+                            name: 'coco_of_friend_of_tom',
+                            sex: "famale",
+                            age: 12,
+                        }
+                    ]
+                }
+            ]
+        }
+        rep = http.post(testSrvInfo.appUrlBase + '/people', {
+            json: [testdata]
+        });
+
+        rep = http.post(testSrvInfo.appUrlBase + '', {
+            json: {
+                requests: [
+                    {
+                        method: 'POST',
+                        path: '/',
+                        headers: {
+                            'Content-Type': 'application/graphql'
+                        },
+                        body: `{
+                            find_people(
+                                where: {
+                                    name: "tom_with_friend"
+                                }
+                            ){
+                                id
+                                name
+                                sex
+                                age
+                                createdAt
+                                friends{
+                                    id
+                                    name
+                                    sex
+                                    age
+                                    createdAt
+                                    my_friends{
+                                        id
+                                        name
+                                        sex
+                                        age
+                                        createdAt
+                                    }
+                                    extra{
+                                        hobby
+                                        meeting_time
+                                    }
+                                }
+                                friends__extra{
+                                    id
+                                    name
+                                    sex
+                                    age
+                                    createdAt
+                                }
+                            }
+                        }`
+                    }
+                ]
+            }
+        });
+
+        var response = rep.json();
+        assert.property(response[0], 'success');
+
+        var queriedPeople = response[0].success.data.find_people[0];
+        assertInstance(queriedPeople)
+        assert.property(queriedPeople, 'friends')
+
+        assertInstance(queriedPeople.friends[0])
+        assert.property(queriedPeople.friends[0], 'my_friends')
+        assertInstance(queriedPeople.friends[0].my_friends[0])
+        Object.keys(queriedPeople.friends[0].my_friends[0]).forEach(key => {
+            if (queriedPeople.hasOwnProperty(key))
+                assert.equal(
+                    queriedPeople[key],
+                    queriedPeople.friends[0].my_friends[0][key]
+                )
+        })
+
+        assert.property(queriedPeople.friends[0], 'extra')
+        assert.property(queriedPeople.friends[0].extra, 'hobby')
+        assert.property(queriedPeople.friends[0].extra, 'meeting_time')
+
+        assert.property(queriedPeople, 'friends__extra')
+        assert.property(queriedPeople.friends[0], 'extra')
+
+    })
 });
 
 if (require.main === module) {

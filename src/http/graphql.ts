@@ -2,6 +2,7 @@ import util = require('util')
 
 import App from "../app";
 import { debugFunctionWrapper } from '../utils/debug';
+import { check_hasmany_extend_extraprops } from '../utils/orm-assoc';
 
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
@@ -136,7 +137,6 @@ export = function (app: App, db: FibApp.FibAppDb) {
     function get_resolve_extra_in_many (m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
             function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
-                console.log('[get_resolve_extra_in_many]parent', parent, args)
                 return parent.extra
             }
         )
@@ -235,7 +235,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
                     if (no_extra_fields)
                         continue 
 
-                    var has_many_association = check_hasmany_extend_extra(m, f)
+                    var has_many_association = check_hasmany_extend_extraprops(m, f)
                     if (has_many_association) {
                         fields[`${f}`] = {
                             type: new graphql.GraphQLList(
@@ -322,32 +322,3 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
     return db;
 };
-
-function check_hasmany_extend_extra (m: FxOrmNS.Model, extend_name: string) {
-    const inst = new m()
-
-    var has_many_association = inst.__opts.many_associations.find(a => a.name === extend_name);
-    var has_extra_fields = has_many_association && has_many_association.props && util.isObject(has_many_association.props) && Object.keys(has_many_association.props).length
-
-    return has_extra_fields ? has_many_association : false
-}
-
-// has_many_association = check_hasmany_extend_extra(m, f)
-function get_all_hasmany_extra_assoc (m: FxOrmNS.Model) {
-    var assocs = []
-    var _extends = m.extends;
-
-    for (var f in _extends) {
-        var has_many_association = check_hasmany_extend_extra(m, f)
-        if (has_many_association)
-            assocs.push(has_many_association)
-    }
-
-    return assocs
-}
-
-function loop_model_extends (m: FxOrmNS.Model, cb: Function) {
-    var _extends = m.extends;
-    for (var f in _extends) {
-    }
-}
