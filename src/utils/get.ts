@@ -29,11 +29,26 @@ export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session:
 };
 
 export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
+    return _egetx(cls, id, extend, rid, session, act).riobj
+}
+
+export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
+    riobj: FibApp.FibAppInternalCommExtendObj,
+    iobj: FibApp.FibAppInternalCommExtendObj
+} {
+    function wrap_error (err: FibApp.FibAppResponse) {
+        return {
+            riobj: err,
+            iobj: err
+        }
+    }
     var rel_model = cls.extends[extend];
     if (rel_model === undefined)
-        return err_info(4040001, {
-            classname: extend
-        }, cls.cid);
+        return wrap_error(
+            err_info(4040001, {
+                classname: extend
+            }, cls.cid)
+        )
 
     var iobj;
 
@@ -50,10 +65,12 @@ export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, exte
         };
 
         if (iobj.data === null)
-            return err_info(4040002, {
-                id: id,
-                classname: cls.model_name
-            }, cls.cid);
+            return wrap_error(
+                err_info(4040002, {
+                    id: id,
+                    classname: cls.model_name
+                }, cls.cid)
+            );
     }
 
     var __opt;
@@ -66,10 +83,12 @@ export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, exte
             if (rid === undefined)
                 rid = rid1;
             else if (rid != rid1)
-                return err_info(4040002, {
-                    id: rid,
-                    classname: `${cls.model_name}.${extend}`
-                }, rel_model.model.cid);
+                return wrap_error(
+                    err_info(4040002, {
+                        id: rid,
+                        classname: `${cls.model_name}.${extend}`
+                    }, rel_model.model.cid)
+                );
             __opt = rel_model.model.find();
         }
     } else
@@ -83,17 +102,24 @@ export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, exte
     };
 
     if (riobj.data === null)
-        return err_info(4040002, {
-            id: rid,
-            classname: `${cls.model_name}.${extend}`
-        }, rel_model.model.cid);
+        return wrap_error(
+            err_info(4040002, {
+                id: rid,
+                classname: `${cls.model_name}.${extend}`
+            }, rel_model.model.cid)
+        );
 
     if (act) {
         var acl = checkout_robj_acl(session, act, iobj.data, riobj.data, extend);
         if (!acl)
-            return err_info(4030001, {}, rel_model.model.cid);
+            return wrap_error(
+                err_info(4030001, {}, rel_model.model.cid)
+            );
         riobj.acl = acl;
     }
 
-    return riobj;
+    return {
+        riobj,
+        iobj
+    };
 };

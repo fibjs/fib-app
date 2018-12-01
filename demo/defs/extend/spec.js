@@ -325,7 +325,6 @@ describe("extend", () => {
     })
 
     it("graphql query hasMany-extend with extra", () => {
-        var rep = null;
         function assertInstance(people) {
             assert.property(people, 'id')
             assert.property(people, 'name')
@@ -334,114 +333,164 @@ describe("extend", () => {
             assert.property(people, 'createdAt')
         }
 
-        var testdata = {
-            name: 'tom_with_friend',
-            sex: "male",
-            age: 35,
-            friends: [
-                {
-                    name: 'friend_of_tom',
-                    sex: "famale",
-                    age: 35,
-                    extra: {
-                        hobby: 'train',
-                        meeting_time: Date.now()
-                    },
-                    childs: [
-                        {
-                            name: 'coco_of_friend_of_tom',
-                            sex: "famale",
-                            age: 12,
-                        }
-                    ]
-                }
-            ]
-        }
-        rep = http.post(testSrvInfo.appUrlBase + '/people', {
-            json: [testdata]
-        });
+        var rep = null;
+        var base_obj = null, ext_obj = null;
 
-        rep = http.post(testSrvInfo.appUrlBase + '', {
-            json: {
-                requests: [
+        var getTestData = function () {
+            return {
+                name: 'tom_with_friend',
+                sex: "male",
+                age: 35,
+                friends: [
                     {
-                        method: 'POST',
-                        path: '/',
-                        headers: {
-                            'Content-Type': 'application/graphql'
+                        name: 'friend_of_tom',
+                        sex: "famale",
+                        age: 35,
+                        extra: {
+                            hobby: 'train',
+                            meeting_time: Date.now()
                         },
-                        body: `{
-                            find_people(
-                                where: {
-                                    name: "tom_with_friend"
-                                }
-                            ){
-                                id
-                                name
-                                sex
-                                age
-                                createdAt
-                                friends{
+                        childs: [
+                            {
+                                name: 'coco_of_friend_of_tom',
+                                sex: "famale",
+                                age: 12,
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+
+        var doPost = function (testdata) {
+            return http.post(testSrvInfo.appUrlBase + '/people', {
+                json: [testdata]
+            });
+        }
+
+        var doPut = function (testdata) {
+            testdata.friends[0].id = ext_obj.id
+            testdata.friends[0].age = 36
+            testdata.friends[0].extra.hobby = 'train2'
+
+            return http.put(testSrvInfo.appUrlBase + `/people/${base_obj.id}/friends/${ext_obj.id}`, {
+                json: testdata.friends[0]
+            });
+        }
+
+        var doGraphQlCheck = function (testdata) {
+            rep = http.post(testSrvInfo.appUrlBase + '', {
+                json: {
+                    requests: [
+                        {
+                            method: 'POST',
+                            path: '/',
+                            headers: {
+                                'Content-Type': 'application/graphql'
+                            },
+                            body: `{
+                                find_people(
+                                    where: {
+                                        name: "tom_with_friend"
+                                    }
+                                ){
                                     id
                                     name
                                     sex
                                     age
                                     createdAt
-                                    my_friends{
+                                    friends(
+                                        where: {
+                                            name: "friend_of_tom"
+                                        }
+                                    ){
+                                        id
+                                        name
+                                        sex
+                                        age
+                                        createdAt
+                                        my_friends{
+                                            id
+                                            name
+                                            sex
+                                            age
+                                            createdAt
+                                        }
+                                        extra{
+                                            hobby
+                                            meeting_time
+                                        }
+                                    }
+                                    friends__extra{
                                         id
                                         name
                                         sex
                                         age
                                         createdAt
                                     }
-                                    extra{
-                                        hobby
-                                        meeting_time
-                                    }
                                 }
-                                friends__extra{
-                                    id
-                                    name
-                                    sex
-                                    age
-                                    createdAt
-                                }
-                            }
-                        }`
-                    }
-                ]
-            }
-        });
+                            }`
+                        }
+                    ]
+                }
+            });
 
-        var response = rep.json();
-        assert.property(response[0], 'success');
+            var response = rep.json();
+            assert.property(response[0], 'success');
 
-        var queriedPeople = response[0].success.data.find_people[0];
-        assertInstance(queriedPeople)
-        assert.property(queriedPeople, 'friends')
+            var queriedPeople = response[0].success.data.find_people[0];
 
-        assertInstance(queriedPeople.friends[0])
-        assert.property(queriedPeople.friends[0], 'my_friends')
-        assertInstance(queriedPeople.friends[0].my_friends[0])
-        Object.keys(queriedPeople.friends[0].my_friends[0]).forEach(key => {
-            if (queriedPeople.hasOwnProperty(key))
-                assert.equal(
-                    queriedPeople[key],
-                    queriedPeople.friends[0].my_friends[0][key]
-                )
-        })
+            base_obj = base_obj || queriedPeople
+            assertInstance(queriedPeople)
+            assert.property(queriedPeople, 'friends')
 
-        assert.property(queriedPeople.friends[0], 'extra')
-        assert.property(queriedPeople.friends[0].extra, 'hobby')
-        assert.property(queriedPeople.friends[0].extra, 'meeting_time')
+            var cur_ext_obj = queriedPeople.friends[0]
+            ext_obj = ext_obj || cur_ext_obj
+            assertInstance(cur_ext_obj)
+            assert.property(cur_ext_obj, 'my_friends')
 
-        assert.property(queriedPeople, 'friends__extra')
-        assert.property(queriedPeople.friends[0], 'extra')
+            /* compare original instance's data with data from reversed instance's reverse accessor */
+            assertInstance(cur_ext_obj.my_friends[0])
+            Object.keys(cur_ext_obj.my_friends[0]).forEach(key => {
+                if (queriedPeople.hasOwnProperty(key))
+                    assert.equal(
+                        queriedPeople[key],
+                        cur_ext_obj.my_friends[0][key]
+                    )
+            })
 
+            /* check extra data */
+            assert.property(cur_ext_obj, 'extra')
+            assert.property(cur_ext_obj.extra, 'hobby')
+            assert.deepEqual(
+                cur_ext_obj.extra.hobby,
+                testdata.friends.find(x => x.name === 'friend_of_tom').extra.hobby
+            )
+            assert.property(cur_ext_obj.extra, 'meeting_time')
+            assert.deepEqual(
+                gettime(cur_ext_obj.extra.meeting_time),
+                gettime(testdata.friends.find(x => x.name === 'friend_of_tom').extra.meeting_time)
+            )
+            
+            assert.property(queriedPeople, 'friends__extra')
+            assert.property(cur_ext_obj, 'extra')
+        }
+
+        var td1 = getTestData()
+        doPost(td1)
+        doGraphQlCheck(td1)
+
+        var td2 = getTestData()
+        doPut(td2)
+        doGraphQlCheck(td2)
     })
 });
 
 if (require.main === module) {
     test.run(console.DEBUG);
     process.exit();
+}
+
+function gettime(m) {
+    return (new Date(m)).getTime()
 }
