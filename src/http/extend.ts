@@ -5,6 +5,7 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget } from '../utils/get';
 import ormUtils = require('../utils/orm');
+import { getInstanceManyAssociation, getInstanceOneAssociation, check_hasmany_extend_extraprops } from '../utils/orm-assoc';
 
 export function setup (app: FibApp.FibAppClass) {
     var api = app.api;
@@ -76,11 +77,11 @@ export function setup (app: FibApp.FibAppClass) {
         var _opt;
         switch (rel_model.type) {
             case 'hasOne':
-                _opt = obj.data.__opts.one_associations.find(a => a.name === extend).setAccessor;
+                _opt = getInstanceOneAssociation(obj.data, extend).setAccessor;
                 break
             case 'hasMany':
             default:
-                _opt = obj.data.__opts.many_associations.find(a => a.name === extend).addAccessor;
+                _opt = getInstanceManyAssociation(obj.data, extend).addAccessor;
                 break
         }
 
@@ -101,17 +102,17 @@ export function setup (app: FibApp.FibAppClass) {
                 classname: extend
             });
 
-        var obj;
+        var obj: FibApp.AppInternalCommunicationObj;
 
         if (util.isObject(id)) {
             obj = {
                 data: id
-            };
+            } as any;
             id = (id as FibApp.ObjectWithIdField).id;
         } else {
             obj = _get(cls, id as FibApp.AppIdType, req.session);
             if (obj.error)
-                return obj;
+                return obj as FibApp.FibAppApiFunctionResponse;
         }
 
         var acl = checkout_obj_acl(req.session, 'create', obj.data, extend) as FibAppACL.AclPermissionType__Create;
@@ -128,6 +129,18 @@ export function setup (app: FibApp.FibAppClass) {
 
         function _create(d) {
             d = filter(d, acl);
+
+            // if (d.extra) {
+            //     console.log('there is extra', d.extra)
+            //     var many_assoc = check_hasmany_extend_extraprops(obj.data.model(), extend)
+            //     if (many_assoc) {
+            //         console.log('there is many_assoc',
+            //             many_assoc,
+            //             obj.data[many_assoc.addAccessor],
+            //             obj.data[many_assoc.addAccessor + 'Sync'],
+            //         )
+            //     }
+            // }
 
             var rd = {};
 
@@ -146,7 +159,7 @@ export function setup (app: FibApp.FibAppClass) {
             var ro = new rel_model.model(d);
 
             if (_createBy !== undefined) {
-                _opt = Object.keys(ro.__opts.one_associations.find(a => a.name === spec_keys['createdBy']).field)[0];
+                _opt = Object.keys(getInstanceOneAssociation(ro, spec_keys['createdBy']).field)[0];
                 ro[_opt] = req.session.id;
             }
 
@@ -175,9 +188,9 @@ export function setup (app: FibApp.FibAppClass) {
         if (!rel_model.reversed) {
             var _opt;
             if (rel_model.type === 'hasOne')
-                _opt = obj.data.__opts.one_associations.find(a => a.name === extend).setAccessor;
+                _opt = getInstanceOneAssociation(obj.data, extend).setAccessor;
             else
-                _opt = obj.data.__opts.many_associations.find(a => a.name === extend).addAccessor;
+                _opt = getInstanceManyAssociation(obj.data, extend).addAccessor;
 
             robj.forEach(ro => obj.data[_opt + 'Sync'].call(obj.data, ro));
         }
@@ -230,9 +243,9 @@ export function setup (app: FibApp.FibAppClass) {
 
         var _association;
         if (rel_model.type === 'hasOne')
-            _association = obj.data.__opts.one_associations.find(a => a.name === extend);
+            _association = getInstanceOneAssociation(obj.data, extend);
         else
-            _association = obj.data.__opts.many_associations.find(a => a.name === extend);
+            _association = getInstanceManyAssociation(obj.data, extend);
 
         return {
             success: _find(req, obj.data[_association.getAccessor].call(obj.data), obj.data, extend)
@@ -257,7 +270,7 @@ export function setup (app: FibApp.FibAppClass) {
         var rel_model = cls.extends[extend];
 
         if (rel_model.type === 'hasMany') {
-            robj.base[robj.base.__opts.many_associations.find(a => a.name === extend).delAccessor + 'Sync'].call(robj.base, robj.data);
+            robj.base[getInstanceManyAssociation(robj.base, extend).delAccessor + 'Sync'].call(robj.base, robj.data);
 
             return {
                 success: {
@@ -274,7 +287,7 @@ export function setup (app: FibApp.FibAppClass) {
                     classname: rel_model.model.model_name
                 }, rel_model.model.cid);
 
-            robj.base[robj.base.__opts.one_associations.find(a => a.name === extend).delAccessor + 'Sync'].call(robj.base);
+            robj.base[getInstanceOneAssociation(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
 
             return {
                 success: {
