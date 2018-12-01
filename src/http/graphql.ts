@@ -76,7 +76,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
     function count_resolve(m: FxOrmNS.Model) {
         return (
-            function (parent, args, req) {
+            function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 args.count = 1
                 args.limit = 0
                 var res = debugFunctionWrapper(app.api.find)({
@@ -96,7 +96,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
     function get_resolve_one(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
-            function (parent: FibApp.AppIdType, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
+            function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 var res = debugFunctionWrapper(app.api.eget)({
                     session: req.session,
                     query: {} as FibApp.FibAppReqQuery
@@ -117,7 +117,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
     function get_resolve_many(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
-            function (parent: FibApp.AppIdType, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
+            function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 var res = debugFunctionWrapper(app.api.efind)({
                     session: req.session,
                     query: args
@@ -133,7 +133,69 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function get_fields(m: FxOrmNS.Model) {
+    function get_resolve_extra_in_many (m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
+        return (
+            function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
+                console.log('[get_resolve_extra_in_many]parent', parent, args)
+                return parent.extra
+            }
+        )
+    }
+
+    function get_fields_hasmanyextra_alone(m: FxOrmNS.Model, extend: string, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
+        var basic_fields = getter();
+
+        return (
+            function () {
+                var extra_fields = {};
+                for (var extraf in many_association.props) {
+                    var orig_type = many_association.props[extraf].type
+                    
+                    if (!graphqlTypeMap[orig_type]) {
+                        throw `valid type required for model ${m.model_name}'s extended extra field ${extraf}`
+                    }
+
+                    extra_fields[extraf] = {
+                        type: graphqlTypeMap[orig_type]
+                    };
+                }
+
+                basic_fields['extra'] = {
+                    type: new graphql.GraphQLObjectType({
+                        name: `${m.model_name}_${extend}_aloneextra`,
+                        fields: extra_fields
+                    }),
+                    resolve: get_resolve_extra_in_many(m, extend)
+                }
+
+                return basic_fields;
+            }
+        )
+    }
+
+    function get_fields_hasmanyextra_mixins(m: FxOrmNS.Model, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
+        var basic_fields = getter();
+
+        return (
+            function () {
+                for (var extraf in many_association.props) {
+                    var orig_type = many_association.props[extraf].type
+                    
+                    if (!graphqlTypeMap[orig_type]) {
+                        throw `valid type required for model ${m.model_name}'s extended extra field ${extraf}`
+                    }
+
+                    basic_fields[extraf] = {
+                        type: graphqlTypeMap[orig_type]
+                    };
+                }
+
+                return basic_fields;
+            }
+        )
+    }
+
+    function get_fields(m: FxOrmNS.Model, no_extra_fields: boolean = false) {
         return (
             function () {
                 var fields = {}
@@ -150,14 +212,14 @@ export = function (app: App, db: FibApp.FibAppDb) {
                         type: type
                     };
                 }
-
                 var _extends = m.extends;
+
                 for (var f in _extends) {
                     var rel_model: FxOrmNS.ExtendModelWrapper = _extends[f];
                     if (!rel_model.model) {
                         throw `rel_model ${f} defined but no related model, detailed information: \n ${JSON.stringify(rel_model, null, '\t')}`
                     }
-                    
+
                     if (rel_model.type === 'hasOne' && !rel_model.reversed)
                         fields[f] = {
                             type: types[rel_model.model.model_name].type,
@@ -169,6 +231,34 @@ export = function (app: App, db: FibApp.FibAppDb) {
                             args: hasManyArgs,
                             resolve: get_resolve_many(m, f)
                         };
+
+                    if (no_extra_fields)
+                        continue 
+
+                    var has_many_association = check_hasmany_extend_extra(m, f)
+                    if (has_many_association) {
+                        fields[`${f}`] = {
+                            type: new graphql.GraphQLList(
+                                new graphql.GraphQLObjectType({
+                                    name: `${m.model_name}__${f}__aloneExtraWrapper`,
+                                    fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_model.model, true)),
+                                })
+                            ),
+                            args: hasManyArgs,
+                            resolve: get_resolve_many(m, f)
+                        }
+
+                        fields[`${f}__extra`] = {
+                            type: new graphql.GraphQLList(
+                                new graphql.GraphQLObjectType({
+                                    name: `${m.model_name}__${f}__mixinExtraWrapper`,
+                                    fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_model.model, true)),
+                                })
+                            ),
+                            args: hasManyArgs,
+                            resolve: get_resolve_many(m, f)
+                        }
+                    }
                 }
 
                 return fields;
@@ -232,3 +322,32 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
     return db;
 };
+
+function check_hasmany_extend_extra (m: FxOrmNS.Model, extend_name: string) {
+    const inst = new m()
+
+    var has_many_association = inst.__opts.many_associations.find(a => a.name === extend_name);
+    var has_extra_fields = has_many_association && has_many_association.props && util.isObject(has_many_association.props) && Object.keys(has_many_association.props).length
+
+    return has_extra_fields ? has_many_association : false
+}
+
+// has_many_association = check_hasmany_extend_extra(m, f)
+function get_all_hasmany_extra_assoc (m: FxOrmNS.Model) {
+    var assocs = []
+    var _extends = m.extends;
+
+    for (var f in _extends) {
+        var has_many_association = check_hasmany_extend_extra(m, f)
+        if (has_many_association)
+            assocs.push(has_many_association)
+    }
+
+    return assocs
+}
+
+function loop_model_extends (m: FxOrmNS.Model, cb: Function) {
+    var _extends = m.extends;
+    for (var f in _extends) {
+    }
+}
