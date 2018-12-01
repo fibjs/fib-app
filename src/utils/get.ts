@@ -32,16 +32,17 @@ export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, exte
     return _egetx(cls, id, extend, rid, session, act).riobj
 }
 
+function wrap_error (err: FibApp.FibAppResponse) {
+    return {
+        riobj: err,
+        iobj: err
+    }
+}
+
 export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
     riobj: FibApp.FibAppInternalCommExtendObj,
     iobj: FibApp.FibAppInternalCommExtendObj
 } {
-    function wrap_error (err: FibApp.FibAppResponse) {
-        return {
-            riobj: err,
-            iobj: err
-        }
-    }
     var rel_model = cls.extends[extend];
     if (rel_model === undefined)
         return wrap_error(
