@@ -235,7 +235,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
                     if (no_extra_fields)
                         continue 
 
-                    var has_many_association = check_hasmany_extend_extraprops(m, f)
+                    var has_many_association = check_hasmany_extend_extraprops((new m()), f)
                     if (has_many_association) {
                         fields[`${f}`] = {
                             type: new graphql.GraphQLList(

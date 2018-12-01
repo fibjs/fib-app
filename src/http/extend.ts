@@ -3,9 +3,9 @@ import { err_info } from '../utils/err_info';
 import util = require('util');
 import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
-import { _get, _eget } from '../utils/get';
+import { _get, _eget, _egetx } from '../utils/get';
 import ormUtils = require('../utils/orm');
-import { getInstanceManyAssociation, getInstanceOneAssociation, check_hasmany_extend_extraprops } from '../utils/orm-assoc';
+import { getInstanceManyAssociation, getInstanceOneAssociation, check_hasmany_extend_extraprops, extra_save } from '../utils/orm-assoc';
 
 export function setup (app: FibApp.FibAppClass) {
     var api = app.api;
@@ -17,11 +17,11 @@ export function setup (app: FibApp.FibAppClass) {
                 classname: extend
             });
 
-        var robj = _eget(cls, id, extend, rid, req.session, "write");
-        if (robj.error)
-            return robj;
+        var { riobj, iobj } = _egetx(cls, id, extend, rid, req.session, "write");
+        if (riobj.error)
+            return riobj;
 
-        data = filter(data, robj.acl as FibAppACL.AclPermissionType__Write);
+        data = filter(data, riobj.acl as FibAppACL.AclPermissionType__Write);
 
         var rdata = {};
 
@@ -37,14 +37,22 @@ export function setup (app: FibApp.FibAppClass) {
         }
 
         for (var k in data)
-            robj.data[k] = data[k];
+            riobj.data[k] = data[k];
 
-        robj.data.saveSync();
+        riobj.data.saveSync();
+
+        var extra = data.extra;
+        if (extra) {
+            var many_assoc = check_hasmany_extend_extraprops(iobj.data, extend)
+            if (many_assoc) {
+                extra_save(iobj.data, riobj.data, many_assoc, extra, true)
+            }
+        }
 
         return {
             success: {
-                id: robj.data.id,
-                updatedAt: robj.data.updatedAt
+                id: riobj.data.id,
+                updatedAt: riobj.data.updatedAt
             }
         };
     };
@@ -130,17 +138,7 @@ export function setup (app: FibApp.FibAppClass) {
         function _create(d) {
             d = filter(d, acl);
 
-            // if (d.extra) {
-            //     console.log('there is extra', d.extra)
-            //     var many_assoc = check_hasmany_extend_extraprops(obj.data.model(), extend)
-            //     if (many_assoc) {
-            //         console.log('there is many_assoc',
-            //             many_assoc,
-            //             obj.data[many_assoc.addAccessor],
-            //             obj.data[many_assoc.addAccessor + 'Sync'],
-            //         )
-            //     }
-            // }
+            var extra = d.extra || null;
 
             var rd = {};
 
@@ -155,7 +153,6 @@ export function setup (app: FibApp.FibAppClass) {
                 }
             }
             rdata.push(rd);
-
             var ro = new rel_model.model(d);
 
             if (_createBy !== undefined) {
@@ -166,8 +163,15 @@ export function setup (app: FibApp.FibAppClass) {
             if (rel_model.reversed) {
                 obj.data[extend] = ro;
                 obj.data.saveSync();
-            } else
+            } else {
                 ro.saveSync();
+                if (extra) {
+                    var many_assoc = check_hasmany_extend_extraprops(obj.data, extend)
+                    if (many_assoc) {
+                        extra_save(obj.data, ro, many_assoc, extra)
+                    }
+                }
+            }
 
             return ro;
         }
