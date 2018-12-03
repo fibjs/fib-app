@@ -78,3 +78,7 @@ app.get('/__null_cls', (request) => {
 [src/classes/index.ts]:src/classes/index.ts
 [src/classes/base.ts]:src/classes/base.ts
 [src/classes/extend.ts]:src/classes/extend.ts
+
+### hasMany-extra read/epost/eput(beta)
+
+...

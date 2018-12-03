@@ -1,7 +1,18 @@
 
-v0.13.4 / 2018-11-30
+v1.13.5 / 2018-12-03
 ==================
 
+  * function declaration robust; best test case.
+  * support hasMany-extra 's epost/eput operation.
+  * add testcase about hasMany-extra query; add utils/orm-assoc.ts and apply it.
+  * typo repair, support hasmany-extra-query in graphql.
+  * better doc about acl.
+  * changelog fix.
+
+v1.13.4 / 2018-11-30
+====================
+
+  * Release v1.13.4
   * robust.
 
 v1.13.3 / 2018-11-30
