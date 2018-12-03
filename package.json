@@ -21,7 +21,7 @@
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
   "dependencies": {
-    "@fxjs/orm": "^1.6.7",
+    "@fxjs/orm": "^1.6.8",
     "@types/fibjs": "^0.26.5",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.4.1",

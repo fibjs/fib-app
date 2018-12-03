@@ -36,7 +36,7 @@ export function extra_save (instance: FxOrmNS.Instance, rinstance: FxOrmNS.Insta
     var hasCheck = instance[_many_assoc.hasAccessor + 'Sync'](rinstance)
     if (just_set && hasCheck) {
         /**
-         * it finish the same purpose of `instance[_many_assoc.setAccessor + 'Sync']`,
+         * it has the same purpose of `instance[_many_assoc.setAccessor + 'Sync']`,
          * but there's one bug in patched instance's [_many_assoc.setAccessor]
          **/ 
         instance[_many_assoc.delAccessor + 'Sync'](rinstance, extra)

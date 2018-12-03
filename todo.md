@@ -63,10 +63,14 @@ extend:cls: delete
     - `rest.model.${cls.model_name}.extend.keep_association_beforewrite`: 在 rest api 对 extend 操作时, 保持实例的关联对象对象信息
 * [x] graphql extra 查询的测试用例
 * [ ] hasMany-extend operation 的测试用例
-    - [x] epost
+    - [x] epost: extra from item in rdata List
+    - [ ] epost: extra from rdata
     - [ ] epost: reverse
-    - [x] eput
+    - [ ] epost: 错误用例
+    - [x] epost: extra from item in rdata List
+    - [ ] epost: extra from rdata
     - [ ] eput: reverse
+    - [ ] eput: 错误用例
 
 ## new features
 
@@ -76,6 +80,7 @@ extend:cls: delete
     - [ ] epost: reverse
     - [x] eput
     - [ ] eput: reverse
-    
+* [ ] support hasMany-extend reversed epost
+
 * [ ] support built-in rpc feature
 * [ ] support built-in emitter

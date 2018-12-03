@@ -9,84 +9,78 @@ import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
 import { getInstanceOneAssociation } from '../utils/orm-assoc';
 
+function map_ro_result (ro) {
+    return {
+        id: ro.id,
+        createdAt: ro.createdAt
+    };
+}
+
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
 
     api.post = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, data: FibApp.FibAppReqData) => {
-        var acl = checkout_acl(req.session, 'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
+        const acl = checkout_acl(req.session, 'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
         if (!acl)
             return err_info(4030001, {}, cls.cid);
         
-        var spec_keys = {
+        const spec_keys = {
             createdBy: ormUtils.getCreatedByField(orm.settings),
         }
-        var _createBy = cls.extends[spec_keys['createdBy']];
-        var _opt;
-        var rdata = [];
-        var obj;
+        const _createBy = cls.extends[spec_keys['createdBy']];
+        let _opt;
+        let instances = [];
+        const extdata_list = [];
 
         let delr = !orm.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
         function _create(d) {
             d = filter(d, acl);
 
-            var rd = {};
-            for (var k in cls.extends) {
-                var r = d[k];
+            const ext_d = {};
+            for (const k in cls.extends) {
+                const r = d[k];
 
                 if (r !== undefined) {
-                    rd[k] = r;
+                    ext_d[k] = r;
                     if (delr)
                         delete d[k];
                 }
             }
+            extdata_list.push(ext_d);
 
-            rdata.push(rd);
-
-            var o: FxOrmNS.Instance = new cls(d);
+            const o: FxOrmNS.Instance = new cls(d);
             if (_createBy !== undefined) {
                 _opt = Object.keys(getInstanceOneAssociation(o, spec_keys['createdBy']).field)[0];
                 o[_opt] = req.session.id;
             }
             o.saveSync();
-            
-            return o;
+
+            return o
         }
 
         if (Array.isArray(data))
-            obj = data.map(d => _create(d));
+            instances = data.map(d => _create(d));
         else
-            obj = [_create(data)];
-
-        rdata.forEach((rd, i) => {
-            for (var k in rd) {
-                var res = api.epost(req, orm, cls, obj[i], k, rd[k]);
-                if (res.error)
+            instances = [_create(data)];
+        
+        extdata_list.forEach((extdata, i) => {
+            for (const k in extdata) {
+                const res = api.epost(req, orm, cls, instances[i], k, extdata[k]);
+                // only capture the 1st error emitted
+                if (res.error) {
                     return res;
-            }
-        });
-
-        if (Array.isArray(data))
-            return {
-                status: 201,
-                success: obj.map(o => {
-                    return {
-                        id: o.id,
-                        createdAt: o.createdAt
-                    };
-                })
-            };
-        else
-            return {
-                status: 201,
-                success: {
-                    id: obj[0].id,
-                    createdAt: obj[0].createdAt
                 }
-            };
+            }
+        })
+
+        return {
+            status: 201,
+            success: Array.isArray(data) ? instances.map(map_ro_result) : instances.map(map_ro_result)[0]
+        };
     };
 
     api.get = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
-        var obj: FibApp.FibAppInternalCommObj = _get(cls, id, req.session, 'read');
+        const obj: FibApp.FibAppInternalCommObj = _get(cls, id, req.session, 'read');
         if (obj.error)
             return obj;
 
@@ -96,17 +90,17 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.put = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, data: FibApp.FibAppReqData): FibApp.FibAppApiFunctionResponse => {
-        var obj = _get(cls, id, req.session, 'write');
+        const obj = _get(cls, id, req.session, 'write');
         if (obj.error)
             return obj;
 
         data = filter(data, obj.acl as FibAppACL.AclPermissionType__Write);
 
-        var rdata = {};
+        const rdata = {};
 
         let delr = !orm.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
-        for (var k in cls.extends) {
-            var r = data[k];
+        for (const k in cls.extends) {
+            const r = data[k];
 
             if (r !== undefined) {
                 rdata[k] = r;
@@ -115,7 +109,7 @@ export function setup (app: FibApp.FibAppClass) {
             }
         }
 
-        for (var k in data)
+        for (const k in data)
             obj.data[k] = data[k];
 
         obj.data.saveSync();
@@ -129,7 +123,7 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.del = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
-        var obj = _get(cls, id, req.session, 'delete');
+        const obj = _get(cls, id, req.session, 'delete');
         if (obj.error)
             return obj;
 

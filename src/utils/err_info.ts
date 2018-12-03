@@ -8,6 +8,7 @@ var infos = {
     "4040002": "Object '${id}' not found in class '${classname}'.",
     "4040003": "'${extend}' in class '${classname}' does not support this operation",
     "4040004": "Function '${function}' not found in class '${classname}'.",
+    "4040005": "'${extend}' in class '${classname}' expected with extra props, but no valid extra data provided.",
     "5000002": "Function '${function}' in class '${classname}' throws error '${message}', please contact the administrator."
 };
 
