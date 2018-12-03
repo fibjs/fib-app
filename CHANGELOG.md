@@ -1,7 +1,13 @@
 
-v1.13.5 / 2018-12-03
+n.n.n / 2018-12-03
 ==================
 
+  * upgrade dependency, return error when wrong format data provided to hasMany-extend's extra props.
+
+v1.13.5 / 2018-12-03
+====================
+
+  * Release v1.13.5
   * function declaration robust; best test case.
   * support hasMany-extra 's epost/eput operation.
   * add testcase about hasMany-extra query; add utils/orm-assoc.ts and apply it.
