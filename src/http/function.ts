@@ -9,7 +9,7 @@ export function setup (app: FibApp.FibAppClass) {
     api.functionHandler = function (classname: string, func: string) {
         return function (_req: FibApp.FibAppReq, db: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, data: FibApp.FibDataPayload) {
             if (!checkout_acl(_req.session, func, cls.ACL))
-                return err_info(4030001, {}, cls.cid);
+                return err_info(4030001, {classname: cls.model_name}, cls.cid);
 
             const f: FibApp.FibAppOrmModelFunction = cls.functions[func];
             if (f === undefined)
