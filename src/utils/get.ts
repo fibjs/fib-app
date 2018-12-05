@@ -21,7 +21,7 @@ export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session:
     if (act) {
         var acl = checkout_obj_acl(session, act, iobj.data);
         if (!acl)
-            return err_info(4030001, {}, cls.cid);
+            return err_info(4030001, {classname: cls.model_name}, cls.cid);
         iobj.acl = acl;
     }
 
@@ -114,7 +114,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, ext
         var acl = checkout_robj_acl(session, act, iobj.data, riobj.data, extend);
         if (!acl)
             return wrap_error(
-                err_info(4030001, {}, rel_model.model.cid)
+                err_info(4030001, {classname: cls.model_name}, rel_model.model.cid)
             );
         riobj.acl = acl;
     }

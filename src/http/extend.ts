@@ -74,7 +74,7 @@ export function setup (app: FibApp.FibAppClass) {
             return obj;
 
         if (Array.isArray(obj.acl) && obj.acl.indexOf(extend) === -1)
-            return err_info(4030001, {}, cls.cid);
+            return err_info(4030001, {classname: cls.model_name}, cls.cid);
 
         const rid = data.id;
         if (rid === undefined)
@@ -130,7 +130,7 @@ export function setup (app: FibApp.FibAppClass) {
 
         const acl = checkout_obj_acl(req.session, 'create', obj.data, extend) as FibAppACL.AclPermissionType__Create;
         if (!acl)
-            return err_info(4030001, {}, cls.cid);
+            return err_info(4030001, {classname: cls.model_name}, cls.cid);
 
         const spec_keys = {
             createdBy: ormUtils.getCreatedByField(orm.settings),
@@ -254,7 +254,7 @@ export function setup (app: FibApp.FibAppClass) {
         }
 
         if (!checkout_obj_acl(req.session, 'find', obj.data, extend))
-            return err_info(4030001, {}, rel_model.model.cid);
+            return err_info(4030001, {classname: cls.model_name}, rel_model.model.cid);
 
         let _association;
         if (rel_model.type === 'hasOne')

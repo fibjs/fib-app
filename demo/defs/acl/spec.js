@@ -336,7 +336,7 @@ describe("acl", () => {
             });
             check_result(rep.json(), {
                 "code": 4030301,
-                "message": "The operation isn’t allowed for clients due to class-level permissions."
+                "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
             http.post(testSrvInfo.serverBase + '/set_session', {
@@ -378,7 +378,7 @@ describe("acl", () => {
             var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
             check_result(rep.json(), {
                 "code": 4030501,
-                "message": "The operation isn’t allowed for clients due to class-level permissions."
+                "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
             http.post(testSrvInfo.serverBase + '/set_session', {
@@ -433,7 +433,7 @@ describe("acl", () => {
             });
             check_result(rep.json(), {
                 "code": 4030501,
-                "message": "The operation isn’t allowed for clients due to class-level permissions."
+                "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
             http.post(testSrvInfo.serverBase + '/set_session', {
@@ -477,7 +477,7 @@ describe("acl", () => {
             var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
             check_result(rep.json(), {
                 "code": 4030301,
-                "message": "The operation isn’t allowed for clients due to class-level permissions."
+                "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
             http.post(testSrvInfo.serverBase + '/set_session', {
@@ -526,7 +526,7 @@ describe("acl", () => {
             var rep = http.del(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
                 "code": 4030301,
-                "message": "The operation isn’t allowed for clients due to class-level permissions."
+                "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
             http.post(testSrvInfo.serverBase + '/set_session', {

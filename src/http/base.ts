@@ -22,7 +22,7 @@ export function setup (app: FibApp.FibAppClass) {
     api.post = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, data: FibApp.FibAppReqData) => {
         const acl = checkout_acl(req.session, 'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
         if (!acl)
-            return err_info(4030001, {}, cls.cid);
+            return err_info(4030001, {classname: cls.model_name}, cls.cid);
         
         const spec_keys = {
             createdBy: ormUtils.getCreatedByField(orm.settings),
@@ -138,7 +138,7 @@ export function setup (app: FibApp.FibAppClass) {
 
     api.find = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel): FibApp.FibAppApiFunctionResponse => {
         if (!checkout_acl(req.session, 'find', cls.ACL))
-            return err_info(4030001, {}, cls.cid);
+            return err_info(4030001, {classname: cls.model_name}, cls.cid);
 
         return {
             success: _find(req, cls.find())
