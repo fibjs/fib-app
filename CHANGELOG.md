@@ -1,7 +1,14 @@
 
-n.n.n / 2018-12-03
+v1.13.7 / 2018-12-07
 ==================
 
+  * upgrade @fxjs/orm
+  * better error_info 403001.
+
+v1.13.6 / 2018-12-03
+====================
+
+  * Release v1.13.6
   * upgrade dependency, return error when wrong format data provided to hasMany-extend's extra props.
 
 v1.13.5 / 2018-12-03
