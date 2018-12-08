@@ -33,7 +33,7 @@ export function setup (app: FibApp.FibAppClass) {
 
         const rextdata = {};
 
-        let delrr = !orm.settings.get(`rest.model.${rel_model.model.model_name}.extend.keep_association_beforewrite`)
+        let delrr = !orm.settings.get(`rest.model.keep_association.eput:${cls.model_name}-${extend}`)
         for (const k in rel_model.model.extends) {
             if (data[k] !== undefined) {
                 rextdata[k] = data[k];
@@ -146,7 +146,7 @@ export function setup (app: FibApp.FibAppClass) {
 
             const r_ext_d: any = {};
 
-            let delr = !orm.settings.get(`rest.model.${cls.model_name}.extend.keep_association_beforewrite`)
+            let delr = !orm.settings.get(`rest.model.keep_association.epost:${cls.model_name}-${extend}`)
             for (const k in cls.extends) {
                 if (d[k] !== undefined) {
                     r_ext_d[k] = d[k];
