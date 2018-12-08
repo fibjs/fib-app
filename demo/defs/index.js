@@ -4,6 +4,7 @@ module.exports = [
     require('./acl'),
     require('./people'),
     require('./extend'),
+    require('./extend-multiple-level'),
     require('./pet'),
     require('./chat'),
     require('./fields_type'),

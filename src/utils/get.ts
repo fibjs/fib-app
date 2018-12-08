@@ -7,19 +7,19 @@ import { getInstanceOneAssociation, getInstanceManyAssociation } from './orm-ass
 
 export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj: FibApp.FibAppInternalCommObj = {
-        data: (cls as any).find().where({
+        inst: (cls as any).find().where({
             id: id
         }).firstSync()
     };
 
-    if (iobj.data === null)
+    if (iobj.inst === null)
         return err_info(4040002, {
             id: id,
             classname: cls.model_name
         }, cls.cid);
 
     if (act) {
-        var acl = checkout_obj_acl(session, act, iobj.data);
+        var acl = checkout_obj_acl(session, act, iobj.inst);
         if (!acl)
             return err_info(4030001, {classname: cls.model_name}, cls.cid);
         iobj.acl = acl;
@@ -28,7 +28,7 @@ export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session:
     return iobj;
 };
 
-export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
+export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
     return _egetx(cls, id, extend, rid, session, act).riobj
 }
 
@@ -39,7 +39,7 @@ function wrap_error (err: FibApp.FibAppResponse) {
     }
 }
 
-export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
+export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
     riobj: FibApp.FibAppInternalCommExtendObj,
     iobj: FibApp.FibAppInternalCommExtendObj
 } {
@@ -55,17 +55,17 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, ext
 
     if (util.isObject(id)) {
         iobj = {
-            data: id
+            inst: id as FxOrmNS.Instance
         };
         id = (id as any).id;
     } else {
         iobj = {
-            data: (cls as any).find().where({
+            inst: (cls as any).find().where({
                 id: id
             }).firstSync()
         };
 
-        if (iobj.data === null)
+        if (iobj.inst === null)
             return wrap_error(
                 err_info(4040002, {
                     id: id,
@@ -78,9 +78,9 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, ext
 
     if (rel_model.type === 'hasOne') {
         if (rel_model.reversed)
-            __opt = iobj.data[getInstanceOneAssociation(iobj.data, extend).getAccessor].call(iobj.data);
+            __opt = iobj.inst[getInstanceOneAssociation(iobj.inst, extend).getAccessor].call(iobj.inst);
         else {
-            var rid1 = iobj.data[Object.keys(getInstanceOneAssociation(iobj.data, extend).field)[0]];
+            var rid1 = iobj.inst[Object.keys(getInstanceOneAssociation(iobj.inst, extend).field)[0]];
             if (rid === undefined)
                 rid = rid1;
             else if (rid != rid1)
@@ -93,16 +93,16 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, ext
             __opt = rel_model.model.find();
         }
     } else
-        __opt = iobj.data[getInstanceManyAssociation(iobj.data, extend).getAccessor].call(iobj.data);
+        __opt = iobj.inst[getInstanceManyAssociation(iobj.inst, extend).getAccessor].call(iobj.inst);
 
     var riobj: FibApp.FibAppInternalCommExtendObj = {
-        base: iobj.data,
-        data: __opt.where({
+        base: iobj.inst,
+        inst: __opt.where({
             id: rid
         }).firstSync()
     };
 
-    if (riobj.data === null)
+    if (riobj.inst === null)
         return wrap_error(
             err_info(4040002, {
                 id: rid,
@@ -111,7 +111,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar, ext
         );
 
     if (act) {
-        var acl = checkout_robj_acl(session, act, iobj.data, riobj.data, extend);
+        var acl = checkout_robj_acl(session, act, iobj.inst, riobj.inst, extend);
         if (!acl)
             return wrap_error(
                 err_info(4030001, {classname: cls.model_name}, rel_model.model.cid)

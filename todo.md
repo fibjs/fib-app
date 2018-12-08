@@ -71,6 +71,12 @@ extend:cls: delete
     - [ ] epost: extra from rdata
     - [ ] eput: reverse
     - [ ] eput: 错误用例
+* [ ] extend operation
+    - [x] epost
+        - [x] recursive epost
+    - [x] eget
+    - [x] efind
+    - [x] eput
 
 ## new features
 

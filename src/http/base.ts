@@ -85,7 +85,7 @@ export function setup (app: FibApp.FibAppClass) {
             return obj;
 
         return {
-            success: filter(filter_ext(req.session, obj.data), req.query.keys, obj.acl)
+            success: filter(filter_ext(req.session, obj.inst), req.query.keys, obj.acl)
         };
     };
 
@@ -110,14 +110,14 @@ export function setup (app: FibApp.FibAppClass) {
         }
 
         for (const k in data)
-            obj.data[k] = data[k];
+            obj.inst[k] = data[k];
 
-        obj.data.saveSync();
+        obj.inst.saveSync();
 
         return {
             success: {
-                id: obj.data.id,
-                createdBy: obj.data[ormUtils.getCreatedByField(orm.settings)]
+                id: obj.inst.id,
+                createdBy: obj.inst[ormUtils.getCreatedByField(orm.settings)]
             }
         };
     };
@@ -127,11 +127,11 @@ export function setup (app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
 
-        obj.data.removeSync();
+        obj.inst.removeSync();
 
         return {
             success: {
-                id: obj.data.id
+                id: obj.inst.id
             }
         };
     };

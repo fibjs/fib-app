@@ -65,7 +65,7 @@ export function bind (app: FibApp.FibAppClass) {
 
                 req_resource_type: getRequestResourceAndHandlerType(req).requestedResultType,
                 req_resource_basecls: classname,
-                req_resource_extcls: undefined,
+                req_resource_extend: undefined,
                 req_resource_handler_type: undefined
             }
 
@@ -73,7 +73,7 @@ export function bind (app: FibApp.FibAppClass) {
                 _req.req_resource_handler_type = 'builtInBaseRest'
             } else if (isAppInternalExtApiFunction(app, func)) {
                 _req.req_resource_handler_type = 'builtInExtRest'
-                _req.req_resource_extcls = earg[1]
+                _req.req_resource_extend = earg[1]
             } else {
                 _req.req_resource_handler_type = 'modelFunction'
             }

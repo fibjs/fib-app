@@ -1,0 +1,17 @@
+{
+	"l1": {
+		"name": "l1:name",
+		"one_l2": {
+			"name": "l1-l2:name",
+			"one_l3": {
+				"name": "l1-l2-l3:name"
+			}
+		},
+		"one_sl": {
+			"name": "l1-sl:name",
+			"one_subl": {
+				"name": "l1-sl-subl:name"
+			}
+		}
+	}
+}

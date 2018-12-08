@@ -135,7 +135,7 @@ declare namespace FibApp {
     type FibAppHttpApiCollectionType = FibAppInternalApis | FibAppInternalViewApis
 
     interface AppInternalCommunicationObj {
-        data?: FxOrmNS.Instance
+        inst?: FxOrmNS.Instance
         acl?: FibAppACL.RoleActDescriptor
         error?: FibAppFinalError
     }
@@ -236,7 +236,7 @@ declare namespace FibApp {
         req_resource_type?: FibAppReqResourceType
         req_resource_handler_type?: FibAppReqResourceHandlerType
         req_resource_basecls?: string
-        req_resource_extcls?: string
+        req_resource_extend?: string
 
         response_headers?: object
     }
