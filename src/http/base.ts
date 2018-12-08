@@ -32,7 +32,7 @@ export function setup (app: FibApp.FibAppClass) {
         let instances = [];
         const extdata_list = [];
 
-        let delr = !orm.settings.get(`rest.model.keep_association.post:${cls.model_name}`)
+        let delr = !orm.settings.get(`rest.model.keep_association.post.${cls.model_name}`)
         function _create(d) {
             d = filter(d, acl);
 
@@ -98,7 +98,7 @@ export function setup (app: FibApp.FibAppClass) {
 
         const rdata = {};
 
-        let delr = !orm.settings.get(`rest.model.keep_association.put:${cls.model_name}`)
+        let delr = !orm.settings.get(`rest.model.keep_association.put.${cls.model_name}`)
         for (const k in cls.extends) {
             const r = data[k];
 
