@@ -31,23 +31,14 @@ export function setup (app: FibApp.FibAppClass) {
 
         data = filter(data, riobj.acl as FibAppACL.AclPermissionType__Write);
 
-        const rextdata = {};
-
-        let delrr = !orm.settings.get(`rest.model.keep_association.eput:${cls.model_name}-${extend}`)
-        for (const k in rel_model.model.extends) {
-            if (data[k] !== undefined) {
-                rextdata[k] = data[k];
-                if (delrr)
-                    delete data[k];
-            }
-        }
-
         for (const k in data)
-            riobj.inst[k] = data[k];
+            if (k !== 'extra')
+                riobj.inst[k] = data[k];
 
         riobj.inst.saveSync();
 
         if (data.extra && util.isObject(data.extra)) {
+            riobj.inst['extra'] = data.extra
             const many_assoc = check_hasmany_extend_extraprops(iobj.inst, extend)
             if (many_assoc) {
                 extra_save(iobj.inst, riobj.inst, many_assoc, data.extra, true)
@@ -163,7 +154,6 @@ export function setup (app: FibApp.FibAppClass) {
 
             const r_ext_d: any = {};
 
-            // let delr = !orm.settings.get(`rest.model.keep_association.epost:${cls.model_name}-${extend}`)
             for (const k in rel_model.model.extends) {
                 if (d[k] !== undefined) {
                     r_ext_d[k] = d[k];
@@ -210,14 +200,8 @@ export function setup (app: FibApp.FibAppClass) {
                             classname: cls.model_name,
                             extend: extend
                         });
-                } else {
-                    // console.log('Object.keys(assoc)', Object.keys(assoc), ro.extra)
-                    // rextdata_extras[i].extra_many_assoc && console.log('Object.keys(rextdata_extras[i].extra_many_assoc)', 
-                    //     Object.keys(rextdata_extras[i].extra_many_assoc),
-                    // )
-                    
+                } else
                     obj.inst[_opt + 'Sync'](ro)
-                }
             }
         }
 
