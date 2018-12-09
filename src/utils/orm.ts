@@ -44,17 +44,17 @@ export function createModelInstanceForInternalApi (cls: FxOrmNS.Model, options: 
 export function attachInteralApiRequestInfoToInstnace (inst: FxOrmNS.Instance, options: InternalApiInfoSettingOptions): void {
     const model = inst.model()
 
-    if (!model.settings.get('rest.model.inject_request_info'))
+    if (!model.settings.get('rest.model.inject_rest_request_info'))
         return 
     
-    Object.defineProperty(inst, `$in_rest_request`, {
+    Object.defineProperty(inst, `$in_filtered_rest`, {
         value: true,
         enumerable: false,
         writable: false
     })
     
     if (options.req_info)
-        Object.defineProperty(inst, `$req_info`, {
+        Object.defineProperty(inst, `$rest_req_info`, {
             value: options.req_info,
             enumerable: false,
             writable: false

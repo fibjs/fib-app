@@ -16,9 +16,13 @@ module.exports = db => {
         hooks: {
             beforeSave: function () {
                 const assert = require('assert')
-                if (this.$req_info) {
-                    assert.property(this.$req_info, 'session')
-                    assert.property(this.$req_info, 'query')
+                if (this.$rest_req_info) {
+                    assert.isTrue(this.$in_filtered_rest)
+                    assert.property(this.$rest_req_info, 'session')
+                    assert.property(this.$rest_req_info, 'query')
+                } else {
+                    assert.notExist(this.$in_filtered_rest)
+                    assert.notOk(this.$in_filtered_rest)
                 }
             },
             beforeCreate: function () {
@@ -108,4 +112,6 @@ module.exports = db => {
             }
         }
     });
+
+    User.settings.set('rest.model.inject_rest_request_info', Math.random(0, 1) > 0.5)
 };
