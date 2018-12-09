@@ -3,7 +3,6 @@ import util = require('util')
 import App from "../app";
 import { debugFunctionWrapper } from '../utils/debug';
 import { check_hasmany_extend_extraprops } from '../utils/orm-assoc';
-import { filterLimit } from '../utils/query';
 
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');

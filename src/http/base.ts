@@ -65,10 +65,9 @@ export function setup (app: FibApp.FibAppClass) {
         delr && extdata_list.forEach((extdata, i) => {
             for (const k in extdata) {
                 const res = api.epost(req, orm, cls, instances[i], k, extdata[k]);
-                // only capture the 1st error emitted
-                if (res.error) {
-                    return res;
-                }
+                // only capture the 1st error emitted as soon as possible
+                if (res.error)
+                    throw new Error(res.error.message);
             }
         })
 

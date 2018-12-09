@@ -166,10 +166,9 @@ export function setup(app: FibApp.FibAppClass) {
                 const ext_data = r_ext_d[r_ext]
 
                 const res = api.epost(req, orm, cls, ros[i], r_ext, ext_data);
-                // only capture the 1st error emitted
-                if (res.error) {
-                    return res;
-                }
+                // only capture the 1st error emitted as soon as possible
+                if (res.error)
+                    throw new Error(res.error.message);
             })
 
             return ro
