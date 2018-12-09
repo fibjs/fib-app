@@ -3,6 +3,7 @@ import util = require('util')
 import App from "../app";
 import { debugFunctionWrapper } from '../utils/debug';
 import { check_hasmany_extend_extraprops } from '../utils/orm-assoc';
+import { filterLimit } from '../utils/query';
 
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
@@ -57,9 +58,26 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function find_resolve(m: FxOrmNS.Model) {
+    function find_resolve(m: FxOrmNS.Model, count_mode: 'count_only' | 'find_only' | 'paging' = 'find_only') {
         return (
             function (parent, args, req) {
+                let selector = null
+
+                switch (count_mode) {
+                    default:
+                    case 'find_only':
+                        args.count = 0
+                        break
+                    case 'count_only':
+                        args.count = 1
+                        args.limit = 0
+                        selector = success => success.count
+                        break
+                    case 'paging':
+                        args.count = 1
+                        break
+                }
+                
                 var res = debugFunctionWrapper(app.api.find)({
                     session: req.session,
                     query: args
@@ -70,29 +88,20 @@ export = function (app: App, db: FibApp.FibAppDb) {
                     throw res.error;
                 }
 
-                return res.success;
+                return selector ? selector(res.success) : res.success;
             }
         );
     }
 
-    function count_resolve(m: FxOrmNS.Model) {
-        return (
-            function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
-                args.count = 1
-                args.limit = 0
-                var res = debugFunctionWrapper(app.api.find)({
-                    session: req.session,
-                    query: args
-                }, db, m);
-
-                if (res.error) {
-                    req.error = res.error;
-                    throw res.error;
-                }
-
-                return res.success.count;
+    function paging_resolve (m: FxOrmNS.Model) {
+        return {
+            results: {
+                type: new graphql.GraphQLList(types[m.model_name].type),
+            },
+            count: {
+                type: graphql.GraphQLInt
             }
-        );
+        }
     }
 
     function get_resolve_one(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
@@ -286,16 +295,25 @@ export = function (app: App, db: FibApp.FibAppDb) {
             resolve: get_resolve(m)
         };
 
-        types['find_' + k] = {
+        types[`find_${k}`] = {
             type: new graphql.GraphQLList(types[k].type),
             args: hasManyArgs,
-            resolve: find_resolve(m)
+            resolve: find_resolve(m, 'find_only')
         };
 
-        types['count_' + k] = {
+        types[`count_${k}`] = {
             type: graphql.GraphQLInt,
             args: hasManyArgs,
-            resolve: count_resolve(m)
+            resolve: find_resolve(m, 'count_only')
+        };
+
+        types[`paging_${k}`] = {
+            type: new graphql.GraphQLObjectType({
+                name: `paging_${k}`,
+                fields: paging_resolve(m)
+            }),
+            args: hasManyArgs,
+            resolve: find_resolve(m, 'paging')
         };
     }
 

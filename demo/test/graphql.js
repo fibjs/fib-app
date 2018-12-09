@@ -187,6 +187,76 @@ describe("graphql", () => {
         });
     });
 
+    it('paging', () => {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                paging_people(
+                    where:{
+                        id: {
+                            eq: "${ids[0]}"
+                        }
+                    }
+                ){
+                    results{
+                        id
+                        name
+                    }
+                    count
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.deepEqual(rep.json(), {
+            "data": {
+                "paging_people": {
+                    results: [{
+                        "id": ids[0],
+                        "name": "tom"
+                    }],
+                    count: 1
+                }
+            }
+        });
+    });
+    
+
+    it('paging cannot set query conditions in subfields', () => {
+        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                paging_people(
+                    where:{
+                        id: {
+                            eq: "${ids[0]}"
+                        }
+                    }
+                ){
+                    results(
+                        where:{
+                            id: {
+                                eq: "${ids[0]}"
+                            }
+                        }
+                    ){
+                        id
+                        name
+                    }
+                    count
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert.property(rep.json(), 'errors');
+        assert.greaterThan(rep.json().errors.length, 0);
+    });
+
     it('hasOne', () => {
         var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
