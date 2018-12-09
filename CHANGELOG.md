@@ -1,7 +1,20 @@
 
-v1.13.8 / 2018-12-09
+v1.13.9 / 2018-12-10
 ==================
 
+  * upgrade orm version
+  * [injected rest request info] little fix; robust for `attachInteralApiRequestInfoToInstnace`.
+  * [injected rest request info] normalize name of var/setting-key.
+  * use model-level setting key 'rest.model.inject_request_info' as switch of inject-rest-request-information for model.
+  * support inject fib-app about rest request information to orm as hidden property.
+  * code clean.
+  * code clean; emit error from extend-operations such as api.post/api.epost as soon as possible.
+  * [graphql] better fatal error info
+
+v1.13.8 / 2018-12-09
+====================
+
+  * Release v1.13.8
   * doc update.
   * support paging query in graphql.
   * robust for orm setting `rest.model.keep_association.post.*`.
