@@ -1,7 +1,19 @@
 
-v1.13.7 / 2018-12-07
+v1.13.8 / 2018-12-09
 ==================
 
+  * doc update.
+  * support paging query in graphql.
+  * robust for orm setting `rest.model.keep_association.post.*`.
+  * fix bad orm setting key, do some code format.
+  * code clean.
+  * fix wrong implement for recursive epost, and add test case to prove/cover that.
+  * fix keyname of orm option about 'keep_association_beforewrite' of rest base operation.
+
+v1.13.7 / 2018-12-07
+====================
+
+  * Release v1.13.7
   * upgrade @fxjs/orm
   * better error_info 403001.
 
