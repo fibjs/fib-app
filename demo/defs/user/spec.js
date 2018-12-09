@@ -24,15 +24,13 @@ const cheerio = require('cheerio');
         viewPathPrefix: '/view'
     }
 ].forEach((appOptions) => {
-    console.log('appOptions', appOptions)
-
     const appPath = !appOptions.apiPathPrefix ? '/api' : ''
 
     const testAppInfo = require('../..').getRandomSqliteBasedApp(appOptions, {uuid: true});
     const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath});
     testSrvInfo.server.run(() => void 0)
 
-    describe(`user, specified appOptions: ${JSON.stringify(appOptions)}`, () => {
+    describe(`user, specified appOptions: \n${JSON.stringify(appOptions, null, '\t')}\n`, () => {
         var id;
         after(() => testAppInfo.cleanSqliteDB())
 
