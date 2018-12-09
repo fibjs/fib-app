@@ -14,6 +14,13 @@ module.exports = db => {
         salt: String
     }, {
         hooks: {
+            beforeSave: function () {
+                const assert = require('assert')
+                if (this.$req_info) {
+                    assert.property(this.$req_info, 'session')
+                    assert.property(this.$req_info, 'query')
+                }
+            },
             beforeCreate: function () {
                 var salt = crypto.pseudoRandomBytes(64);
                 this.salt = salt.hex();

@@ -15,17 +15,46 @@ export function setOrmDefaultSettings (orm: FibApp.FibAppORM) {
     })
 }
 
+/* field about :start */
 export function getCreatedByField (settings: FxOrmNS.SettingInstance) {
     return settings.get('app.orm.common_fields.createdBy')
 }
 
 export function getCreatedAtField (settings: FxOrmNS.SettingInstance) {
     return settings.get('app.orm.common_fields.createdAt')
-
 }
 
 export function getUpdatedAtField (settings: FxOrmNS.SettingInstance) {
     return settings.get('app.orm.common_fields.updatedAt')
-
 }
+/* field about :end */
+
+/* fib-app specified properties about :start */
+interface InternalApiInfoSettingOptions {
+    data,
+    req_info?: FibApp.FibAppReq
+}
+export function createModelInstanceForInternalApi (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {
+    const o = new cls(options.data)
+    attachInteralApiRequestInfoToInstnace(o, options)
+    
+    return o
+}
+
+export function attachInteralApiRequestInfoToInstnace (inst: FxOrmNS.Instance, options: InternalApiInfoSettingOptions): void {
+    Object.defineProperty(inst, `$in_rest_request`, {
+        value: true,
+        enumerable: false,
+        writable: false
+    })
+    
+    if (options.req_info)
+        Object.defineProperty(inst, `$req_info`, {
+            value: options.req_info,
+            enumerable: false,
+            writable: false
+        })
+}
+/* fib-app specified properties about :end */
+
 

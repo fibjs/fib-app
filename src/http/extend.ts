@@ -28,6 +28,8 @@ export function setup(app: FibApp.FibAppClass) {
         const { riobj, iobj } = _egetx(cls, id, extend, rid, req.session, "write");
         if (riobj.error)
             return riobj;
+        ormUtils.attachInteralApiRequestInfoToInstnace(iobj.inst, { data: null, req_info: req })
+        ormUtils.attachInteralApiRequestInfoToInstnace(riobj.inst, { data: null, req_info: req })
 
         data = filter(data, riobj.acl as FibAppACL.AclPermissionType__Write);
 
@@ -63,6 +65,7 @@ export function setup(app: FibApp.FibAppClass) {
         const obj = _get(cls, id, req.session, "write");
         if (obj.error)
             return obj;
+        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
 
         if (Array.isArray(obj.acl) && obj.acl.indexOf(extend) === -1)
             return err_info(4030001, { classname: cls.model_name }, cls.cid);
@@ -118,6 +121,7 @@ export function setup(app: FibApp.FibAppClass) {
             if (obj.error)
                 return obj as FibApp.FibAppApiFunctionResponse;
         }
+        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
 
         const acl = checkout_obj_acl(req.session, 'create', obj.inst, extend) as FibAppACL.AclPermissionType__Create;
         if (!acl)
@@ -138,7 +142,11 @@ export function setup(app: FibApp.FibAppClass) {
             rextdata_extras.push({ extra_many_assoc, extra: d.extra || null })
             delete d.extra
 
-            const ro = new rel_model.model(d);
+            // const ro = new rel_model.model(d);
+            const ro = ormUtils.createModelInstanceForInternalApi(rel_model.model, {
+                data: d,
+                req_info: req
+            })
 
             if (_createBy !== undefined) {
                 _opt = Object.keys(getInstanceOneAssociation(ro, spec_keys['createdBy']).field)[0];
@@ -232,6 +240,7 @@ export function setup(app: FibApp.FibAppClass) {
             if (obj.error)
                 return obj;
         }
+        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
 
         if (!checkout_obj_acl(req.session, 'find', obj.inst, extend))
             return err_info(4030001, { classname: cls.model_name }, rel_model.model.cid);
@@ -251,6 +260,8 @@ export function setup(app: FibApp.FibAppClass) {
         const robj = _eget(cls, id, extend, rid, req.session, "read");
         if (robj.error)
             return robj;
+            
+        ormUtils.attachInteralApiRequestInfoToInstnace(robj.inst, { data: null, req_info: req })
 
         return {
             success: filter(filter_ext(req.session, robj.inst), req.query.keys, robj.acl)
@@ -261,6 +272,8 @@ export function setup(app: FibApp.FibAppClass) {
         const robj = _eget(cls, id, extend, rid, req.session, "delete");
         if (robj.error)
             return robj;
+            
+        ormUtils.attachInteralApiRequestInfoToInstnace(robj.inst, { data: null, req_info: req })
 
         const rel_model = cls.extends[extend];
 

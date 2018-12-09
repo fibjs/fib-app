@@ -46,7 +46,7 @@ export function setup (app: FibApp.FibAppClass) {
             }
             extdata_list.push(ext_d);
 
-            const o: FxOrmNS.Instance = new cls(d);
+            const o: FxOrmNS.Instance = ormUtils.createModelInstanceForInternalApi(cls, {data: d, req_info: req})
             if (_createBy !== undefined) {
                 _opt = Object.keys(getInstanceOneAssociation(o, spec_keys['createdBy']).field)[0];
                 o[_opt] = req.session.id;
@@ -82,6 +82,8 @@ export function setup (app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
 
+        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+
         return {
             success: filter(filter_ext(req.session, obj.inst), req.query.keys, obj.acl)
         };
@@ -91,6 +93,8 @@ export function setup (app: FibApp.FibAppClass) {
         const obj = _get(cls, id, req.session, 'write');
         if (obj.error)
             return obj;
+        
+        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
 
         data = filter(data, obj.acl as FibAppACL.AclPermissionType__Write);
 
@@ -124,6 +128,8 @@ export function setup (app: FibApp.FibAppClass) {
         const obj = _get(cls, id, req.session, 'delete');
         if (obj.error)
             return obj;
+            
+        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
 
         obj.inst.removeSync();
 
