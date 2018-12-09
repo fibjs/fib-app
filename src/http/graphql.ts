@@ -226,7 +226,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
                 for (var f in _extends) {
                     var rel_model: FxOrmNS.ExtendModelWrapper = _extends[f];
                     if (!rel_model.model) {
-                        throw `rel_model ${f} defined but no related model, detailed information: \n ${JSON.stringify(rel_model, null, '\t')}`
+                        throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_model, null, '\t')}`
                     }
 
                     if (rel_model.type === 'hasOne' && !rel_model.reversed)
