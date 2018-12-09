@@ -38,10 +38,8 @@ export function setup (app: FibApp.FibAppClass) {
 
             const ext_d = {};
             for (const k in cls.extends) {
-                const r = d[k];
-
-                if (r !== undefined) {
-                    ext_d[k] = r;
+                if (d[k] !== undefined) {
+                    ext_d[k] = d[k];
                     if (delr)
                         delete d[k];
                 }
@@ -63,7 +61,7 @@ export function setup (app: FibApp.FibAppClass) {
         else
             instances = [_create(data)];
         
-        extdata_list.forEach((extdata, i) => {
+        delr && extdata_list.forEach((extdata, i) => {
             for (const k in extdata) {
                 const res = api.epost(req, orm, cls, instances[i], k, extdata[k]);
                 // only capture the 1st error emitted
