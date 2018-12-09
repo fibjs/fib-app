@@ -42,6 +42,10 @@ export function createModelInstanceForInternalApi (cls: FxOrmNS.Model, options: 
 }
 
 export function attachInteralApiRequestInfoToInstnace (inst: FxOrmNS.Instance, options: InternalApiInfoSettingOptions): void {
+    // avoid repeative define
+    if (inst.$in_filtered_rest)
+        return
+
     const model = inst.model()
 
     if (!model.settings.get('rest.model.inject_rest_request_info'))

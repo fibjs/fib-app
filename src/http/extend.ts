@@ -65,6 +65,7 @@ export function setup(app: FibApp.FibAppClass) {
         const obj = _get(cls, id, req.session, "write");
         if (obj.error)
             return obj;
+            
         ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
 
         if (Array.isArray(obj.acl) && obj.acl.indexOf(extend) === -1)
@@ -80,6 +81,8 @@ export function setup(app: FibApp.FibAppClass) {
         const robj = _get(rel_model.model, rid, req.session, "read");
         if (robj.error)
             return robj;
+            
+        ormUtils.attachInteralApiRequestInfoToInstnace(robj.inst, { data: null, req_info: req })
 
         let _opt;
         switch (rel_model.type) {
