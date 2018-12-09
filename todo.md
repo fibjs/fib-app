@@ -53,6 +53,40 @@ extend:cls: read
 edel
 extend:cls: delete
 
+## docs
+
+* [ ] graphql
+    - [ ] introduction
+    - [ ] (get)[model]
+        - [ ] sample
+    - [ ] find_[model]
+        - [ ] sample
+    - [ ] count_[model]
+        - [ ] sample
+    - [ ] paging_[model]
+        - [ ] sample
+    
+- [ ] app rest-api
+    - [ ] introduction
+    - [ ] app.api.get
+        - [ ] sample
+    - [ ] app.api.post
+        - [ ] sample
+    - [ ] app.api.put
+        - [ ] sample
+    - [ ] app.api.del
+        - [ ] sample
+    - [ ] app.api.eget
+        - [ ] sample
+    - [ ] app.api.epost
+        - [ ] sample
+    - [ ] app.api.elink
+        - [ ] sample
+    - [ ] app.api.eput
+        - [ ] sample
+    - [ ] app.api.edel
+        - [ ] sample
+
 ## use cases
 
 * [x] 重写用例，用例独立运行, uuid

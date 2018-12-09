@@ -61,6 +61,7 @@ export function setup (app: FibApp.FibAppClass) {
         else
             instances = [_create(data)];
         
+        // if not delr in previous step, `o.saveSync` would do associatation operation automatically.
         delr && extdata_list.forEach((extdata, i) => {
             for (const k in extdata) {
                 const res = api.epost(req, orm, cls, instances[i], k, extdata[k]);
