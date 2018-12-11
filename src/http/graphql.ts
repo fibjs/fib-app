@@ -65,15 +65,15 @@ export = function (app: App, db: FibApp.FibAppDb) {
                 switch (count_mode) {
                     default:
                     case 'find_only':
-                        args.count = 0
+                        args.count_required = false
                         break
                     case 'count_only':
-                        args.count = 1
+                        args.count_required = true
                         args.limit = 0
-                        selector = success => success.count
+                        selector = (success: FibApp.FibAppIneternalApiFindResult) => success.count
                         break
                     case 'paging':
-                        args.count = 1
+                        args.count_required = true
                         break
                 }
                 
@@ -92,7 +92,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function paging_resolve (m: FxOrmNS.Model) {
+    function paging_fields (m: FxOrmNS.Model) {
         return {
             results: {
                 type: new graphql.GraphQLList(types[m.model_name].type),
@@ -245,6 +245,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
                     var has_many_association = check_hasmany_extend_extraprops((new m()), f)
                     if (has_many_association) {
+                        // hasMany-assoc-style result: alone mode(recommendation)
                         fields[`${f}`] = {
                             type: new graphql.GraphQLList(
                                 new graphql.GraphQLObjectType({
@@ -256,6 +257,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
                             resolve: get_resolve_many(m, f)
                         }
 
+                        // hasMany-assoc-style result: mixin mode
                         fields[`${f}__extra`] = {
                             type: new graphql.GraphQLList(
                                 new graphql.GraphQLObjectType({
@@ -309,7 +311,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         types[`paging_${k}`] = {
             type: new graphql.GraphQLObjectType({
                 name: `paging_${k}`,
-                fields: paging_resolve(m)
+                fields: paging_fields(m)
             }),
             args: hasManyArgs,
             resolve: find_resolve(m, 'paging')

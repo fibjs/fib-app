@@ -8,6 +8,7 @@ import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
 import { getInstanceOneAssociation } from '../utils/orm-assoc';
+import { is_count_required, found_result_selector } from '../utils/query';
 
 function map_ro_result (ro) {
     return {
@@ -143,9 +144,9 @@ export function setup (app: FibApp.FibAppClass) {
     api.find = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel): FibApp.FibAppApiFunctionResponse => {
         if (!checkout_acl(req.session, 'find', cls.ACL))
             return err_info(4030001, {classname: cls.model_name}, cls.cid);
-
+        
         return {
-            success: _find(req, cls.find())
-        };
+            success: found_result_selector(_find(req, cls.find()), !is_count_required(req.query) ? 'results' : '') 
+        }
     };
 }

@@ -124,6 +124,10 @@ declare namespace FibApp {
             }
         }
     }
+    interface FibAppIneternalApiFindResult<ReponseT = any> {
+        count: number
+        results: ReponseT[]
+    }
 
     interface FibAppInternalViewApis {
         get?: FibAppInternalTypedApi__Get<FibAppModelViewFunctionResponse>
@@ -220,8 +224,21 @@ declare namespace FibApp {
         limit?: number
         // such as '-id', 'person_id'
         order?: string
-        // it's numberType, but it's designed as boolean
+        /**
+         * it's numberType, but it's designed as boolean like count_required
+         * @history this is mostly for arg from http get url like
+         * 
+         * // from http
+         * `http://localhost:8080/api/user?count=1`
+         */
         count?: number
+        /**
+         * // from http
+         * `http://localhost:8080/api/user?count_required=1&skip=10` -> `count_required = true`
+         * `http://localhost:8080/api/user?count_required=0&skip=10` -> `count_required = true`
+         * `http://localhost:8080/api/user?count_required=&skip=10` -> `count_required = false`
+         */
+        count_required?: boolean
 
         [extraField: string]: any;
     }

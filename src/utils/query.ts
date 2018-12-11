@@ -27,6 +27,13 @@ export function filterLimit (query: FibApp.FibAppReqQuery) {
     return limit
 }
 
-export function isCountOnly (query: FibApp.FibAppReqQuery) {
-    return query.count == 1
+export function is_count_required (query: FibApp.FibAppReqQuery) {
+    if (!query)
+        return false
+    
+    return query.count_required == true || query.count == 1
+}
+
+export function found_result_selector (result: FibApp.FibAppIneternalApiFindResult, fetch_field: 'results' | 'count' | '' = '') {
+    return fetch_field ? result[fetch_field] : result
 }

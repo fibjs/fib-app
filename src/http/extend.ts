@@ -7,6 +7,7 @@ import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 import ormUtils = require('../utils/orm');
 import { getInstanceManyAssociation, getInstanceOneAssociation, check_hasmany_extend_extraprops, extra_save } from '../utils/orm-assoc';
+import { is_count_required, found_result_selector } from '../utils/query';
 
 function map_ro_result(ro) {
     return {
@@ -253,9 +254,12 @@ export function setup(app: FibApp.FibAppClass) {
             _association = getInstanceOneAssociation(obj.inst, extend);
         else
             _association = getInstanceManyAssociation(obj.inst, extend);
-
+            
         return {
-            success: _find(req, obj.inst[_association.getAccessor].call(obj.inst), obj.inst, extend)
+            success: found_result_selector(
+                _find(req, obj.inst[_association.getAccessor].call(obj.inst), obj.inst, extend),
+                !is_count_required(req.query) ? 'results' : ''
+            ) 
         };
     };
 
