@@ -112,6 +112,28 @@ describe("extend", () => {
             "age": 32
         });
 
+        filterable_extend_query__hasOne: {
+            /**
+             * `people` only **hasOne** `wife`. That is, as you add 'count=1' and **not realistic** `where` condition in query, 
+             * it just return the specified item result. In fact, it equivelent to eget the **only** item
+             */
+            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+                query: {
+                    // useless
+                    count: 1,
+                    keys: 'name,age',
+                    // not realistic
+                    where: JSON.stringify({
+                        name: {ne: 'alice'}
+                    })
+                }
+            });
+            check_result(rep.json(), {
+                "name": "alice",
+                "age": 32
+            });
+        }
+
         var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife/${ids[1]}`, {
             query: {
                 keys: 'name,age'
@@ -145,6 +167,64 @@ describe("extend", () => {
             "name": "jack",
             "age": 8
         }]);
+
+        filterable_extend_query__hasMany: {
+            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+                query: {
+                    count: 1,
+                    keys: 'name,age',
+                    order: 'age'
+                }
+            });
+            check_result(rep.json(), {
+                results: [{
+                    "name": "lily",
+                    "age": 4
+                }, {
+                    "name": "jack",
+                    "age": 8
+                }],
+                count: 2
+            });
+
+            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+                query: {
+                    count: 1,
+                    keys: 'name,age',
+                    order: 'age',
+                    // realistic
+                    where: JSON.stringify({
+                        name: {ne: 'lily'}
+                    })
+                }
+            });
+            check_result(rep.json(), {
+                results: [{
+                    "name": "jack",
+                    "age": 8
+                }],
+                count: 1
+            });
+
+            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+                query: {
+                    count: 1,
+                    keys: 'name,age',
+                    order: 'age',
+                    // realistic
+                    where: JSON.stringify({
+                        name: {eq: 'lily'}
+                    })
+                }
+            });
+            check_result(rep.json(), {
+                results: [{
+                    "name": "lily",
+                    "age": 4
+                }],
+                count: 1
+            });
+        }
 
         var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[3]}`, {
             query: {
