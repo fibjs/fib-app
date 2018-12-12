@@ -92,18 +92,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function paging_fields (m: FxOrmNS.Model) {
-        return {
-            results: {
-                type: new graphql.GraphQLList(types[m.model_name].type),
-            },
-            count: {
-                type: graphql.GraphQLInt
-            }
-        }
-    }
-
-    function get_resolve_one(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
+    function eget_resolve(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
             function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 var res = debugFunctionWrapper(app.api.eget)({
@@ -124,9 +113,18 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function get_resolve_many(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
+    function efind_many_resolve(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName, mode: 'paging' | '' = '') {
+        const is_paging_mode = mode === 'paging'
         return (
             function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
+                if (is_paging_mode) {
+                    args.count = 1
+                    args.count_required = true
+                } else {
+                    args.count = 0
+                    args.count_required = false
+                }
+
                 var res = debugFunctionWrapper(app.api.efind)({
                     session: req.session,
                     query: args
@@ -142,12 +140,15 @@ export = function (app: App, db: FibApp.FibAppDb) {
         );
     }
 
-    function get_resolve_extra_in_many (m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
-        return (
-            function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
-                return parent.extra
+    function paging_fields (list_item_type: any) {
+        return {
+            results: {
+                type: list_item_type,
+            },
+            count: {
+                type: graphql.GraphQLInt
             }
-        )
+        }
     }
 
     function get_fields_hasmanyextra_alone(m: FxOrmNS.Model, extend: string, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
@@ -173,7 +174,9 @@ export = function (app: App, db: FibApp.FibAppDb) {
                         name: `${m.model_name}_${extend}_aloneextra`,
                         fields: extra_fields
                     }),
-                    resolve: get_resolve_extra_in_many(m, extend)
+                    resolve: function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
+                        return parent.extra
+                    }
                 }
 
                 return basic_fields;
@@ -203,6 +206,7 @@ export = function (app: App, db: FibApp.FibAppDb) {
         )
     }
 
+    var extend_paging_types = {}
     function get_fields(m: FxOrmNS.Model, no_extra_fields: boolean = false) {
         return (
             function () {
@@ -231,42 +235,64 @@ export = function (app: App, db: FibApp.FibAppDb) {
                     if (rel_model.type === 'hasOne' && !rel_model.reversed)
                         fields[f] = {
                             type: types[rel_model.model.model_name].type,
-                            resolve: get_resolve_one(m, f)
+                            resolve: eget_resolve(m, f)
                         };
-                    else
-                        fields[f] = {
-                            type: new graphql.GraphQLList(types[rel_model.model.model_name].type),
-                            args: hasManyArgs,
-                            resolve: get_resolve_many(m, f)
-                        };
+                    else {
+                        let type_has_many = new graphql.GraphQLList(types[rel_model.model.model_name].type)
+                        let type_has_many_mixin_extra = null
 
-                    if (no_extra_fields)
-                        continue 
+                        let has_many_association = null
+                        
+                        if (!no_extra_fields) {
+                            has_many_association = check_hasmany_extend_extraprops((new m()), f)
+                            if (has_many_association) {
+                                // hasMany-assoc-style result: alone mode(recommendation)
+                                type_has_many = new graphql.GraphQLList(
+                                    new graphql.GraphQLObjectType({
+                                        name: `${m.model_name}__${f}__aloneExtraWrapper`,
+                                        fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_model.model, true)),
+                                    })
+                                )
 
-                    var has_many_association = check_hasmany_extend_extraprops((new m()), f)
-                    if (has_many_association) {
-                        // hasMany-assoc-style result: alone mode(recommendation)
-                        fields[`${f}`] = {
-                            type: new graphql.GraphQLList(
-                                new graphql.GraphQLObjectType({
-                                    name: `${m.model_name}__${f}__aloneExtraWrapper`,
-                                    fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_model.model, true)),
-                                })
-                            ),
-                            args: hasManyArgs,
-                            resolve: get_resolve_many(m, f)
+                                // hasMany-assoc-style result: mixin mode
+                                type_has_many_mixin_extra = new graphql.GraphQLList(
+                                    new graphql.GraphQLObjectType({
+                                        name: `${m.model_name}__${f}__mixinExtraWrapper`,
+                                        fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_model.model, true)),
+                                    })
+                                )
+                            }
                         }
 
-                        // hasMany-assoc-style result: mixin mode
-                        fields[`${f}__extra`] = {
-                            type: new graphql.GraphQLList(
-                                new graphql.GraphQLObjectType({
-                                    name: `${m.model_name}__${f}__mixinExtraWrapper`,
-                                    fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_model.model, true)),
+                        fields[f] = {
+                            type: type_has_many,
+                            args: hasManyArgs,
+                            resolve: efind_many_resolve(m, f)
+                        };
+
+                        var extend_paging_uname = get_extend_paging_unique_name(m, rel_model, f) 
+                        fields[`paging_${f}`] = {
+                            type: (
+                                /**
+                                 * there maybe repeative call to `get_fields`, and the name of this type should always keep unique
+                                 */
+                                extend_paging_types[extend_paging_uname] = extend_paging_types[extend_paging_uname] 
+                                || new graphql.GraphQLObjectType({
+                                    name: extend_paging_uname,
+                                    args: hasManyArgs,
+                                    fields: paging_fields(fields[f].type)
                                 })
                             ),
                             args: hasManyArgs,
-                            resolve: get_resolve_many(m, f)
+                            resolve: efind_many_resolve(m, f, 'paging')
+                        };
+
+                        if (type_has_many_mixin_extra) {
+                            fields[`${f}__extra`] = {
+                                type: type_has_many_mixin_extra,
+                                args: hasManyArgs,
+                                resolve: efind_many_resolve(m, f)
+                            }
                         }
                     }
                 }
@@ -311,7 +337,9 @@ export = function (app: App, db: FibApp.FibAppDb) {
         types[`paging_${k}`] = {
             type: new graphql.GraphQLObjectType({
                 name: `paging_${k}`,
-                fields: paging_fields(m)
+                fields: paging_fields(
+                    new graphql.GraphQLList(types[m.model_name].type)
+                )
             }),
             args: hasManyArgs,
             resolve: find_resolve(m, 'paging')
@@ -341,3 +369,10 @@ export = function (app: App, db: FibApp.FibAppDb) {
 
     return db;
 };
+
+function get_extend_paging_unique_name (m: FibOrmNS.Model, rel_model: FxOrmNS.ExtendModelWrapper, extend: string) {
+    if (rel_model.type === 'hasOne' && rel_model.reversed)
+        return `extend_paging__reverse_${rel_model.model.model_name}_${rel_model.type}_${extend}_${m.model_name}`
+    
+    return `extend_paging__${m.model_name}_${rel_model.type}_${extend}_${rel_model.model.model_name}`
+}
