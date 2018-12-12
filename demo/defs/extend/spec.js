@@ -252,7 +252,7 @@ describe("extend", () => {
     it('delete extend', () => {
         var rep = null
 
-        // you can not do unlink-operation(edel) from on reversed model to its orignal model
+        // you can not do unlink-operation(edel) one original model from on reversed model, which in one `hasOne` association
         rep = http.del(testSrvInfo.appUrlBase + `/people/${ids[1]}/husbands/${ids[0]}`)
         assert.equal(rep.statusCode, 404);
         check_result(rep.json(), {
