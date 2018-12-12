@@ -1,7 +1,16 @@
 
-v1.13.9 / 2018-12-10
+v1.13.10 / 2018-12-13
 ==================
 
+  * [grahpql]support paging in *2m assoc (including reverse-hasOne and hasMany)
+  * comment update.
+  * more clean internal find work-flow.
+  * add test case about extend fields' filter.
+
+v1.13.9 / 2018-12-10
+====================
+
+  * Release v1.13.9
   * upgrade orm version
   * [injected rest request info] little fix; robust for `attachInteralApiRequestInfoToInstnace`.
   * [injected rest request info] normalize name of var/setting-key.
