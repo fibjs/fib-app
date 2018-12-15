@@ -5,7 +5,7 @@
   "main": "./lib",
   "types": "@types/index.d.ts",
   "scripts": {
-    "build": "fib-typify src -o lib -c .typifyrc.json",
+    "build": "fib-typify src -o lib",
     "test:cov": "fibjs --cov ./demo/test/index.js",
     "test": "fibjs ./demo/test/index.js",
     "ci": "npm run build && npm run test",
