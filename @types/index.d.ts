@@ -7,6 +7,7 @@
 /// <reference path="./req.d.ts" />
 /// <reference path="./orm-patch.d.ts" />
 
+/// <reference path="./rest.d.ts" />
 /// <reference path="./app.d.ts" />
 
 /// <reference path="./test.d.ts" />

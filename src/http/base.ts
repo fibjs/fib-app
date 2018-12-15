@@ -10,7 +10,7 @@ import ormUtils = require('../utils/orm');
 import { getInstanceOneAssociation } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
-function map_ro_result (ro) {
+function map_ro_result (ro: FxOrmNS.Instance): FibAppRest.PostResponse {
     return {
         id: ro.id,
         createdAt: ro.createdAt
@@ -20,8 +20,14 @@ function map_ro_result (ro) {
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
 
-    api.post = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, data: FibApp.FibAppReqData) => {
-        const acl = checkout_acl(req.session, 'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
+    api.post = (
+        req: FibApp.FibAppReq,
+        orm: FibApp.FibAppORM,
+        cls: FibApp.FibAppORMModel,
+        data: FibApp.FibAppReqData
+    ): FibApp.FibAppApiFunctionResponse<FibAppRest.PostResponse|FibAppRest.PostResponse[]> => {
+        const acl = checkout_acl(req.session,
+        'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
         if (!acl)
             return err_info(4030001, {classname: cls.model_name}, cls.cid);
         
@@ -78,7 +84,12 @@ export function setup (app: FibApp.FibAppClass) {
         };
     };
 
-    api.get = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
+    api.get = (
+        req: FibApp.FibAppReq,
+        orm: FibApp.FibAppORM,
+        cls: FibApp.FibAppORMModel,
+        id: FibApp.AppIdType
+    ): FibApp.FibAppApiFunctionResponse<any> => {
         const obj: FibApp.FibAppInternalCommObj = _get(cls, id, req.session, 'read');
         if (obj.error)
             return obj;
