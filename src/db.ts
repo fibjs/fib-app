@@ -67,20 +67,17 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
                 var _beforeCreate;
                 var _beforeSave;
 
-                if (orm_define_opts !== undefined) {
-                    if (orm_define_opts.hooks !== undefined) {
-                        _beforeCreate = orm_define_opts.hooks.beforeCreate;
-                        _beforeSave = orm_define_opts.hooks.beforeSave;
-                    }
-
-                    m.functions = orm_define_opts.functions;
-                    m.viewFunctions = orm_define_opts.viewFunctions;
-                    m.ACL = orm_define_opts.ACL;
-                    m.OACL = orm_define_opts.OACL;
+                orm_define_opts = orm_define_opts || {}
+                if (orm_define_opts.hooks !== undefined) {
+                    _beforeCreate = orm_define_opts.hooks.beforeCreate;
+                    _beforeSave = orm_define_opts.hooks.beforeSave;
                 }
+                m.ACL = orm_define_opts.ACL;
+                m.OACL = orm_define_opts.OACL;
 
-                m.functions = m.functions || {};
-                m.viewFunctions = m.viewFunctions || {};
+                m.functions = orm_define_opts.functions || {};
+                m.viewFunctions = orm_define_opts.viewFunctions || {};
+                m.viewServices = orm_define_opts.viewServices || {};
 
                 if (m.ACL === undefined)
                     m.ACL = {

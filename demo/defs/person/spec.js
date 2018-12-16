@@ -1,6 +1,7 @@
 const test = require('test');
 test.setup();
 
+const querystring = require('querystring');
 const { check_result } = require('../../test/_utils');
 
 const testAppInfo = require('../..').getRandomSqliteBasedApp();
@@ -188,6 +189,127 @@ describe("classes - person", () => {
             });
         });
     });
+
+    describe("view service", () => {
+        const test_session = {
+            id: Date.now(),
+            roles: ['nothing']
+        }
+        
+        it("get request always fallback to viewServices", () => {
+            var rep = http.request('GET', testSrvInfo.appUrlBase + `/person/test`, {
+            });
+            assert.equal(rep.statusCode, 200);
+            
+            var rep = http.request('GET', testSrvInfo.appUrlBase + `/person/test`, {
+                headers: {
+                    'Content-Type': 'application/xjson'
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+            
+            ;[
+                'text/html; charset=utf8',
+                'text/css; charset=utf8',
+                'text/javascript; charset=utf8',
+                'application/javascript; charset=utf8'
+            ].forEach(contentType => {
+                var rep = http.request('GET', testSrvInfo.appUrlBase + `/person/test`, {
+                    headers: {
+                        'Content-Type': contentType
+                    }
+                });
+                // try find viewFunctions/serviceFunctions -> internalApi -> 404 response
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.json(), null);
+            })
+        });
+
+        describe('static response', () => {
+            ;[
+                [404, 'undefined', 'staticUndefined'],
+                [200, 'null', 'staticNull', null],
+                [200, 'NaN', 'staticNaN', null],
+                [200, 'number', 'staticNumber', 123],
+                [200, 'null', 'staticString', 'static person'],
+                [200, 'boolean', 'staticBoolean', true],
+                [200, 'object', 'staticObject', {a: 1}],
+                [404, 'Symbol', 'staticSymbol'],
+            ].forEach(([status, value_type, method, response_value]) => {
+                if (status === 200) {
+                    it(`can be ${value_type}`, () => {
+
+                        var rep = http.get(testSrvInfo.appUrlBase + `/person/${method}`, {
+                        });
+                        assert.equal(rep.statusCode, 200);
+                        assert.deepEqual(rep.json(), response_value);
+                    })
+                } else {
+                    it(`** can not be ${value_type}`, () => {
+                        var rep = http.get(testSrvInfo.appUrlBase + `/person/${method}`, {
+                        });
+                        assert.equal(rep.statusCode, status);
+                    })
+                }
+            })
+        })
+
+        it("testReqSession", () => {
+            http.post(testSrvInfo.serverBase + '/set_session', {
+                json: test_session
+            });
+
+            var rep = http.get(testSrvInfo.appUrlBase + `/person/testReqSession`, {
+                json: {}
+            });
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), test_session);
+        });
+
+        it("testReqQuery", () => {
+            ;[
+                [
+                    {
+                        a: 1,
+                        b: false,
+                        c: 3
+                    },
+                    {
+                        a: "1",
+                        b: "false",
+                        c: "3"
+                    }
+                ],
+                [
+                    {
+                    },
+                    {
+                    }
+                ]
+            ].forEach(([test_query, result_query]) => {
+                var rep = http.get(testSrvInfo.appUrlBase + `/person/testReqQuery`, {
+                    json: {},
+                    query: test_query
+                });
+                assert.equal(rep.statusCode, 200);
+                assert.deepEqual(rep.json(), result_query);
+
+                var rep = http.get(testSrvInfo.appUrlBase + `/person/testReqQuery?${querystring.stringify(test_query)}`, {
+                    json: {},
+                });
+                assert.equal(rep.statusCode, 200);
+                assert.deepEqual(rep.json(), result_query);
+            })
+        });
+        
+        it("testCtxOrm", () => {
+            var rep = http.get(testSrvInfo.appUrlBase + `/person/testCtxOrm`, {
+                json: {}
+            });
+            assert.equal(rep.statusCode, 200);
+            assert.isTrue(rep.json().includes('person'));
+        });
+    })
 
     describe("put id", () => {
         var id;

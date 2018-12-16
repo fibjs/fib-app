@@ -21,6 +21,12 @@ function writeInSuccess (result: FibApp.FibAppResponse, req: FibApp.FibAppHttpRe
         req.response.write(result.success);
 }
 
+function fill_undefined_error(req: FibApp.FibAppHttpRequest, cls: FibApp.FibAppORMModel): void {
+    fill_error(req, err_info(5000003, {
+        classname: cls.model_name,
+    }, cls ? cls.cid : -1));
+}
+
 export function bind (app: FibApp.FibAppClass) {
     const pool = app.dbPool;
 
@@ -28,6 +34,7 @@ export function bind (app: FibApp.FibAppClass) {
         const arglen = arguments.length;
         const earg = _slice.call(arguments, 2, arglen - 1);
         const func: FibApp.FibAppFunctionToBeFilter = arguments[arglen - 1];
+
 
         return pool((db: FibApp.FibAppDb) => {
             let data;
@@ -116,10 +123,14 @@ export function bind (app: FibApp.FibAppClass) {
 
             switch (_req.req_resource_type) {
                 case 'json':
-                    if (result.success) {
-                        req.response.json(result.success);
-                    } else
+                    if (result.error) {
                         fill_error(req, result);
+                    } else if (result.hasOwnProperty('success')) {
+                        req.response.json(result.success);
+                    } else {
+                        fill_undefined_error(req, cls)
+                    }
+
                     break
                 case 'css':
                     writeInSuccess(result, req);
@@ -128,7 +139,9 @@ export function bind (app: FibApp.FibAppClass) {
                     writeInSuccess(result, req);
                     break
                 case 'html':
-                    if (result.success) {
+                    if (result.error) {
+                        render_error(req, result);
+                    } else if (result.hasOwnProperty('success')) {
                         switch (typeof result.success) {
                             default:
                                 writeInSuccess(result, req);
@@ -137,8 +150,10 @@ export function bind (app: FibApp.FibAppClass) {
                                 req.response.json(result.success);
                                 break
                         }
-                    } else
-                        render_error(req, result);
+                    } else {
+                        fill_undefined_error(req, cls)
+                    }
+
                     break
             }
 

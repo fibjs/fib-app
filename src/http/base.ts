@@ -79,6 +79,13 @@ export function setup (app: FibApp.FibAppClass) {
     };
 
     api.get = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
+        const func = parseFibAppOrmModelServices(id, cls.viewServices)
+
+        if (func) {
+            req.req_resource_type = 'json'
+            return func(req, req.request.query)
+        }
+        
         const obj: FibApp.FibAppInternalCommObj = _get(cls, id, req.session, 'read');
         if (obj.error)
             return obj;
@@ -149,4 +156,25 @@ export function setup (app: FibApp.FibAppClass) {
             success: found_result_selector(_find(req, cls.find()), !is_count_required(req.query) ? 'results' : '') 
         }
     };
+}
+
+function parseFibAppOrmModelServices (cb_name: string | number, services: FibApp.FibAppOrmModelViewServiceHash): FibApp.FibAppOrmModelViewServiceCallback {
+    if (services[cb_name] === undefined || typeof services[cb_name] === 'symbol')
+        return null
+
+    if (typeof services[cb_name] !== 'function') {
+        let response = undefined
+        try {
+            response = JSON.parse(
+                JSON.stringify(services[cb_name])
+            )
+        } catch (e) {
+            services[cb_name] = () => ({error: e})
+        }
+
+        // static response
+        services[cb_name] = () => ({success: response})
+    }
+
+    return services[cb_name]
 }
