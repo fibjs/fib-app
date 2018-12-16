@@ -1,7 +1,16 @@
 
-v1.13.10 / 2018-12-13
+v1.13.11 / 2018-12-17
 ==================
 
+  * support `viewServices` options in model define Properties.
+  * little typo fix.
+  * update script 'build''.
+  * upgrade version of @fxjs/orm
+
+v1.13.10 / 2018-12-13
+=====================
+
+  * Release v1.13.10
   * [grahpql]support paging in *2m assoc (including reverse-hasOne and hasMany)
   * comment update.
   * more clean internal find work-flow.
