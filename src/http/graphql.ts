@@ -1,6 +1,5 @@
 import util = require('util')
 
-import App from "../app";
 import { debugFunctionWrapper } from '../utils/debug';
 import { check_hasmany_extend_extraprops } from '../utils/orm-assoc';
 
@@ -35,7 +34,7 @@ const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
     }
 };
 
-export = function (app: App, db: FibApp.FibAppDb) {
+export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
     var types = {};
     var graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
 
