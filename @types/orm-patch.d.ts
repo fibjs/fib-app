@@ -5,6 +5,20 @@
 
 
 declare namespace FibApp {
+    interface FibAppOrmModelFunction {
+        (req: FibAppReq, data: FibAppReqData): FibAppModelFunctionResponse
+    }
+
+    /* model view function :start */
+    interface FibAppOrmModelViewFunctionRequestInfo {
+        base: string
+        id: AppIdType
+        extend: string
+        ext_id: AppIdType
+    }
+    interface FibAppOrmModelViewFunction {
+        (result: null | FibAppApiFunctionResponse, req: FibAppReq, modelViewFunctionInfo: FibAppOrmModelViewFunctionRequestInfo): FibAppModelViewFunctionResponse
+    }
     interface FibAppOrmModelFunctionHash {
         [fnName: string]: FibAppOrmModelFunction
     }
@@ -23,6 +37,16 @@ declare namespace FibApp {
 
         [fnName: string]: FibAppOrmModelViewFunctionDefinition
     }
+    /* model view function :end */
+
+    /* model view service :start */
+    interface FibAppOrmModelViewServiceCallback {
+        (req: FibAppReq, data: FibAppReqData): FibAppModelFunctionResponse
+    }
+    interface FibAppOrmModelViewServiceHash {
+        [fnName: string]: FibAppOrmModelViewServiceCallback
+    }
+    /* model view service :end */
 
     interface FibAppOrmInstance extends FxOrmNS.Instance {
         acl: FibAppACL.ACLDefinition
@@ -45,6 +69,7 @@ declare namespace FibApp {
         OACL?: FibAppACL.FibOACLDef
         functions?: FibAppOrmModelFunctionHash
         viewFunctions?: FibAppOrmModelViewFunctionHash
+        viewServices?: FibAppOrmModelViewServiceHash
         no_graphql?: boolean
     }
     interface FibAppORMModel extends FxOrmNS.Model {
@@ -54,7 +79,8 @@ declare namespace FibApp {
         ACL: FibAppACL.FibACLDef// FibAppACL.ACLDefinition
         OACL: FibAppACL.FibOACLDef// FibAppACL.OACLDefinition
         functions: FibAppOrmModelFunctionHash
-        viewFunctions?: FibAppOrmModelViewFunctionHash
+        viewFunctions: FibAppOrmModelViewFunctionHash
+        viewServices: FibAppOrmModelViewServiceHash
         no_graphql: boolean
 
         extends: { [extendModel: string]: FibAppFixedOrmExtendModelWrapper };

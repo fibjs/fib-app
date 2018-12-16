@@ -136,6 +136,10 @@ declare namespace FibApp {
         efind?: FibAppInternalTypedApi__Efind<FibAppModelViewFunctionResponse>
     }
 
+    interface FibAppModelViewServiceApis {
+        [view_service_api: string]: FibAppOrmModelViewServiceHash
+    }
+
     type FibAppHttpApiCollectionType = FibAppInternalApis | FibAppInternalViewApis
 
     interface AppInternalCommunicationObj {
@@ -168,22 +172,6 @@ declare namespace FibApp {
     type FibAppDb = FibAppORM
 
     type FibAppFunctionToBeFilter = FibAppFilterableApiFunction__WithModel | FibAppFilterableApiFunction__NullModel | FibAppOrmModelFunction | FibAppInternalApiFunction
-
-    interface FibAppOrmModelFunction {
-        (req: FibAppReq, data: FibAppReqData): FibAppModelFunctionResponse
-    }
-
-    /* view model function :start */
-    interface FibAppOrmModelViewFunctionRequestInfo {
-        base: string
-        id: AppIdType
-        extend: string
-        ext_id: AppIdType
-    }
-    interface FibAppOrmModelViewFunction {
-        (result: null | FibAppApiFunctionResponse, req: FibAppReq, modelViewFunctionInfo: FibAppOrmModelViewFunctionRequestInfo): FibAppModelViewFunctionResponse
-    }
-    /* view model function :end */
 
     type FibAppInternalApiFunction =
         FibAppIneternalApiFunction__Get

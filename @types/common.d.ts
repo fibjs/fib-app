@@ -28,6 +28,7 @@ declare namespace FibApp {
 
     type FibAppApiFunctionResponse<DT = any> = FibAppResponse<DT>
     type FibAppModelFunctionResponse<DT = any> = FibAppResponse<{ data: DT, message: string }>
+    type FibAppModelViewServiceCallbackResponse<DT = any> = FibAppResponse<DT>
     type FibAppModelViewFunctionResponse = FibAppResponse<string>
 
     interface FibAppFinalError {

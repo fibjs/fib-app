@@ -87,6 +87,8 @@ extend:cls: delete
     - [ ] app.api.edel
         - [ ] sample
 
+- [ ] app view-service-api
+
 ## use cases
 
 * [x] 重写用例，用例独立运行, uuid
@@ -111,6 +113,8 @@ extend:cls: delete
     - [x] eget
     - [x] efind
     - [x] eput
+- [ ] app view-service-api
+- [ ] fallback when api, view-api, view-serivce-api all exist
 
 ## new features
 
