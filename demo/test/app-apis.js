@@ -172,7 +172,7 @@ describe('app apis', () => {
     it('util: app.utils', () => {
         assert.isObject(app.utils)
 
-        assert.isFunction(app.utils.transformFieldsList2GraphQLInnerString)
+        assert.isFunction(app.utils.transform_fieldslist_2_graphql_inner_string)
         
         assert.isBoolean(app.utils.isDebug)
         assert.equal(app.utils.isDebug, !!process.env.FIBAPP_DEBUG)

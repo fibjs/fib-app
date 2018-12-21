@@ -7,7 +7,7 @@ import { filter, filter_ext } from '../utils/filter';
 import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
-import { getInstanceOneAssociation } from '../utils/orm-assoc';
+import { get_one_association_item } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
 function map_ro_result (ro) {
@@ -26,7 +26,7 @@ export function setup (app: FibApp.FibAppClass) {
             return err_info(4030001, {classname: cls.model_name}, cls.cid);
         
         const spec_keys = {
-            createdBy: ormUtils.getCreatedByField(orm.settings),
+            createdBy: ormUtils.get_field_createdby(orm.settings),
         }
         const _createBy = cls.extends[spec_keys['createdBy']];
         let _opt;
@@ -47,9 +47,9 @@ export function setup (app: FibApp.FibAppClass) {
             }
             extdata_list.push(ext_d);
 
-            const o: FxOrmNS.Instance = ormUtils.createModelInstanceForInternalApi(cls, {data: d, req_info: req})
+            const o: FxOrmNS.Instance = ormUtils.create_instance_for_internal_api(cls, {data: d, req_info: req})
             if (_createBy !== undefined) {
-                _opt = Object.keys(getInstanceOneAssociation(o, spec_keys['createdBy']).field)[0];
+                _opt = Object.keys(get_one_association_item(o, spec_keys['createdBy']).field)[0];
                 o[_opt] = req.session.id;
             }
             o.saveSync();
@@ -90,7 +90,7 @@ export function setup (app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
 
-        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         return {
             success: filter(filter_ext(req.session, obj.inst), req.query.keys, obj.acl)
@@ -102,7 +102,7 @@ export function setup (app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
         
-        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         data = filter(data, obj.acl as FibAppACL.AclPermissionType__Write);
 
@@ -127,7 +127,7 @@ export function setup (app: FibApp.FibAppClass) {
         return {
             success: {
                 id: obj.inst.id,
-                createdBy: obj.inst[ormUtils.getCreatedByField(orm.settings)]
+                createdBy: obj.inst[ormUtils.get_field_createdby(orm.settings)]
             }
         };
     };
@@ -137,7 +137,7 @@ export function setup (app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
             
-        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         obj.inst.removeSync();
 

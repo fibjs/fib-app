@@ -1,7 +1,7 @@
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 import { filter, filter_ext } from './filter';
 
-import { filterSkip, filterLimit, filterWhere, is_count_required } from './query';
+import { query_filter_skip, query_filter_limit, query_filter_where, is_count_required } from './query';
 
 export = function<ReponseT = any> (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFibORMFind, bobj?: FxOrmNS.Instance, extend?: FibAppACL.ACLExtendModelNameType): FibApp.FibAppIneternalApiFindResult<ReponseT> {
     var query = req.query;
@@ -10,14 +10,14 @@ export = function<ReponseT = any> (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFi
     if (keys !== undefined)
         exec = exec.only(keys);
 
-    var where = filterWhere(query);
+    var where = query_filter_where(query);
 
     var exec = exec.where(where) as FxOrmNS.IChainFibORMFind;
 
-    var skip = filterSkip(query)
+    var skip = query_filter_skip(query)
     exec = exec.offset(skip) as FxOrmNS.IChainFibORMFind;
 
-    var limit = filterLimit(query)
+    var limit = query_filter_limit(query)
     exec = exec.limit(limit) as FxOrmNS.IChainFibORMFind;
 
     var order = query.order;

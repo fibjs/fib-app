@@ -22,18 +22,18 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
     var db: FibApp.AppDBPool<FibApp.FibAppORM> = Pool({
         create: function () {
             var ormInstance: FibApp.FibAppORM = orm.connectSync(connStr) as FibApp.FibAppORM;
-            ormUtils.setOrmDefaultSettings(ormInstance)
+            ormUtils.set_orm_default_settings(ormInstance)
 
             var spec_keys = {
-                createdAt: ormUtils.getCreatedAtField(ormInstance.settings),
-                updatedAt: ormUtils.getUpdatedAtField(ormInstance.settings),
+                createdAt: ormUtils.get_field_createdat(ormInstance.settings),
+                updatedAt: ormUtils.get_field_updatedat(ormInstance.settings),
             }
             
             var _define = ormInstance.define;
             var cls_id = 1;
 
             ormInstance.app = app;
-            ormInstance.define = function (name: string, properties: OrigORMDefProperties, orm_define_opts: FibAppOrmModelDefOptions) {
+            ormInstance.define = function (name: string, properties: FxOrmNS.ModelPropertyDefinitionHash, orm_define_opts: FibAppOrmModelDefOptions) {
                 var old_properties = properties;
 
                 if (use_uuid)

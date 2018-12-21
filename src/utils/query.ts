@@ -1,6 +1,6 @@
 import convert_where = require("./convert_where");
 
-export function filterWhere (query: FibApp.FibAppReqQuery) {
+export function query_filter_where (query: FibApp.FibAppReqQuery) {
     var where = query.where;
 
     if (where !== undefined)
@@ -11,7 +11,7 @@ export function filterWhere (query: FibApp.FibAppReqQuery) {
     return where
 }
 
-export function filterSkip (query: FibApp.FibAppReqQuery) {
+export function query_filter_skip (query: FibApp.FibAppReqQuery) {
     var skip = +query.skip;
     if (isNaN(skip) || skip < 0)
         skip = 0;
@@ -19,7 +19,7 @@ export function filterSkip (query: FibApp.FibAppReqQuery) {
     return skip
 }
 
-export function filterLimit (query: FibApp.FibAppReqQuery) {
+export function query_filter_limit (query: FibApp.FibAppReqQuery) {
     var limit = +query.limit;
     if (isNaN(limit) || limit < 0 || limit > 1000)
         limit = 100;

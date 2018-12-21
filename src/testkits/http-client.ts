@@ -35,7 +35,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
         },
         getByGraphQL: (id, fields = []) => {
             if (Array.isArray(fields)) {
-                fields = transformFieldsList2GraphQLInnerString(fields)
+                fields = transform_fieldslist_2_graphql_inner_string(fields)
             }
             
             let rep = graphqlRequest(
@@ -71,7 +71,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             }
 
             if (Array.isArray(fields)) {
-                fields = transformFieldsList2GraphQLInnerString(fields)
+                fields = transform_fieldslist_2_graphql_inner_string(fields)
             }
 
             let res = graphqlRequest(
@@ -216,7 +216,7 @@ export function queryObject2GraphQLConditionString (queryObject) {
     return queryObject
 }
 
-export function transformFieldsList2GraphQLInnerString (arr: any[] = []) {
+export function transform_fieldslist_2_graphql_inner_string (arr: any[] = []) {
     const result = arr.map(item => {
         if (typeof item === 'string') {
             return item
@@ -227,7 +227,7 @@ export function transformFieldsList2GraphQLInnerString (arr: any[] = []) {
 
             if (!name) return
 
-            return `${name}{ \n${transformFieldsList2GraphQLInnerString(fields)} }`
+            return `${name}{ \n${transform_fieldslist_2_graphql_inner_string(fields)} }`
         }
     }).filter(x => x).join('\n')
 

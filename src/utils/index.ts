@@ -1,11 +1,11 @@
-import { transformFieldsList2GraphQLInnerString } from '../testkits/http-client'
-import { getIsDebug } from './debug';
+import { transform_fieldslist_2_graphql_inner_string } from '../testkits/http-client'
+import { get_is_debug } from './debug';
 
 export function bind (app: FibApp.FibAppClass) {
     app.utils = {
-        transformFieldsList2GraphQLInnerString,
+        transform_fieldslist_2_graphql_inner_string,
         get isDebug (): boolean {
-            return getIsDebug()
+            return get_is_debug()
         }
     }
 }

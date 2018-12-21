@@ -12,7 +12,7 @@ import _view = require('./view');
 
 const _slice = Array.prototype.slice;
 
-import { isAppInternalBaseApiFunction, isAppInternalExtApiFunction, getRequestResourceAndHandlerType } from '../utils/filter_request'
+import { is_internal_base_api_fn, is_internal_ext_api_fn, parse_req_resource_and_hdlr_type } from '../utils/filter_request'
 import { ouputMap } from "../utils/mimes";
 
 
@@ -70,15 +70,15 @@ export function bind (app: FibApp.FibAppClass) {
                 query: req.query.toJSON(),
                 request: req,
 
-                req_resource_type: getRequestResourceAndHandlerType(req).requestedResultType,
+                req_resource_type: parse_req_resource_and_hdlr_type(req).requestedResultType,
                 req_resource_basecls: classname,
                 req_resource_extend: undefined,
                 req_resource_handler_type: undefined
             }
 
-            if (isAppInternalBaseApiFunction(app, func)) {
+            if (is_internal_base_api_fn(app, func)) {
                 _req.req_resource_handler_type = 'builtInBaseRest'
-            } else if (isAppInternalExtApiFunction(app, func)) {
+            } else if (is_internal_ext_api_fn(app, func)) {
                 _req.req_resource_handler_type = 'builtInExtRest'
                 _req.req_resource_extend = earg[1]
             } else {
@@ -284,7 +284,7 @@ export function bind (app: FibApp.FibAppClass) {
 };
 
 function selectApiCollection (req: FibApp.FibAppHttpRequest, app: FibApp.FibAppClass): FibApp.FibAppHttpApiCollectionType {
-    switch (getRequestResourceAndHandlerType(req).requestedResultType) {
+    switch (parse_req_resource_and_hdlr_type(req).requestedResultType) {
         case 'css':
         case 'js':
         case 'html':

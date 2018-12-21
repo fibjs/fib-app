@@ -2,22 +2,22 @@
 import util = require('util')
 import coroutine = require('coroutine')
 
-export function getInstanceManyAssociations (instance: FxOrmNS.Instance): FxOrmNS.InstanceAssociationItem_HasMany[] {
+export function get_many_associations (instance: FxOrmNS.Instance): FxOrmNS.InstanceAssociationItem_HasMany[] {
     return instance.__opts.many_associations
 }
 
-export function getInstanceManyAssociation (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany {
-    const many_assocs = getInstanceManyAssociations(instance)
+export function get_many_association_item (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany {
+    const many_assocs = get_many_associations(instance)
     
     return many_assocs.find(a => a.name === extend_name)
 }
 
-export function getInstanceOneAssociations (instance: FxOrmNS.Instance): FxOrmNS.InstanceAssociationItem_HasOne[] {
+export function get_one_associations (instance: FxOrmNS.Instance): FxOrmNS.InstanceAssociationItem_HasOne[] {
     return instance.__opts.one_associations
 }
 
-export function getInstanceOneAssociation (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasOne {
-    const one_assocs = getInstanceOneAssociations(instance)
+export function get_one_association_item (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasOne {
+    const one_assocs = get_one_associations(instance)
     
     return one_assocs.find(a => a.name === extend_name)
 }

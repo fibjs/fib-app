@@ -1,11 +1,11 @@
-export function getIsDebug () {
+export function get_is_debug () {
     return !!(process.env as any).FIBAPP_DEBUG
 }
 
 export function debugFunctionWrapper (fn, loglevel = 'error') {
     const self = arguments[arguments.length - 1]
     
-    if (getIsDebug()) {
+    if (get_is_debug()) {
         const origFn = fn
         fn = function (...args) {
             try {

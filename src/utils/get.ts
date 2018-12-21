@@ -3,7 +3,7 @@
 import util = require('util');
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
-import { getInstanceOneAssociation, getInstanceManyAssociation } from './orm-assoc';
+import { get_one_association_item, get_many_association_item } from './orm-assoc';
 
 export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj: FibApp.FibAppInternalCommObj = {
@@ -78,9 +78,9 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
 
     if (rel_model.type === 'hasOne') {
         if (rel_model.reversed)
-            __opt = iobj.inst[getInstanceOneAssociation(iobj.inst, extend).getAccessor].call(iobj.inst);
+            __opt = iobj.inst[get_one_association_item(iobj.inst, extend).getAccessor].call(iobj.inst);
         else {
-            var rid1 = iobj.inst[Object.keys(getInstanceOneAssociation(iobj.inst, extend).field)[0]];
+            var rid1 = iobj.inst[Object.keys(get_one_association_item(iobj.inst, extend).field)[0]];
             if (rid === undefined)
                 rid = rid1;
             else if (rid != rid1)
@@ -93,7 +93,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
             __opt = rel_model.model.find();
         }
     } else
-        __opt = iobj.inst[getInstanceManyAssociation(iobj.inst, extend).getAccessor].call(iobj.inst);
+        __opt = iobj.inst[get_many_association_item(iobj.inst, extend).getAccessor].call(iobj.inst);
 
     var riobj: FibApp.FibAppInternalCommExtendObj = {
         base: iobj.inst,

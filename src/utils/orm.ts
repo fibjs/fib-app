@@ -1,4 +1,4 @@
-export function defaultSettings (): FibApp.FibAppOrmSettings {
+export function default_settings (): FibApp.FibAppOrmSettings {
     return {
         'app.orm.common_fields.createdBy': 'createdBy',
         'app.orm.common_fields.createdAt': 'createdAt',
@@ -6,8 +6,8 @@ export function defaultSettings (): FibApp.FibAppOrmSettings {
     }
 }
 
-export function setOrmDefaultSettings (orm: FibApp.FibAppORM) {
-    let settings = defaultSettings()
+export function set_orm_default_settings (orm: FibApp.FibAppORM) {
+    let settings = default_settings()
     Object.keys(
         settings
     ).forEach(key => {
@@ -16,15 +16,15 @@ export function setOrmDefaultSettings (orm: FibApp.FibAppORM) {
 }
 
 /* field about :start */
-export function getCreatedByField (settings: FxOrmNS.SettingInstance) {
+export function get_field_createdby (settings: FxOrmNS.SettingInstance) {
     return settings.get('app.orm.common_fields.createdBy')
 }
 
-export function getCreatedAtField (settings: FxOrmNS.SettingInstance) {
+export function get_field_createdat (settings: FxOrmNS.SettingInstance) {
     return settings.get('app.orm.common_fields.createdAt')
 }
 
-export function getUpdatedAtField (settings: FxOrmNS.SettingInstance) {
+export function get_field_updatedat (settings: FxOrmNS.SettingInstance) {
     return settings.get('app.orm.common_fields.updatedAt')
 }
 /* field about :end */
@@ -34,14 +34,14 @@ interface InternalApiInfoSettingOptions {
     data,
     req_info?: FibApp.FibAppReq
 }
-export function createModelInstanceForInternalApi (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {
+export function create_instance_for_internal_api (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {
     const o = new cls(options.data)
-    attachInteralApiRequestInfoToInstnace(o, options)
+    attach_internal_api_requestinfo_to_instance(o, options)
     
     return o
 }
 
-export function attachInteralApiRequestInfoToInstnace (inst: FxOrmNS.Instance, options: InternalApiInfoSettingOptions): void {
+export function attach_internal_api_requestinfo_to_instance (inst: FxOrmNS.Instance, options: InternalApiInfoSettingOptions): void {
     // avoid repeative define
     if (inst.$in_filtered_rest)
         return

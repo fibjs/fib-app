@@ -6,7 +6,7 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 import ormUtils = require('../utils/orm');
-import { getInstanceManyAssociation, getInstanceOneAssociation, check_hasmany_extend_extraprops, extra_save } from '../utils/orm-assoc';
+import { get_many_association_item, get_one_association_item, check_hasmany_extend_extraprops, extra_save } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
 function map_ro_result(ro) {
@@ -29,8 +29,8 @@ export function setup(app: FibApp.FibAppClass) {
         const { riobj, iobj } = _egetx(cls, id, extend, rid, req.session, "write");
         if (riobj.error)
             return riobj;
-        ormUtils.attachInteralApiRequestInfoToInstnace(iobj.inst, { data: null, req_info: req })
-        ormUtils.attachInteralApiRequestInfoToInstnace(riobj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(iobj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(riobj.inst, { data: null, req_info: req })
 
         data = filter(data, riobj.acl as FibAppACL.AclPermissionType__Write);
 
@@ -67,7 +67,7 @@ export function setup(app: FibApp.FibAppClass) {
         if (obj.error)
             return obj;
             
-        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         if (Array.isArray(obj.acl) && obj.acl.indexOf(extend) === -1)
             return err_info(4030001, { classname: cls.model_name }, cls.cid);
@@ -83,16 +83,16 @@ export function setup(app: FibApp.FibAppClass) {
         if (robj.error)
             return robj;
             
-        ormUtils.attachInteralApiRequestInfoToInstnace(robj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(robj.inst, { data: null, req_info: req })
 
         let _opt;
         switch (rel_model.type) {
             case 'hasOne':
-                _opt = getInstanceOneAssociation(obj.inst, extend).setAccessor;
+                _opt = get_one_association_item(obj.inst, extend).setAccessor;
                 break
             case 'hasMany':
             default:
-                _opt = getInstanceManyAssociation(obj.inst, extend).addAccessor;
+                _opt = get_many_association_item(obj.inst, extend).addAccessor;
                 break
         }
 
@@ -125,14 +125,14 @@ export function setup(app: FibApp.FibAppClass) {
             if (obj.error)
                 return obj as FibApp.FibAppApiFunctionResponse;
         }
-        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         const acl = checkout_obj_acl(req.session, 'create', obj.inst, extend) as FibAppACL.AclPermissionType__Create;
         if (!acl)
             return err_info(4030001, { classname: cls.model_name }, cls.cid);
 
         const spec_keys = {
-            createdBy: ormUtils.getCreatedByField(orm.settings),
+            createdBy: ormUtils.get_field_createdby(orm.settings),
         }
         const _createBy = rel_model.model.extends[spec_keys['createdBy']];
         let _opt;
@@ -147,13 +147,13 @@ export function setup(app: FibApp.FibAppClass) {
             delete d.extra
 
             // const ro = new rel_model.model(d);
-            const ro = ormUtils.createModelInstanceForInternalApi(rel_model.model, {
+            const ro = ormUtils.create_instance_for_internal_api(rel_model.model, {
                 data: d,
                 req_info: req
             })
 
             if (_createBy !== undefined) {
-                _opt = Object.keys(getInstanceOneAssociation(ro, spec_keys['createdBy']).field)[0];
+                _opt = Object.keys(get_one_association_item(ro, spec_keys['createdBy']).field)[0];
                 ro[_opt] = req.session.id;
             }
 
@@ -194,10 +194,10 @@ export function setup(app: FibApp.FibAppClass) {
         if (!rel_model.reversed) {
             let _opt, assoc
             if (rel_model.type === 'hasOne') {
-                assoc = getInstanceOneAssociation(obj.inst, extend)
+                assoc = get_one_association_item(obj.inst, extend)
                 _opt = assoc.setAccessor;
             } else {
-                assoc = getInstanceManyAssociation(obj.inst, extend)
+                assoc = get_many_association_item(obj.inst, extend)
                 _opt = assoc.addAccessor;
             }
 
@@ -244,16 +244,16 @@ export function setup(app: FibApp.FibAppClass) {
             if (obj.error)
                 return obj;
         }
-        ormUtils.attachInteralApiRequestInfoToInstnace(obj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         if (!checkout_obj_acl(req.session, 'find', obj.inst, extend))
             return err_info(4030001, { classname: cls.model_name }, rel_model.model.cid);
 
         let _association;
         if (rel_model.type === 'hasOne')
-            _association = getInstanceOneAssociation(obj.inst, extend);
+            _association = get_one_association_item(obj.inst, extend);
         else
-            _association = getInstanceManyAssociation(obj.inst, extend);
+            _association = get_many_association_item(obj.inst, extend);
             
         return {
             success: found_result_selector(
@@ -268,7 +268,7 @@ export function setup(app: FibApp.FibAppClass) {
         if (robj.error)
             return robj;
             
-        ormUtils.attachInteralApiRequestInfoToInstnace(robj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(robj.inst, { data: null, req_info: req })
 
         return {
             success: filter(filter_ext(req.session, robj.inst), req.query.keys, robj.acl)
@@ -280,12 +280,12 @@ export function setup(app: FibApp.FibAppClass) {
         if (robj.error)
             return robj;
             
-        ormUtils.attachInteralApiRequestInfoToInstnace(robj.inst, { data: null, req_info: req })
+        ormUtils.attach_internal_api_requestinfo_to_instance(robj.inst, { data: null, req_info: req })
 
         const rel_model = cls.extends[extend];
 
         if (rel_model.type === 'hasMany') {
-            robj.base[getInstanceManyAssociation(robj.base, extend).delAccessor + 'Sync'].call(robj.base, robj.inst);
+            robj.base[get_many_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base, robj.inst);
 
             return {
                 success: {
@@ -302,7 +302,7 @@ export function setup(app: FibApp.FibAppClass) {
                     classname: rel_model.model.model_name
                 }, rel_model.model.cid);
 
-            robj.base[getInstanceOneAssociation(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
+            robj.base[get_one_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
 
             return {
                 success: {

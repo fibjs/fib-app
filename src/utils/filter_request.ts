@@ -1,14 +1,16 @@
+/// <reference lib="es2016" />
+
 /// <reference path="../../@types/index.d.ts" />
 
-export function isAppInternalBaseApiFunction (app: FibApp.FibAppClass, func: any | Function) {
+export function is_internal_base_api_fn (app: FibApp.FibAppClass, func: any | Function) {
     return [ app.api.get, app.api.post, app.api.put, app.api.del, app.api.find ].includes(func)
 }
 
-export function isAppInternalExtApiFunction (app: FibApp.FibAppClass, func: any | Function) {
+export function is_internal_ext_api_fn (app: FibApp.FibAppClass, func: any | Function) {
     return [ app.api.eget, app.api.epost, app.api.eput, app.api.edel, app.api.efind ].includes(func)
 }
 
-export function getRequestResourceAndHandlerType (req: Class_HttpRequest): {
+export function parse_req_resource_and_hdlr_type (req: Class_HttpRequest): {
     requestedResultType: FibApp.FibAppReqResourceType,
     requestedPayloadType: FibApp.FibAppReqResourceHandlerType
 } {

@@ -318,7 +318,7 @@ declare namespace FibApp {
     }
 
     interface FibAppClassUtils {
-        transformFieldsList2GraphQLInnerString(arr: any[]): string
+        transform_fieldslist_2_graphql_inner_string(arr: any[]): string
         readonly isDebug: boolean;
     }
 
