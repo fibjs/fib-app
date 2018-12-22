@@ -7,13 +7,11 @@ testSrvInfo.server.run(() => void 0)
 
 const http = require('http');
 
-describe("graphql", () => {
-    var ids = [];
-    after(() => testAppInfo.cleanSqliteDB())
-
-    it('init data', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + '/people', {
-            json: [{
+var ids = [];
+function init_data () {
+    var rep = http.post(testSrvInfo.appUrlBase + '/people', {
+        json: [
+            {
                 name: 'tom',
                 sex: "male",
                 age: 35
@@ -36,78 +34,86 @@ describe("graphql", () => {
                 age: 65
             }
         ]
-        });
-
-        rep.json().forEach(r => ids.push(r.id));
     });
 
-    it('init extend', () => {
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
-            json: {
-                id: ids[1]
-            }
-        });
-        assert.equal(rep.statusCode, 200)
+    rep.json().forEach(r => ids.push(r.id));
+}
 
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/father`, {
-            json: {
-                id: ids[4]
-            }
-        });
-        assert.equal(rep.statusCode, 200)
+function init_extend () {
+    var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+        json: {
+            id: ids[1]
+        }
+    });
+    assert.equal(rep.statusCode, 200)
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}`, {
-            query: {
-                keys: 'wife_id'
-            }
-        });
-        assert.equal(rep.statusCode, 200)
+    var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/father`, {
+        json: {
+            id: ids[4]
+        }
+    });
+    assert.equal(rep.statusCode, 200)
 
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
+    var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}`, {
+        query: {
+            keys: 'wife_id'
+        }
+    });
+    assert.equal(rep.statusCode, 200)
+
+    var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
+        json: {
+            id: ids[0]
+        }
+    });
+    assert.equal(rep.statusCode, 200)
+
+    function set_parents(id) {
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/father`, {
             json: {
                 id: ids[0]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        function set_parents(id) {
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/father`, {
-                json: {
-                    id: ids[0]
-                }
-            });
-            assert.equal(rep.statusCode, 200)
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/mother`, {
+            json: {
+                id: ids[1]
+            }
+        });
+        assert.equal(rep.statusCode, 200)
+    }
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/mother`, {
-                json: {
-                    id: ids[1]
-                }
-            });
-            assert.equal(rep.statusCode, 200)
-        }
+    set_parents(ids[2]);
+    set_parents(ids[3]);
 
-        set_parents(ids[2]);
-        set_parents(ids[3]);
+    function add_childs(id) {
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
+            json: {
+                id: ids[2]
+            }
+        });
+        assert.equal(rep.statusCode, 200)
 
-        function add_childs(id) {
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
-                json: {
-                    id: ids[2]
-                }
-            });
-            assert.equal(rep.statusCode, 200)
+        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
+            json: {
+                id: ids[3]
+            }
+        });
+        assert.equal(rep.statusCode, 200)
+    }
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
-                json: {
-                    id: ids[3]
-                }
-            });
-            assert.equal(rep.statusCode, 200)
-        }
+    add_childs(ids[0]);
+    add_childs(ids[1]);
+}
 
-        add_childs(ids[0]);
-        add_childs(ids[1]);
-    });
+describe("graphql", () => {
+    after(() => testAppInfo.cleanSqliteDB())
+
+    before(() => {
+        init_data();
+        init_extend();
+    })
 
     it('simple', () => {
         var rep = http.post(testSrvInfo.appUrlBase + ``, {
@@ -223,7 +229,6 @@ describe("graphql", () => {
         });
     });
     
-
     it('paging cannot set query conditions in subfields', () => {
         var rep = http.post(testSrvInfo.appUrlBase + ``, {
             headers: {
@@ -257,81 +262,159 @@ describe("graphql", () => {
         assert.greaterThan(rep.json().errors.length, 0);
     });
 
-    it('hasOne', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
-            headers: {
-                'Content-Type': 'application/graphql'
-            },
-            body: `{
-                people(id:"${ids[2]}"){
-                    id,
-                    name,
-                    mother{
+    describe('featured graphql quering', () => {
+        it('explicit and named query', () => {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `query PagingPeople{
+                    paging_people(
+                        where:{
+                            id: {
+                                eq: "${ids[0]}"
+                            }
+                        }
+                    ){
+                        results{
+                            id
+                            name
+                        }
+                        count
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "data": {
+                    "paging_people": {
+                        results: [{
+                            "id": ids[0],
+                            "name": "tom"
+                        }],
+                        count: 1
+                    }
+                }
+            });
+        })
+
+        it('alias', () => {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `query PagingPeople{
+                    paging_people(
+                        where:{
+                            id: {
+                                eq: "${ids[0]}"
+                            }
+                        }
+                    ){
+                        list: results{
+                            id
+                            name
+                        }
+                        number: count
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "data": {
+                    "paging_people": {
+                        list: [{
+                            "id": ids[0],
+                            "name": "tom"
+                        }],
+                        number: 1
+                    }
+                }
+            });
+        })
+        
+        xit('mutations', () => undefined)
+    })
+
+    describe('hasOne', () => {
+        it('basic', () => {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    people(id:"${ids[2]}"){
                         id,
                         name,
-                        husband{
+                        mother{
+                            id,
+                            name,
+                            husband{
+                                id,
+                                name
+                            }
+                        }
+                    }
+                }`
+            });
+    
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "data": {
+                    "people": {
+                        "id": ids[2],
+                        "name": "jack",
+                        "mother": {
+                            "id": ids[1],
+                            "name": "alice",
+                            "husband": {
+                                "id": ids[0],
+                                "name": "tom"
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    
+        it('hasOne with null', () => {
+            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    people(id:"${ids[0]}"){
+                        id,
+                        name,
+                        father{
+                            id,
+                            name
+                        },
+                        mother{
                             id,
                             name
                         }
                     }
-                }
-            }`
-        });
-
-        assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
-            "data": {
-                "people": {
-                    "id": ids[2],
-                    "name": "jack",
-                    "mother": {
-                        "id": ids[1],
-                        "name": "alice",
-                        "husband": {
-                            "id": ids[0],
-                            "name": "tom"
-                        }
-                    }
-                }
-            }
-        });
-    });
-
-    it('hasOne with null', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
-            headers: {
-                'Content-Type': 'application/graphql'
-            },
-            body: `{
-                people(id:"${ids[0]}"){
-                    id,
-                    name,
-                    father{
-                        id,
-                        name
+                }`
+            });
+    
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "data": {
+                  "people": {
+                    "id": ids[0],
+                    "name": "tom",
+                    "father": {
+                      "id": ids[4],
+                      "name": "mike"
                     },
-                    mother{
-                        id,
-                        name
-                    }
+                    "mother": null
+                  }
                 }
-            }`
+              });
         });
-
-        assert.equal(rep.statusCode, 200);
-        assert.deepEqual(rep.json(), {
-            "data": {
-              "people": {
-                "id": ids[0],
-                "name": "tom",
-                "father": {
-                  "id": ids[4],
-                  "name": "mike"
-                },
-                "mother": null
-              }
-            }
-          });
     });
 
     describe('hasMany', () => {
@@ -820,7 +903,7 @@ describe("graphql", () => {
         });
     });
 
-    it('batch request: rest/graphql', () => {
+    it('in batch request: rest/graphql', () => {
         var testName = 'GeziFighter' + Date.now()
         var rep = http.post(testSrvInfo.appUrlBase + '', {
             json: {

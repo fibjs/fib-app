@@ -508,6 +508,13 @@ describe("extend", () => {
                                         age
                                         createdAt
                                     }
+                                    _friends: friends__extra{
+                                        id
+                                        name
+                                        sex
+                                        age
+                                        createdAt
+                                    }
                                 }
                             }`
                         }
@@ -553,6 +560,11 @@ describe("extend", () => {
             )
             
             assert.property(queriedPeople, 'friends__extra')
+            assert.property(queriedPeople, '_friends')
+            assert.deepEqual(
+                queriedPeople.friends__extra,
+                queriedPeople._friends
+            )            
             assert.property(cur_ext_obj, 'extra')
         }
 
