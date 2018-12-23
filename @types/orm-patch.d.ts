@@ -72,6 +72,23 @@ declare namespace FibApp {
         viewServices?: FibAppOrmModelViewServiceHash
         no_graphql?: boolean
     }
+    interface ExtendModelWrapper {
+        // 'hasOne', 'hasMany'
+        type: string;
+        reversed?: boolean;
+        model: FibApp.FibAppORMModel;
+    }
+    interface FibAppFixedOrmExtendModelWrapper extends ExtendModelWrapper {
+        extraProperties: {
+            [modelName: string]: FibAppORMModel
+        }
+    }
+    interface FibAppOrmModelExtendsInfoHash {
+        [ext_name: string]: FibAppFixedOrmExtendModelWrapper
+    }
+    // just for compability
+    type FibAppOrmModelExtendsInfo = FibAppOrmModelExtendsInfoHash
+    
     interface FibAppORMModel extends FxOrmNS.Model {
         // globally unique class id
         cid: number
@@ -83,13 +100,7 @@ declare namespace FibApp {
         viewServices: FibAppOrmModelViewServiceHash
         no_graphql: boolean
 
-        extends: { [extendModel: string]: FibAppFixedOrmExtendModelWrapper };
-    }
-
-    interface FibAppFixedOrmExtendModelWrapper extends FxOrmNS.ExtendModelWrapper {
-        extraProperties: {
-            [modelName: string]: FibAppORMModel
-        }
+        extends: FibAppOrmModelExtendsInfoHash;
     }
 
     interface FibAppOrmSettings {

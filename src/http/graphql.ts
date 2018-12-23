@@ -34,7 +34,7 @@ const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
     }
 };
 
-export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
+export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     var types = {};
     var graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
 
@@ -44,7 +44,7 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
                 var res = debugFunctionWrapper(app.api.get)({
                     session: req.session,
                     query: {} as FibApp.FibAppReqQuery
-                }, db, m, args.id);
+                }, ormInstance, m, args.id);
 
                 if (res.error) {
                     req.error = res.error;
@@ -79,7 +79,7 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
                 var res = debugFunctionWrapper(app.api.find)({
                     session: req.session,
                     query: args
-                }, db, m);
+                }, ormInstance, m);
 
                 if (res.error) {
                     req.error = res.error;
@@ -97,7 +97,7 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
                 var res = debugFunctionWrapper(app.api.eget)({
                     session: req.session,
                     query: {} as FibApp.FibAppReqQuery
-                }, db, m, parent, f);
+                }, ormInstance, m, parent, f);
 
                 if (res.error) {
                     if(res.error.code === 4040002)
@@ -127,7 +127,7 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
                 var res = debugFunctionWrapper(app.api.efind)({
                     session: req.session,
                     query: args
-                }, db, m, parent, f);
+                }, ormInstance, m, parent, f);
 
                 if (res.error) {
                     req.error = res.error;
@@ -226,7 +226,7 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
                 var _extends = m.extends;
 
                 for (var f in _extends) {
-                    var rel_model: FxOrmNS.ExtendModelWrapper = _extends[f];
+                    var rel_model: FibApp.ExtendModelWrapper = _extends[f];
                     if (!rel_model.model) {
                         throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_model, null, '\t')}`
                     }
@@ -301,8 +301,8 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
         );
     }
 
-    for (var k in db.models) {
-        var m = db.models[k];
+    for (var k in ormInstance.models) {
+        var m = ormInstance.models[k];
 
         if (m.no_graphql) {
             continue ;
@@ -352,7 +352,7 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
         })
     });
 
-    db.graphql = (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest) => {
+    ormInstance.graphql = (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest) => {
         var res = graphql.graphqlSync(Schema, query, {}, req);
 
         if (req.error) {
@@ -366,10 +366,10 @@ export = function (app: FibApp.FibAppClass, db: FibApp.FibAppDb) {
         return res;
     };
 
-    return db;
+    return ormInstance;
 };
 
-function get_extend_paging_unique_name (m: FibOrmNS.Model, rel_model: FxOrmNS.ExtendModelWrapper, extend: string) {
+function get_extend_paging_unique_name (m: FibOrmNS.Model, rel_model: FibApp.ExtendModelWrapper, extend: string) {
     if (rel_model.type === 'hasOne' && rel_model.reversed)
         return `extend_paging__reverse_${rel_model.model.model_name}_${rel_model.type}_${extend}_${m.model_name}`
     
