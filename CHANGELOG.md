@@ -1,7 +1,16 @@
 
-v1.13.11 / 2018-12-17
+v1.13.12 / 2018-12-24
 ==================
 
+  * refactor dbPool based on orm's plugin mechanism.
+  * add some test cases about graphql feature.
+  * normalize declartion of internal functions; upgrade @fxjs/orm
+  * upgrade @fxjs/orm.
+
+v1.13.11 / 2018-12-17
+=====================
+
+  * Release v1.13.11
   * support `viewServices` options in model define Properties.
   * little typo fix.
   * update script 'build''.
