@@ -1,7 +1,13 @@
 
-v1.13.12 / 2018-12-24
+v1.13.13 / 2018-12-25
 ==================
 
+  * fix: lack of call to oldHook by `prependHook`.
+
+v1.13.12 / 2018-12-24
+=====================
+
+  * Release v1.13.12
   * refactor dbPool based on orm's plugin mechanism.
   * add some test cases about graphql feature.
   * normalize declartion of internal functions; upgrade @fxjs/orm
