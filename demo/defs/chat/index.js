@@ -1,4 +1,3 @@
-const orm = require('@fxjs/orm');
 const push = require('fib-push');
 
 module.exports = db => {

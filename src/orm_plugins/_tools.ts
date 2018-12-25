@@ -2,7 +2,7 @@ export function prependHook(hooks: FxOrmNS.Hooks, hookName: string, preLogic: Fu
 	if (typeof hooks[hookName] === 'function') {
 		var oldHook = hooks[hookName];
 		
-		function callOldHook (next) {
+		function callOldHook (next: Function|boolean) {
             if (typeof oldHook === 'function') {
                 if (oldHook.length > 0)
                     return oldHook.call(this, next)
@@ -10,12 +10,16 @@ export function prependHook(hooks: FxOrmNS.Hooks, hookName: string, preLogic: Fu
 				oldHook.call(this)
 			}
 			
-			next()
+			if (typeof next === 'function')
+				next()
 		}
 		
-		hooks[hookName] = function (next) {
+		hooks[hookName] = function (next: Function|boolean) {
 			if (preLogic.length > 0) {
-				return preLogic.call(this, next)
+				var self = this
+				return preLogic.call(this, function () {
+					callOldHook.call(self, next)
+				})
 			}
 
 			preLogic.call(this)

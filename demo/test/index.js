@@ -20,6 +20,7 @@ if (!process.env.FIBAPP_NO_APP_SPEC) {
     run('./chat');
     
     run('./user');
+    require('../defs/hooks/spec')
 }
 
 if (!process.env.FIBAPP_NO_MODEL_SPEC) {
