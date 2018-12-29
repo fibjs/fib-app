@@ -38,7 +38,7 @@
     "ejs": "^2.6.1",
     "faker": "^4.1.0",
     "fib-pug": "0.0.2",
-    "fib-typify": "^0.4.1"
+    "fib-typify": "^0.5.0"
   },
   "ci": {
     "type": "travis, appveyor",
