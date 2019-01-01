@@ -38,7 +38,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     var types = {};
     var graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
 
-    function get_resolve(m: FxOrmNS.Model) {
+    function get_resolve(m: FibApp.FibAppORMModel) {
         return (
             function (parent, args, req) {
                 var res = debugFunctionWrapper(app.api.get)({
@@ -56,7 +56,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         );
     }
 
-    function find_resolve(m: FxOrmNS.Model, count_mode: 'count_only' | 'find_only' | 'paging' = 'find_only') {
+    function find_resolve(m: FibApp.FibAppORMModel, count_mode: 'count_only' | 'find_only' | 'paging' = 'find_only') {
         return (
             function (parent, args, req) {
                 let selector = null
@@ -91,7 +91,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         );
     }
 
-    function eget_resolve(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName) {
+    function eget_resolve(m: FibApp.FibAppORMModel, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
             function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
                 var res = debugFunctionWrapper(app.api.eget)({
@@ -112,7 +112,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         );
     }
 
-    function efind_many_resolve(m: FxOrmNS.Model, f: FibApp.FibAppModelExtendORMFuncName, mode: 'paging' | '' = '') {
+    function efind_many_resolve(m: FibApp.FibAppORMModel, f: FibApp.FibAppModelExtendORMFuncName, mode: 'paging' | '' = '') {
         const is_paging_mode = mode === 'paging'
         return (
             function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
@@ -150,7 +150,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         }
     }
 
-    function get_fields_hasmanyextra_alone(m: FxOrmNS.Model, extend: string, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
+    function get_fields_hasmanyextra_alone(m: FibApp.FibAppORMModel, extend: string, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
         var basic_fields = getter();
 
         return (
@@ -183,7 +183,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         )
     }
 
-    function get_fields_hasmanyextra_mixins(m: FxOrmNS.Model, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
+    function get_fields_hasmanyextra_mixins(m: FibApp.FibAppORMModel, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
         var basic_fields = getter();
 
         return (
@@ -206,7 +206,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     }
 
     var extend_paging_types = {}
-    function get_fields(m: FxOrmNS.Model, no_extra_fields: boolean = false) {
+    function get_fields(m: FibApp.FibAppORMModel, no_extra_fields: boolean = false) {
         return (
             function () {
                 var fields = {}
