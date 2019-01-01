@@ -5,8 +5,13 @@ import setupTest = require('./testkits')
 import setupDb = require('./db');
 import setupUtils = require('./utils')
 import diagram = require('./utils/diagram');
+import ORM = require('@fxjs/orm');
+import Session = require('fib-session');
 
 class App extends mq.Routing implements FibApp.FibAppClass {
+    static ORM = ORM;
+    static Session = Session;
+
     api: FibApp.FibAppInternalApis;
     viewApi: FibApp.FibAppInternalViewApis;
 
@@ -30,7 +35,10 @@ class App extends mq.Routing implements FibApp.FibAppClass {
         const dbSetupOpts: FibApp.FibAppDbSetupOpts = arguments[arguments.length - 1]
         const appOpts: FibApp.FibAppOpts = (arguments[1] === dbSetupOpts ? null : arguments[1]) || {}
 
-        this.__opts = filterFibAppOptions(appOpts)
+        Object.defineProperty(this, '__opts', {
+            value: filterFibAppOptions(appOpts),
+            writable: false
+        })
 
         // just for compatible
         this.__opts.graphqlTypeMap = this.__opts.graphqlTypeMap || (dbSetupOpts as any).graphqlTypeMap || {}
