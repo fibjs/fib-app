@@ -280,6 +280,8 @@ declare namespace FibApp {
 
         apiPathPrefix?: string
         viewPathPrefix?: string
+        graphQLPathPrefix?: string
+        batchPathPrefix?: string
     }
 
     interface GetTestRoutingOptions {

@@ -3,6 +3,7 @@ var infos = {
     "4000002": "The data uploaded in the request is not legal JSON data.",
     "4000003": "'where' in the query is not legal JSON data.",
     "4000004": "The data requested by 'batch' must be an array.",
+    "4000005": "The Content-Type header in the request must include application/graphql.",
     "4030001": "The operation isn’t allowed to '${classname}' for clients due to class-level permissions.",
     "4040001": "Missing or invalid classname '${classname}'.",
     "4040002": "Object '${id}' not found in class '${classname}'.",
