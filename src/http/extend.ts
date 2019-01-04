@@ -19,7 +19,7 @@ function map_ro_result(ro) {
 export function setup(app: FibApp.FibAppClass) {
     const api = app.api;
 
-    api.eput = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.eput = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         const rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -56,7 +56,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.elink = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.elink = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         const rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -106,7 +106,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         const rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -222,7 +222,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.efind = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType): FibApp.FibAppApiFunctionResponse => {
+    api.efind = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType): FibApp.FibAppApiFunctionResponse => {
         const rel_model = cls.extends[extend];
         if (rel_model === undefined)
             return err_info(4040001, {
@@ -263,7 +263,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.eget = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
+    api.eget = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
         const robj = _eget(cls, id, extend, rid, req.session, "read");
         if (robj.error)
             return robj;
@@ -275,7 +275,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.edel = (req: FibApp.FibAppReq, orm: FibApp.FibAppDb, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
+    api.edel = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType): FibApp.FibAppApiFunctionResponse => {
         const robj = _eget(cls, id, extend, rid, req.session, "delete");
         if (robj.error)
             return robj;

@@ -28,7 +28,7 @@ export function bind (app: FibApp.FibAppClass) {
         const func: FibApp.FibAppFunctionToBeFilter = arguments[arglen - 1];
 
 
-        return app.dbPool((db: FibApp.FibAppDb) => {
+        return app.dbPool((db: FibApp.FibAppORM) => {
             let data;
 
             // check empty data

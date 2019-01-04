@@ -3,7 +3,7 @@ export function is_graphql_request (request: FibApp.FibAppHttpRequest) {
 }
 
 export function run_graphql (app: FibApp.FibAppClass, req: FibApp.FibAppHttpRequest) {
-    app.dbPool((db: FibApp.FibAppDb) => {
+    app.dbPool((db: FibApp.FibAppORM) => {
         let data: FibApp.GraphQLQueryString = "";
         try {
             data = req.data.toString();

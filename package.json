@@ -24,7 +24,7 @@
     "@fxjs/orm": "^1.7.3",
     "@types/fibjs": "^0.26.5",
     "fib-graphql": "^1.0.0",
-    "fib-pool": "^1.5.1",
+    "fib-pool": "^1.5.2",
     "fib-session": "^0.4.0",
     "graphql-iso-date": "^3.4.0",
     "graphql-type-json": "^0.1.4",

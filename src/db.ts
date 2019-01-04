@@ -1,27 +1,23 @@
 import orm = require('@fxjs/orm');
 
-import uuid = require('uuid');
 import coroutine = require('coroutine');
 
 import Pool = require('fib-pool');
 
 import graphql = require('./http/graphql');
-import App from './app';
 
 import orm_utils = require('./utils/orm')
 import orm_plugins = require('./orm_plugins')
 
-const slice = Array.prototype.slice;
-
-export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppDBPool<FibApp.FibAppORM> => {
+export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppORMPool<FibApp.FibAppORM> => {
     var defs = [];
     opts = opts || {};
     var sync_lock = new coroutine.Lock();
     var syned = false;
     var use_uuid = opts.uuid;
 
-    var ormPool: FibApp.AppDBPool<FibApp.FibAppORM> = Pool({
-        create: function () {
+    var ormPool = Pool({
+        create: function (): FibApp.FibAppORM {
             var ormInstance: FibApp.FibAppORM = orm.connectSync(connStr) as FibApp.FibAppORM;
             orm_utils.set_orm_default_settings(ormInstance)
             
@@ -53,10 +49,10 @@ export = (app: App, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.App
         maxsize: opts.maxsize,
         timeout: opts.timeout,
         retry: opts.retry
-    });
+    }) as FibApp.AppORMPool<FibApp.FibAppORM>;
 
     ormPool.app = app;
-    ormPool.use = (def: FibAppOrmDefineFn|FibAppOrmDefineFn[]) => defs = defs.concat(def);
+    ormPool.use = (def: FibApp.FibAppOrmDefineFn | FibApp.FibAppOrmDefineFn[]) => defs = defs.concat(def);
 
     return ormPool;
 };

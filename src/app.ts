@@ -15,8 +15,11 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     api: FibApp.FibAppInternalApis;
     viewApi: FibApp.FibAppInternalViewApis;
 
-    db: FibApp.AppDBPool<FibApp.FibAppDb>;
-    dbPool: FibApp.AppDBPool<FibApp.FibAppDb>;
+    
+    ormPool: FibApp.AppORMPool<FibApp.FibAppORM>;
+    get dbPool (): FibApp.AppORMPool<FibApp.FibAppORM> { return this.ormPool }
+    get db (): FibApp.AppORMPool<FibApp.FibAppORM> { return this.ormPool }
+
     filterRequest: FibApp.FibAppSetupChainFn;
     diagram: any;
 
@@ -42,7 +45,7 @@ class App extends mq.Routing implements FibApp.FibAppClass {
 
         // just for compatible
         this.__opts.graphqlTypeMap = this.__opts.graphqlTypeMap || (dbSetupOpts as any).graphqlTypeMap || {}
-        this.dbPool = this.db = setupDb(this, connStr, dbSetupOpts);
+        this.ormPool = setupDb(this, connStr, dbSetupOpts);
 
         setupApis.bind(this);
         
