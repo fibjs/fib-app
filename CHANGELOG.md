@@ -1,7 +1,18 @@
 
-v1.13.13 / 2018-12-25
+v1.13.14 / 2019-01-05
 ==================
 
+  * normalize types about orm pool.
+  * upgrade fib-pool.
+  * robust.
+  * code format.
+  * typo fix.
+  * upgrade fib-typify.
+
+v1.13.13 / 2018-12-25
+=====================
+
+  * Release v1.13.13
   * fix: lack of call to oldHook by `prependHook`.
 
 v1.13.12 / 2018-12-24
