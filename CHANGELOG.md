@@ -1,7 +1,13 @@
 
-v1.13.14 / 2019-01-05
+v1.13.15 / 2019-01-06
 ==================
 
+  * fix wrong initialization for uuid orm plugin.
+
+v1.13.14 / 2019-01-05
+=====================
+
+  * Release v1.13.14
   * normalize types about orm pool.
   * upgrade fib-pool.
   * robust.
