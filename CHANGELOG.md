@@ -1,7 +1,13 @@
 
-v1.13.15 / 2019-01-06
+v1.13.16 / 2019-01-08
 ==================
 
+  * upgrade @fxjs/orm to new minor version, adjust typo.
+
+v1.13.15 / 2019-01-06
+=====================
+
+  * Release v1.13.15
   * fix wrong initialization for uuid orm plugin.
 
 v1.13.14 / 2019-01-05
