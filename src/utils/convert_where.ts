@@ -18,7 +18,7 @@ var convert_where = function (where: FibApp.ReqWhere) {
     var or = where["or"];
 
     if (util.isArray(or)) {
-        where1["or"] = or.map(o => convert_where(o));
+        where1["or"] = (or as FxSqlQueryComparator.SubQueryInput[]).map((o: FxSqlQueryComparator.SubQueryInput) => convert_where(o));
         return where1;
     }
 

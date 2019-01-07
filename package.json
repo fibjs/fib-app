@@ -21,7 +21,7 @@
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
   "dependencies": {
-    "@fxjs/orm": "^1.7.3",
+    "@fxjs/orm": "^1.8.1",
     "@types/fibjs": "^0.26.5",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.2",
@@ -39,6 +39,9 @@
     "fib-pug": "0.0.2",
     "fib-typify": "^0.5.0",
     "fib-push": "^1.3.0"
+  },
+  "peerDependencies": {
+    "@fxjs/orm": "1.8.x"
   },
   "ci": {
     "type": "travis, appveyor",

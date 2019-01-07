@@ -3,7 +3,9 @@ import { filter, filter_ext } from './filter';
 
 import { query_filter_skip, query_filter_limit, query_filter_where, is_count_required } from './query';
 
-export = function<ReponseT = any> (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFibORMFind, bobj?: FxOrmNS.Instance, extend?: FibAppACL.ACLExtendModelNameType): FibApp.FibAppIneternalApiFindResult<ReponseT> {
+export = function<ReponseT = any> (
+    req: FibApp.FibAppReq, exec: FxOrmQuery.IChainFind, bobj?: FxOrmNS.Instance, extend?: FibAppACL.ACLExtendModelNameType
+): FibApp.FibAppIneternalApiFindResult<ReponseT> {
     var query = req.query;
 
     var keys = query.keys;
@@ -12,13 +14,13 @@ export = function<ReponseT = any> (req: FibApp.FibAppReq, exec: FxOrmNS.IChainFi
 
     var where = query_filter_where(query);
 
-    var exec = exec.where(where) as FxOrmNS.IChainFibORMFind;
+    var exec = exec.where(where) as FxOrmQuery.IChainFind;
 
     var skip = query_filter_skip(query)
-    exec = exec.offset(skip) as FxOrmNS.IChainFibORMFind;
+    exec = exec.offset(skip) as FxOrmQuery.IChainFind;
 
     var limit = query_filter_limit(query)
-    exec = exec.limit(limit) as FxOrmNS.IChainFibORMFind;
+    exec = exec.limit(limit) as FxOrmQuery.IChainFind;
 
     var order = query.order;
     if (order !== undefined)

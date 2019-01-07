@@ -73,7 +73,7 @@ export default function (ormInstance: FibApp.FibAppORM, opts) {
         var _hasOne = m.hasOne;
         m.hasOne = function (extend_name: string) {
             var model: FibApp.FibAppORMModel = arguments[1]
-            var orm_hasOne_opts: FxOrmNS.AssociationDefinitionOptions_HasOne = arguments[2]
+            var orm_hasOne_opts: FxOrmAssociation.AssociationDefinitionOptions_HasOne = arguments[2]
             
             if (arguments[1] && !arguments[1].table) {
                 orm_hasOne_opts = arguments[1]
@@ -95,7 +95,7 @@ export default function (ormInstance: FibApp.FibAppORM, opts) {
 
         var _hasMany = m.hasMany;
         m.hasMany = function (extend_name: string, model: FibApp.FibAppORMModel) {
-            var extraProperties = {}, orm_hasMany_opts = {} as FxOrmNS.AssociationDefinitionOptions_HasMany;
+            var extraProperties = {}, orm_hasMany_opts = {} as FxOrmAssociation.AssociationDefinitionOptions_HasMany;
             if (arguments.length >= 4) {
                 extraProperties = arguments[2]
                 orm_hasMany_opts = arguments[3]
