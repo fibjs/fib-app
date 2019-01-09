@@ -1,3 +1,5 @@
+import { prependHook } from "./_tools";
+
 const error_reasons = [
     '',
     '!name',
@@ -16,8 +18,8 @@ function int (bool: boolean) {
 
 
 const slice = Array.prototype.slice;
-export default function (ormInstance: FibApp.FibAppORM, opts) {
-    ormInstance.app = opts.app;
+export default function (ormInstance: FibApp.FibAppORM, plugin_opts) {
+    ormInstance.app = plugin_opts.app;
 
     const orm_definition_hash: {[model_name: string]: {
         name: string
@@ -27,8 +29,16 @@ export default function (ormInstance: FibApp.FibAppORM, opts) {
 
     function beforeDefine (name: string, properties: FxOrmNS.ModelPropertyDefinitionHash, opts: FxOrmNS.ModelOptions) {
         opts.timestamp = true
+        opts.hooks = opts.hooks || {}
 
         orm_definition_hash[name] = { name, properties, opts }
+
+        prependHook(opts.hooks, 'beforeCreate', function (next: FxOrmHook.HookActionNextFunction) {
+            if (this.hasOwnProperty('id'))
+                delete this.id
+
+            next()
+        });
     }
     
     let cls_id = 1;
