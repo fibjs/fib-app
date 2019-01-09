@@ -10,7 +10,7 @@ import ormUtils = require('../utils/orm');
 import { get_one_association_item } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
-function map_ro_result (ro) {
+function map_ro_result (ro: FxOrmInstance.Instance) {
     return {
         id: ro.id,
         createdAt: ro.createdAt
@@ -34,7 +34,7 @@ export function setup (app: FibApp.FibAppClass) {
         const extdata_list = [];
 
         let delr = !orm.settings.get(`rest.model.keep_association.post.${cls.model_name}`)
-        function _create(d) {
+        function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
 
             const ext_d = {};

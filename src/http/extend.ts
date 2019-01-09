@@ -9,7 +9,7 @@ import ormUtils = require('../utils/orm');
 import { get_many_association_item, get_one_association_item, check_hasmany_extend_extraprops, extra_save } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
-function map_ro_result(ro) {
+function map_ro_result(ro: FxOrmInstance.Instance) {
     return {
         id: ro.id,
         createdAt: ro.createdAt
@@ -137,9 +137,12 @@ export function setup(app: FibApp.FibAppClass) {
         const _createBy = rel_model.model.extends[spec_keys['createdBy']];
         let _opt;
         let ros = [];
-        const rextdata_extras = [];
+        const rextdata_extras: {
+            extra_many_assoc: FxOrmAssociation.InstanceAssociationItem_HasMany|false,
+            extra: any
+        }[] = [];
 
-        function _create(d) {
+        function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
 
             const extra_many_assoc = check_hasmany_extend_extraprops(obj.inst, extend) || null
@@ -192,7 +195,7 @@ export function setup(app: FibApp.FibAppClass) {
             ros = [_create(data)];
 
         if (!rel_model.reversed) {
-            let _opt, assoc
+            let _opt: string, assoc: FxOrmAssociation.InstanceAssociationItem
             if (rel_model.type === 'hasOne') {
                 assoc = get_one_association_item(obj.inst, extend)
                 _opt = assoc.setAccessor;
@@ -205,7 +208,12 @@ export function setup(app: FibApp.FibAppClass) {
                 const ro = ros[i]
                 if (assoc === rextdata_extras[i].extra_many_assoc) {
                     if (rextdata_extras[i].extra)
-                        extra_save(obj.inst, ro, rextdata_extras[i].extra_many_assoc, rextdata_extras[i].extra)
+                        extra_save(
+                            obj.inst,
+                            ro,
+                            rextdata_extras[i].extra_many_assoc as FxOrmAssociation.InstanceAssociationItem_HasMany,
+                            rextdata_extras[i].extra
+                        )
                     else
                         return err_info(4040005, {
                             classname: cls.model_name,

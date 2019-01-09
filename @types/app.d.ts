@@ -15,7 +15,7 @@ declare namespace FibApp {
     interface FibAppOrmDefineFn {
         (db: FibAppORM): void | FibAppORMModel | any
     }
-    interface AppORMPool<T1, T2 = any> extends FibPoolNS.FibPoolFunction<T1, T2> {
+    interface AppORMPool<T1> extends FibPoolNS.FibPoolFunction<T1> {
         app: FibAppClass
         use(defs: FibAppOrmDefineFn | FibAppOrmDefineFn[]): FibAppOrmDefineFn[];
     }
@@ -168,7 +168,7 @@ declare namespace FibApp {
         /* override :end */
 
         graphql?: FibAppDbGraphQLHandler
-        define(name: string, properties: OrigORMDefProperties, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
+        define(name: string, properties: FxOrmModel.ModelPropertyDefinitionHash, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
     }
     // compatible
     type FibAppDb = FibAppORM

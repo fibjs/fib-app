@@ -42,7 +42,7 @@ export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp
 		opts.hooks = opts.hooks || {};
 
 		if (plugin_opts.createdProperty)
-			prependHook(opts.hooks, 'beforeCreate', function (next) {
+			prependHook(opts.hooks, 'beforeCreate', function (next: FxOrmHook.HookActionNextFunction) {
 				const createdProperty = plugin_opts.createdProperty as string
 				const updatedProperty = plugin_opts.updatedProperty as string
 
@@ -52,7 +52,7 @@ export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp
 			});
 
 		if (plugin_opts.updatedProperty)
-			prependHook(opts.hooks, 'beforeSave', function (next) {
+			prependHook(opts.hooks, 'beforeSave', function (next: FxOrmHook.HookActionNextFunction) {
 				const createdProperty = plugin_opts.createdProperty as string
 				const updatedProperty = plugin_opts.updatedProperty as string
 
@@ -65,7 +65,7 @@ export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp
 			});
 
 		if (plugin_opts.expireProperty)
-			prependHook(opts.hooks, 'beforeSave', function (next) {
+			prependHook(opts.hooks, 'beforeSave', function (next: FxOrmHook.HookActionNextFunction) {
 				this[plugin_opts.expireProperty as string] = plugin_opts.expire();
 
 				next()
