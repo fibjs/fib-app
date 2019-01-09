@@ -1,7 +1,15 @@
 
-v1.13.16 / 2019-01-08
+v1.13.17 / 2019-01-09
 ==================
 
+  * upgrade orm.
+  * typo adjust.
+  * upgrade orm.
+
+v1.13.16 / 2019-01-08
+=====================
+
+  * Release v1.13.16
   * upgrade @fxjs/orm to new minor version, adjust typo.
 
 v1.13.15 / 2019-01-06
