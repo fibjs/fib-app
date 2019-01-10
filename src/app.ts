@@ -64,7 +64,7 @@ function filterFibAppOptions (__opts: FibApp.FibAppOpts) {
     __opts.apiPathPrefix = __opts.apiPathPrefix || ''
     __opts.viewPathPrefix = __opts.viewPathPrefix || ''
     __opts.graphQLPathPrefix = __opts.graphQLPathPrefix || '/'
-    __opts.batchPathPrefix = __opts.graphQLPathPrefix || '/'
+    __opts.batchPathPrefix = __opts.batchPathPrefix || '/'
 
     __opts.graphqlTypeMap = __opts.graphqlTypeMap || {}
 
