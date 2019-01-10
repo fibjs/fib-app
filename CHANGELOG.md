@@ -1,7 +1,13 @@
 
-v1.13.17 / 2019-01-09
+n.n.n / 2019-01-11
 ==================
 
+  * fix: wrong intialization for opts.batchPathPrefix.
+
+v1.13.17 / 2019-01-09
+=====================
+
+  * Release v1.13.17
   * upgrade orm.
   * typo adjust.
   * upgrade orm.
