@@ -14,13 +14,13 @@ describe("extend multiple level", () => {
 
     after(() => testAppInfo.cleanSqliteDB())
 
-    it('init data', () => {
+    before(() => {
         var rep = http.post(testSrvInfo.appUrlBase + '/level', {
             json: require('./__test__/mock-data.json').l1
         });
 
         top_id = rep.json().id
-    });
+    })
 
     it('find level', () => {
         ;[
@@ -57,10 +57,133 @@ describe("extend multiple level", () => {
                         'createdAt',
                         'updatedAt',
                         'id'
-                    ])
+                ]);
             }
         })
-    })
+    });
+
+    it('find whereExists sublevel with has-many assoc', () => {
+        ;[
+            [
+                `many_sublevels_id: {
+                    ne: 1
+                }`, { name: `l1:name`, },
+                [
+                    {
+                        "name": "many_levels:name"
+                    },
+                    {
+                        "name": "many_levels3:name"
+                    },
+                    {
+                        "name": "many_levels2:name"
+                    }
+                ]
+            ],
+            [
+                `many_sublevels_id: "1"`, undefined
+            ]
+        ].forEach(([on_cond, l1_result, results]) => {
+            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels",
+                            on: {
+                                ${on_cond}
+                            }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "-name"
+                        ){
+                            id,name
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+
+            if (!l1_result) {
+                assert.equal(
+                    rep.json().data.find_level[0],
+                    l1_result
+                )
+                return ;
+            }
+
+            check_result(
+                rep.json().data.find_level[0],
+                l1_result,
+                [
+                    'createdAt',
+                    'updatedAt',
+                    'id',
+                    'many_sublevels'
+                ]
+            )
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({ name: x.name })),
+                // results is order by '-name'
+                results
+            );
+        });
+    });
+
+    it('find whereExists sublevel with has-one assoc', () => {
+        ;[
+            null
+        ].forEach(key => {
+            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "one_subl",
+                            where: {
+                                name: "l1-l2:name"
+                            }
+                        }
+                    ){
+                        id,
+                        name,
+                        one_sl{
+                            name
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            check_result(
+                rep.json().data.find_level[0],
+                {
+                    name: `l1:name`,
+                },
+                [
+                    'createdAt',
+                    'updatedAt',
+                    'id',
+                    'one_sl'
+                ]
+            );
+
+            check_result(
+                rep.json().data.find_level[0].one_sl,
+                {
+                    "name": "l1-sl:name"
+                }
+            );
+        });
+    });
 
     it('find sublevel', () => {
         ;[
@@ -93,7 +216,7 @@ describe("extend multiple level", () => {
                     'id'
                 ])
         })
-    })
+    });
 });
 
 if (require.main === module) {

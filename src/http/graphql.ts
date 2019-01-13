@@ -23,6 +23,9 @@ const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
     where: {
         type: GraphQLJSON
     },
+    findby: {
+        type: GraphQLJSON
+    },
     skip: {
         type: graphql.GraphQLInt
     },

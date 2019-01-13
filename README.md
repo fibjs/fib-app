@@ -221,6 +221,8 @@ curl -X GET http://localhost/1.0/person?where=%7B%22name%22%3A%22tom%22%7D
 
 除了完全匹配一个给定的值以外, `where` 也支持比较的方式, 比如包含。`where` 参数支持如下选项：
 
+##### where 选项
+
 | key          | operation | sample                |
 |--------------|-----------|-----------------------|
 | eq           | 等于       | {"name":{"eq":"tom"}} 或者 {"name":"tom"} |
@@ -344,6 +346,54 @@ curl -X DETELE http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a240000
 ```sh
 curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets
 ```
+#### 查询具有reverse关系的扩展对象列表
+
+如果 orm 中定义了 person hasMany pets 时声明了 `reverse` 选项, 就像这样:
+
+```javascript
+Person.hasMany('pets', Pet, {}, {reverse: 'owners'});
+```
+
+也可以通过 pets 去筛选所有的拥有某只宠物的的 owners(person), 如下:
+
+```sh
+curl -X GET http://localhost/1.0/pet/57fbbdb0a2400007/owners
+```
+
+#### findby 过滤条件
+
+通过 `findby` 参数的形式可以对查询对象做出约束。和 `where` 一样, `findby` 参数的值应该是被 JSON 编码又经过 url 编码的的。
+
+参数包含的选项含义如下
+- `findby.extend` 是由 orm 定义时的 `hasOne`, `hasMany` 关联关系. 如 extend 描述的**关联关系**对该**基础对象**而言不存在, 则该 `findby` 条件实际上不会生效.
+- `findby.where`: 只适用于 `hasOne` 关系. 与[基础的 where](#where-选项) 含义一致. 
+- `findby.on`: 只适用于 `hasMany` 关系. 与[基础的 where](#where-选项) 含义一致, 但其 key 只能是关联关系中的字段, 而不能被关联中的对象中的字段.
+
+例如, 存在以下关系
+
+- person hasOne father
+- person hasMany pets
+
+如果我们想要搜索父亲名字为 `anleb` 的用户, 我们可以这样构造查询:
+
+```sh
+curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22father%22%2C%22where%22%3A%7B%22name%22%3A%22anleb%22%7D%7D
+```
+`findby` 的内容为：`{"extend":"father","where":{"name":"anleb"}}`
+
+如果我们想要搜索拥有名为 `doggy` 的一只宠物的用户, 是无法直接通过宠物的 name 去筛选的, 我们必须先得到名为 `doggy` 的宠物的 id, 然后再筛选. 我们应该这样构造查询:
+
+```sh
+curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%2257fbbdb0a2400007%22%7D%7D
+```
+`findby` 的内容为：`{"extend":"pets","on":{"pets_id":"57fbbdb0a2400007"}}`
+
+这看起来似乎等价于 [查询具有reverse关系的扩展对象列表](#查询具有reverse关系的扩展对象列表), 事实上, 当以**完全匹配id**作为查询条件的时候的确如此. 但 findby 比 [查询具有reverse关系的扩展对象列表](#查询具有reverse关系的扩展对象列表) 的优势在于, 可以使用复杂的 where 条件. 例如, 如果我们想搜索宠物 id **不为某些值**的的用户, 就可以这样写:
+
+```sh
+curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%7B%22not_in%22%3A%5B%2257fbbdb0a2400007%22%5D%7D%7D%7D
+```
+`findby` 的内容为：`{"extend":"pets","on":{"pets_id":{"not_in":["57fbbdb0a2400007"]}}}`
 
 ## ACL
 可以通过定义 Model 的 ACL 控制数据权限。比如:
