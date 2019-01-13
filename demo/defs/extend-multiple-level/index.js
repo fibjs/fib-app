@@ -12,4 +12,6 @@ module.exports = orm => {
 	SubLevel.hasOne('one_subl', SubLevel, {})
 	
 	Level.hasOne('one_sl', SubLevel, {})
+
+	Level.hasMany('many_sublevels', SubLevel, {}, {})
 };

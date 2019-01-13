@@ -265,7 +265,12 @@ export function setup(app: FibApp.FibAppClass) {
             
         return {
             success: found_result_selector(
-                _find(req, obj.inst[_association.getAccessor].call(obj.inst), obj.inst, extend),
+                _find(
+                    req,
+                    obj.inst[_association.getAccessor].call(obj.inst).find(),
+                    obj.inst,
+                    extend
+                ),
                 !is_count_required(req.query) ? 'results' : ''
             ) 
         };

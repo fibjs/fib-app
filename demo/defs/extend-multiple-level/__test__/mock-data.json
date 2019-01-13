@@ -12,6 +12,17 @@
 			"one_subl": {
 				"name": "l1-sl-subl:name"
 			}
-		}
+		},
+		"many_sublevels": [
+			{
+				"name": "many_levels:name"
+			},
+			{
+				"name": "many_levels2:name"
+			},
+			{
+				"name": "many_levels3:name"
+			}
+		]
 	}
 }
