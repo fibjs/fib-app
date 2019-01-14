@@ -3,7 +3,7 @@
 import orm = require('@fxjs/orm');
 import util = require('util');
 import { get_many_association_item, get_one_association_item } from './orm-assoc';
-import { checkout_robj_acl } from './checkout_acl';
+import { checkout_acl } from './checkout_acl';
 
 export function query_filter_where (query: FibApp.FibAppReqQuery) {
     var where = query.where;
@@ -49,10 +49,7 @@ export function query_filter_findby (req: FibApp.FibAppReq, base_model: FxOrmMod
         const mg_ks = Object.values(hasmany_assoc.mergeId).map(x => x.mapsTo);
         const mks = base_model.id;
 
-        const extend_instance = new hasmany_assoc.model();
-        if (
-            !checkout_robj_acl(req.session, 'find', base_instance, extend_instance, findby.extend)
-        ) return ;
+        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return ;
 
         /**
          * @description code below means 'support single key only'
@@ -76,10 +73,7 @@ export function query_filter_findby (req: FibApp.FibAppReq, base_model: FxOrmMod
         if (!filter_conditions(findby_conditions))
             return ;
 
-        const extend_instance = new hasone_assoc.model();
-        if (
-            !checkout_robj_acl(req.session, 'find', base_instance, extend_instance, findby.extend)
-        ) return ;
+        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return ;
 
         const assocTplName = hasone_assoc.getAccessor.slice(3)
         findby_accessor = typeof base_instance.model[assocTplName] === 'function' ? assocTplName : null
