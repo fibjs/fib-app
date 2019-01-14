@@ -1,7 +1,14 @@
 
-v1.13.19 / 2019-01-14
+v1.13.20 / 2019-01-14
 ==================
 
+  * fix README.md
+  * fix: downgrade the check for 'findby' from OACL level to ACL level.
+
+v1.13.19 / 2019-01-14
+=====================
+
+  * Release v1.13.19
   * support `findby ` in FibAppReq.
 
 v1.13.18 / 2019-01-11
