@@ -1,7 +1,13 @@
 
-v1.13.20 / 2019-01-14
+v1.13.21 / 2019-01-15
 ==================
 
+  * support comma separated orders.
+
+v1.13.20 / 2019-01-14
+=====================
+
+  * Release v1.13.20
   * fix README.md
   * fix: downgrade the check for 'findby' from OACL level to ACL level.
 
