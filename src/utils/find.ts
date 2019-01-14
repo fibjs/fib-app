@@ -43,8 +43,12 @@ export = function<ReponseT = any> (
     exec = exec.limit(limit)
 
     var order = query.order;
-    if (order !== undefined)
-        exec = exec.order(order);
+    if (order !== undefined) {
+        order = order || ''
+            
+        const order_list: string[] = order.split(',').filter(x => x)
+        order_list.forEach(order => exec = exec.order(order))
+    }
     
     // avoid extra find action such as `exec.allSync()`
     var objs = [];
