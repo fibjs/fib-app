@@ -362,14 +362,14 @@ curl -X GET http://localhost/1.0/pet/57fbbdb0a2400007/owners
 
 #### findby 过滤条件
 
-**Started From 1.13.18**
+**Started From 1.13.20**
 
 通过 `findby` 参数的形式可以对查询对象做出约束。和 `where` 一样, `findby` 参数的值应该是被 JSON 编码又经过 url 编码的的。
 
 参数包含的选项含义如下
 - `findby.extend` 是由 orm 定义时的 `hasOne`, `hasMany` 关联关系. 如 extend 描述的**关联关系**对该**基础对象**而言不存在, 则该 `findby` 条件实际上不会生效.
 - `findby.where`: 只适用于 `hasOne` 关系. 与[基础的 where](#where-选项) 含义一致. 
-- `findby.on`: 只适用于 `hasMany` 关系. 与[基础的 where](#where-选项) 含义一致, 但其 key 只能是关联关系中的字段, 而不能被关联中的对象中的字段.
+- `findby.on`: 只适用于 `hasMany` 关系. 与[基础的 where](#where-选项) 含义一致, 但其 key 只能是关联关系中的字段, 而不能是被关联中的对象中的字段.
 
 例如, 存在以下关系
 
