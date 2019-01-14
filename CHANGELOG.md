@@ -1,7 +1,13 @@
 
-n.n.n / 2019-01-11
+v1.13.19 / 2019-01-14
 ==================
 
+  * support `findby ` in FibAppReq.
+
+v1.13.18 / 2019-01-11
+=====================
+
+  * Release v1.13.18
   * fix: wrong intialization for opts.batchPathPrefix.
 
 v1.13.17 / 2019-01-09

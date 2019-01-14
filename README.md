@@ -362,6 +362,8 @@ curl -X GET http://localhost/1.0/pet/57fbbdb0a2400007/owners
 
 #### findby 过滤条件
 
+**Started From 1.13.18**
+
 通过 `findby` 参数的形式可以对查询对象做出约束。和 `where` 一样, `findby` 参数的值应该是被 JSON 编码又经过 url 编码的的。
 
 参数包含的选项含义如下
