@@ -23,7 +23,7 @@ exports.getRandomSqliteBasedApp = function (...args) {
     const dbName = `test-${Date.now()}.db`
     let connName = `sqlite:${dbName}`
 
-    if (process.env.WEBX_CI_DB_DEBUG)
+    if (process.env.WEBX_TEST_DB_DEBUG)
         connName += '?debug=true'
 
     function cleanSqliteDB () {
