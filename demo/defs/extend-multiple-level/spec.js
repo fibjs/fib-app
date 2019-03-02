@@ -164,7 +164,7 @@ describe("extend multiple level", () => {
         );
     }
     
-    oit('find by level with has-one self assoc', () => {
+    it('find by level with has-one self assoc', () => {
         ;[
             null
         ].forEach(key => {
