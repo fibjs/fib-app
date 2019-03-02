@@ -210,7 +210,8 @@ declare namespace FibApp {
 
     interface FibAppReqQuery {
         where?: string | FibApp.ReqWhere
-        findby?: FibApp.ReqFindByItem|FibApp.ReqFindByItem[]
+        // findby?: FibApp.ReqFindByItem|FibApp.ReqFindByItem[]
+        findby?: FibApp.ReqFindByItem
         keys?: string | string[]
         skip?: number
         limit?: number

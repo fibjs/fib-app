@@ -11,4 +11,10 @@ declare namespace FibApp {
         on?: FxSqlQuerySubQuery.SubQueryConditions
         where?: FxSqlQuerySubQuery.SubQueryConditions
     }
+
+    interface FilteredFindByInfo<T = any> {
+        accessor: string,
+        conditions: FxSqlQuerySubQuery.SubQueryConditions
+        accessor_payload: FxOrmQuery.IChainFind | FxOrmModel.Model
+    }
 }

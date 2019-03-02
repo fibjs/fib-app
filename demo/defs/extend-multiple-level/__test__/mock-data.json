@@ -9,19 +9,24 @@
 		},
 		"one_sl": {
 			"name": "l1-sl:name",
-			"one_subl": {
+			"subl_one_subl": {
 				"name": "l1-sl-subl:name"
 			}
 		},
+		"many_levels": [
+			{
+				"name": "l1-many_levels:name"
+			}
+		],
 		"many_sublevels": [
 			{
-				"name": "many_levels:name"
+				"name": "many_sublevels:name"
 			},
 			{
-				"name": "many_levels2:name"
+				"name": "many_sublevels2:name"
 			},
 			{
-				"name": "many_levels3:name"
+				"name": "many_sublevels3:name"
 			}
 		]
 	}

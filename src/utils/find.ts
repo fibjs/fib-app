@@ -1,3 +1,4 @@
+import util = require('util')
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 import { filter, filter_ext } from './filter';
 
@@ -6,7 +7,8 @@ import {
     query_filter_limit,
     query_filter_where,
     query_filter_findby,
-    is_count_required
+    is_count_required,
+    parse_findby
 } from './query';
 
 export = function<ReponseT = any> (
@@ -14,15 +16,16 @@ export = function<ReponseT = any> (
 ): FibApp.FibAppIneternalApiFindResult<ReponseT> {
     var query = req.query;
 
-    var {
-        exists,
-        findby_accessor = '',
-        findby_conditions
-    } = query_filter_findby(
-        req, exec.model
-    ) || <any>{};
-    if (findby_conditions && findby_accessor)
-        exec = exec.model[findby_accessor](findby_conditions)
+    var findby = parse_findby(req);
+    var { exists, findby_infos } = query_filter_findby(findby, exec.model, { req, pre_exec: exec });
+
+    if (findby_infos && findby_infos.length) {
+        findby_infos.forEach(findby_info => {
+            if (findby_info.accessor_payload && findby_info.accessor && findby_info.conditions) {
+                exec = findby_info.accessor_payload[findby_info.accessor](findby_info.conditions)
+            }
+        })
+    }
 
     if (exists && exec.whereExists) {
         exec = exec.whereExists(exists)
@@ -55,6 +58,7 @@ export = function<ReponseT = any> (
     if (limit > 0) {
         objs = exec.allSync();
     }
+    
     objs = objs.map(obj => {
         var a
         if (extend !== undefined)

@@ -4,6 +4,7 @@ import orm = require('@fxjs/orm');
 import util = require('util');
 import { get_many_association_item, get_one_association_item } from './orm-assoc';
 import { checkout_acl } from './checkout_acl';
+import { ucfirst } from './str';
 
 export function query_filter_where (query: FibApp.FibAppReqQuery) {
     var where = query.where;
@@ -16,28 +17,24 @@ export function query_filter_where (query: FibApp.FibAppReqQuery) {
     return where
 }
 
-export function query_filter_findby (req: FibApp.FibAppReq, base_model: FxOrmModel.Model) {
-    const query = req.query;
+interface FindByFilteredInfo {
+    exists: FxOrmQuery.ChainWhereExistsInfo[] | null
+    findby_infos: FibApp.FilteredFindByInfo[]
+}
+export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], base_model: FxOrmModel.Model, opts: {
+    pre_exec?: FxOrmNS.IChainFind
+    req: FibApp.FibAppReq
+}): FindByFilteredInfo {
+    const { req, pre_exec = null } = opts
 
-    var findby = (query.findby || null) as FibApp.ReqFindByItem;
-    if (typeof findby === 'string') {
-        try {
-            findby = JSON.parse(findby)
-        } catch (e) {
-            findby = null;
-        }
-    }
+    const __wrapper = { exists: null, findby_infos: [] }
 
-    if (!findby) return ;
+    if (!findby) return __wrapper;
 
-    if (!findby.extend) return ;
+    if (!findby.extend || typeof findby.extend !== 'string') return __wrapper;
 
-    let hasmany_assoc: FxOrmNS.InstanceAssociationItem_HasMany,
-        hasone_assoc: FxOrmNS.InstanceAssociationItem_HasOne
-
-    let exists: FxOrmQuery.ChainWhereExistsInfo[] = null,
-        findby_accessor: string = null,
-        findby_conditions: FxSqlQuerySubQuery.SubQueryConditions = null;
+    let hasmany_assoc: FxOrmNS.InstanceAssociationItem_HasMany;
+    let hasone_assoc: FxOrmNS.InstanceAssociationItem_HasOne;
     
     const base_instance = new base_model()
 
@@ -49,15 +46,15 @@ export function query_filter_findby (req: FibApp.FibAppReq, base_model: FxOrmMod
         const mg_ks = Object.values(hasmany_assoc.mergeId).map(x => x.mapsTo);
         const mks = base_model.id;
 
-        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return ;
+        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
 
         /**
          * @description code below means 'support single key only'
          */
         // const mg_assocks = Object.values(hasmany_assoc.mergeAssocId).map(x => x.mapsTo);
-        // if (mg_assocks.length !== 1 || mks.length !== 1) return ;
+        // if (mg_assocks.length !== 1 || mks.length !== 1) return __wrapper;
 
-        exists = [
+        __wrapper.exists = [
             {
                 table: hasmany_assoc.mergeTable,
                 link: [ mg_ks, mks ],
@@ -65,22 +62,47 @@ export function query_filter_findby (req: FibApp.FibAppReq, base_model: FxOrmMod
             }
         ];
 
-        exists = convert_exists(exists)
+        __wrapper.exists = convert_exists(__wrapper.exists)
     } else if (
         findby.where
         && (hasone_assoc = get_one_association_item(base_instance, findby.extend))
     ) {
-        if (!filter_conditions(findby_conditions))
-            return ;
+        let findby_conditions = findby.where
+        if (!filter_conditions(findby_conditions)) return __wrapper;
 
-        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return ;
+        findby_conditions = convert_where(findby_conditions)
 
-        const assocTplName = hasone_assoc.getAccessor.slice(3)
-        findby_accessor = typeof base_instance.model[assocTplName] === 'function' ? assocTplName : null
-        findby_conditions = findby.where
+
+        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
+
+        let accessor_fn = null ,
+            accessor_name = null,
+            accessor_payload = null;
+            
+        let findby_accessor_name = `findBy${ucfirst(findby.extend)}`;
+
+        ;[
+            base_model,
+            // base_instance
+        ].forEach(test_payload => {
+            if (accessor_name)
+                return ;
+            
+            accessor_fn = test_payload[findby_accessor_name]
+            if (typeof accessor_fn === 'function') {
+                accessor_payload = test_payload
+                accessor_name = findby_accessor_name
+            }
+        })
+        
+        __wrapper.findby_infos.push({
+            accessor: findby_accessor_name,
+            accessor_payload: accessor_payload,
+            conditions: findby_conditions
+        })
     }
     
-    return { exists, findby_accessor, findby_conditions }
+    return __wrapper
 }
 
 export function query_filter_skip (query: FibApp.FibAppReqQuery) {
@@ -190,6 +212,21 @@ function convert_exists (exists: FibApp.ReqWhereExists) {
         return true;
     })
 };
+
+export function parse_findby (req: FibApp.FibAppReq): FibApp.FibAppReqQuery['findby'] | null {
+    const query = req.query;
+
+    var findby: FibApp.FibAppReqQuery['findby'] = (query.findby || null)
+    if (typeof findby === 'string') {
+        try {
+            findby = JSON.parse(findby)
+        } catch (e) {
+            findby = null;
+        }
+    }
+
+    return findby;
+}
 
 // internal helper function for `filter_exist_item_link`
 function filter_link_tuple (tuple: any): any[] {
