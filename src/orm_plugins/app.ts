@@ -80,39 +80,67 @@ export default function (ormInstance: FibApp.FibAppORM, opts) {
                 model = arguments[1] = null
             }
 
+            var assoc_model = null;
             m.extends[extend_name] = {
                 type: 'hasOne',
                 model: model,
+                get assoc_model () {
+                    return assoc_model;
+                },
                 // it's meaningless, just keep same format with `hasMany`
-                extraProperties: {}
+                model_associated_models: {}
             };
 
             if (orm_hasOne_opts !== undefined && orm_hasOne_opts.reversed)
                 m.extends[extend_name].reversed = true;
 
-            return _hasOne.apply(this, slice.call(arguments));
+            return ( assoc_model = _hasOne.apply(this, slice.call(arguments)) );
         }
 
         var _hasMany = m.hasMany;
         m.hasMany = function (extend_name: string, model: FibApp.FibAppORMModel) {
-            var extraProperties = {}, orm_hasMany_opts = {} as FxOrmAssociation.AssociationDefinitionOptions_HasMany;
+            var model_associated_models = {}, orm_hasMany_opts = {} as FxOrmAssociation.AssociationDefinitionOptions_HasMany;
             if (arguments.length >= 4) {
-                extraProperties = arguments[2]
+                model_associated_models = arguments[2]
                 orm_hasMany_opts = arguments[3]
             } else {
-                extraProperties = {}
+                model_associated_models = {}
                 orm_hasMany_opts = arguments[2]
             }
+
+            var assoc_model = null;
             m.extends[extend_name] = {
                 type: 'hasMany',
                 model: model,
-                extraProperties: extraProperties
-            } as FibApp.FibAppFixedOrmExtendModelWrapper;
+                get assoc_model () {
+                    return assoc_model;
+                },
+                model_associated_models: model_associated_models
+            };
 
             if (orm_hasMany_opts && orm_hasMany_opts.reversed)
                 m.extends[extend_name].reversed = true;
 
-            return _hasMany.apply(this, slice.call(arguments));
+            return ( assoc_model = _hasMany.apply(this, slice.call(arguments)) );
+        }
+
+        var _extendsTo = m.extendsTo;
+        m.extendsTo = function (extend_name: string, assoc_props: FxOrmModel.ModelPropertyDefinitionHash, orm_extendsTo_opts?: FxOrmAssociation.AssociationDefinitionOptions_HasMany) {
+            orm_extendsTo_opts = orm_extendsTo_opts || {};
+            orm_extendsTo_opts.hooks = orm_extendsTo_opts.hooks || {};
+
+            var assoc_model = null;
+            m.extends[extend_name] = {
+                type: 'extendsTo',
+                // it's meaningless, just keep same format with `hasMany`
+                model: null,
+                get assoc_model () {
+                    return assoc_model;
+                },
+                model_associated_models: {}
+            };
+
+            return ( assoc_model = _extendsTo.apply(this, slice.call(arguments)) );
         }
 
         return m;

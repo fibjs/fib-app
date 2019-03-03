@@ -14,4 +14,9 @@ module.exports = orm => {
 	Level.hasOne('one_sl', SubLevel, {})
 
 	Level.hasMany('many_sublevels', SubLevel, {}, {})
+
+	Level.extendsTo('lproperty', {
+		name: String,
+		weight: Number
+	})
 };

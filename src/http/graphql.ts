@@ -230,72 +230,86 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
 
                 for (var f in _extends) {
                     var rel_model: FibApp.ExtendModelWrapper = _extends[f];
-                    if (!rel_model.model) {
+                    if (rel_model.type !== 'extendsTo' && !rel_model.model) {
                         throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_model, null, '\t')}`
                     }
 
-                    if (rel_model.type === 'hasOne' && !rel_model.reversed)
-                        fields[f] = {
-                            type: types[rel_model.model.model_name].type,
-                            resolve: eget_resolve(m, f)
-                        };
-                    else {
-                        let type_has_many = new graphql.GraphQLList(types[rel_model.model.model_name].type)
-                        let type_has_many_mixin_extra = null
-
-                        let has_many_association = null
-                        
-                        if (!no_extra_fields) {
-                            has_many_association = check_hasmany_extend_extraprops((new m()), f)
-                            if (has_many_association) {
-                                // hasMany-assoc-style result: alone mode(recommendation)
-                                type_has_many = new graphql.GraphQLList(
-                                    new graphql.GraphQLObjectType({
-                                        name: `${m.model_name}__${f}__aloneExtraWrapper`,
-                                        fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_model.model, true)),
-                                    })
-                                )
-
-                                // hasMany-assoc-style result: mixin mode
-                                type_has_many_mixin_extra = new graphql.GraphQLList(
-                                    new graphql.GraphQLObjectType({
-                                        name: `${m.model_name}__${f}__mixinExtraWrapper`,
-                                        fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_model.model, true)),
-                                    })
-                                )
+                    switch (rel_model.type) {
+                        default:
+                            break
+                        case 'extendsTo':
+                            fields[f] = {
+                                type: types[rel_model.assoc_model.model_name].type,
+                                resolve: eget_resolve(m, f)
+                            };
+                            break
+                        case 'hasOne':
+                            if (!rel_model.reversed) {
+                                fields[f] = {
+                                    type: types[rel_model.model.model_name].type,
+                                    resolve: eget_resolve(m, f)
+                                };
+                                break
                             }
-                        }
+                        case 'hasMany': {
+                            let type_has_many = new graphql.GraphQLList(types[rel_model.model.model_name].type)
+                            let type_has_many_mixin_extra = null
 
-                        fields[f] = {
-                            type: type_has_many,
-                            args: hasManyArgs,
-                            resolve: efind_many_resolve(m, f)
-                        };
+                            let has_many_association = null
+                            
+                            if (!no_extra_fields) {
+                                has_many_association = check_hasmany_extend_extraprops((new m()), f)
+                                if (has_many_association) {
+                                    // hasMany-assoc-style result: alone mode(recommendation)
+                                    type_has_many = new graphql.GraphQLList(
+                                        new graphql.GraphQLObjectType({
+                                            name: `${m.model_name}__${f}__aloneExtraWrapper`,
+                                            fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_model.model, true)),
+                                        })
+                                    )
 
-                        var extend_paging_uname = get_extend_paging_unique_name(m, rel_model, f) 
-                        fields[`paging_${f}`] = {
-                            type: (
-                                /**
-                                 * there maybe repeative call to `get_fields`, and the name of this type should always keep unique
-                                 */
-                                extend_paging_types[extend_paging_uname] = extend_paging_types[extend_paging_uname] 
-                                || new graphql.GraphQLObjectType({
-                                    name: extend_paging_uname,
-                                    args: hasManyArgs,
-                                    fields: paging_fields(fields[f].type)
-                                })
-                            ),
-                            args: hasManyArgs,
-                            resolve: efind_many_resolve(m, f, 'paging')
-                        };
+                                    // hasMany-assoc-style result: mixin mode
+                                    type_has_many_mixin_extra = new graphql.GraphQLList(
+                                        new graphql.GraphQLObjectType({
+                                            name: `${m.model_name}__${f}__mixinExtraWrapper`,
+                                            fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_model.model, true)),
+                                        })
+                                    )
+                                }
+                            }
 
-                        if (type_has_many_mixin_extra) {
-                            fields[`${f}__extra`] = {
-                                type: type_has_many_mixin_extra,
+                            fields[f] = {
+                                type: type_has_many,
                                 args: hasManyArgs,
                                 resolve: efind_many_resolve(m, f)
+                            };
+
+                            var extend_paging_uname = get_extend_paging_unique_name(m, rel_model, f) 
+                            fields[`paging_${f}`] = {
+                                type: (
+                                    /**
+                                     * there maybe repeative call to `get_fields`, and the name of this type should always keep unique
+                                     */
+                                    extend_paging_types[extend_paging_uname] = extend_paging_types[extend_paging_uname] 
+                                    || new graphql.GraphQLObjectType({
+                                        name: extend_paging_uname,
+                                        args: hasManyArgs,
+                                        fields: paging_fields(fields[f].type)
+                                    })
+                                ),
+                                args: hasManyArgs,
+                                resolve: efind_many_resolve(m, f, 'paging')
+                            };
+
+                            if (type_has_many_mixin_extra) {
+                                fields[`${f}__extra`] = {
+                                    type: type_has_many_mixin_extra,
+                                    args: hasManyArgs,
+                                    resolve: efind_many_resolve(m, f)
+                                }
                             }
                         }
+                            break
                     }
                 }
 
