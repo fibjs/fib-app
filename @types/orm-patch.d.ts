@@ -73,13 +73,13 @@ declare namespace FibApp {
         no_graphql?: boolean
     }
     interface ExtendModelWrapper {
-        // 'hasOne', 'hasMany'
-        type: string;
+        type: 'hasOne' | 'hasMany' | 'extendsTo';
         reversed?: boolean;
         model: FibApp.FibAppORMModel;
+        assoc_model: FibApp.FibAppORMModel;
     }
     interface FibAppFixedOrmExtendModelWrapper extends ExtendModelWrapper {
-        extraProperties: {
+        model_associated_models: {
             [modelName: string]: FibAppORMModel
         }
     }

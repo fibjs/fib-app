@@ -28,6 +28,10 @@
 			{
 				"name": "many_sublevels3:name"
 			}
-		]
+		],
+		"lproperty": {
+			"name": "l1:level_property-name",
+			"weight": 987654321
+		}
 	}
 }

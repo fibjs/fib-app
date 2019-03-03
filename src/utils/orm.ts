@@ -31,7 +31,7 @@ export function get_field_updatedat (settings: FxOrmNS.SettingInstance) {
 
 /* fib-app specified properties about :start */
 interface InternalApiInfoSettingOptions {
-    data,
+    data: any,
     req_info?: FibApp.FibAppReq
 }
 export function create_instance_for_internal_api (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {

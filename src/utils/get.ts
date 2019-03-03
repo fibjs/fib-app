@@ -3,7 +3,7 @@
 import util = require('util');
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
-import { get_one_association_item, get_many_association_item } from './orm-assoc';
+import { get_association_item_by_reltype } from './orm-assoc';
 
 export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj: FibApp.FibAppInternalCommObj = {
@@ -74,47 +74,67 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
             );
     }
 
-    var __opt;
+    var __opt,
+        is_extendsTo = rel_model.type === 'extendsTo',
+        key_model = is_extendsTo ? rel_model.assoc_model : rel_model.model,
+        assoc = get_association_item_by_reltype(rel_model.type, iobj.inst, extend);
 
-    if (rel_model.type === 'hasOne') {
-        if (rel_model.reversed)
-            __opt = iobj.inst[get_one_association_item(iobj.inst, extend).getAccessor].call(iobj.inst);
-        else {
-            var rid1 = iobj.inst[Object.keys(get_one_association_item(iobj.inst, extend).field)[0]];
-            if (rid === undefined)
-                rid = rid1;
-            else if (rid != rid1)
-                return wrap_error(
-                    err_info(4040002, {
-                        id: rid,
-                        classname: `${cls.model_name}.${extend}`
-                    }, rel_model.model.cid)
-                );
-            __opt = rel_model.model.find();
-        }
-    } else
-        __opt = iobj.inst[get_many_association_item(iobj.inst, extend).getAccessor].call(iobj.inst);
+    switch (rel_model.type) {
+        default:
+            throw `invalid rel_model.type ${rel_model.type}`
+        case 'extendsTo':
+            __opt = assoc.model.find({})
+            rid = iobj.inst.id;
+            break
+        case 'hasOne':
+            if (rel_model.reversed)
+                __opt = iobj.inst[assoc.getAccessor].call(iobj.inst);
+            else {
+                var rid1 = iobj.inst[Object.keys(assoc.field)[0]];
+                if (rid === undefined)
+                    rid = rid1;
+                else if (rid != rid1)
+                    return wrap_error(
+                        err_info(4040002, {
+                            id: rid,
+                            classname: `${cls.model_name}.${extend}`
+                        }, rel_model.model.cid)
+                    );
+                __opt = rel_model.model.find();
+            }
+            break
+        case 'hasMany':
+            __opt = iobj.inst[assoc.getAccessor].call(iobj.inst);
+            break
+    }
 
     var riobj: FibApp.FibAppInternalCommExtendObj = {
         base: iobj.inst,
-        inst: __opt.where({
+        inst: is_extendsTo ? __opt.firstSync() : __opt.where({
             id: rid
         }).firstSync()
     };
 
-    if (riobj.inst === null)
+    if (is_extendsTo && riobj.inst === null) {
+        return {
+            riobj,
+            iobj
+        }
+    }
+
+    if (riobj.inst == null)
         return wrap_error(
             err_info(4040002, {
                 id: rid,
                 classname: `${cls.model_name}.${extend}`
-            }, rel_model.model.cid)
+            }, key_model.cid)
         );
 
     if (act) {
         var acl = checkout_robj_acl(session, act, iobj.inst, riobj.inst, extend);
         if (!acl)
             return wrap_error(
-                err_info(4030001, {classname: cls.model_name}, rel_model.model.cid)
+                err_info(4030001, {classname: cls.model_name}, key_model.cid)
             );
         riobj.acl = acl;
     }

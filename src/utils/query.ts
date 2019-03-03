@@ -21,7 +21,7 @@ interface FindByFilteredInfo {
     exists: FxOrmQuery.ChainWhereExistsInfo[] | null
     findby_infos: FibApp.FilteredFindByInfo[]
 }
-export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], base_model: FxOrmModel.Model, opts: {
+export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], base_model: FibApp.FibAppORMModel, opts: {
     pre_exec?: FxOrmNS.IChainFind
     req: FibApp.FibAppReq
 }): FindByFilteredInfo {
@@ -65,13 +65,14 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
         __wrapper.exists = convert_exists(__wrapper.exists)
     } else if (
         findby.where
-        && (hasone_assoc = get_one_association_item(base_instance, findby.extend))
     ) {
         let findby_conditions = findby.where
         if (!filter_conditions(findby_conditions)) return __wrapper;
 
-        findby_conditions = convert_where(findby_conditions)
+        const rel_model = base_model.extends[findby.extend]
+        const is_extendsTo = rel_model.type === 'extendsTo'
 
+        findby_conditions = convert_where(findby_conditions)
 
         if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
 
@@ -82,8 +83,7 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
         let findby_accessor_name = `findBy${ucfirst(findby.extend)}`;
 
         ;[
-            base_model,
-            // base_instance
+            base_model
         ].forEach(test_payload => {
             if (accessor_name)
                 return ;
@@ -93,10 +93,10 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
                 accessor_payload = test_payload
                 accessor_name = findby_accessor_name
             }
-        })
+        });
         
         __wrapper.findby_infos.push({
-            accessor: findby_accessor_name,
+            accessor: accessor_name,
             accessor_payload: accessor_payload,
             conditions: findby_conditions
         })

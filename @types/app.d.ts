@@ -145,7 +145,7 @@ declare namespace FibApp {
     type FibAppHttpApiCollectionType = FibAppInternalApis | FibAppInternalViewApis
 
     interface AppInternalCommunicationObj {
-        inst?: FxOrmNS.Instance
+        inst?: FxOrmNS.Instance | null
         acl?: FibAppACL.RoleActDescriptor
         error?: FibAppFinalError
     }
