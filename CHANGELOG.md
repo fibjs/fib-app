@@ -1,7 +1,16 @@
 
-v1.13.22 / 2019-02-20
+v1.13.23 / 2019-03-03
 ==================
 
+  * support using rest api for extendsTo-type association.
+  * rename `WEBX_CI_DB_DEBUG` to `WEBX_TEST_DB_DEBUG`.
+  * test case fix.
+  * upgrade @fxjs/orm; fix bad implements for findby-query in hasOne-type association.
+
+v1.13.22 / 2019-02-20
+=====================
+
+  * Release v1.13.22
   * upgrade @fxjs/orm.
 
 v1.13.21 / 2019-01-15
