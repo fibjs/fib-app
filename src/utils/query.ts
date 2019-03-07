@@ -2,7 +2,7 @@
 
 import orm = require('@fxjs/orm');
 import util = require('util');
-import { get_many_association_item, get_one_association_item } from './orm-assoc';
+import { get_many_association_item, get_one_association_item, get_extendsto_association_item } from './orm-assoc';
 import { checkout_acl } from './checkout_acl';
 import { ucfirst } from './str';
 
@@ -34,13 +34,13 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
     if (!findby.extend || typeof findby.extend !== 'string') return __wrapper;
 
     let hasmany_assoc: FxOrmNS.InstanceAssociationItem_HasMany;
-    let hasone_assoc: FxOrmNS.InstanceAssociationItem_HasOne;
+    let found_assoc: FxOrmAssociation.InstanceAssociationItem;
     
     const base_instance = new base_model()
 
     if (
         findby.on
-        && (hasmany_assoc = get_many_association_item(base_instance, findby.extend))
+        && (found_assoc = hasmany_assoc = get_many_association_item(base_instance, findby.extend))
     ) {
         // TODO: make sure order of mg_ks is corresponding to mks
         const mg_ks = Object.values(hasmany_assoc.mergeId).map(x => x.mapsTo);
@@ -65,6 +65,11 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
         __wrapper.exists = convert_exists(__wrapper.exists)
     } else if (
         findby.where
+        && (
+            (found_assoc = get_one_association_item(base_instance, findby.extend))
+            ||
+            (found_assoc = get_extendsto_association_item(base_instance, findby.extend))
+        )
     ) {
         let findby_conditions = findby.where
         if (!filter_conditions(findby_conditions)) return __wrapper;
@@ -77,7 +82,7 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
             accessor_name = null,
             accessor_payload = null;
             
-        let findby_accessor_name = `findBy${ucfirst(findby.extend)}`;
+        const findby_accessor_name = found_assoc.modelFindByAccessor || `findBy${ucfirst(findby.extend)}`;
 
         ;[
             base_model
