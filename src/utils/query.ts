@@ -69,9 +69,6 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
         let findby_conditions = findby.where
         if (!filter_conditions(findby_conditions)) return __wrapper;
 
-        const rel_model = base_model.extends[findby.extend]
-        const is_extendsTo = rel_model.type === 'extendsTo'
-
         findby_conditions = convert_where(findby_conditions)
 
         if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
