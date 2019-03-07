@@ -1,7 +1,16 @@
 
-v1.13.23 / 2019-03-03
+v1.13.24 / 2019-03-07
 ==================
 
+  * code clean.
+  * code clean.
+  * fix error when generating diagram with `extendsTo` association type.
+  * upgrade core dependency.
+
+v1.13.23 / 2019-03-03
+=====================
+
+  * Release v1.13.23
   * support using rest api for extendsTo-type association.
   * rename `WEBX_CI_DB_DEBUG` to `WEBX_TEST_DB_DEBUG`.
   * test case fix.
