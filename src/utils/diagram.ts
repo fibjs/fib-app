@@ -6,9 +6,10 @@ export = function () {
     var models = [];
     var exts = [];
 
-    this.db(db => {
-        var m, m1;
-        var ks;
+    this.db((db: FibApp.FibAppORM) => {
+        var m: FibApp.FibAppORMModel,
+            m1: FibApp.ExtendModelWrapper;
+        var ks: string[];
 
         for (var name in db.models) {
             m = db.models[name];
@@ -23,7 +24,11 @@ export = function () {
             for (var e in m.extends) {
                 m1 = m.extends[e];
                 var one = m1.type === "hasOne" && !m1.reversed;
-                exts.push(`${m.model_name} -> ${m1.model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
+                var extendsTo = m1.type === "extendsTo";
+                if (!extendsTo)
+                    exts.push(`${m.model_name} -> ${m1.model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
+                else
+                    exts.push(`${m.model_name} -> ${m1.assoc_model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
             }
         }
     });

@@ -1,6 +1,8 @@
 const test = require('test');
 test.setup();
 
+const fs = require('fs');
+const path = require('path');
 const { serverBase } = require('..');
 const { check_result } = require('./_utils');
 
@@ -176,6 +178,21 @@ describe('app apis', () => {
         
         assert.isBoolean(app.utils.isDebug)
         assert.equal(app.utils.isDebug, !!process.env.FIBAPP_DEBUG)
+    })
+
+    it('util: app.diagram', () => {
+        assert.isFunction(app.diagram)
+
+        var fpath = path.join(__dirname, '../diagram.svg');
+        try {
+            fs.unlink(fpath);
+        } catch (e) {}
+
+        fs.writeTextFile(fpath, app.diagram());
+
+        assert.ok(
+            fs.exists(fpath)
+        )
     })
 })
 
