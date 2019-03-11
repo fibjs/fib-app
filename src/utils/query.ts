@@ -9,10 +9,7 @@ import { ucfirst } from './str';
 export function query_filter_where (query: FibApp.FibAppReqQuery) {
     var where = query.where;
 
-    if (where !== undefined)
-        where = convert_where(where as FibApp.ReqWhere);
-    else
-        where = {};
+    where = where || {};
 
     return where
 }
@@ -74,8 +71,6 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
         let findby_conditions = findby.where
         if (!filter_conditions(findby_conditions)) return __wrapper;
 
-        findby_conditions = convert_where(findby_conditions)
-
         if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
 
         let accessor_fn = null ,
@@ -134,67 +129,6 @@ export function found_result_selector (result: FibApp.FibAppIneternalApiFindResu
     return fetch_field ? result[fetch_field] : result
 }
 
-const model_conjunctions_keys: (keyof FxSqlQuerySubQuery.ConjunctionInput__Sample)[] = [
-    'or',
-    'and',
-    'not_or',
-    'not_and',
-    'not'
-];
-
-const ops = {
-    "like": orm.like,
-    "eq": orm.eq,
-    "ne": orm.ne,
-    "gt": orm.gt,
-    "gte": orm.gte,
-    "lt": orm.lt,
-    "lte": orm.lte,
-    "not_like": orm.not_like,
-    "not_in": orm.not_in
-};
-
-function convert_where (where: FibApp.ReqWhere, result_where = {}) {
-    var conjunction_where = util.pick(where, model_conjunctions_keys);
-    var normal_where = util.omit(where, model_conjunctions_keys);
-
-    for (let k in conjunction_where) {
-        const cw = conjunction_where[k]
-        if (!Array.isArray(cw)) continue
-        
-        result_where[k] = cw.map((o: FxSqlQueryComparator.SubQueryInput) => convert_where(o));
-    }
-
-    for (var k in normal_where) {
-        var v = normal_where[k];
-
-        if (util.isArray(v))
-            result_where[k] = v;
-        else if (util.isObject(v)) {
-            const keys = Object.keys(v);
-            if (keys.length >= 1) {
-                var op = keys[0];
-
-                if (op === "between") {
-                    var as = v[op];
-                    if (util.isArray(as))
-                        result_where[k] = orm.between(as[0], as[1]);
-                } else if (op === "not_between") {
-                    var as = v[op];
-                    if (util.isArray(as))
-                        result_where[k] = orm.not_between(as[0], as[1]);
-                } else if (op === "in")
-                    result_where[k] = v[op];
-                else if (ops[op])
-                    result_where[k] = ops[op](v[op]);
-            }
-        } else
-            result_where[k] = v;
-    }
-
-    return result_where;
-};
-
 function convert_exists (exists: FibApp.ReqWhereExists) {
     if (!Array.isArray(exists))
         exists = []
@@ -204,10 +138,6 @@ function convert_exists (exists: FibApp.ReqWhereExists) {
         if (!exist_item.table || typeof exist_item.table !== 'string') return false;
 
         if (!filter_exist_item_link(exist_item)) return false;
-
-        if (!filter_conditions(exist_item.conditions)) return false;
-        
-        exist_item.conditions = convert_where(exist_item.conditions);
 
         if (!filter_conditions(exist_item.conditions)) return false;
 
