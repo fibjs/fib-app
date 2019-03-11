@@ -3,7 +3,7 @@ test.setup();
 
 const http = require('http');
 
-const { check_result } = require('../../test/_utils');
+const { check_result, cutOffMilliSeconds, cutOffSeconds } = require('../../test/_utils');
 
 const testAppInfo = require('../..').getRandomSqliteBasedApp();
 const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
@@ -11,6 +11,10 @@ testSrvInfo.server.run(() => void 0)
 
 describe("extend", () => {
     var ids = [];
+
+    before(() => {
+        testAppInfo.dropModelsSync();
+    });
 
     after(() => testAppInfo.cleanSqliteDB())
 
@@ -22,7 +26,7 @@ describe("extend", () => {
                 age: 35
             }, {
                 name: 'alice',
-                sex: "famale",
+                sex: "female",
                 age: 32
             }, {
                 name: 'jack',
@@ -30,7 +34,7 @@ describe("extend", () => {
                 age: 8
             }, {
                 name: 'lily',
-                sex: "famale",
+                sex: "female",
                 age: 4
             }]
         });
@@ -341,7 +345,7 @@ describe("extend", () => {
         var rep = http.post(testSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
             json: {
                 name: 'ly_li',
-                sex: "famale",
+                sex: "female",
                 age: 8
             }
         });
@@ -392,11 +396,11 @@ describe("extend", () => {
                 age: 35,
                 wife: {
                     name: 'lily',
-                    sex: "famale",
+                    sex: "female",
                     age: 35,
                     childs: [{
                         name: 'coco',
-                        sex: "famale",
+                        sex: "female",
                         age: 12,
                     }]
                 }
@@ -424,7 +428,7 @@ describe("extend", () => {
                 friends: [
                     {
                         name: 'friend_of_tom',
-                        sex: "famale",
+                        sex: "female",
                         age: 35,
                         extra: {
                             hobby: 'train',
@@ -433,7 +437,7 @@ describe("extend", () => {
                         childs: [
                             {
                                 name: 'coco_of_friend_of_tom',
-                                sex: "famale",
+                                sex: "female",
                                 age: 12,
                             }
                         ]
@@ -554,9 +558,10 @@ describe("extend", () => {
                 testdata.friends.find(x => x.name === 'friend_of_tom').extra.hobby
             )
             assert.property(cur_ext_obj.extra, 'meeting_time')
-            assert.deepEqual(
+            assert.closeTo(
                 gettime(cur_ext_obj.extra.meeting_time),
-                gettime(testdata.friends.find(x => x.name === 'friend_of_tom').extra.meeting_time)
+                gettime(testdata.friends.find(x => x.name === 'friend_of_tom').extra.meeting_time),
+                1000
             )
             
             assert.property(queriedPeople, 'friends__extra')
@@ -584,5 +589,10 @@ if (require.main === module) {
 }
 
 function gettime(m) {
-    return (new Date(m)).getTime()
+    let ms = m
+
+    ms = cutOffMilliSeconds(ms)
+    ms = cutOffSeconds(ms)
+
+    return ms
 }

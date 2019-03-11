@@ -1,6 +1,5 @@
 /// <reference lib="es2017" />
 
-import orm = require('@fxjs/orm');
 import util = require('util');
 import { get_many_association_item, get_one_association_item, get_extendsto_association_item } from './orm-assoc';
 import { checkout_acl } from './checkout_acl';

@@ -8,20 +8,34 @@ function getDefaultFilterKeys () {
 }
 exports.clean_result = function (res, filters = getDefaultFilterKeys()) {
     if (!util.isObject(res))
-        return 
-        
+        return res
+    
     if (Array.isArray(res))
-        res.forEach(r => exports.clean_result(r));
+        return res.map(r => exports.clean_result(r, filters));
     else {
-        filters.forEach(key => {
-            delete res[key]
-        })
+        res = util.omit(res, filters)
+
         for (var k in res)
-            exports.clean_result(res[k]);
+            res[k] = exports.clean_result(res[k], filters);
     }
+    return res
 }
 
 exports.check_result = function (res, data, filters = getDefaultFilterKeys()) {
-    exports.clean_result(res, filters);
+    res = exports.clean_result(res, filters);
+    data = exports.clean_result(data, filters);
+
     assert.deepEqual(res, data);
+}
+
+exports.cutOffMilliSeconds = function (date) {
+    date = new Date(date)
+
+    return date.getTime() - date.getMilliseconds()
+}
+
+exports.cutOffSeconds = function (date) {
+    date = new Date(date)
+
+    return date.getTime() - date.getSeconds()
 }

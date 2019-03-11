@@ -17,6 +17,9 @@ module.exports = orm => {
 
 	Level.extendsTo('lproperty', {
 		name: String,
-		weight: Number
+		weight: {
+			type: 'integer',
+			size: 4
+		}
 	})
 };

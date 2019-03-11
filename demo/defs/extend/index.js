@@ -9,7 +9,10 @@ module.exports = db => {
 
     People.hasMany("friends", People, {
         hobby: String,
-        meeting_time: Date
+        meeting_time: {
+            type: 'date',
+            time: true
+        }
     }, {
         /**
          * never write 'friends' here,

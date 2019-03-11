@@ -9,6 +9,10 @@ const http = require('http');
 const util = require('util');
 
 describe("nographql", () => {
+    before(() => {
+        testAppInfo.dropModelsSync();
+    });
+
     after(() => testAppInfo.cleanSqliteDB())
 
     const testData = {

@@ -1,6 +1,8 @@
 const test = require('test');
 test.setup();
 
+const { dropSync } = require('../test/support/spec_helper');
+
 const testAppInfo = require('../').getRandomSqliteBasedApp();
 const testSrvInfo = require('../').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
 testSrvInfo.server.run(() => void 0)
@@ -10,6 +12,12 @@ const { check_result } = require('./_utils');
 const http = require('http');
 
 describe("reverse", () => {
+    before(() => {
+        testAppInfo.app.ormPool(orm => {
+            dropSync( Object.values(orm.models) );
+        });
+    });
+
     after(() => testAppInfo.cleanSqliteDB())
     
     describe("1:n", () => {

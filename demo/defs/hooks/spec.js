@@ -15,6 +15,8 @@ describe("hook_test", () => {
     after(() => testAppInfo.cleanSqliteDB())
 
     before(() => {
+        testAppInfo.dropModelsSync();
+
         http.post(serverBase + '/set_session', {
             json: {
                 id: 999

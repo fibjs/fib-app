@@ -8,6 +8,8 @@ const push = require('fib-push');
 const App = require('../');
 const defs = require('./defs');
 
+const { dropSync } = require('./test/support/spec_helper');
+
 exports.getApp = function (conn = 'sqlite:test.db', ...args) {
     args[Math.max(args.length - 1, 0)] = args[Math.max(args.length - 1, 0)] || {}
     args[args.length - 1].uuid = true
@@ -20,13 +22,15 @@ exports.getApp = function (conn = 'sqlite:test.db', ...args) {
 }
 
 exports.getRandomSqliteBasedApp = function (...args) {
-    const dbName = `test-${Date.now()}.db`
-    let connName = `sqlite:${dbName}`
+    let {conn: connName, dbName, protocol = ''} = generateRandomConn();
 
     if (process.env.WEBX_TEST_DB_DEBUG)
         connName += '?debug=true'
 
     function cleanSqliteDB () {
+        if (protocol !== 'sqlite')
+            return ;
+            
         [
             dbName,
             `${dbName}-shm`,
@@ -44,11 +48,19 @@ exports.getRandomSqliteBasedApp = function (...args) {
         })
     }
 
+    function dropModelsSync () {
+        app.ormPool(orm => {
+            dropSync(Object.values(orm.models))
+        })
+    }
+
     const app = exports.getApp(connName, ...args)
     return {
         app,
         dbName,
+        dropModelsSync,
         cleanSqliteDB,
+        protocol,
         utils: {
             connectionToDB () {
                 return db.open(connName)
@@ -79,4 +91,22 @@ exports.mountAppToSrv = function (app, options = {}) {
     )
 
     return mountedInfo
+}
+
+function generateRandomConn () {
+    let dbName = `fibjs-test`;
+    if (process.env.WEBX_TEST_SQLITE) {
+        dbName = `test-${Date.now()}.db`
+        return {
+            protocol: 'sqlite',
+            dbName,
+            conn: `sqlite:${dbName}`
+        }
+    }
+
+    return {
+        protocol: 'mysql',
+        dbName,
+        conn: `mysql://root:@127.0.0.1/fibjs-test`
+    }
 }

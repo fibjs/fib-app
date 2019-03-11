@@ -2,23 +2,26 @@ const test = require('test');
 test.setup();
 
 const { check_result } = require('../../test/_utils');
-
-const { app, cleanSqliteDB } = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(app, {appPath: '/api'});
+const testAppInfo = require('../..').getRandomSqliteBasedApp();
+const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
 testSrvInfo.server.run(() => void 0)
 
 const faker = require('../../faker')
 
 const restClients = {
-    test_acl: app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'test_acl'}),
-    ext_acl: app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'ext_acl'}),
-    ext_acl1: app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'ext_acl1'}),
+    test_acl: testAppInfo.app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'test_acl'}),
+    ext_acl: testAppInfo.app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'ext_acl'}),
+    ext_acl1: testAppInfo.app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'ext_acl1'}),
 }
 
 const sessionAs = testSrvInfo.utils.sessionAs
 
 describe('defs: acl', () => {
-    after(() => cleanSqliteDB())
+    before(() => {
+        testAppInfo.dropModelsSync()
+    })
+    
+    after(() => testAppInfo.cleanSqliteDB())
 
     describe('base:, role as admin', () => {
         before(() => sessionAs({ id: 12345, roles: ['admin'] }))
