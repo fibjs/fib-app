@@ -260,7 +260,7 @@
 <text text-anchor="middle" x="1169.996" y="-212.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">level_lproperty</text>
 <polyline fill="none" stroke="#000000" points="1121,-205.5 1218.992,-205.5 "/>
 <text text-anchor="start" x="1129" y="-192.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
-<text text-anchor="start" x="1129" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ weight : number</text>
+<text text-anchor="start" x="1129" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ weight : integer</text>
 <text text-anchor="start" x="1129" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_id : text</text>
 <text text-anchor="start" x="1129" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1129" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>

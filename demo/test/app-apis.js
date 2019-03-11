@@ -6,7 +6,7 @@ const path = require('path');
 const { serverBase } = require('..');
 const { check_result } = require('./_utils');
 
-const { app, cleanSqliteDB } = require('..').getRandomSqliteBasedApp();
+const testAppInfo = require('..').getRandomSqliteBasedApp();
 const faker = require('../faker');
 
 describe('app apis', () => {
@@ -14,6 +14,8 @@ describe('app apis', () => {
     let findCondition = null
     let getId = null
     let putData = null
+
+    const { app } = testAppInfo
 
     const reqInfo = {
         session: {
@@ -24,6 +26,8 @@ describe('app apis', () => {
     }
 
     before(() => {
+        testAppInfo.dropModelsSync();
+
         postData = {
             name: faker.name.findName(),
             sex: 'female',
@@ -35,7 +39,7 @@ describe('app apis', () => {
         }
     })
     
-    after(() => cleanSqliteDB());
+    after(() => testAppInfo.cleanSqliteDB());
 
     it('util: app.dbPool', () => {
         assert.isFunction(app.db)
@@ -97,7 +101,11 @@ describe('app apis', () => {
             app.test.internalApiResultAssert.ok(getResult)
 
             const { success: gotItem } = getResult || {}
-            check_result(gotItem, postData)
+
+            check_result(
+                gotItem,
+                postData,
+            )
         })
     })
 

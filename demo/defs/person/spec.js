@@ -14,6 +14,7 @@ describe("classes - person", () => {
     let conn = null
     
     before(() => {
+        testAppInfo.dropModelsSync();
         conn = testAppInfo.utils.connectionToDB()
     })
     after(() => testAppInfo.cleanSqliteDB())

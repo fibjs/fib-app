@@ -51,6 +51,8 @@ matrix:
       osx_image: xcode9
       env:
         - VERSION=0.26.1
+services:
+    - mysql
 before_install:
   - OS=linux
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -60,7 +62,10 @@ before_install:
       brew update;
       brew install xz;
       OS=darwin;
+      brew install mariadb;
+      mysql.server start;
     fi
+  - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS `fibjs-test` CHARACTER SET utf8 COLLATE utf8_general_ci;';
 script:
   - npm i
   - mkdir -p ./node_modules/.bin

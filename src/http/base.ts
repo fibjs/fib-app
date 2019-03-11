@@ -28,6 +28,7 @@ export function setup (app: FibApp.FibAppClass) {
         const spec_keys = {
             createdBy: ormUtils.get_field_createdby(orm.settings),
         }
+        
         const _createBy = cls.extends[spec_keys['createdBy']];
         let _opt;
         let instances = [];

@@ -10,6 +10,10 @@ const { check_result } = require('../../test/_utils');
 const http = require('http');
 
 describe("acl", () => {
+    before(() => {
+        testAppInfo.dropModelsSync();
+    });
+
     after(() => testAppInfo.cleanSqliteDB())
 
     describe("basic", () => {

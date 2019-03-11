@@ -7,7 +7,6 @@ const coroutine = require('coroutine');
 
 const { check_result } = require('../../test/_utils');
 
-
 const testAppInfo = require('../..').getRandomSqliteBasedApp();
 const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
 testSrvInfo.server.run(() => void 0)
@@ -22,6 +21,8 @@ describe("chat", () => {
     after(() => testAppInfo.cleanSqliteDB())
 
     before(() => {
+        testAppInfo.dropModelsSync();
+
         var rep = http.post(testSrvInfo.appUrlBase + '/user', {
             json: {
                 name: 'lion'

@@ -31,6 +31,10 @@ const cheerio = require('cheerio');
     testSrvInfo.server.run(() => void 0)
 
     describe(`user, specified appOptions: \n${JSON.stringify(appOptions, null, '\t')}\n`, () => {
+        before(() => {
+            testAppInfo.dropModelsSync();
+        });
+        
         var id;
         after(() => testAppInfo.cleanSqliteDB())
 

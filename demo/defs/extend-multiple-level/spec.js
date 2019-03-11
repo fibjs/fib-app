@@ -29,12 +29,14 @@ describe("extend multiple level", () => {
     after(() => testAppInfo.cleanSqliteDB())
 
     before(() => {
+        testAppInfo.dropModelsSync();
+
         var rep = http.post(testSrvInfo.appUrlBase + '/level', {
             json: TESTDATA.l1
         });
 
         top_id = rep.json().id
-    })
+    });
 
     it('find level', () => {
         ;[

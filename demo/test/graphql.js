@@ -17,7 +17,7 @@ function init_data () {
                 age: 35
             }, {
                 name: 'alice',
-                sex: "famale",
+                sex: "female",
                 age: 32
             }, {
                 name: 'jack',
@@ -25,7 +25,7 @@ function init_data () {
                 age: 8
             }, {
                 name: 'lily',
-                sex: "famale",
+                sex: "female",
                 age: 4
             },
             {
@@ -111,6 +111,8 @@ describe("graphql", () => {
     after(() => testAppInfo.cleanSqliteDB())
 
     before(() => {
+        testAppInfo.dropModelsSync();
+        
         init_data();
         init_extend();
     })
@@ -888,7 +890,8 @@ describe("graphql", () => {
 
         let r = rep.json();
         assert.equal(r.data.json.createdAt.toString().slice(-1), "Z");
-        assert.notEqual(new Date(r.data.json.createdAt).getTime() % 1000, 0);
+        if (testAppInfo.protocol !== 'mysql')
+            assert.notEqual(new Date(r.data.json.createdAt).getTime() % 1000, 0);
         delete r.data.json.createdAt;
         assert.deepEqual(r, {
             "data": {
@@ -954,7 +957,8 @@ describe("graphql", () => {
         assert.equal(createR.id, queryR.id)
 
         assert.equal(queryR.createdAt.toString().slice(-1), "Z");
-        assert.notEqual(new Date(queryR.createdAt).getTime() % 1000, 0);
+        if (testAppInfo.protocol !== 'mysql')
+            assert.notEqual(new Date(queryR.createdAt).getTime() % 1000, 0);
         delete queryR.createdAt;
 
         assert.deepEqual(queryR, {
