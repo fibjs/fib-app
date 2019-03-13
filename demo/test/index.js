@@ -6,26 +6,41 @@ if (FIBJS_LTE_21) {
     require.main = module
 }
 
-run('./app-apis');
+const { dbBuilder, getStaticTestDBName } = require('./support/spec_helper');
 
-if (!process.env.FIBAPP_NO_APP_SPEC) {
-    run('./classes');
-    run('./extend');
-    run('./reverse');
-    
-    run('./acl');
-    run('./graphql');
-    run('./nographql');
-    
-    run('./chat');
-    
-    run('./user');
-    require('../defs/hooks/spec')
-}
+describe('fib-app', function () {
+    const builder = dbBuilder(getStaticTestDBName());
 
-if (!process.env.FIBAPP_NO_MODEL_SPEC) {
-    run('../defs/acl/model.spec')
-}
+    before(() => {
+        builder.drop();
+        builder.create();
+    });
+
+    after(() => {
+        builder.drop();
+    });
+
+    require('./app-apis');
+
+    if (!process.env.FIBAPP_NO_APP_SPEC) {
+        require('./classes');
+        require('./extend');
+        require('./reverse');
+        
+        require('./acl');
+        require('./graphql');
+        require('./nographql');
+        
+        require('./chat');
+        
+        require('./user');
+        require('../defs/hooks/spec')
+    }
+
+    if (!process.env.FIBAPP_NO_MODEL_SPEC) {
+        require('../defs/acl/model.spec')
+    }
+})
 
 if (require.main === module) {
     test.run(console.DEBUG);

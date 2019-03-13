@@ -5,21 +5,21 @@ const http = require('http');
 
 const { check_result, cutOffMilliSeconds, cutOffSeconds } = require('../../test/_utils');
 
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 describe("extend", () => {
     var ids = [];
 
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
     });
 
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     it('init data', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + '/people', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/people', {
             json: [{
                 name: 'tom',
                 sex: "male",
@@ -43,14 +43,14 @@ describe("extend", () => {
     });
 
     it('init extend', () => {
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
             json: {
                 id: ids[1]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}`, {
             query: {
                 keys: 'wife_id'
             }
@@ -59,7 +59,7 @@ describe("extend", () => {
             wife_id: ids[1]
         });
 
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
             json: {
                 id: ids[0]
             }
@@ -67,14 +67,14 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 200)
 
         function set_parents(id) {
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/father`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/father`, {
                 json: {
                     id: ids[0]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/mother`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/mother`, {
                 json: {
                     id: ids[1]
                 }
@@ -86,14 +86,14 @@ describe("extend", () => {
         set_parents(ids[3]);
 
         function add_childs(id) {
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/childs`, {
                 json: {
                     id: ids[2]
                 }
             });
             assert.equal(rep.statusCode, 200)
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/childs`, {
                 json: {
                     id: ids[3]
                 }
@@ -106,7 +106,7 @@ describe("extend", () => {
     });
 
     it('get extend', () => {
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
             }
@@ -121,7 +121,7 @@ describe("extend", () => {
              * `people` only **hasOne** `wife`. That is, as you add 'count=1' and **not realistic** `where` condition in query, 
              * it just return the specified item result. In fact, it equivelent to eget the **only** item
              */
-            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
                 query: {
                     // useless
                     count: 1,
@@ -138,7 +138,7 @@ describe("extend", () => {
             });
         }
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife/${ids[1]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife/${ids[1]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -148,7 +148,7 @@ describe("extend", () => {
             "age": 32
         });
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[2]}/mother`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[2]}/mother`, {
             query: {
                 keys: 'name,age'
             }
@@ -158,7 +158,7 @@ describe("extend", () => {
             "age": 32
         });
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -173,7 +173,7 @@ describe("extend", () => {
         }]);
 
         filterable_extend_query__hasMany: {
-            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
                 query: {
                     count: 1,
                     keys: 'name,age',
@@ -191,7 +191,7 @@ describe("extend", () => {
                 count: 2
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
                 query: {
                     count: 1,
                     keys: 'name,age',
@@ -210,7 +210,7 @@ describe("extend", () => {
                 count: 1
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
                 query: {
                     count: 1,
                     keys: 'name,age',
@@ -230,7 +230,7 @@ describe("extend", () => {
             });
         }
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[3]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[3]}`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -241,7 +241,7 @@ describe("extend", () => {
             "age": 4
         });
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[1]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[1]}`, {
             query: {
                 keys: 'name,age',
                 order: 'age'
@@ -257,27 +257,27 @@ describe("extend", () => {
         var rep = null
 
         // you can not do unlink-operation(edel) one original model from on reversed model, which in one `hasOne` association
-        rep = http.del(testSrvInfo.appUrlBase + `/people/${ids[1]}/husbands/${ids[0]}`)
+        rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[1]}/husbands/${ids[0]}`)
         assert.equal(rep.statusCode, 404);
         check_result(rep.json(), {
             "code": 4040603,
             "message": `'husbands' in class 'people' does not support this operation`
         })
 
-        rep = http.del(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife/${ids[1]}`);
+        rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife/${ids[1]}`);
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
             query: {
                 keys: 'name,age'
             }
         });
         assert.equal(rep.statusCode, 404);
 
-        var rep = http.del(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[2]}`);
+        var rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[2]}`);
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
             query: {
                 keys: 'name,age'
             }
@@ -287,7 +287,7 @@ describe("extend", () => {
             "age": 4
         }]);
 
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
             json: {
                 id: ids[2]
             }
@@ -296,7 +296,7 @@ describe("extend", () => {
     });
 
     it('create extend object', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
             json: {
                 name: 'jack_li',
                 sex: "male",
@@ -306,7 +306,7 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 201);
         ids.push(rep.json().id);
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -317,7 +317,7 @@ describe("extend", () => {
             "age": 8
         });
 
-        var rep = http.post(testSrvInfo.appUrlBase + `/people/${ids[4]}/childs`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[4]}/childs`, {
             json: [{
                 name: 'jack_li_0',
                 sex: "male",
@@ -331,7 +331,7 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 201);
         rep.json().forEach(r => ids.push(r.id));
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -342,7 +342,7 @@ describe("extend", () => {
             "age": 8
         });
 
-        var rep = http.post(testSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
             json: {
                 name: 'ly_li',
                 sex: "female",
@@ -351,7 +351,7 @@ describe("extend", () => {
         });
         assert.equal(rep.statusCode, 201);
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
             query: {
                 keys: 'name,age'
             }
@@ -364,7 +364,7 @@ describe("extend", () => {
     });
 
     it('change extend object', () => {
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
             json: {
                 name: 'jack_li',
                 sex: "male",
@@ -373,7 +373,7 @@ describe("extend", () => {
         });
         assert.equal(rep.statusCode, 200);
 
-        var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
             query: {
                 keys: 'name,age'
             }
@@ -384,12 +384,12 @@ describe("extend", () => {
             "age": 18
         });
 
-        rep = http.del(testSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`);
+        rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`);
         assert.equal(rep.statusCode, 200);
     });
 
     it("multi level create", () => {
-        var rep = http.post(testSrvInfo.appUrlBase + '/people', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/people', {
             json: [{
                 name: 'tom',
                 sex: "male",
@@ -447,7 +447,7 @@ describe("extend", () => {
         }
 
         var doPost = function (testdata) {
-            return http.post(testSrvInfo.appUrlBase + '/people', {
+            return http.post(tSrvInfo.appUrlBase + '/people', {
                 json: [testdata]
             });
         }
@@ -457,13 +457,13 @@ describe("extend", () => {
             testdata.friends[0].age = 36
             testdata.friends[0].extra.hobby = 'train2'
 
-            return http.put(testSrvInfo.appUrlBase + `/people/${base_obj.id}/friends/${ext_obj.id}`, {
+            return http.put(tSrvInfo.appUrlBase + `/people/${base_obj.id}/friends/${ext_obj.id}`, {
                 json: testdata.friends[0]
             });
         }
 
         var doGraphQlCheck = function (testdata) {
-            rep = http.post(testSrvInfo.appUrlBase + '', {
+            rep = http.post(tSrvInfo.appUrlBase + '', {
                 json: {
                     requests: [
                         {

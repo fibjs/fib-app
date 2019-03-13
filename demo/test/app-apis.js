@@ -3,10 +3,10 @@ test.setup();
 
 const fs = require('fs');
 const path = require('path');
-const { serverBase } = require('..');
 const { check_result } = require('./_utils');
 
-const testAppInfo = require('..').getRandomSqliteBasedApp();
+const tappInfo = require('../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
 const faker = require('../faker');
 
 describe('app apis', () => {
@@ -15,7 +15,7 @@ describe('app apis', () => {
     let getId = null
     let putData = null
 
-    const { app } = testAppInfo
+    const { app } = tappInfo
 
     const reqInfo = {
         session: {
@@ -26,7 +26,7 @@ describe('app apis', () => {
     }
 
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
 
         postData = {
             name: faker.name.findName(),
@@ -39,7 +39,7 @@ describe('app apis', () => {
         }
     })
     
-    after(() => testAppInfo.cleanSqliteDB());
+    after(() => tappInfo.utils.cleanLocalDB());
 
     it('util: app.dbPool', () => {
         assert.isFunction(app.db)
@@ -163,7 +163,7 @@ describe('app apis', () => {
         assert.isFunction(app.test.getRestClient)
 
         const restClient = app.test.getRestClient({
-            serverBase: serverBase,
+            serverBase: tSrvInfo.serverBase,
             modelName: 'person'
         })
 

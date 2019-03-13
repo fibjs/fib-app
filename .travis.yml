@@ -65,7 +65,7 @@ before_install:
       brew install mariadb;
       mysql.server start;
     fi
-  - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS `fibjs-test` CHARACTER SET utf8 COLLATE utf8_general_ci;';
+  - mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS `fibjs-test`;';
 script:
   - npm i
   - mkdir -p ./node_modules/.bin

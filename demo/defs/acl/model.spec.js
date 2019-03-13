@@ -2,26 +2,26 @@ const test = require('test');
 test.setup();
 
 const { check_result } = require('../../test/_utils');
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 const faker = require('../../faker')
 
 const restClients = {
-    test_acl: testAppInfo.app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'test_acl'}),
-    ext_acl: testAppInfo.app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'ext_acl'}),
-    ext_acl1: testAppInfo.app.test.getRestClient({appUrlBase: testSrvInfo.appUrlBase, modelName: 'ext_acl1'}),
+    test_acl: tappInfo.app.test.getRestClient({appUrlBase: tSrvInfo.appUrlBase, modelName: 'test_acl'}),
+    ext_acl: tappInfo.app.test.getRestClient({appUrlBase: tSrvInfo.appUrlBase, modelName: 'ext_acl'}),
+    ext_acl1: tappInfo.app.test.getRestClient({appUrlBase: tSrvInfo.appUrlBase, modelName: 'ext_acl1'}),
 }
 
-const sessionAs = testSrvInfo.utils.sessionAs
+const sessionAs = tSrvInfo.utils.sessionAs
 
 describe('defs: acl', () => {
     before(() => {
-        testAppInfo.dropModelsSync()
+        tappInfo.utils.dropModelsSync()
     })
     
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     describe('base:, role as admin', () => {
         before(() => sessionAs({ id: 12345, roles: ['admin'] }))

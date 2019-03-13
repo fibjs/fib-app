@@ -1,9 +1,9 @@
 const test = require('test');
 test.setup();
 
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 const { check_result } = require('../../test/_utils');
 
@@ -11,16 +11,16 @@ const http = require('http');
 
 describe("acl", () => {
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
     });
 
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     describe("basic", () => {
         var id;
 
         it("forbidden", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -31,14 +31,14 @@ describe("acl", () => {
         });
 
         it("role allow act", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r2']
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -50,34 +50,34 @@ describe("acl", () => {
         });
 
         it("object act", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
             assert.equal(rep.statusCode, 403);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
             assert.equal(rep.statusCode, 200);
         });
 
         it("role allow all", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r2']
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -89,14 +89,14 @@ describe("acl", () => {
         });
 
         it("object allow owner", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r2']
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -106,25 +106,25 @@ describe("acl", () => {
             assert.equal(rep.statusCode, 201);
             var res = rep.json();
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12346
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${res.id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${res.id}`);
             assert.equal(rep.statusCode, 403);
         });
 
         it("user disallow", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 9999,
                     roles: ['r1']
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -136,7 +136,7 @@ describe("acl", () => {
 
         describe("allow field", () => {
             before(() => {
-                http.post(testSrvInfo.serverBase + '/set_session', {
+                http.post(tSrvInfo.serverBase + '/set_session', {
                     json: {
                         id: 123,
                         roles: ['r3']
@@ -145,7 +145,7 @@ describe("acl", () => {
             });
 
             it("create", () => {
-                var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+                var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                     json: {
                         name: "aaa",
                         age: 12,
@@ -155,7 +155,7 @@ describe("acl", () => {
 
                 var id = rep.json().id;
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+                var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
                 assert.deepEqual(rep.json(), {
                     name: "aaa",
                     age: null
@@ -163,13 +163,13 @@ describe("acl", () => {
             });
 
             it("get", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+                var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
                 assert.deepEqual(rep.json(), {
                     name: "aaa",
                     age: 12
                 });
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`, {
                     query: {
                         keys: 'name,sex'
                     }
@@ -180,7 +180,7 @@ describe("acl", () => {
             });
 
             it("update", () => {
-                var rep = http.put(testSrvInfo.appUrlBase + `/test_acl/${id}`, {
+                var rep = http.put(tSrvInfo.appUrlBase + `/test_acl/${id}`, {
                     json: {
                         name: "bbb",
                         age: 123,
@@ -188,7 +188,7 @@ describe("acl", () => {
                     }
                 });
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+                var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
                 assert.deepEqual(rep.json(), {
                     name: "aaa",
                     age: 123
@@ -197,7 +197,7 @@ describe("acl", () => {
             });
 
             it("find", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/test_acl`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/test_acl`, {
                     query: {
                         limit: 2
                     }
@@ -221,14 +221,14 @@ describe("acl", () => {
         var rid1;
 
         before(() => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['admin']
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/test_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/test_acl', {
                 json: {
                     name: "aaa",
                     age: 12,
@@ -238,7 +238,7 @@ describe("acl", () => {
             assert.equal(rep.statusCode, 201);
             id = rep.json().id;
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/ext_acl', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/ext_acl', {
                 json: {
                     name: "aaa_ext"
                 }
@@ -248,41 +248,41 @@ describe("acl", () => {
         });
 
         it('link', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
                 json: {
                     id: rid
                 }
             });
             assert.equal(rep.statusCode, 403);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r3']
                 }
             });
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
                 json: {
                     id: rid
                 }
             });
             assert.equal(rep.statusCode, 403);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['admin']
                 }
             });
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
                 json: {
                     id: rid
                 }
@@ -291,34 +291,34 @@ describe("acl", () => {
         });
 
         it('read', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
             assert.equal(rep.statusCode, 403);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
             check_result(rep.json(), {
                 name: 'aaa_ext'
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
             check_result(rep.json(), {
                 id: rid,
                 name: 'aaa_ext',
@@ -327,13 +327,13 @@ describe("acl", () => {
         });
 
         it('put', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`, {
                 json: {
                     name: 'aaa_ext 1',
                 }
@@ -343,14 +343,14 @@ describe("acl", () => {
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`, {
                 json: {
                     name: 'aaa_ext 1',
                     age: 123
@@ -358,13 +358,13 @@ describe("acl", () => {
             });
             assert.equal(rep.statusCode, 200);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid}`);
             check_result(rep.json(), {
                 "id": rid,
                 "name": "aaa_ext",
@@ -373,26 +373,26 @@ describe("acl", () => {
         });
 
         it('autoFetch', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
             check_result(rep.json(), {
                 "code": 4030501,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
             check_result(rep.json(), {
                 "name": "aaa",
                 "age": 12,
@@ -401,13 +401,13 @@ describe("acl", () => {
                 }]
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
             check_result(rep.json(), {
                 "id": id,
                 "name": "aaa",
@@ -423,13 +423,13 @@ describe("acl", () => {
         });
 
         it('create', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
                 json: {
                     name: 'new name',
                     age: 123
@@ -440,14 +440,14 @@ describe("acl", () => {
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`, {
                 json: {
                     name: 'new name',
                     age: 123
@@ -456,13 +456,13 @@ describe("acl", () => {
             assert.equal(rep.statusCode, 201);
             rid1 = rep.json().id;
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
                 "id": rid1,
                 "name": null,
@@ -472,26 +472,26 @@ describe("acl", () => {
         });
 
         it('find', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
             check_result(rep.json(), {
                 "code": 4030301,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
             check_result(rep.json(), [{
                     "name": "aaa_ext"
                 },
@@ -500,13 +500,13 @@ describe("acl", () => {
                 }
             ]);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
             check_result(rep.json(), [{
                     "id": rid,
                     "name": "aaa_ext",
@@ -521,34 +521,34 @@ describe("acl", () => {
         });
 
         it('delete', () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345
                 }
             });
 
-            var rep = http.del(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
                 "code": 4030301,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 12345,
                     roles: ['r4']
                 }
             });
-            var rep = http.del(testSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
             assert.equal(rep.statusCode, 200);
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: 54321
                 }
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
             check_result(rep.json(), [{
                 "id": rid,
                 "name": "aaa_ext",

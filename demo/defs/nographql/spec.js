@@ -1,26 +1,26 @@
 const test = require('test');
 test.setup();
 
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 const http = require('http');
 const util = require('util');
 
 describe("nographql", () => {
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
     });
 
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     const testData = {
         foo: Date.now(),
         bin: new Buffer(123)
     }
     it('init data', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + '/nographql', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/nographql', {
             json: testData
         });
         assert.equal(rep.statusCode, 201);
@@ -28,7 +28,7 @@ describe("nographql", () => {
     })
 
     it('error for when graphql-query', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -48,7 +48,7 @@ describe("nographql", () => {
     });
 
     it('success in rest', () => {
-        var rep = http.get(testSrvInfo.appUrlBase + '/nographql');
+        var rep = http.get(tSrvInfo.appUrlBase + '/nographql');
 
         const response = rep.json()
         assert.isArray(response)
