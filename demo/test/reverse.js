@@ -1,11 +1,9 @@
 const test = require('test');
 test.setup();
 
-const { dropSync } = require('../test/support/spec_helper');
-
-const testAppInfo = require('../').getRandomSqliteBasedApp();
-const testSrvInfo = require('../').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 const { check_result } = require('./_utils');
 
@@ -13,12 +11,10 @@ const http = require('http');
 
 describe("reverse", () => {
     before(() => {
-        testAppInfo.app.ormPool(orm => {
-            dropSync( Object.values(orm.models) );
-        });
+        tappInfo.utils.dropModelsSync();
     });
 
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
     
     describe("1:n", () => {
         var msg_id;
@@ -26,7 +22,7 @@ describe("reverse", () => {
         var user_id;
 
         before(() => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/chatroom', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/chatroom', {
                 json: {
                     name: "room1"
                 }
@@ -34,7 +30,7 @@ describe("reverse", () => {
 
             room_id = rep.json().id;
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/user', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/user', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -45,7 +41,7 @@ describe("reverse", () => {
 
             user_id = rep.json().id;
 
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: user_id
                 }
@@ -53,7 +49,7 @@ describe("reverse", () => {
         });
 
         it("create message", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages`, {
                 json: {
                     msg: "hello"
                 }
@@ -63,7 +59,7 @@ describe("reverse", () => {
         });
 
         it("get", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello",
@@ -73,7 +69,7 @@ describe("reverse", () => {
         });
 
         it("get reserve", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/chatmessage/${msg_id}/room/${room_id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/chatmessage/${msg_id}/room/${room_id}`);
             check_result(rep.json(), {
                 id: room_id,
                 name: "room1"
@@ -81,7 +77,7 @@ describe("reverse", () => {
         });
 
         it("list", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages`);
             check_result(rep.json(), [{
                 id: msg_id,
                 msg: "hello",
@@ -91,14 +87,14 @@ describe("reverse", () => {
         });
 
         it("update", () => {
-            var rep = http.put(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`, {
                 json: {
                     msg: 'hello 2'
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 2",
@@ -108,10 +104,10 @@ describe("reverse", () => {
         });
 
         xit("delete", () => {
-            var rep = http.del(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 2",
@@ -121,7 +117,7 @@ describe("reverse", () => {
         });
 
         it("link reserve", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/chatmessage`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/chatmessage`, {
                 json: {
                     msg: "hello 1"
                 }
@@ -129,14 +125,14 @@ describe("reverse", () => {
 
             var msg_id = rep.json().id;
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/chatmessage/${msg_id}/room`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/chatmessage/${msg_id}/room`, {
                 json: {
                     id: room_id
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
             check_result(rep.json(), {
                 id: msg_id,
                 msg: "hello 1",
@@ -153,7 +149,7 @@ describe("reverse", () => {
         var user2_id;
 
         before(() => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/chatroom', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/chatroom', {
                 json: [{
                     name: "room1"
                 }, {
@@ -165,7 +161,7 @@ describe("reverse", () => {
             room1_id = data[0].id;
             room2_id = data[1].id;
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/user', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/user', {
                 json: [{
                     name: 'lion 1',
                     sex: "male",
@@ -185,14 +181,14 @@ describe("reverse", () => {
         });
 
         it("put extends", () => {
-            var rep = http.put(testSrvInfo.appUrlBase + `/chatroom/${room1_id}/mambers`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/chatroom/${room1_id}/mambers`, {
                 json: {
                     id: user1_id
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/user/${user2_id}/rooms`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/user/${user2_id}/rooms`, {
                 json: {
                     id: room2_id
                 }
@@ -201,15 +197,15 @@ describe("reverse", () => {
         });
 
         it("del", () => {
-            var rep = http.del(testSrvInfo.appUrlBase + `/chatroom/${room1_id}/mambers/${user1_id}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/chatroom/${room1_id}/mambers/${user1_id}`);
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.del(testSrvInfo.appUrlBase + `/user/${user2_id}/rooms/${room2_id}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/user/${user2_id}/rooms/${room2_id}`);
             assert.equal(rep.statusCode, 200);
         });
 
         it("create", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/chatroom/${room1_id}/mambers`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/chatroom/${room1_id}/mambers`, {
                 json: {
                     name: 'lion 3',
                     sex: "male",
@@ -219,7 +215,7 @@ describe("reverse", () => {
             });
             assert.equal(rep.statusCode, 201);
 
-            var rep = http.post(testSrvInfo.appUrlBase + `/user/${user2_id}/rooms`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/user/${user2_id}/rooms`, {
                 json: {
                     name: "room3"
                 }

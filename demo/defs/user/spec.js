@@ -26,21 +26,21 @@ const cheerio = require('cheerio');
 ].forEach((appOptions) => {
     const appPath = !appOptions.apiPathPrefix ? '/api' : ''
 
-    const testAppInfo = require('../..').getRandomSqliteBasedApp(appOptions, {uuid: true});
-    const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath});
-    testSrvInfo.server.run(() => void 0)
+    const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp(appOptions, {uuid: true});
+    const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath});
+    tSrvInfo.server.run(() => void 0)
 
     describe(`user, specified appOptions: \n${JSON.stringify(appOptions, null, '\t')}\n`, () => {
         before(() => {
-            testAppInfo.dropModelsSync();
+            tappInfo.utils.dropModelsSync();
         });
         
         var id;
-        after(() => testAppInfo.cleanSqliteDB())
+        after(() => tappInfo.utils.cleanLocalDB())
 
         describe("post new", () => {
             it("error: empty body", () => {
-                var rep = http.post(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`);
+                var rep = http.post(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`);
                 assert.equal(rep.statusCode, 400);
                 check_result(rep.json(), {
                     "code": 4000001,
@@ -49,7 +49,7 @@ const cheerio = require('cheerio');
             });
 
             it("error: bad body", () => {
-                var rep = http.post(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`, {
                     body: 'aaaa'
                 });
                 assert.equal(rep.statusCode, 400);
@@ -60,7 +60,7 @@ const cheerio = require('cheerio');
             });
 
             it("error: bad class", () => {
-                var rep = http.post(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user1`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user1`, {
                     json: {}
                 });
                 assert.equal(rep.statusCode, 404);
@@ -71,7 +71,7 @@ const cheerio = require('cheerio');
             });
 
             it("create user", () => {
-                var rep = http.post(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`, {
                     json: {
                         name: 'lion',
                         sex: "male",
@@ -85,7 +85,7 @@ const cheerio = require('cheerio');
             });
 
             xit("error: bad field", () => {
-                var rep = http.post(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user`, {
                     json: {
                         name: 'lion1',
                         sex: "male",
@@ -99,17 +99,17 @@ const cheerio = require('cheerio');
 
         describe("get by id", () => {
             it("bad class", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user1/${id}`);
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user1/${id}`);
                 assert.equal(rep.statusCode, 404);
             });
 
             it("bad id", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user/9999`);
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user/9999`);
                 assert.equal(rep.statusCode, 404);
             });
 
             it("simple", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user/${id}`);
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user/${id}`);
                 assert.equal(rep.statusCode, 200);
                 var data = rep.json();
                 delete data.salt;
@@ -123,7 +123,7 @@ const cheerio = require('cheerio');
             });
 
             it("keys", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user/${id}`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.apiPathPrefix}/user/${id}`, {
                     query: {
                         keys: "age"
                     }
@@ -137,7 +137,7 @@ const cheerio = require('cheerio');
 
         describe("viewFunctions", () => {
             it('get', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/${id}`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/${id}`, {
                     headers: {
                         Accept: 'text/html'
                     }
@@ -154,7 +154,7 @@ const cheerio = require('cheerio');
             })
 
             it('find', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user`, {
                     headers: {
                         Accept: 'text/html'
                     }
@@ -180,7 +180,7 @@ const cheerio = require('cheerio');
             })
 
             it('custom: profile page', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/profile`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/profile`, {
                     headers: {
                         Accept: 'text/html'
                     }
@@ -196,7 +196,7 @@ const cheerio = require('cheerio');
             })
 
             it('custom: css1', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/css1`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/css1`, {
                     headers: {
                         Accept: 'text/css'
                     }
@@ -207,7 +207,7 @@ const cheerio = require('cheerio');
             })
 
             it('custom: css2', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/css2`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/css2`, {
                     headers: {
                         Accept: 'text/css'
                     }
@@ -218,7 +218,7 @@ const cheerio = require('cheerio');
             })
 
             it('custom: javascript1', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/javascript1`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/javascript1`, {
                     headers: {
                         Accept: 'text/javascript'
                     }
@@ -229,7 +229,7 @@ const cheerio = require('cheerio');
             })
 
             it('custom: javascript2', () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/javascript2`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `${appOptions.viewPathPrefix}/user/javascript2`, {
                     headers: {
                         Accept: 'text/javascript'
                     }

@@ -5,16 +5,16 @@ const http = require('http');
 
 const { check_result } = require('../../test/_utils');
 
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, { appPath: '/api' });
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, { appPath: '/api' });
+tSrvInfo.server.run(() => void 0)
 
 describe("extend multiple level", () => {
     var top_id;
     var TESTDATA = require('./__test__/mock-data.json');
 
     function get_uniq_level () {
-        var rep = http.get(testSrvInfo.appUrlBase + `/level`, {
+        var rep = http.get(tSrvInfo.appUrlBase + `/level`, {
             query: {
                 where: JSON.stringify({
                     name: 'l1:name'
@@ -26,12 +26,12 @@ describe("extend multiple level", () => {
         return l1;
     }
 
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
 
-        var rep = http.post(testSrvInfo.appUrlBase + '/level', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/level', {
             json: TESTDATA.l1
         });
 
@@ -44,7 +44,7 @@ describe("extend multiple level", () => {
             'l1-l2',
             'l1-l2-l3',
         ].forEach(key => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -104,7 +104,7 @@ describe("extend multiple level", () => {
                 []
             ]
         ].forEach(([on_cond, l1_result, results]) => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -184,7 +184,7 @@ describe("extend multiple level", () => {
         ;[
             null
         ].forEach(key => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -216,7 +216,7 @@ describe("extend multiple level", () => {
         ;[
             null
         ].forEach(key => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -274,7 +274,7 @@ describe("extend multiple level", () => {
         ;[
             null
         ].forEach(key => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -305,7 +305,7 @@ describe("extend multiple level", () => {
         ;[
             null
         ].forEach(key => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -341,7 +341,7 @@ describe("extend multiple level", () => {
             'l1-sl',
             'l1-sl-subl',
         ].forEach(key => {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -381,7 +381,7 @@ describe("extend multiple level", () => {
         }
 
         function get_uniq_extendsTo_property () {
-            var rep = http.get(testSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
                 query: {}
             });
 
@@ -390,7 +390,7 @@ describe("extend multiple level", () => {
         }
 
         function get_uniq_extendsTo_property_by_gql () {
-            var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -430,7 +430,7 @@ describe("extend multiple level", () => {
             ;[
                 null
             ].forEach(key => {
-                var rep = http.put(testSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
+                var rep = http.put(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
                     query: {},
                     json: {
                         weight: count_increament()
@@ -448,7 +448,7 @@ describe("extend multiple level", () => {
             assert_uniq_extendsTo_property(l1_lproperty);
 
             remove_it: {
-                var rep = http.del(testSrvInfo.appUrlBase + `/level/${top_id}/lproperty/${l1_lproperty.id}`, {
+                var rep = http.del(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty/${l1_lproperty.id}`, {
                     query: {},
                     body: {}
                 });
@@ -466,7 +466,7 @@ describe("extend multiple level", () => {
             }
 
             recreate: {
-                var rep = http.post(testSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
                     query: {},
                     json: {
                         ...TESTDATA.l1.lproperty,
@@ -568,7 +568,7 @@ describe("extend multiple level", () => {
                 ]
             ].forEach(([cond, item_count, data_fetcher]) => {
                 if (typeof cond === 'object') {
-                    var rep = http.get(testSrvInfo.appUrlBase + `/level`, {
+                    var rep = http.get(tSrvInfo.appUrlBase + `/level`, {
                         query: {
                             findby: JSON.stringify(cond)
                         }
@@ -579,7 +579,7 @@ describe("extend multiple level", () => {
                     return ;
                 }
                 
-                var rep = http.post(testSrvInfo.appUrlBase + `/`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                     headers: {
                         'Content-Type': 'application/graphql'
                     },

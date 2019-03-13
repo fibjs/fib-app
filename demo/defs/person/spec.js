@@ -4,9 +4,9 @@ test.setup();
 const querystring = require('querystring');
 const { check_result } = require('../../test/_utils');
 
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 const http = require('http');
 
@@ -14,16 +14,16 @@ describe("classes - person", () => {
     let conn = null
     
     before(() => {
-        testAppInfo.dropModelsSync();
-        conn = testAppInfo.utils.connectionToDB()
+        tappInfo.utils.dropModelsSync();
+        conn = tappInfo.utils.connectionToDB()
     })
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     describe("post new", () => {
         var id;
 
         it("error: empty body", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/person');
+            var rep = http.post(tSrvInfo.appUrlBase + '/person');
             assert.equal(rep.statusCode, 400);
             check_result(rep.json(), {
                 "code": 4000001,
@@ -32,7 +32,7 @@ describe("classes - person", () => {
         });
 
         it("error: bad body", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 body: 'aaaa'
             });
             assert.equal(rep.statusCode, 400);
@@ -43,7 +43,7 @@ describe("classes - person", () => {
         });
 
         it("error: bad class", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/person1', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person1', {
                 json: {}
             });
             assert.equal(rep.statusCode, 404);
@@ -54,7 +54,7 @@ describe("classes - person", () => {
         });
 
         it("create person", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -67,7 +67,7 @@ describe("classes - person", () => {
         });
 
         it("create multi person", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: [{
                         name: 'lion 1',
                         sex: "male",
@@ -85,7 +85,7 @@ describe("classes - person", () => {
         });
 
         xit("error: bad field", () => {
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: {
                     name: 'lion1',
                     sex: "male",
@@ -97,13 +97,13 @@ describe("classes - person", () => {
         });
 
         it("new with createdBy", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: id
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/pet', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/pet', {
                 json: {
                     name: 'tomcat'
                 }
@@ -111,18 +111,18 @@ describe("classes - person", () => {
             assert.equal(rep.statusCode, 201);
             var pid = rep.json().id;
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/pet/${pid}/createdBy`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/pet/${pid}/createdBy`);
             assert.equal(rep.json().name, 'lion');
         });
 
         it("multi with createdBy", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: {
                     id: id
                 }
             });
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/pet', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/pet', {
                 json: [{
                         name: 'tomcat'
                     }, {
@@ -135,7 +135,7 @@ describe("classes - person", () => {
             });
             assert.equal(rep.statusCode, 201);
             rep.json().forEach(r => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/pet/${r.id}/createdBy`);
+                var rep = http.get(tSrvInfo.appUrlBase + `/pet/${r.id}/createdBy`);
                 assert.equal(rep.json().name, 'lion');
             });
         });
@@ -149,7 +149,7 @@ describe("classes - person", () => {
                 conn.execute('delete from person;');
             } catch (e) {}
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -160,15 +160,15 @@ describe("classes - person", () => {
         });
 
         it("error", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person1/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person1/${id}`);
             assert.equal(rep.statusCode, 404);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/9999`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/9999`);
             assert.equal(rep.statusCode, 404);
         });
 
         it("simple", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/${id}`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), {
                 "name": "lion",
@@ -179,7 +179,7 @@ describe("classes - person", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/${id}`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/${id}`, {
                 query: {
                     keys: "age"
                 }
@@ -198,11 +198,11 @@ describe("classes - person", () => {
         }
         
         it("get request always fallback to viewServices", () => {
-            var rep = http.request('GET', testSrvInfo.appUrlBase + `/person/test`, {
+            var rep = http.request('GET', tSrvInfo.appUrlBase + `/person/test`, {
             });
             assert.equal(rep.statusCode, 200);
             
-            var rep = http.request('GET', testSrvInfo.appUrlBase + `/person/test`, {
+            var rep = http.request('GET', tSrvInfo.appUrlBase + `/person/test`, {
                 headers: {
                     'Content-Type': 'application/xjson'
                 }
@@ -215,7 +215,7 @@ describe("classes - person", () => {
                 'text/javascript; charset=utf8',
                 'application/javascript; charset=utf8'
             ].forEach(contentType => {
-                var rep = http.request('GET', testSrvInfo.appUrlBase + `/person/test`, {
+                var rep = http.request('GET', tSrvInfo.appUrlBase + `/person/test`, {
                     headers: {
                         'Content-Type': contentType
                     }
@@ -240,14 +240,14 @@ describe("classes - person", () => {
                 if (status === 200) {
                     it(`can be ${value_type}`, () => {
 
-                        var rep = http.get(testSrvInfo.appUrlBase + `/person/${method}`, {
+                        var rep = http.get(tSrvInfo.appUrlBase + `/person/${method}`, {
                         });
                         assert.equal(rep.statusCode, 200);
                         assert.deepEqual(rep.json(), response_value);
                     })
                 } else {
                     it(`** can not be ${value_type}`, () => {
-                        var rep = http.get(testSrvInfo.appUrlBase + `/person/${method}`, {
+                        var rep = http.get(tSrvInfo.appUrlBase + `/person/${method}`, {
                         });
                         assert.equal(rep.statusCode, status);
                     })
@@ -256,11 +256,11 @@ describe("classes - person", () => {
         })
 
         it("testReqSession", () => {
-            http.post(testSrvInfo.serverBase + '/set_session', {
+            http.post(tSrvInfo.serverBase + '/set_session', {
                 json: test_session
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/testReqSession`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/testReqSession`, {
                 json: {}
             });
             assert.equal(rep.statusCode, 200);
@@ -288,14 +288,14 @@ describe("classes - person", () => {
                     }
                 ]
             ].forEach(([test_query, result_query]) => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person/testReqQuery`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person/testReqQuery`, {
                     json: {},
                     query: test_query
                 });
                 assert.equal(rep.statusCode, 200);
                 assert.deepEqual(rep.json(), result_query);
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/person/testReqQuery?${querystring.stringify(test_query)}`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person/testReqQuery?${querystring.stringify(test_query)}`, {
                     json: {},
                 });
                 assert.equal(rep.statusCode, 200);
@@ -304,7 +304,7 @@ describe("classes - person", () => {
         });
         
         it("testCtxOrm", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/testCtxOrm`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/testCtxOrm`, {
                 json: {}
             });
             assert.equal(rep.statusCode, 200);
@@ -320,7 +320,7 @@ describe("classes - person", () => {
                 conn.execute('delete from person;');
             } catch (e) {}
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -331,12 +331,12 @@ describe("classes - person", () => {
         });
 
         it("error", () => {
-            var rep = http.put(testSrvInfo.appUrlBase + `/person1/${id}`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/person1/${id}`, {
                 json: {}
             });
             assert.equal(rep.statusCode, 404);
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/person/9999`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/person/9999`, {
                 json: {
                     name: 'xicilion',
                     some_filed: 'skip'
@@ -344,12 +344,12 @@ describe("classes - person", () => {
             });
             assert.equal(rep.statusCode, 404);
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/person/${id}`);
+            var rep = http.put(tSrvInfo.appUrlBase + `/person/${id}`);
             assert.equal(rep.statusCode, 400);
         });
 
         it("update", () => {
-            var rep = http.put(testSrvInfo.appUrlBase + `/person/${id}`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/person/${id}`, {
                 json: {
                     name: 'xicilion',
                     some_filed: 'skip'
@@ -357,14 +357,14 @@ describe("classes - person", () => {
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.put(testSrvInfo.appUrlBase + `/person/${id}`, {
+            var rep = http.put(tSrvInfo.appUrlBase + `/person/${id}`, {
                 json: {
                     name: 'xicilion'
                 }
             });
             assert.equal(rep.statusCode, 200);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/${id}`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), {
                 "name": "xicilion",
@@ -383,7 +383,7 @@ describe("classes - person", () => {
                 conn.execute('delete from person;');
             } catch (e) {}
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: {
                     name: 'lion',
                     sex: "male",
@@ -394,21 +394,21 @@ describe("classes - person", () => {
         });
 
         it("error", () => {
-            var rep = http.del(testSrvInfo.appUrlBase + `/person1/${id}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/person1/${id}`);
             assert.equal(rep.statusCode, 404);
 
-            var rep = http.del(testSrvInfo.appUrlBase + `/person/9999`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/person/9999`);
             assert.equal(rep.statusCode, 404);
         });
 
         it("delete", () => {
-            var rep = http.del(testSrvInfo.appUrlBase + `/person/${id}`);
+            var rep = http.del(tSrvInfo.appUrlBase + `/person/${id}`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), {
                 "id": id
             });
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/person/${id}`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person/${id}`);
             assert.equal(rep.statusCode, 404);
         })
     });
@@ -421,7 +421,7 @@ describe("classes - person", () => {
                 conn.execute('delete from person;');
             } catch (e) {}
 
-            var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+            var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: [{
                         "name": "tom",
                         "sex": "male",
@@ -448,10 +448,10 @@ describe("classes - person", () => {
         });
 
         it("simple", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person1`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person1`);
             assert.equal(rep.statusCode, 404);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`);
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`);
             assert.equal(rep.statusCode, 200);
             check_result(rep.json(), [{
                     "name": "tom",
@@ -481,7 +481,7 @@ describe("classes - person", () => {
         });
 
         it("keys", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                 query: {
                     keys: 'id,name'
                 }
@@ -508,7 +508,7 @@ describe("classes - person", () => {
 
         describe("where", () => {
             it("error query", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: "err_json"
                     }
@@ -517,7 +517,7 @@ describe("classes - person", () => {
             });
 
             it("eq", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":"${ids[2]}","age":14}`
                     }
@@ -530,7 +530,7 @@ describe("classes - person", () => {
                     "id": ids[2]
                 }]);
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":"${ids[2]}","age":15}`
                     }
@@ -538,7 +538,7 @@ describe("classes - person", () => {
                 assert.equal(rep.statusCode, 200);
                 check_result(rep.json(), []);
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"eq":"${ids[2]}"}}`
                     }
@@ -553,7 +553,7 @@ describe("classes - person", () => {
             });
 
             it("ne", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"ne":"${ids[2]}"}}`
                     }
@@ -581,7 +581,7 @@ describe("classes - person", () => {
             });
 
             it("gt", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"gt":"${ids[1]}"}}`
                     }
@@ -601,7 +601,7 @@ describe("classes - person", () => {
             });
 
             it("gte", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"gte":"${ids[2]}"}}`
                     }
@@ -621,7 +621,7 @@ describe("classes - person", () => {
             });
 
             it("lt", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"lt":"${ids[2]}"}}`
                     }
@@ -643,7 +643,7 @@ describe("classes - person", () => {
             });
 
             it("lte", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"lte":"${ids[1]}"}}`
                     }
@@ -665,7 +665,7 @@ describe("classes - person", () => {
             });
 
             it("like", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: '{"name":{"like":"%k"}}'
                     }
@@ -687,7 +687,7 @@ describe("classes - person", () => {
             });
 
             it("not_like", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: '{"name":{"not_like":"%k"}}'
                     }
@@ -709,7 +709,7 @@ describe("classes - person", () => {
             });
 
             it("between", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"between":["${ids[0]}","${ids[2]}"]}}`
                     }
@@ -737,7 +737,7 @@ describe("classes - person", () => {
             });
 
             it("not_between", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"not_between":["${ids[1]}","${ids[2]}"]}}`
                     }
@@ -759,7 +759,7 @@ describe("classes - person", () => {
             });
 
             it("in", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":["123456","${ids[0]}","${ids[1]}"]}`
                     }
@@ -779,7 +779,7 @@ describe("classes - person", () => {
                     }
                 ]);
 
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"in":["123456","${ids[0]}","${ids[1]}"]}}`
                     }
@@ -801,7 +801,7 @@ describe("classes - person", () => {
             });
 
             it("not_in", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"id":{"not_in":["123456","${ids[0]}","${ids[1]}"]}}`
                     }
@@ -823,7 +823,7 @@ describe("classes - person", () => {
             });
 
             it("or", () => {
-                var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+                var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                     query: {
                         where: `{"or":[{"id":"${ids[1]}"},{"id":"${ids[3]}"}]}`
                     }
@@ -846,7 +846,7 @@ describe("classes - person", () => {
         });
 
         it("skip", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                 query: {
                     skip: 2
                 }
@@ -868,7 +868,7 @@ describe("classes - person", () => {
         });
 
         it("limit", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                 query: {
                     limit: 2
                 }
@@ -890,7 +890,7 @@ describe("classes - person", () => {
         });
 
         it("order", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                 query: {
                     order: '-id'
                 }
@@ -924,7 +924,7 @@ describe("classes - person", () => {
         });
 
         it("count", () => {
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                 query: {
                     count: 1
                 }
@@ -958,7 +958,7 @@ describe("classes - person", () => {
                 }
             ]);
 
-            var rep = http.get(testSrvInfo.appUrlBase + `/person`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/person`, {
                 query: {
                     limit: 2,
                     count: 1
@@ -990,7 +990,7 @@ describe("classes - person", () => {
             conn.execute('delete from person;');
         } catch (e) {}
 
-        var rep = http.post(testSrvInfo.appUrlBase + '/person', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/person', {
             json: [{
                     "name": "tom",
                     "sex": "male",
@@ -1015,7 +1015,7 @@ describe("classes - person", () => {
 
         rep.json().forEach(r => ids.push(r.id));
 
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             json: {
                 requests: [{
                     "method": "GET",
@@ -1076,12 +1076,12 @@ describe("classes - person", () => {
     });
 
     it("function", () => {
-        var rep = http.post(testSrvInfo.appUrlBase + `/person1/test`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/person1/test`, {
             json: {}
         });
         assert.equal(rep.statusCode, 404);
 
-        var rep = http.post(testSrvInfo.appUrlBase + `/person/test`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/person/test`, {
             json: {
                 name: 'lion'
             }
@@ -1095,7 +1095,7 @@ describe("classes - person", () => {
             }
         });
 
-        var rep = http.post(testSrvInfo.appUrlBase + `/person/getPersonByName`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/person/getPersonByName`, {
             json: {
                 name: 'tom',
                 foo: 'male',

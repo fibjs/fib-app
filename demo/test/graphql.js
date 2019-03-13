@@ -1,15 +1,15 @@
 const test = require('test');
 test.setup();
 
-const testAppInfo = require('../').getRandomSqliteBasedApp();
-const testSrvInfo = require('../').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
 const http = require('http');
 
 var ids = [];
 function init_data () {
-    var rep = http.post(testSrvInfo.appUrlBase + '/people', {
+    var rep = http.post(tSrvInfo.appUrlBase + '/people', {
         json: [
             {
                 name: 'tom',
@@ -40,28 +40,28 @@ function init_data () {
 }
 
 function init_extend () {
-    var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
+    var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
         json: {
             id: ids[1]
         }
     });
     assert.equal(rep.statusCode, 200)
 
-    var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[0]}/father`, {
+    var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/father`, {
         json: {
             id: ids[4]
         }
     });
     assert.equal(rep.statusCode, 200)
 
-    var rep = http.get(testSrvInfo.appUrlBase + `/people/${ids[0]}`, {
+    var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}`, {
         query: {
             keys: 'wife_id'
         }
     });
     assert.equal(rep.statusCode, 200)
 
-    var rep = http.put(testSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
+    var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[1]}/husband`, {
         json: {
             id: ids[0]
         }
@@ -69,14 +69,14 @@ function init_extend () {
     assert.equal(rep.statusCode, 200)
 
     function set_parents(id) {
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/father`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/father`, {
             json: {
                 id: ids[0]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/mother`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/mother`, {
             json: {
                 id: ids[1]
             }
@@ -88,14 +88,14 @@ function init_extend () {
     set_parents(ids[3]);
 
     function add_childs(id) {
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/childs`, {
             json: {
                 id: ids[2]
             }
         });
         assert.equal(rep.statusCode, 200)
 
-        var rep = http.put(testSrvInfo.appUrlBase + `/people/${id}/childs`, {
+        var rep = http.put(tSrvInfo.appUrlBase + `/people/${id}/childs`, {
             json: {
                 id: ids[3]
             }
@@ -108,17 +108,17 @@ function init_extend () {
 }
 
 describe("graphql", () => {
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
         
         init_data();
         init_extend();
     })
 
     it('simple', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -142,7 +142,7 @@ describe("graphql", () => {
     });
 
     it('find', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -172,7 +172,7 @@ describe("graphql", () => {
     });
 
     it('count', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -196,7 +196,7 @@ describe("graphql", () => {
     });
 
     it('paging', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -232,7 +232,7 @@ describe("graphql", () => {
     });
     
     it('paging cannot set query conditions in subfields', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -266,7 +266,7 @@ describe("graphql", () => {
 
     describe('featured graphql quering', () => {
         it('explicit and named query', () => {
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -302,7 +302,7 @@ describe("graphql", () => {
         })
 
         it('alias', () => {
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -342,7 +342,7 @@ describe("graphql", () => {
 
     describe('hasOne', () => {
         it('basic', () => {
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -382,7 +382,7 @@ describe("graphql", () => {
         });
     
         it('hasOne with null', () => {
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -439,7 +439,7 @@ describe("graphql", () => {
                 }
             ]
 
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -471,7 +471,7 @@ describe("graphql", () => {
             });
 
             // paging
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -515,7 +515,7 @@ describe("graphql", () => {
                 "name": "lily"
             }];
 
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -549,7 +549,7 @@ describe("graphql", () => {
             });
 
             // paging
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -595,7 +595,7 @@ describe("graphql", () => {
                 "name": "lily"
             }];
 
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -623,7 +623,7 @@ describe("graphql", () => {
             });
 
             // paging
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -663,7 +663,7 @@ describe("graphql", () => {
                 "name": "jack"
             }];
 
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -691,7 +691,7 @@ describe("graphql", () => {
             });
 
             // paging
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -736,7 +736,7 @@ describe("graphql", () => {
                 }
             ];
             
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -764,7 +764,7 @@ describe("graphql", () => {
             });
             
             // paging
-            var rep = http.post(testSrvInfo.appUrlBase + ``, {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
@@ -800,13 +800,13 @@ describe("graphql", () => {
     });
 
     it("error", () => {
-        http.post(testSrvInfo.serverBase + '/set_session', {
+        http.post(tSrvInfo.serverBase + '/set_session', {
             json: {
                 id: 12345
             }
         });
     
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -828,14 +828,14 @@ describe("graphql", () => {
     });
 
     it('acl field error', () => {
-        http.post(testSrvInfo.serverBase + '/set_session', {
+        http.post(tSrvInfo.serverBase + '/set_session', {
             json: {
                 id: 123457,
                 roles: ['test']
             }
         });
 
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -863,7 +863,7 @@ describe("graphql", () => {
     });
 
     it('json data', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + '/json', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/json', {
             json: {
                 name: 'tom',
                 profile: {
@@ -875,7 +875,7 @@ describe("graphql", () => {
 
         var id = rep.json().id;
 
-        var rep = http.post(testSrvInfo.appUrlBase + ``, {
+        var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
             },
@@ -890,7 +890,7 @@ describe("graphql", () => {
 
         let r = rep.json();
         assert.equal(r.data.json.createdAt.toString().slice(-1), "Z");
-        if (testAppInfo.protocol !== 'mysql')
+        if (tappInfo.protocol !== 'mysql')
             assert.notEqual(new Date(r.data.json.createdAt).getTime() % 1000, 0);
         delete r.data.json.createdAt;
         assert.deepEqual(r, {
@@ -908,7 +908,7 @@ describe("graphql", () => {
 
     it('in batch request: rest/graphql', () => {
         var testName = 'GeziFighter' + Date.now()
-        var rep = http.post(testSrvInfo.appUrlBase + '', {
+        var rep = http.post(tSrvInfo.appUrlBase + '', {
             json: {
                 requests: [
                     {
@@ -957,7 +957,7 @@ describe("graphql", () => {
         assert.equal(createR.id, queryR.id)
 
         assert.equal(queryR.createdAt.toString().slice(-1), "Z");
-        if (testAppInfo.protocol !== 'mysql')
+        if (tappInfo.protocol !== 'mysql')
             assert.notEqual(new Date(queryR.createdAt).getTime() % 1000, 0);
         delete queryR.createdAt;
 

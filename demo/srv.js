@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const app = require('.').getApp();
+const app = require('./test/support/spec_helper').getApp();
 
 const detectPort = require('@fibjs/detect-port');
 

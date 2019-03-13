@@ -7,23 +7,23 @@ const coroutine = require('coroutine');
 
 const { check_result } = require('../../test/_utils');
 
-const testAppInfo = require('../..').getRandomSqliteBasedApp();
-const testSrvInfo = require('../..').mountAppToSrv(testAppInfo.app, {appPath: '/api'});
-testSrvInfo.server.run(() => void 0)
+const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
+const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
+tSrvInfo.server.run(() => void 0)
 
-const serverBase = testSrvInfo.serverBase
+const serverBase = tSrvInfo.serverBase
 const wsBase = serverBase.replace('http://', 'ws://')
 
 describe("chat", () => {
     var cid;
     var uid;
 
-    after(() => testAppInfo.cleanSqliteDB())
+    after(() => tappInfo.utils.cleanLocalDB())
 
     before(() => {
-        testAppInfo.dropModelsSync();
+        tappInfo.utils.dropModelsSync();
 
-        var rep = http.post(testSrvInfo.appUrlBase + '/user', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/user', {
             json: {
                 name: 'lion'
             }
@@ -39,7 +39,7 @@ describe("chat", () => {
     });
 
     it('create room', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + '/chatroom', {
+        var rep = http.post(tSrvInfo.appUrlBase + '/chatroom', {
             json: {
                 name: 'room1'
             }
@@ -49,14 +49,14 @@ describe("chat", () => {
     });
 
     it('post message', () => {
-        var rep = http.post(testSrvInfo.appUrlBase + `/chatroom/${cid}/messages`, {
+        var rep = http.post(tSrvInfo.appUrlBase + `/chatroom/${cid}/messages`, {
             json: {
                 msg: 'hellow, world.'
             }
         });
         var mid = rep.json().id;
 
-        rep = http.get(testSrvInfo.appUrlBase + `/chatroom/${cid}/messages`);
+        rep = http.get(tSrvInfo.appUrlBase + `/chatroom/${cid}/messages`);
         check_result(rep.json(), [{
             "msg": "hellow, world.",
             "id": mid,
@@ -83,7 +83,7 @@ describe("chat", () => {
 
         coroutine.sleep(100);
 
-        http.post(testSrvInfo.appUrlBase + `/chatroom/${cid}/messages`, {
+        http.post(tSrvInfo.appUrlBase + `/chatroom/${cid}/messages`, {
             json: {
                 msg: 'hellow, world. again'
             }
@@ -137,7 +137,7 @@ describe("chat", () => {
         console.time('chat performance');
         coroutine.parallel(() => {
             for (var i = 0; i < 100; i++) {
-                http.post(testSrvInfo.appUrlBase + `/chatroom/${cid}/messages`, {
+                http.post(tSrvInfo.appUrlBase + `/chatroom/${cid}/messages`, {
                     json: {
                         msg: 'hellow, world. ' + i
                     }
