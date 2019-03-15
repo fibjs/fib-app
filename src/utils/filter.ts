@@ -52,7 +52,7 @@ export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmNS.Instance
         return filter(filter_ext(session, robj), acl);
     }
 
-    for (var k in cls.extends) {
+    for (var k in cls.associations) {
         var robj = obj[k];
 
         if (robj === undefined)

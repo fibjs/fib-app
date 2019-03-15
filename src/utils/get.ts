@@ -43,8 +43,8 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
     riobj: FibApp.FibAppInternalCommExtendObj,
     iobj: FibApp.FibAppInternalCommExtendObj
 } {
-    var rel_model = cls.extends[extend];
-    if (rel_model === undefined)
+    var rel_assoc_info = cls.associations[extend];
+    if (rel_assoc_info === undefined)
         return wrap_error(
             err_info(4040001, {
                 classname: extend
@@ -75,19 +75,21 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
     }
 
     var __opt,
-        is_extendsTo = rel_model.type === 'extendsTo',
-        key_model = is_extendsTo ? rel_model.assoc_model : rel_model.model,
-        assoc = get_association_item_by_reltype(rel_model.type, iobj.inst, extend);
+        is_extendsTo = rel_assoc_info.type === 'extendsTo',
+        // key_model = is_extendsTo ? rel_assoc_info.assoc_model : rel_assoc_info.model,
+        rel_type = rel_assoc_info.type,
+        key_model = rel_assoc_info.association.model,
+        assoc = get_association_item_by_reltype(rel_assoc_info.type, iobj.inst, extend);
 
-    switch (rel_model.type) {
+    switch (rel_type) {
         default:
-            throw `invalid rel_model.type ${rel_model.type}`
+            throw `invalid rel_assoc_info.type ${rel_type}`
         case 'extendsTo':
             __opt = assoc.model.find({})
             rid = iobj.inst.id;
             break
         case 'hasOne':
-            if (rel_model.reversed)
+            if (rel_assoc_info.association.reversed)
                 __opt = iobj.inst[assoc.getAccessor].call(iobj.inst);
             else {
                 var rid1 = iobj.inst[Object.keys(assoc.field)[0]];
@@ -98,9 +100,9 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
                         err_info(4040002, {
                             id: rid,
                             classname: `${cls.model_name}.${extend}`
-                        }, rel_model.model.cid)
+                        }, rel_assoc_info.association.model.cid)
                     );
-                __opt = rel_model.model.find();
+                __opt = rel_assoc_info.association.model.find();
             }
             break
         case 'hasMany':

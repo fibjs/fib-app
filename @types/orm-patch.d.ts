@@ -100,6 +100,7 @@ declare namespace FibApp {
         viewServices: FibAppOrmModelViewServiceHash
         no_graphql: boolean
 
+        // @deprecated, use orignal Model's field `associations`
         extends: FibAppOrmModelExtendsInfoHash;
     }
 

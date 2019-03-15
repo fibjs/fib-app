@@ -20,8 +20,8 @@ export function setup(app: FibApp.FibAppClass) {
     const api = app.api;
 
     api.eput = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
-        const rel_model = cls.extends[extend];
-        if (rel_model === undefined)
+        const rel_assoc_info = cls.associations[extend];
+        if (rel_assoc_info === undefined)
             return err_info(4040001, {
                 classname: extend
             });
@@ -59,13 +59,13 @@ export function setup(app: FibApp.FibAppClass) {
     };
 
     api.elink = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
-        const rel_model = cls.extends[extend];
-        if (rel_model === undefined)
+        const rel_assoc_info = cls.associations[extend];
+        if (rel_assoc_info === undefined)
             return err_info(4040001, {
                 classname: extend
             });
         
-        if (rel_model.type === 'extendsTo')
+        if (rel_assoc_info.type === 'extendsTo')
             return api.eput(req, orm, cls, id, extend, undefined, {...data});
 
         const obj = _get(cls, id, req.session, "write");
@@ -82,16 +82,16 @@ export function setup(app: FibApp.FibAppClass) {
             return err_info(4040002, {
                 id: rid,
                 classname: extend
-            }, rel_model.model.cid);
+            }, rel_assoc_info.association.model.cid);
 
-        const robj = _get(rel_model.model, rid, req.session, "read");
+        const robj = _get(rel_assoc_info.association.model, rid, req.session, "read");
         if (robj.error)
             return robj;
             
         ormUtils.attach_internal_api_requestinfo_to_instance(robj.inst, { data: null, req_info: req })
 
         let _opt;
-        switch (rel_model.type) {
+        switch (rel_assoc_info.type) {
             case 'hasOne':
                 _opt = get_one_association_item(obj.inst, extend).setAccessor;
                 break
@@ -112,8 +112,8 @@ export function setup(app: FibApp.FibAppClass) {
     };
 
     api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
-        const rel_model = cls.extends[extend];
-        if (rel_model === undefined)
+        const rel_assoc_info = cls.associations[extend];
+        if (rel_assoc_info === undefined)
             return err_info(4040001, {
                 classname: extend
             });
@@ -140,11 +140,12 @@ export function setup(app: FibApp.FibAppClass) {
             createdBy: ormUtils.get_field_createdby(orm.settings),
         }
 
-        const is_extendsTo = rel_model.type === 'extendsTo';
+        const is_extendsTo = rel_assoc_info.type === 'extendsTo';
         const extendsToAssoc = is_extendsTo ? get_extendsto_association_item(obj.inst, extend) : null;
 
-        const key_model = is_extendsTo ? rel_model.assoc_model : rel_model.model;
-        const _createBy = key_model.extends[spec_keys['createdBy']];
+        // const key_model = is_extendsTo ? rel_assoc_info.assoc_model : rel_assoc_info.association.model;
+        const key_model = rel_assoc_info.association.model;
+        const _createBy = key_model.associations[spec_keys['createdBy']];
         let _opt;
         let ros = [];
         const rextdata_extras: {
@@ -179,7 +180,7 @@ export function setup(app: FibApp.FibAppClass) {
 
             const r_ext_d: any = {};
 
-            for (const k in key_model.extends) {
+            for (const k in key_model.associations) {
                 if (d[k] !== undefined) {
                     r_ext_d[k] = d[k];
 
@@ -206,7 +207,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         if (!key_model.reversed) {
             let _opt: string, assoc: FxOrmAssociation.InstanceAssociationItem
-            switch (rel_model.type) {
+            switch (rel_assoc_info.type) {
                 default:
                     break
                 case 'extendsTo':
@@ -250,15 +251,15 @@ export function setup(app: FibApp.FibAppClass) {
     };
 
     api.efind = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType): FibApp.FibAppApiFunctionResponse => {
-        const rel_model = cls.extends[extend];
-        if (rel_model === undefined)
+        const rel_assoc_info = cls.associations[extend];
+        if (rel_assoc_info === undefined)
             return err_info(4040001, {
                 classname: extend
             });
 
         if (
-            (rel_model.type === 'hasOne' && !rel_model.reversed)
-            || rel_model.type === 'extendsTo'
+            (rel_assoc_info.type === 'hasOne' && !rel_assoc_info.association.reversed)
+            || rel_assoc_info.type === 'extendsTo'
         )
             return api.eget(req, orm, cls, id as FibApp.AppIdType, extend);
 
@@ -277,9 +278,9 @@ export function setup(app: FibApp.FibAppClass) {
         ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         if (!checkout_obj_acl(req.session, 'find', obj.inst, extend))
-            return err_info(4030001, { classname: cls.model_name }, rel_model.model.cid);
+            return err_info(4030001, { classname: cls.model_name }, rel_assoc_info.association.model.cid);
 
-        let _association = get_association_item_by_reltype(rel_model.type, obj.inst, extend);
+        let _association = get_association_item_by_reltype(rel_assoc_info.type, obj.inst, extend);
 
         return {
             success: found_result_selector(
@@ -319,20 +320,21 @@ export function setup(app: FibApp.FibAppClass) {
                         
         ormUtils.attach_internal_api_requestinfo_to_instance(robj.inst, { data: null, req_info: req })
 
-        const rel_model = cls.extends[extend];
+        const rel_assoc_info = cls.associations[extend];
+        const rel_type = rel_assoc_info.type;
 
-        switch (rel_model.type) {
+        switch (rel_type) {
             default:
-                throw `invalid rel_model.type ${rel_model.type}`
+                throw `invalid rel_assoc_info.type ${rel_type}`
             case 'extendsTo': 
                 robj.base[get_extendsto_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
                 break
             case 'hasOne':
-                if (rel_model.reversed)
+                if (rel_assoc_info.association.reversed)
                     return err_info(4040003, {
                         extend: extend,
-                        classname: rel_model.model.model_name
-                    }, rel_model.model.cid);
+                        classname: rel_assoc_info.association.model.model_name
+                    }, rel_assoc_info.association.model.cid);
 
                 robj.base[get_one_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
                 break
