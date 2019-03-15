@@ -29,7 +29,7 @@ export function setup (app: FibApp.FibAppClass) {
             createdBy: ormUtils.get_field_createdby(orm.settings),
         }
         
-        const _createBy = cls.extends[spec_keys['createdBy']];
+        const _createBy = cls.associations[spec_keys['createdBy']];
         let _opt;
         let instances = [];
         const extdata_list = [];
@@ -39,7 +39,7 @@ export function setup (app: FibApp.FibAppClass) {
             d = filter(d, acl);
 
             const ext_d = {};
-            for (const k in cls.extends) {
+            for (const k in cls.associations) {
                 if (d[k] !== undefined) {
                     ext_d[k] = d[k];
                     if (delr)
@@ -110,7 +110,7 @@ export function setup (app: FibApp.FibAppClass) {
         const rdata = {};
 
         let delr = !orm.settings.get(`rest.model.keep_association.put.${cls.model_name}`)
-        for (const k in cls.extends) {
+        for (const k in cls.associations) {
             const r = data[k];
 
             if (r !== undefined) {

@@ -165,15 +165,15 @@
 <g id="edge7" class="edge">
 <title>people&#45;&gt;people</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M596.2273,-343.0467C646.4969,-346.3878 709.024,-344.2056 709.024,-336.5 709.024,-329.3061 654.5255,-326.9264 606.3822,-329.3607"/>
-<polygon fill="none" stroke="#000000" points="606.0064,-325.8766 596.2273,-329.9533 606.4142,-332.8647 606.0064,-325.8766"/>
-<text text-anchor="middle" x="717.912" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">wife</text>
+<polygon fill="#000000" stroke="#000000" points="606.0064,-325.8766 596.2273,-329.9533 606.4142,-332.8647 606.0064,-325.8766"/>
+<text text-anchor="middle" x="730.701" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">husbands</text>
 </g>
 <!-- people&#45;&gt;people -->
 <g id="edge8" class="edge">
 <title>people&#45;&gt;people</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M596.0144,-344.1753C652.9905,-349.0578 727.024,-346.4994 727.024,-336.5 727.024,-327.0865 661.4121,-324.2675 606.1871,-328.0431"/>
-<polygon fill="#000000" stroke="#000000" points="605.7168,-324.5688 596.0144,-328.8247 606.2531,-331.5482 605.7168,-324.5688"/>
-<text text-anchor="middle" x="748.701" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">husbands</text>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M596.1354,-343.8579C660.5674,-349.162 752.378,-346.7094 752.378,-336.5 752.378,-326.8091 669.6551,-324.1071 606.1474,-328.3941"/>
+<polygon fill="none" stroke="#000000" points="605.8468,-324.9067 596.1354,-329.1421 606.3684,-331.8872 605.8468,-324.9067"/>
+<text text-anchor="middle" x="761.266" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">wife</text>
 </g>
 <!-- people&#45;&gt;people -->
 <g id="edge9" class="edge">
@@ -187,14 +187,14 @@
 <title>people&#45;&gt;people</title>
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M596.2088,-345.6353C674.8973,-354.5363 795.934,-351.4912 795.934,-336.5 795.934,-322.1529 685.0754,-318.7474 606.5739,-326.2835"/>
 <polygon fill="#000000" stroke="#000000" points="605.7917,-322.846 596.2088,-327.3647 606.518,-329.8082 605.7917,-322.846"/>
-<text text-anchor="middle" x="810.936" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">friends</text>
+<text text-anchor="middle" x="820.38" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">my_friends</text>
 </g>
 <!-- people&#45;&gt;people -->
 <g id="edge11" class="edge">
 <title>people&#45;&gt;people</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M595.9961,-346.2472C683.5799,-357.2598 825.938,-354.0107 825.938,-336.5 825.938,-319.6391 693.9495,-316.001 605.9628,-325.5857"/>
-<polygon fill="#000000" stroke="#000000" points="605.5211,-322.1134 595.9961,-326.7528 606.3353,-329.0659 605.5211,-322.1134"/>
-<text text-anchor="middle" x="850.384" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">my_friends</text>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M596.0535,-346.0476C688.0761,-357.2983 844.826,-354.1157 844.826,-336.5 844.826,-319.5036 698.9039,-315.9434 605.9894,-325.8193"/>
+<polygon fill="#000000" stroke="#000000" points="605.5925,-322.3418 596.0535,-326.9524 606.3857,-329.2967 605.5925,-322.3418"/>
+<text text-anchor="middle" x="859.828" y="-333.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">friends</text>
 </g>
 <!-- level -->
 <g id="node7" class="node">

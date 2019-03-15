@@ -209,7 +209,7 @@ export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: Fi
         acl = checkout_acl(session, act, cls.ACL, extend);
 
     if (act === 'read' && Array.isArray(acl))
-        acl = acl.concat(Object.keys(cls.extends));
+        acl = acl.concat(Object.keys(cls.associations));
 
     return acl;
 }
@@ -233,7 +233,7 @@ export const checkout_robj_acl = function (session: FibApp.FibAppSession, act: F
         acl = checkout_acl(session, act, rcls.ACL);
 
     if (act === 'read' && Array.isArray(acl))
-        acl = acl.concat(Object.keys(rcls.extends));
+        acl = acl.concat(Object.keys(rcls.associations));
 
     return acl;
 }

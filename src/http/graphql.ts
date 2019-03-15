@@ -226,33 +226,33 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                         type: type
                     };
                 }
-                var _extends = m.extends;
+                var _associations = m.associations;
 
-                for (var f in _extends) {
-                    var rel_model: FibApp.ExtendModelWrapper = _extends[f];
-                    if (rel_model.type !== 'extendsTo' && !rel_model.model) {
-                        throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_model, null, '\t')}`
+                for (var f in _associations) {
+                    var rel_assoc_info = _associations[f];
+                    if (rel_assoc_info.type !== 'extendsTo' && !rel_assoc_info.association.model) {
+                        throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_assoc_info, null, '\t')}`
                     }
 
-                    switch (rel_model.type) {
+                    switch (rel_assoc_info.type) {
                         default:
                             break
                         case 'extendsTo':
                             fields[f] = {
-                                type: types[rel_model.assoc_model.model_name].type,
+                                type: types[rel_assoc_info.association.model.model_name].type,
                                 resolve: eget_resolve(m, f)
                             };
                             break
                         case 'hasOne':
-                            if (!rel_model.reversed) {
+                            if (!rel_assoc_info.association.reversed) {
                                 fields[f] = {
-                                    type: types[rel_model.model.model_name].type,
+                                    type: types[rel_assoc_info.association.model.model_name].type,
                                     resolve: eget_resolve(m, f)
                                 };
                                 break
                             }
                         case 'hasMany': {
-                            let type_has_many = new graphql.GraphQLList(types[rel_model.model.model_name].type)
+                            let type_has_many = new graphql.GraphQLList(types[rel_assoc_info.association.model.model_name].type)
                             let type_has_many_mixin_extra = null
 
                             let has_many_association = null
@@ -264,7 +264,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                                     type_has_many = new graphql.GraphQLList(
                                         new graphql.GraphQLObjectType({
                                             name: `${m.model_name}__${f}__aloneExtraWrapper`,
-                                            fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_model.model, true)),
+                                            fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_assoc_info.association.model as FibApp.FibAppORMModel, true)),
                                         })
                                     )
 
@@ -272,7 +272,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                                     type_has_many_mixin_extra = new graphql.GraphQLList(
                                         new graphql.GraphQLObjectType({
                                             name: `${m.model_name}__${f}__mixinExtraWrapper`,
-                                            fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_model.model, true)),
+                                            fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_assoc_info.association.model as FibApp.FibAppORMModel, true)),
                                         })
                                     )
                                 }
@@ -284,7 +284,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                                 resolve: efind_many_resolve(m, f)
                             };
 
-                            var extend_paging_uname = get_extend_paging_unique_name(m, rel_model, f) 
+                            var extend_paging_uname = get_extend_paging_unique_name(m, rel_assoc_info, f) 
                             fields[`paging_${f}`] = {
                                 type: (
                                     /**
@@ -386,9 +386,14 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     return ormInstance;
 };
 
-function get_extend_paging_unique_name (m: FibOrmNS.Model, rel_model: FibApp.ExtendModelWrapper, extend: string) {
-    if (rel_model.type === 'hasOne' && rel_model.reversed)
-        return `extend_paging__reverse_${rel_model.model.model_name}_${rel_model.type}_${extend}_${m.model_name}`
+function get_extend_paging_unique_name (
+    m: FibApp.FibAppORMModel,
+    rel_assoc_info: FxOrmModel.Model['associations'][string],
+    extend: string
+) {
+    const assoc = rel_assoc_info.association
+    if (rel_assoc_info.type === 'hasOne' && rel_assoc_info.association.reversed)
+        return `extend_paging__reverse_${rel_assoc_info.association.model.model_name}_${rel_assoc_info.type}_${extend}_${m.model_name}`
     
-    return `extend_paging__${m.model_name}_${rel_model.type}_${extend}_${rel_model.model.model_name}`
+    return `extend_paging__${m.model_name}_${rel_assoc_info.type}_${extend}_${rel_assoc_info.association.model.model_name}`
 }
