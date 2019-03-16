@@ -1,7 +1,18 @@
 
-v1.13.24 / 2019-03-07
+v1.13.25 / 2019-03-16
 ==================
 
+  * support use `join_where` option in query for has-many assoc.
+  * apply model's field `associations`.
+  * normalize test case code.
+  * make mysql as default test driver; fix error of test case in mysql.
+  * 1.13.25-dev
+  * upgrade @fxjs/orm. apply its feature about literal where conditions.
+
+v1.13.24 / 2019-03-07
+=====================
+
+  * Release v1.13.24
   * code clean.
   * code clean.
   * fix error when generating diagram with `extendsTo` association type.
