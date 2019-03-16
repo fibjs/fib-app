@@ -1,27 +1,40 @@
 /// <reference lib="es2017" />
 
 import util = require('util');
-import { get_many_association_item, get_one_association_item, get_extendsto_association_item } from './orm-assoc';
+import  ORM = require('@fxjs/orm');
+const Helpers = ORM.Helpers;
+
 import { checkout_acl } from './checkout_acl';
 import { ucfirst } from './str';
 
-export function query_filter_where (query: FibApp.FibAppReqQuery) {
-    var where = query.where;
+export function query_filter_where (req: FibApp.FibAppReq) {
+    var where = parse_json_queryarg(req, 'where');
 
     where = where || {};
 
     return where
 }
 
-interface FindByFilteredInfo {
+export function query_filter_join_where (req: FibApp.FibAppReq) {
+    var join_where = parse_json_queryarg(req, 'join_where');
+
+    join_where = join_where || {};
+
+    return join_where
+}
+
+export function query_filter_findby (
+    findby: FibApp.FibAppReqQuery['findby'],
+    exec_model: FxOrmModel.Model,
+    opts: {
+        pre_exec?: FxOrmNS.IChainFind
+        req: FibApp.FibAppReq
+    }
+): {
     exists: FxOrmQuery.ChainWhereExistsInfo[] | null
     findby_infos: FibApp.FilteredFindByInfo[]
-}
-export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], base_model: FibApp.FibAppORMModel, opts: {
-    pre_exec?: FxOrmNS.IChainFind
-    req: FibApp.FibAppReq
-}): FindByFilteredInfo {
-    const { req, pre_exec = null } = opts
+} {
+    const { req } = opts
 
     const __wrapper = { exists: null, findby_infos: [] }
 
@@ -29,74 +42,79 @@ export function query_filter_findby (findby: FibApp.FibAppReqQuery['findby'], ba
 
     if (!findby.extend || typeof findby.extend !== 'string') return __wrapper;
 
-    let hasmany_assoc: FxOrmNS.InstanceAssociationItem_HasMany;
     let found_assoc: FxOrmAssociation.InstanceAssociationItem;
     
-    const base_instance = new base_model()
+    const exec_instance = new exec_model()
 
-    if (
-        findby.on
-        && (found_assoc = hasmany_assoc = get_many_association_item(base_instance, findby.extend))
-    ) {
-        // TODO: make sure order of mg_ks is corresponding to mks
-        const mg_ks = Object.values(hasmany_assoc.mergeId).map(x => x.mapsTo);
-        const mks = base_model.id;
+    ;(() => {
+        if (
+            findby.on
+            && (found_assoc = Helpers.getManyAssociationItemFromInstanceByExtname(exec_instance, findby.extend))
+        ) {
+            const hasmany_assoc = found_assoc as FxOrmNS.InstanceAssociationItem_HasMany;
 
-        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
+            // TODO: make sure order of mg_ks is corresponding to mks
+            const mg_ks = Object.values(hasmany_assoc.mergeId).map(x => x.mapsTo);
+            const mks = exec_model.id;
 
-        /**
-         * @description code below means 'support single key only'
-         */
-        // const mg_assocks = Object.values(hasmany_assoc.mergeAssocId).map(x => x.mapsTo);
-        // if (mg_assocks.length !== 1 || mks.length !== 1) return __wrapper;
+            if (!checkout_acl(req.session, 'find', exec_model.ACL, findby.extend)) return ;
 
-        __wrapper.exists = [
-            {
-                table: hasmany_assoc.mergeTable,
-                link: [ mg_ks, mks ],
-                conditions: findby.on
-            }
-        ];
-
-        __wrapper.exists = convert_exists(__wrapper.exists)
-    } else if (
-        findby.where
-        && (
-            (found_assoc = get_one_association_item(base_instance, findby.extend))
-            ||
-            (found_assoc = get_extendsto_association_item(base_instance, findby.extend))
-        )
-    ) {
-        let findby_conditions = findby.where
-        if (!filter_conditions(findby_conditions)) return __wrapper;
-
-        if (!checkout_acl(req.session, 'find', base_model.ACL, findby.extend)) return __wrapper;
-
-        let accessor_fn = null ,
-            accessor_name = null,
-            accessor_payload = null;
+            /**
+             * @description code below means 'support single key only'
+             */
+            const exists_conditions = findby.on
+            if (!filter_conditions(exists_conditions)) return ;
             
-        const findby_accessor_name = found_assoc.modelFindByAccessor || `findBy${ucfirst(findby.extend)}`;
+            __wrapper.exists = [
+                {
+                    table: hasmany_assoc.mergeTable,
+                    link: [ mg_ks, mks ],
+                    conditions: exists_conditions
+                }
+            ];
 
-        ;[
-            base_model
-        ].forEach(test_payload => {
-            if (accessor_name)
-                return ;
+            __wrapper.exists = convert_exists(__wrapper.exists)
+        }
+    })();
+
+    ;(() => {
+        if (
+            findby.where
+            && (
+                (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('hasOne', exec_instance, findby.extend))
+                || (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('hasMany', exec_instance, findby.extend))
+                || (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('extendsTo', exec_instance, findby.extend))
+            )
+        ) {
+            const findby_conditions = findby.where
+            if (!filter_conditions(findby_conditions)) return ;
+
+            if (!checkout_acl(req.session, 'find', exec_model.ACL, findby.extend)) return ;
+
+            let accessor_fn = null ,
+                accessor_name = null,
+                accessor_payload = null;
+                
+            const findby_accessor_name = found_assoc.modelFindByAccessor || `findBy${ucfirst(findby.extend)}`;
+
+            ;[ exec_model ].forEach(test_payload => {
+                if (accessor_name)
+                    return ;
+                
+                accessor_fn = test_payload[findby_accessor_name]
+                if (typeof accessor_fn === 'function') {
+                    accessor_payload = test_payload
+                    accessor_name = findby_accessor_name
+                }
+            });
             
-            accessor_fn = test_payload[findby_accessor_name]
-            if (typeof accessor_fn === 'function') {
-                accessor_payload = test_payload
-                accessor_name = findby_accessor_name
-            }
-        });
-        
-        __wrapper.findby_infos.push({
-            accessor: accessor_name,
-            accessor_payload: accessor_payload,
-            conditions: findby_conditions
-        })
-    }
+            __wrapper.findby_infos.push({
+                accessor: accessor_name,
+                accessor_payload: accessor_payload,
+                conditions: findby_conditions
+            })
+        }
+    })();
     
     return __wrapper
 }
@@ -117,6 +135,18 @@ export function query_filter_limit (query: FibApp.FibAppReqQuery) {
     return limit
 }
 
+export function query_filter_order (query: FibApp.FibAppReqQuery): string[] {
+    let order_list = [] as string[]
+    var order = query.order;
+    if (order !== undefined) {
+        order = order || ''
+            
+        order_list = order.split(',').filter(x => x)
+    }
+    
+    return order_list;
+}
+
 export function is_count_required (query: FibApp.FibAppReqQuery) {
     if (!query)
         return false
@@ -128,7 +158,10 @@ export function found_result_selector (result: FibApp.FibAppIneternalApiFindResu
     return fetch_field ? result[fetch_field] : result
 }
 
-function convert_exists (exists: FibApp.ReqWhereExists) {
+function convert_exists (
+    exists: FibApp.ReqWhereExists,
+    is_allow_empty_link: boolean = false
+) {
     if (!Array.isArray(exists))
         exists = []
 
@@ -136,7 +169,12 @@ function convert_exists (exists: FibApp.ReqWhereExists) {
         if (!exist_item) return false;
         if (!exist_item.table || typeof exist_item.table !== 'string') return false;
 
-        if (!filter_exist_item_link(exist_item)) return false;
+        if (!filter_exist_item_link(exist_item)) {
+            if (!is_allow_empty_link)
+                return false;
+
+            exist_item.link = [[], []];
+        }
 
         if (!filter_conditions(exist_item.conditions)) return false;
 
@@ -144,19 +182,20 @@ function convert_exists (exists: FibApp.ReqWhereExists) {
     })
 };
 
-export function parse_findby (req: FibApp.FibAppReq): FibApp.FibAppReqQuery['findby'] | null {
-    const query = req.query;
-
-    var findby: FibApp.FibAppReqQuery['findby'] = (query.findby || null)
-    if (typeof findby === 'string') {
+export function parse_json_queryarg <T> (
+    req: FibApp.FibAppReq,
+    k: 'findby' | 'join_where' | 'where'
+): T | null {
+    var parsed: any = (req.query[k] || null)
+    if (typeof parsed === 'string') {
         try {
-            findby = JSON.parse(findby)
+            parsed = JSON.parse(parsed)
         } catch (e) {
-            findby = null;
+            parsed = null;
         }
     }
 
-    return findby;
+    return parsed;
 }
 
 // internal helper function for `filter_exist_item_link`
@@ -178,8 +217,8 @@ function filter_exist_item_link (exist_item: FxOrmQuery.ChainWhereExistsInfo) {
     const link_list = filter_link_tuple(exist_item.link)
 
     /**
-     * tuple1: ['t1_assocf', 't2_assocf']
-     * tuple2: [
+     * exist_item.link: ['t1_assocf', 't2_assocf']
+     * exist_item.link: [
      *      ['t1_assocf1', 't1_assocf2'],
      *      ['t2_assocf1', 't2_assocf2'],
      * ]
@@ -189,8 +228,8 @@ function filter_exist_item_link (exist_item: FxOrmQuery.ChainWhereExistsInfo) {
     
     if (Array.isArray(link_list[0])) {
         link_list[0] = filter_link_tuple(link_list[0])
-        
         if (link_list[0].length === 0) return false;
+
         link_list[1] = filter_link_tuple(link_list[1])
         if (link_list[1].length === 0) return false;
 
@@ -205,7 +244,9 @@ function filter_exist_item_link (exist_item: FxOrmQuery.ChainWhereExistsInfo) {
     return link_list
 }
 
-function filter_conditions (conditions: FxSqlQuerySubQuery.SubQueryConditions) {
+function filter_conditions (
+    conditions: FxSqlQuerySubQuery.SubQueryConditions
+) {
     if (!conditions) return false;
 
     if (util.isArray(conditions)) return false;
@@ -214,4 +255,10 @@ function filter_conditions (conditions: FxSqlQuerySubQuery.SubQueryConditions) {
     if (!Object.keys(conditions).length) return false;
 
     return conditions
+}
+
+function find_date_property_keys_from_property_hash (hash: FxOrmProperty.NormalizedPropertyHash) {
+    return Object.keys(hash).filter(pname => {
+        return hash[pname].type === 'date'
+    })
 }

@@ -17,15 +17,7 @@ export default function (orm, plugin_opts): FxOrmNS.Plugin {
         });
     }
 
-    // const beforeAddAssociatedProperty: FxOrmNS.Plugin['beforeAddAssociatedProperty'] = function (
-    //     params, assoc_opts, status
-    // ) {
-    //     if (params.association_name !== 'createdBy')
-    //         return ;
-    // }
-
     return {
-        beforeDefine,
-        // beforeAddAssociatedProperty
+        beforeDefine
     }
 }

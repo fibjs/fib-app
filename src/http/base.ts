@@ -1,5 +1,8 @@
 /// <reference types="@fxjs/orm" />
 
+import ORM = require('@fxjs/orm');
+const Helpers = ORM.Helpers;
+
 import { err_info } from '../utils/err_info';
 import _find = require('../utils/find');
 
@@ -7,7 +10,6 @@ import { filter, filter_ext } from '../utils/filter';
 import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
-import { get_one_association_item } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
 function map_ro_result (ro: FxOrmInstance.Instance) {
@@ -50,7 +52,7 @@ export function setup (app: FibApp.FibAppClass) {
 
             const o: FxOrmNS.Instance = ormUtils.create_instance_for_internal_api(cls, {data: d, req_info: req})
             if (_createBy !== undefined) {
-                _opt = Object.keys(get_one_association_item(o, spec_keys['createdBy']).field)[0];
+                _opt = Object.keys(Helpers.getOneAssociationItemFromInstanceByExtname(o, spec_keys['createdBy']).field)[0];
                 o[_opt] = req.session.id;
             }
             o.saveSync();
@@ -154,7 +156,10 @@ export function setup (app: FibApp.FibAppClass) {
             return err_info(4030001, {classname: cls.model_name}, cls.cid);
         
         return {
-            success: found_result_selector(_find(req, cls.find()), !is_count_required(req.query) ? 'results' : '') 
+            success: found_result_selector(
+                _find(req, cls.find.bind(cls), {bmodel: cls}),
+                !is_count_required(req.query) ? 'results' : ''
+            )
         }
     };
 }

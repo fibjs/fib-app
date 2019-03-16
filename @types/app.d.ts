@@ -25,6 +25,7 @@ declare namespace FibApp {
     // constant type
     interface FibAppApiCommnPayload_hasManyArgs {
         where: { type: Function }
+        join_where: { type: Function }
         findby: { type: Function }
         skip: { type: Function }
         limit: { type: Function }
@@ -210,7 +211,7 @@ declare namespace FibApp {
 
     interface FibAppReqQuery {
         where?: string | FibApp.ReqWhere
-        // findby?: FibApp.ReqFindByItem|FibApp.ReqFindByItem[]
+        join_where?: FibApp.ReqWhere
         findby?: FibApp.ReqFindByItem
         keys?: string | string[]
         skip?: number

@@ -13,7 +13,19 @@ module.exports = orm => {
 	
 	Level.hasOne('one_sl', SubLevel, {})
 
-	Level.hasMany('many_sublevels', SubLevel, {}, {})
+	Level.hasMany('many_sublevels', SubLevel, {
+		since: {
+			type: 'date',
+			time: true
+		}
+	}, {
+		// hooks: {
+		// 	beforeSave (extra, next) {
+		// 		console.log('extra', extra, next)
+		// 		next()
+		// 	}
+		// }
+	})
 
 	Level.extendsTo('lproperty', {
 		name: String,
