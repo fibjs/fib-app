@@ -1,7 +1,7 @@
 import util = require('util')
 
 import { debugFunctionWrapper } from '../utils/debug';
-import { check_hasmany_extend_extraprops } from '../utils/orm-assoc';
+import { check_hasmanyassoc_with_extraprops } from '../utils/orm-assoc';
 
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
@@ -21,6 +21,9 @@ const TypeMap = {
 
 const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
     where: {
+        type: GraphQLJSON
+    },
+    join_where: {
         type: GraphQLJSON
     },
     findby: {
@@ -234,37 +237,39 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                         throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_assoc_info, null, '\t')}`
                     }
 
+                    const assoc_model = rel_assoc_info.association.model;
+
                     switch (rel_assoc_info.type) {
                         default:
                             break
                         case 'extendsTo':
                             fields[f] = {
-                                type: types[rel_assoc_info.association.model.model_name].type,
+                                type: types[assoc_model.model_name].type,
                                 resolve: eget_resolve(m, f)
                             };
                             break
                         case 'hasOne':
                             if (!rel_assoc_info.association.reversed) {
                                 fields[f] = {
-                                    type: types[rel_assoc_info.association.model.model_name].type,
+                                    type: types[assoc_model.model_name].type,
                                     resolve: eget_resolve(m, f)
                                 };
                                 break
                             }
                         case 'hasMany': {
-                            let type_has_many = new graphql.GraphQLList(types[rel_assoc_info.association.model.model_name].type)
+                            let type_has_many = new graphql.GraphQLList(types[assoc_model.model_name].type)
                             let type_has_many_mixin_extra = null
 
                             let has_many_association = null
                             
                             if (!no_extra_fields) {
-                                has_many_association = check_hasmany_extend_extraprops((new m()), f)
+                                has_many_association = check_hasmanyassoc_with_extraprops((new m()), f)
                                 if (has_many_association) {
                                     // hasMany-assoc-style result: alone mode(recommendation)
                                     type_has_many = new graphql.GraphQLList(
                                         new graphql.GraphQLObjectType({
                                             name: `${m.model_name}__${f}__aloneExtraWrapper`,
-                                            fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(rel_assoc_info.association.model as FibApp.FibAppORMModel, true)),
+                                            fields: get_fields_hasmanyextra_alone(m, f, has_many_association, get_fields(assoc_model as FibApp.FibAppORMModel, true)),
                                         })
                                     )
 
@@ -272,7 +277,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                                     type_has_many_mixin_extra = new graphql.GraphQLList(
                                         new graphql.GraphQLObjectType({
                                             name: `${m.model_name}__${f}__mixinExtraWrapper`,
-                                            fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(rel_assoc_info.association.model as FibApp.FibAppORMModel, true)),
+                                            fields: get_fields_hasmanyextra_mixins(m, has_many_association, get_fields(assoc_model as FibApp.FibAppORMModel, true)),
                                         })
                                     )
                                 }
@@ -391,7 +396,6 @@ function get_extend_paging_unique_name (
     rel_assoc_info: FxOrmModel.Model['associations'][string],
     extend: string
 ) {
-    const assoc = rel_assoc_info.association
     if (rel_assoc_info.type === 'hasOne' && rel_assoc_info.association.reversed)
         return `extend_paging__reverse_${rel_assoc_info.association.model.model_name}_${rel_assoc_info.type}_${extend}_${m.model_name}`
     

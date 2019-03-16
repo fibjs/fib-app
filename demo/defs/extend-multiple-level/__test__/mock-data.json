@@ -20,13 +20,22 @@
 		],
 		"many_sublevels": [
 			{
-				"name": "many_sublevels:name"
+				"name": "many_sublevels1:name",
+				"extra": {
+					"since": "2019-03-06T00:00:16.000Z"
+				}
 			},
 			{
-				"name": "many_sublevels2:name"
+				"name": "many_sublevels2:name",
+				"extra": {
+					"since": "2019-03-06T00:00:17.000Z"
+				}
 			},
 			{
-				"name": "many_sublevels3:name"
+				"name": "many_sublevels3:name",
+				"extra": {
+					"since": "2019-03-06T00:00:18.000Z"
+				}
 			}
 		],
 		"lproperty": {

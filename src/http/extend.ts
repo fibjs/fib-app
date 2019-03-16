@@ -1,12 +1,16 @@
+import util = require('util');
+import ORM = require('@fxjs/orm');
+const Helpers = ORM.Helpers;
+
 import _find = require('../utils/find');
 import { err_info } from '../utils/err_info';
-import util = require('util');
+import ormUtils = require('../utils/orm');
 
 import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
-import ormUtils = require('../utils/orm');
-import { get_many_association_item, get_one_association_item, check_hasmany_extend_extraprops, extra_save, get_extendsto_association_item, get_extendsto_associations, get_association_item_by_reltype } from '../utils/orm-assoc';
+
+import { check_hasmanyassoc_with_extraprops, extra_save } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 
 function map_ro_result(ro: FxOrmInstance.Instance) {
@@ -44,7 +48,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         if (data.extra && util.isObject(data.extra)) {
             riobj.inst['extra'] = data.extra
-            const many_assoc = check_hasmany_extend_extraprops(iobj.inst, extend)
+            const many_assoc = check_hasmanyassoc_with_extraprops(iobj.inst, extend)
             if (many_assoc) {
                 extra_save(iobj.inst, riobj.inst, many_assoc, data.extra, true)
             }
@@ -93,13 +97,19 @@ export function setup(app: FibApp.FibAppClass) {
         let _opt;
         switch (rel_assoc_info.type) {
             case 'hasOne':
-                _opt = get_one_association_item(obj.inst, extend).setAccessor;
+                _opt = Helpers.getOneAssociationItemFromInstanceByExtname(obj.inst, extend).setAccessor;
                 break
             case 'hasMany':
+                _opt = Helpers.getManyAssociationItemFromInstanceByExtname(obj.inst, extend).addAccessor;
             default:
-                _opt = get_many_association_item(obj.inst, extend).addAccessor;
                 break
         }
+
+        if (!_opt)
+            return err_info(4040003, {
+                extend: extend,
+                classname: cls.model_name,
+            }, rel_assoc_info.association.model.cid);
 
         obj.inst[_opt + 'Sync'].call(obj.inst, robj.inst);
 
@@ -141,9 +151,7 @@ export function setup(app: FibApp.FibAppClass) {
         }
 
         const is_extendsTo = rel_assoc_info.type === 'extendsTo';
-        const extendsToAssoc = is_extendsTo ? get_extendsto_association_item(obj.inst, extend) : null;
 
-        // const key_model = is_extendsTo ? rel_assoc_info.assoc_model : rel_assoc_info.association.model;
         const key_model = rel_assoc_info.association.model;
         const _createBy = key_model.associations[spec_keys['createdBy']];
         let _opt;
@@ -156,7 +164,7 @@ export function setup(app: FibApp.FibAppClass) {
         function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
 
-            const extra_many_assoc = check_hasmany_extend_extraprops(obj.inst, extend) || null
+            const extra_many_assoc = check_hasmanyassoc_with_extraprops(obj.inst, extend) || null
             rextdata_extras.push({ extra_many_assoc, extra: d.extra || null })
             delete d.extra
 
@@ -166,7 +174,7 @@ export function setup(app: FibApp.FibAppClass) {
             })
 
             if (_createBy !== undefined) {
-                _opt = Object.keys(get_one_association_item(ro, spec_keys['createdBy']).field)[0];
+                _opt = Object.keys(Helpers.getOneAssociationItemFromInstanceByExtname(ro, spec_keys['createdBy']).field)[0];
                 ro[_opt] = req.session.id;
             }
 
@@ -175,7 +183,6 @@ export function setup(app: FibApp.FibAppClass) {
                 obj.inst.saveSync();
             } else if (!is_extendsTo) {
                 ro.saveSync();
-            } else {
             }
 
             const r_ext_d: any = {};
@@ -206,20 +213,18 @@ export function setup(app: FibApp.FibAppClass) {
             ros = [_create(data)];
 
         if (!key_model.reversed) {
-            let _opt: string, assoc: FxOrmAssociation.InstanceAssociationItem
+            let _opt: string,
+                assoc: FxOrmAssociation.InstanceAssociationItem = Helpers.getAssociationItemFromInstanceByExtname(rel_assoc_info.type, obj.inst, extend)
             switch (rel_assoc_info.type) {
                 default:
                     break
                 case 'extendsTo':
-                    assoc = extendsToAssoc
                     _opt = assoc.setAccessor;
                     break
                 case 'hasOne':
-                    assoc = get_one_association_item(obj.inst, extend)
                     _opt = assoc.setAccessor;
                     break
                 case 'hasMany':
-                    assoc = get_many_association_item(obj.inst, extend)
                     _opt = assoc.addAccessor;
                     break
             }
@@ -280,15 +285,18 @@ export function setup(app: FibApp.FibAppClass) {
         if (!checkout_obj_acl(req.session, 'find', obj.inst, extend))
             return err_info(4030001, { classname: cls.model_name }, rel_assoc_info.association.model.cid);
 
-        let _association = get_association_item_by_reltype(rel_assoc_info.type, obj.inst, extend);
+        const _association = Helpers.getAssociationItemFromInstanceByExtname(rel_assoc_info.type, obj.inst, extend);
 
         return {
             success: found_result_selector(
                 _find(
                     req,
-                    obj.inst[_association.getAccessor].call(obj.inst).find(),
-                    obj.inst,
-                    extend
+                    obj.inst[_association.getAccessor].bind(obj.inst),
+                    {
+                        bmodel: obj.inst.model(),
+                        binstance: obj.inst,
+                        extend
+                    }
                 ),
                 !is_count_required(req.query) ? 'results' : ''
             ) 
@@ -327,7 +335,7 @@ export function setup(app: FibApp.FibAppClass) {
             default:
                 throw `invalid rel_assoc_info.type ${rel_type}`
             case 'extendsTo': 
-                robj.base[get_extendsto_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
+                robj.base[Helpers.getExtendsToAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
                 break
             case 'hasOne':
                 if (rel_assoc_info.association.reversed)
@@ -336,10 +344,10 @@ export function setup(app: FibApp.FibAppClass) {
                         classname: rel_assoc_info.association.model.model_name
                     }, rel_assoc_info.association.model.cid);
 
-                robj.base[get_one_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
+                robj.base[Helpers.getOneAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
                 break
             case 'hasMany': 
-                robj.base[get_many_association_item(robj.base, extend).delAccessor + 'Sync'].call(robj.base, robj.inst);
+                robj.base[Helpers.getManyAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base, robj.inst);
                 break
         }
 

@@ -1,9 +1,11 @@
 /// <reference path="../../@types/index.d.ts" />
 
 import util = require('util');
+import  ORM = require('@fxjs/orm');
+const Helpers = ORM.Helpers;
+
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
-import { get_association_item_by_reltype } from './orm-assoc';
 
 export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj: FibApp.FibAppInternalCommObj = {
@@ -79,7 +81,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
         // key_model = is_extendsTo ? rel_assoc_info.assoc_model : rel_assoc_info.model,
         rel_type = rel_assoc_info.type,
         key_model = rel_assoc_info.association.model,
-        assoc = get_association_item_by_reltype(rel_assoc_info.type, iobj.inst, extend);
+        assoc = Helpers.getAssociationItemFromInstanceByExtname(rel_assoc_info.type, iobj.inst, extend);
 
     switch (rel_type) {
         default:

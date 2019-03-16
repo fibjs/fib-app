@@ -10,6 +10,7 @@ declare namespace FibApp {
         extend: string
         on?: FxSqlQuerySubQuery.SubQueryConditions
         where?: FxSqlQuerySubQuery.SubQueryConditions
+        options?: FxOrmModel.ModelOptions__Findby
     }
 
     interface FilteredFindByInfo<T = any> {

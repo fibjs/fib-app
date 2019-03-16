@@ -362,14 +362,14 @@ curl -X GET http://localhost/1.0/pet/57fbbdb0a2400007/owners
 
 #### findby 过滤条件
 
-**Started From 1.13.20**
+**Started From 1.13.20, >= 1.13.25 Recommended**
 
 通过 `findby` 参数的形式可以对查询对象做出约束。和 `where` 一样, `findby` 参数的值应该是被 JSON 编码又经过 url 编码的的。
 
 参数包含的选项含义如下
-- `findby.extend` 是由 orm 定义时的 `hasOne`, `hasMany` 关联关系. 如 extend 描述的**关联关系**对该**基础对象**而言不存在, 则该 `findby` 条件实际上不会生效.
-- `findby.where`: 只适用于 `hasOne` 关系. 与[基础的 where](#where-选项) 含义一致. 
-- `findby.on`: 只适用于 `hasMany` 关系. 与[基础的 where](#where-选项) 含义一致, 但其 key 只能是关联关系中的字段, 而不能是被关联中的对象中的字段.
+- `findby.extend` 是由 orm 定义时的 `hasOne`, `hasMany`, `extendsTo` 关联关系. 如 extend 描述的**关联关系**对该**基础对象**而言不存在, 则该 `findby` 条件实际上不会生效.
+- `findby.where`: <del>只适用于 `hasOne` 关系</del> 适用于所有的扩展关系. 与[基础的 where](#where-选项) 含义一致. 
+- `findby.on`: 只适用于 `hasMany` 关系. 与[基础的 where](#where-选项) 含义一致, 但其 key 只能是关联关系中的字段, 而不能是被关联中的对象中的字段. 推荐使用功能更为完备的 `findby.where`
 
 例如, 存在以下关系
 
@@ -396,6 +396,115 @@ curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%2
 curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%7B%22not_in%22%3A%5B%2257fbbdb0a2400007%22%5D%7D%7D%7D
 ```
 `findby` 的内容为：`{"extend":"pets","on":{"pets_id":{"not_in":["57fbbdb0a2400007"]}}}`
+
+
+#### join_where 过滤条件
+
+**Started From 1.13.25**
+
+通过 `join_where` 参数的形式可以在对具有 hasMany 关系的扩展对象查询时, 对关联表中的字段进行筛选做出约束。和 `where` 一样, `join_where` 参数的值应该是被 JSON 编码又经过 url 编码的的。
+
+例如, 存在以下关系
+
+- person hasMany pets, 且含有扩展字段:
+  - nickname: { type: "text", size: 256 }
+
+现在我们希望查询级联的用户、宠物信息, 要求**按照"拥有年龄不低于 1 岁的的宠物" 对 person 进行 findby 查找**
+
+一般可以使用 graphql 进行查询, 如下: 
+
+```graphql
+# curl -X POST http://localhost/graphql -H 'content-type: application/graphql'
+{
+  find_persons(
+    findby: {
+      # 按拥有"年龄不低于 1 岁的宠物"为条件找到用户
+      extend: "pets"
+      where: {
+        age: { gt: 1 }
+      }
+    }
+  ){
+    id
+    name
+    pets{
+      id
+      name
+      extra{
+        nickname
+      }
+    }
+  }
+}
+```
+
+如果我们希望在做 pets 查询时, 过滤出其宠物 nickname 含有 `a` 字母的宠物, 则可以这样写:
+
+```graphql
+# curl -X POST http://localhost/graphql -H 'content-type: application/graphql'
+{
+  find_persons(
+    findby: {
+      # 按拥有"年龄不低于 1 岁的宠物"为条件找到用户
+      extend: "pets"
+      where: {
+        age: { gte: 1 }
+      }
+    }
+  ){
+    id
+    name
+    pets(
+      join_where: {
+        nickname: { like: "%a%" }
+      }
+    ){
+      id
+      name
+      extra{
+        nickname
+      }
+    }
+  }
+}
+```
+
+**注意** 由于 M:N 类型的数据标关系固有特点, 由 `findby` 筛选出的用户**必然**拥有一岁以上的宠物, 但并**不一定只**拥有一岁以上的宠物. 如果你希望读取 pets 时只筛选出年龄不低于 1 岁的宠物, 记得使用 where 对 pets 也进行过滤, 如下:
+
+```graphql
+# curl -X POST http://localhost/graphql -H 'content-type: application/graphql'
+{
+  find_persons(
+    findby: {
+      # 按拥有"年龄不低于 1 岁的宠物"为条件找到用户
+      extend: "pets"
+      where: {
+        age: { gte: 1 }
+      }
+    }
+  ){
+    id
+    name
+    pets(
+      where: {
+        age: {gte: 1}
+      }
+      # where 和 join_where 可以一起使用, 二者含义不同
+      # where 的筛选对象是 pet 本身的字段;
+      # join_where 的筛选对象是 person-pet 关系中的扩展字段;
+      join_where: {
+        nickname: { like: "%a%" }
+      }
+    ){
+      id
+      name
+      extra{
+        nickname
+      }
+    }
+  }
+}
+```
 
 ## ACL
 可以通过定义 Model 的 ACL 控制数据权限。比如:

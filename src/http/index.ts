@@ -1,6 +1,4 @@
-
-
-import { err_info, fill_error, render_error } from '../utils/err_info';
+import { err_info, fill_error } from '../utils/err_info';
 
 import _base = require('./base');
 import _extend = require('./extend');

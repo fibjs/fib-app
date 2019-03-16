@@ -78,32 +78,101 @@ describe("extend multiple level", () => {
         })
     });
 
-    it('find whereExists sublevel with has-many assoc', () => {
+    it('find where/whereExists/join_where sublevel with has-many assoc', () => {
         const t = Date.now();
-        const all_many_sublevels = [
-            {
-                "name": "many_sublevels:name"
-            },
-            {
-                "name": "many_sublevels3:name"
-            },
-            {
-                "name": "many_sublevels2:name"
-            }
-        ];
+        const all_many_sublevels = TESTDATA.l1.many_sublevels;
         
         ;[
             [
-                `many_sublevels_id: { ne: ${t} }`,
-                { name: `l1:name`, },
-                all_many_sublevels
+                [
+                    `on: { many_sublevels_id: { ne: ${t} } }`,
+                    { name: `l1:name` }
+                ],
+                [
+                    ``,
+                    all_many_sublevels
+                ]
             ],
             [
-                `many_sublevels_id: "${t}"`,
-                undefined,
+                [
+                    `on: { many_sublevels_id: "${t}" }`,
+                    undefined
+                ],
                 []
-            ]
-        ].forEach(([on_cond, l1_result, results]) => {
+            ],
+            [
+                [
+                    `on: {
+                        since: {
+                            eq: "${t}"
+                        }
+                    }`,
+                    undefined
+                ],
+                []
+            ],
+            [
+                [
+                    `on: {
+                        since: {
+                            lte: "${all_many_sublevels[0].extra.since}"
+                            modifiers: {
+                                is_date: true
+                            }
+                        }
+                    }`,
+                    { name: `l1:name` }
+                ],
+                [
+                    ``,
+                    all_many_sublevels
+                ]
+            ],
+            [
+                [
+                    `on: {
+                        since: {
+                            eq: "${all_many_sublevels[0].extra.since}"
+                            modifiers: {
+                                is_date: true
+                            }
+                        }
+                    }`,
+                    { name: `l1:name` }
+                ],
+                [
+                    `join_where: {
+                        since: {
+                            eq: "${all_many_sublevels[0].extra.since}"
+                            modifiers: {
+                                is_date: true
+                            }
+                        }
+                    }`,
+                    [all_many_sublevels[0]]
+                ]
+            ],
+            [
+                [
+                    ``,
+                    { name: `l1:name` }
+                ],
+                [
+                    `join_where: {
+                        since: {
+                            ne: "${all_many_sublevels[1].extra.since}"
+                            modifiers: {
+                                is_date: true
+                            }
+                        }
+                    }`,
+                    [all_many_sublevels[0], all_many_sublevels[2]]
+                ]
+            ],
+        ].forEach(([
+            [findby_on, l1_result],
+            [extra_cond, extra_results]
+        ]) => {
             var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
@@ -112,17 +181,20 @@ describe("extend multiple level", () => {
                     find_level(
                         findby: {
                             extend: "many_sublevels",
-                            on: {
-                                ${on_cond}
-                            }
+                            ${findby_on}
                         }
                     ){
                         id,
                         name,
                         many_sublevels(
-                            order: "-name"
+                            order: "name"
+                            ${extra_cond ? extra_cond : ''}
                         ){
-                            id,name
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
                         }
                     }
                 }`
@@ -150,9 +222,10 @@ describe("extend multiple level", () => {
             )
             
             check_result(
-                rep.json().data.find_level[0].many_sublevels.map(x => ({ name: x.name })),
-                // results is order by '-name'
-                results
+                rep.json().data.find_level[0].many_sublevels
+                    .map(x => ({ name: x.name, extra: x.extra })),
+                // extra_results is order by 'name'
+                extra_results
             );
         });
     });
