@@ -13,19 +13,6 @@ describe("extend multiple level", () => {
     var top_id;
     var TESTDATA = require('./__test__/mock-data.json');
 
-    function get_uniq_level () {
-        var rep = http.get(tSrvInfo.appUrlBase + `/level`, {
-            query: {
-                where: JSON.stringify({
-                    name: 'l1:name'
-                })
-            }
-        });
-
-        var l1 = rep.json()[0];
-        return l1;
-    }
-
     after(() => tappInfo.utils.cleanLocalDB())
 
     before(() => {
@@ -84,36 +71,44 @@ describe("extend multiple level", () => {
         
         ;[
             [
+                {
+                    where: '',
+                    findby_on: `on: { many_sublevels_id: { ne: ${t} } }`,
+                    extra_cond: ``,
+                },
                 [
-                    `on: { many_sublevels_id: { ne: ${t} } }`,
-                    { name: `l1:name` }
-                ],
-                [
-                    ``,
+                    { name: `l1:name` },
                     all_many_sublevels
                 ]
             ],
             [
+                {
+                    where: '',
+                    findby_on: `on: { many_sublevels_id: "${t}" }`,
+                    extra_cond: ''
+                },
                 [
-                    `on: { many_sublevels_id: "${t}" }`,
                     undefined
-                ],
-                []
+                ]
             ],
             [
-                [
-                    `on: {
+                {
+                    where: '',
+                    findby_on: `on: {
                         since: {
                             eq: "${t}"
                         }
                     }`,
+                    extra_cond: ''
+                },
+                [
                     undefined
-                ],
-                []
+                ]
             ],
             [
-                [
-                    `on: {
+                {
+                    where: '',
+                    findby_on: `on: {
                         since: {
                             lte: "${all_many_sublevels[0].extra.since}"
                             modifiers: {
@@ -121,16 +116,17 @@ describe("extend multiple level", () => {
                             }
                         }
                     }`,
-                    { name: `l1:name` }
-                ],
+                    extra_cond: ``,
+                },
                 [
-                    ``,
+                    { name: `l1:name` },
                     all_many_sublevels
                 ]
             ],
             [
-                [
-                    `on: {
+                {
+                    where: '',
+                    findby_on: `on: {
                         since: {
                             eq: "${all_many_sublevels[0].extra.since}"
                             modifiers: {
@@ -138,10 +134,7 @@ describe("extend multiple level", () => {
                             }
                         }
                     }`,
-                    { name: `l1:name` }
-                ],
-                [
-                    `join_where: {
+                    extra_cond: `join_where: {
                         since: {
                             eq: "${all_many_sublevels[0].extra.since}"
                             modifiers: {
@@ -149,36 +142,45 @@ describe("extend multiple level", () => {
                             }
                         }
                     }`,
+                },
+                [
+                    { name: `l1:name` },
                     [all_many_sublevels[0]]
                 ]
             ],
             [
-                [
-                    ``,
-                    { name: `l1:name` }
-                ],
-                [
-                    `join_where: {
+                {
+                    where: '',
+                    findby_on: ``,
+                    extra_cond: `join_where: {
                         since: {
                             ne: "${all_many_sublevels[1].extra.since}"
                             modifiers: {
                                 is_date: true
                             }
                         }
-                    }`,
+                    }`
+                },
+                [
+                    { name: `l1:name` },
                     [all_many_sublevels[0], all_many_sublevels[2]]
                 ]
             ],
         ].forEach(([
-            [findby_on, l1_result],
-            [extra_cond, extra_results]
+            w,
+            [l1_result, extra_results]
         ]) => {
+            const where = w.where || ''
+            const findby_on = w.findby_on || ''
+            const extra_cond = w.extra_cond || ''
+
             var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
                 body: `{
                     find_level(
+                        ${where}
                         findby: {
                             extend: "many_sublevels",
                             ${findby_on}
