@@ -200,13 +200,14 @@
 <g id="node7" class="node">
 <title>level</title>
 <g id="a_node7"><a xlink:title="level">
-<polygon fill="#ffffff" stroke="#000000" points="1015,-298.5 1015,-374.5 1112.992,-374.5 1112.992,-298.5 1015,-298.5"/>
-<text text-anchor="middle" x="1063.996" y="-361.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">level</text>
-<polyline fill="none" stroke="#000000" points="1015,-354.5 1112.992,-354.5 "/>
-<text text-anchor="start" x="1023" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
-<text text-anchor="start" x="1023" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
-<text text-anchor="start" x="1023" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1023" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
+<polygon fill="#ffffff" stroke="#000000" points="1015,-292.5 1015,-380.5 1112.992,-380.5 1112.992,-292.5 1015,-292.5"/>
+<text text-anchor="middle" x="1063.996" y="-367.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">level</text>
+<polyline fill="none" stroke="#000000" points="1015,-360.5 1112.992,-360.5 "/>
+<text text-anchor="start" x="1023" y="-347.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
+<text text-anchor="start" x="1023" y="-335.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_f : text</text>
+<text text-anchor="start" x="1023" y="-323.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
+<text text-anchor="start" x="1023" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
+<text text-anchor="start" x="1023" y="-299.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -228,28 +229,29 @@
 <g id="node8" class="node">
 <title>sub_level</title>
 <g id="a_node8"><a xlink:title="sub_level">
-<polygon fill="#ffffff" stroke="#000000" points="918,-137.5 918,-213.5 1015.992,-213.5 1015.992,-137.5 918,-137.5"/>
-<text text-anchor="middle" x="966.996" y="-200.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sub_level</text>
-<polyline fill="none" stroke="#000000" points="918,-193.5 1015.992,-193.5 "/>
-<text text-anchor="start" x="926" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
-<text text-anchor="start" x="926" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
-<text text-anchor="start" x="926" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="926" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
+<polygon fill="#ffffff" stroke="#000000" points="918,-131.5 918,-219.5 1015.992,-219.5 1015.992,-131.5 918,-131.5"/>
+<text text-anchor="middle" x="966.996" y="-206.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sub_level</text>
+<polyline fill="none" stroke="#000000" points="918,-199.5 1015.992,-199.5 "/>
+<text text-anchor="start" x="926" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
+<text text-anchor="start" x="926" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sublevel_f : text</text>
+<text text-anchor="start" x="926" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
+<text text-anchor="start" x="926" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
+<text text-anchor="start" x="926" y="-138.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
 <!-- level&#45;&gt;sub_level -->
 <g id="edge14" class="edge">
 <title>level&#45;&gt;sub_level</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1033.1521,-298.2005C1024.9488,-289.5141 1015.6605,-280.8441 1005.996,-274 989.6038,-262.3916 975.5585,-272.7951 964.541,-256 958.3756,-246.6014 956.3245,-235.1673 956.4116,-223.903"/>
-<polygon fill="none" stroke="#000000" points="959.9204,-223.8638 957.0361,-213.6691 952.9334,-223.4373 959.9204,-223.8638"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1027.4582,-292.3603C1020.75,-285.705 1013.486,-279.3041 1005.996,-274 989.6038,-262.3916 975.5585,-272.7951 964.541,-256 959.4721,-248.2729 957.1841,-239.1699 956.5791,-229.9165"/>
+<polygon fill="none" stroke="#000000" points="960.079,-229.8577 956.5312,-219.8746 953.0791,-229.8912 960.079,-229.8577"/>
 <text text-anchor="middle" x="979.7235" y="-247" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">one_sl</text>
 </g>
 <!-- level&#45;&gt;sub_level -->
 <g id="edge15" class="edge">
 <title>level&#45;&gt;sub_level</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1041.0084,-298.3452C1027.2869,-275.5704 1009.7568,-246.4741 995.2017,-222.3157"/>
-<polygon fill="#000000" stroke="#000000" points="998.1451,-220.4188 989.9865,-213.6595 992.1492,-224.0313 998.1451,-220.4188"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1037.2336,-292.0799C1025.3592,-272.371 1011.2931,-249.024 998.879,-228.4193"/>
+<polygon fill="#000000" stroke="#000000" points="1001.8297,-226.5345 993.6711,-219.7752 995.8338,-230.1469 1001.8297,-226.5345"/>
 <text text-anchor="middle" x="1051.836" y="-247" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">many_sublevels</text>
 </g>
 <!-- level_lproperty -->
@@ -271,7 +273,7 @@
 <!-- level&#45;&gt;level_lproperty -->
 <g id="edge16" class="edge">
 <title>level&#45;&gt;level_lproperty</title>
-<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1081.5964,-298.0605C1090.0052,-281.0027 1100.7134,-260.9891 1112.104,-244 1114.3327,-240.6759 1116.6975,-237.3287 1119.1485,-233.9966"/>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M1084.5874,-292.0651C1092.4781,-276.4378 1102.0238,-259.0346 1112.104,-244 1114.3327,-240.6759 1116.6975,-237.3287 1119.1485,-233.9966"/>
 <polygon fill="#000000" stroke="#000000" points="1122.136,-235.8495 1125.3905,-225.7669 1116.5587,-231.6194 1122.136,-235.8495"/>
 <text text-anchor="middle" x="1131.442" y="-247" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">lproperty</text>
 </g>

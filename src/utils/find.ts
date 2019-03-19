@@ -43,10 +43,7 @@ export = function<ReponseT = any> (
         if (Array.isArray(findby_exists))
             exists_args = exists_args.concat(findby_exists)
     })();
-
-    var where = query_filter_where(req);
-    init_conditions = util.extend(init_conditions, where);
-
+    
     const join_where = query_filter_join_where(req);
     let exec = finder(init_conditions, { join_where });
 
@@ -56,6 +53,9 @@ export = function<ReponseT = any> (
     var keys = query.keys;
     if (keys !== undefined)
         exec = exec.only(keys);
+    
+    var where = query_filter_where(req);
+    exec = exec.where(where, { join_where });
     
     var skip = query_filter_skip(query);
     exec = exec.offset(skip)

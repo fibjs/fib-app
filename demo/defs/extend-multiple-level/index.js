@@ -1,6 +1,7 @@
 module.exports = orm => {
     var Level = orm.define('level', {
         name: String,
+		level_f: String
 	});
 	
 	Level.hasOne('one_l2', Level, {})
@@ -8,6 +9,7 @@ module.exports = orm => {
 
     var SubLevel = orm.define('sub_level', {
         name: String,
+		sublevel_f: String
 	});
 	SubLevel.hasOne('subl_one_subl', SubLevel, {})
 	
