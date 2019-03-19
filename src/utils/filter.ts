@@ -5,13 +5,13 @@ import {
     checkout_robj_acl
 } from './checkout_acl';
 
-export function filter (obj: FxOrmNS.Instance | FibApp.FibDataPayload, keys: boolean | string | string[], keys1?: FibAppACL.RoleActDescriptor) {
+export function filter (obj: FxOrmNS.Instance | FibApp.FibDataPayload, keys: boolean | string | string[], readonly_keys?: FibAppACL.RoleActDescriptor) {
     if (Array.isArray(keys)) {
-        if (Array.isArray(keys1)) {
-            keys = util.intersection(keys, keys1)
+        if (Array.isArray(readonly_keys)) {
+            keys = util.intersection(keys, readonly_keys)
         }
-    } else if (Array.isArray(keys1)) {
-        keys = keys1
+    } else if (Array.isArray(readonly_keys)) {
+        keys = readonly_keys
     }
 
     if (!Array.isArray(keys)) {

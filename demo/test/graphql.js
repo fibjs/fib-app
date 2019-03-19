@@ -8,30 +8,40 @@ tSrvInfo.server.run(() => void 0)
 const http = require('http');
 
 var ids = [];
+var TreeCity = {
+    code: 'ST',
+    name: 'Tree City'
+}
+
 function init_data () {
     var rep = http.post(tSrvInfo.appUrlBase + '/people', {
         json: [
             {
                 name: 'tom',
                 sex: "male",
-                age: 35
+                age: 35,
+                city: TreeCity
             }, {
                 name: 'alice',
                 sex: "female",
-                age: 32
+                age: 32,
+                city: TreeCity
             }, {
                 name: 'jack',
                 sex: "male",
-                age: 8
+                age: 8,
+                city: TreeCity
             }, {
                 name: 'lily',
                 sex: "female",
-                age: 4
+                age: 4,
+                city: TreeCity
             },
             {
                 name: 'mike',
                 sex: "male",
-                age: 65
+                age: 65,
+                city: TreeCity
             }
         ]
     });

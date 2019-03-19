@@ -28,7 +28,9 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
                 updatedProperty: orm_utils.get_field_updatedat(ormInstance.settings),
             })
 
-            use_uuid && ormInstance.use(orm_plugins.uuid)
+            ormInstance.use(orm_plugins.association)
+
+            ormInstance.use(orm_plugins.uuid, { enable: use_uuid })
 
             defs.forEach(def => def(ormInstance));
 

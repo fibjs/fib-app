@@ -1,3 +1,4 @@
+import uuid = require('uuid');
 import util = require('util');
 import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
@@ -10,20 +11,14 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 
-import { check_hasmanyassoc_with_extraprops, extra_save } from '../utils/orm-assoc';
+import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker, getValidDataFieldsFromModel, getOneMergeIdFromAssocExtendsTo, buildPersitedInstance, addHiddenProperty } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
-
-function map_ro_result(ro: FxOrmInstance.Instance) {
-    return {
-        id: ro.id,
-        createdAt: ro.createdAt
-    };
-}
+import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 
 export function setup(app: FibApp.FibAppClass) {
     const api = app.api;
 
-    api.eput = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.eput = (req, orm, cls, id, extend, rid, data) => {
         const rel_assoc_info = cls.associations[extend];
         if (rel_assoc_info === undefined)
             return err_info(4040001, {
@@ -44,7 +39,7 @@ export function setup(app: FibApp.FibAppClass) {
             if (k !== 'extra')
                 riobj.inst[k] = data[k];
 
-        riobj.inst.saveSync();
+        riobj.inst.saveSync.call(riobj.inst, {}, {saveAssociations: false});
 
         if (data.extra && util.isObject(data.extra)) {
             riobj.inst['extra'] = data.extra
@@ -101,6 +96,7 @@ export function setup(app: FibApp.FibAppClass) {
                 break
             case 'hasMany':
                 _opt = Helpers.getManyAssociationItemFromInstanceByExtname(obj.inst, extend).addAccessor;
+                break
             default:
                 break
         }
@@ -140,6 +136,7 @@ export function setup(app: FibApp.FibAppClass) {
             if (obj.error)
                 return obj as FibApp.FibAppApiFunctionResponse;
         }
+
         ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         const acl = checkout_obj_acl(req.session, 'create', obj.inst, extend) as FibAppACL.AclPermissionType__Create;
@@ -150,112 +147,133 @@ export function setup(app: FibApp.FibAppClass) {
             createdBy: ormUtils.get_field_createdby(orm.settings),
         }
 
-        const is_extendsTo = rel_assoc_info.type === 'extendsTo';
-
         const key_model = rel_assoc_info.association.model;
         const _createBy = key_model.associations[spec_keys['createdBy']];
-        let _opt;
-        let ros = [];
-        const rextdata_extras: {
-            extra_many_assoc: FxOrmAssociation.InstanceAssociationItem_HasMany|false,
-            extra: any
-        }[] = [];
+        let rinstances = [] as FxOrmInstance.Instance[];
+
+        const is_extendsTo = rel_assoc_info.type === 'extendsTo';
 
         function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
-
-            const extra_many_assoc = check_hasmanyassoc_with_extraprops(obj.inst, extend) || null
-            rextdata_extras.push({ extra_many_assoc, extra: d.extra || null })
+            // this field has been used in probable parent call to `api.epost` in `api.post`
+            const dextra = d.extra
             delete d.extra
 
-            let ro = ormUtils.create_instance_for_internal_api(key_model, {
+            const ro = ormUtils.create_instance_for_internal_api(key_model, {
                 data: d,
                 req_info: req
             })
+            if (dextra)
+                addHiddenProperty(ro, '$extra', dextra);
+
+            const linkers_after_host_save: Function[] = [];
 
             if (_createBy !== undefined) {
-                _opt = Object.keys(Helpers.getOneAssociationItemFromInstanceByExtname(ro, spec_keys['createdBy']).field)[0];
+                const _opt = Object.keys(Helpers.getOneAssociationItemFromInstanceByExtname(ro, spec_keys['createdBy']).field)[0];
                 ro[_opt] = req.session.id;
+            }
+
+            for (const k in key_model.associations) {
+                if (d[k] === undefined) {
+                    continue ;
+                }
+
+                const dkdata = d[k];
+                delete d[k];
+
+                const assoc_info = key_model.associations[k];
+                const is_assoc_extendsTo = assoc_info.type === 'extendsTo';
+
+                if (!is_assoc_extendsTo) {
+                    const res = api.epost(req, orm, key_model, ro, k, dkdata);
+
+                    // capture the 1st error emitted as soon as possible
+                    if (res.error)
+                        throw new Error(res.error.message);
+        
+                    const KEYS_TO_LEFT = getValidDataFieldsFromModel(assoc_info.association.model)
+                    ro[k] = filterInstanceAsItsOwnShape(
+                        res.success,
+                        // data => new assoc_info.association.model(data.id || undefined)
+                        (data) => buildPersitedInstance(assoc_info.association.model, data.id, KEYS_TO_LEFT)
+                    )
+
+                    if (shouldSetSingle(assoc_info)) {
+                        ro[`${getOneMergeIdFromAssocHasOne(assoc_info.association)}`] = res.success.id
+                    }
+                } else {
+                    linkers_after_host_save.push(() => {
+                        ro[assoc_info.association.setAccessor + 'Sync'].call(ro, dkdata)
+                    })
+                }
             }
 
             if (key_model.reversed) {
                 obj.inst[extend] = ro;
-                obj.inst.saveSync();
+                obj.inst.saveSync.call(obj.inst, {}, {saveAssociations: false});
             } else if (!is_extendsTo) {
-                ro.saveSync();
+                ro.saveSync.call(ro, {}, {saveAssociations: false});
             }
 
-            const r_ext_d: any = {};
+            if (ro.$webx_lazy_linkers)
+                execLinkers(ro.$webx_lazy_linkers, ro);
 
-            for (const k in key_model.associations) {
-                if (d[k] !== undefined) {
-                    r_ext_d[k] = d[k];
-
-                    delete d[k];
-                }
-            }
-
-            Object.keys(r_ext_d).forEach((r_ext, i) => {
-                const ext_data = r_ext_d[r_ext]
-
-                const res = api.epost(req, orm, cls, ros[i], r_ext, ext_data);
-                // only capture the 1st error emitted as soon as possible
-                if (res.error)
-                    throw new Error(res.error.message);
-            })
+            execLinkers(linkers_after_host_save);
 
             return ro
         }
 
         if (Array.isArray(data))
-            ros = data.map(d => _create(d));
+            rinstances = data.map(d => _create(d));
         else
-            ros = [_create(data)];
+            rinstances = [_create(data)];
 
-        if (!key_model.reversed) {
-            let _opt: string,
-                assoc: FxOrmAssociation.InstanceAssociationItem = Helpers.getAssociationItemFromInstanceByExtname(rel_assoc_info.type, obj.inst, extend)
-            switch (rel_assoc_info.type) {
-                default:
-                    break
-                case 'extendsTo':
-                    _opt = assoc.setAccessor;
-                    break
-                case 'hasOne':
-                    _opt = assoc.setAccessor;
-                    break
-                case 'hasMany':
-                    _opt = assoc.addAccessor;
-                    break
+        const isomorphicLinker = (host: FxOrmInstance.Instance) => {
+            if (!host.id) {
+                return ;
             }
 
-            for (const i in ros) {
-                const ro = ros[i]
-                if (assoc === rextdata_extras[i].extra_many_assoc) {
-                    if (rextdata_extras[i].extra)
-                        extra_save(
-                            obj.inst,
-                            ro,
-                            rextdata_extras[i].extra_many_assoc as FxOrmAssociation.InstanceAssociationItem_HasMany,
-                            rextdata_extras[i].extra
-                        )
-                    else
-                        return err_info(4040005, {
-                            classname: cls.model_name,
-                            extend: extend
-                        });
-                } else
-                    obj.inst[_opt + 'Sync'](ro)
+            if (key_model.reversed) {
+                return ;
+            }
+
+            for (const i in rinstances) {
+                const ro = rinstances[i]
+                const isMany = rel_assoc_info.type === 'hasMany'
+
+                const askorOptions = {
+                    has_associated_instance_in_many: isMany && host[rel_assoc_info.association.hasAccessor + 'Sync'](ro)
+                }
+                const linkAccessor = getAccessorForPost(rel_assoc_info, host, askorOptions)
+
+                if (isMany && ro.$extra) {
+                    const assoc = rel_assoc_info.association
+                    let extra = ro.$extra || {}
+                    delete ro.$extra
+
+                    if (askorOptions.has_associated_instance_in_many) {
+                        host[assoc.delAccessor + 'Sync'](ro)
+                    }
+                    
+                    host[assoc.addAccessor + 'Sync'](ro, extra)
+                } else {
+                    host[linkAccessor + 'Sync'](ro)
+                }
             }
         }
 
+        if (!obj.inst.id)
+            addHiddenLazyLinker(obj.inst, [isomorphicLinker])
+        else
+            execLinkers([isomorphicLinker], obj.inst);
+
         return {
             status: 201,
-            success: Array.isArray(data) ? ros.map(map_ro_result) : ros.map(map_ro_result)[0]
+            success: Array.isArray(data) ? rinstances.map(map_to_result) : rinstances.map(map_to_result)[0]
         };
     };
 
-    api.efind = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType): FibApp.FibAppApiFunctionResponse => {
+    api.efind = (req, orm, cls, id, extend) => {
         const rel_assoc_info = cls.associations[extend];
         if (rel_assoc_info === undefined)
             return err_info(4040001, {
@@ -266,7 +284,7 @@ export function setup(app: FibApp.FibAppClass) {
             (rel_assoc_info.type === 'hasOne' && !rel_assoc_info.association.reversed)
             || rel_assoc_info.type === 'extendsTo'
         )
-            return api.eget(req, orm, cls, id as FibApp.AppIdType, extend);
+            return api.eget(req, orm, cls, id, extend);
 
         let obj: FibApp.FibAppInternalCommObj;
 
@@ -274,7 +292,6 @@ export function setup(app: FibApp.FibAppClass) {
             obj = {
                 inst: id as FxOrmNS.Instance
             };
-            id = (id as FibApp.ObjectWithIdField).id;
         } else {
             obj = _get(cls, id as FibApp.AppIdType, req.session);
             if (obj.error)
@@ -305,7 +322,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         if (robj.error)
             return robj;
-            
+
         if (!robj.inst)
             return {
                 success: null

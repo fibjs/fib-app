@@ -1,0 +1,19 @@
+{
+    "init_people": [{
+        "name": "tom",
+        "sex": "male",
+        "age": 35
+    }, {
+        "name": "alice",
+        "sex": "female",
+        "age": 32
+    }, {
+        "name": "jack",
+        "sex": "male",
+        "age": 8
+    }, {
+        "name": "lily",
+        "sex": "female",
+        "age": 4
+    }]
+}

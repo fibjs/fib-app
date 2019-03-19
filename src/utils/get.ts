@@ -53,7 +53,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
             }, cls.cid)
         )
 
-    var iobj;
+    var iobj: FibApp.AppInternalCommunicationObj;
 
     if (util.isObject(id)) {
         iobj = {
@@ -78,7 +78,6 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
 
     var __opt,
         is_extendsTo = rel_assoc_info.type === 'extendsTo',
-        // key_model = is_extendsTo ? rel_assoc_info.assoc_model : rel_assoc_info.model,
         rel_type = rel_assoc_info.type,
         key_model = rel_assoc_info.association.model,
         assoc = Helpers.getAssociationItemFromInstanceByExtname(rel_assoc_info.type, iobj.inst, extend);
@@ -87,7 +86,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
         default:
             throw `invalid rel_assoc_info.type ${rel_type}`
         case 'extendsTo':
-            __opt = assoc.model.find({})
+            __opt = assoc.model.find({});
             rid = iobj.inst.id;
             break
         case 'hasOne':

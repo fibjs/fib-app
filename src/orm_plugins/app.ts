@@ -79,6 +79,9 @@ export default function (ormInstance: FibApp.FibAppORM, opts) {
     }
 }
 
+/**
+ * @warning would deprecated in > 1.13, never use `m.extends`
+ */
 function compatSetup (
     m: FibApp.FibAppORMModel
 ) {

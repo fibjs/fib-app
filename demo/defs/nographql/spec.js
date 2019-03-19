@@ -11,6 +11,8 @@ const util = require('util');
 describe("nographql", () => {
     before(() => {
         tappInfo.utils.dropModelsSync();
+
+        init_data();
     });
 
     after(() => tappInfo.utils.cleanLocalDB())
@@ -19,13 +21,15 @@ describe("nographql", () => {
         foo: Date.now(),
         bin: new Buffer(123)
     }
-    it('init data', () => {
+    
+    function init_data () {
         var rep = http.post(tSrvInfo.appUrlBase + '/nographql', {
             json: testData
         });
+
         assert.equal(rep.statusCode, 201);
         assert.property(rep.json(), "id");
-    })
+    }
 
     it('error for when graphql-query', () => {
         var rep = http.post(tSrvInfo.appUrlBase + ``, {

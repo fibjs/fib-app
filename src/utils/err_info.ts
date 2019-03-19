@@ -5,6 +5,7 @@ var infos = {
     "4000004": "The data requested by 'batch' must be an array.",
     "4000005": "The Content-Type header in the request must include application/graphql.",
     "4030001": "The operation isn’t allowed to '${classname}' for clients due to class-level permissions.",
+    "4030002": "The operation isn’t allowed to '${base_classname}.${ext_classname}' for clients due to class-level permissions.",
     "4040001": "Missing or invalid classname '${classname}'.",
     "4040002": "Object '${id}' not found in class '${classname}'.",
     "4040003": "'${extend}' in class '${classname}' does not support this operation",
@@ -44,7 +45,7 @@ APPError.prototype.toString = function () {
     return this.code + ': ' + this.message;
 }
 
-export function err_info(code: number, data?: object, cls?: FibApp.FibModelCountTypeMACRO): FibApp.FibAppResponse {
+export function err_info(code: number, data?: object, cls?: FibApp.FibModelCountTypeMACRO): FibApp.FibAppErrorResponse {
     return {
         error: new APPError(code, infos[code].replace(/\${(.+?)}/g, (s1, s2) => data[s2]), cls)
     }
