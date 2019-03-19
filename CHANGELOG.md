@@ -1,7 +1,14 @@
 
-v1.13.26 / 2019-03-19
+v1.13.27 / 2019-03-20
 ==================
 
+  * fix: unrecognized table alias when do `findBy*` in self-hasone-assoc.
+  * code style change.
+
+v1.13.26 / 2019-03-19
+=====================
+
+  * Release v1.13.26
   * feat: throw error when trying to find invalid association name for `findby`.
   * fix: wrong arg when _find in base-extend rest find.
   * test case code normalization.
