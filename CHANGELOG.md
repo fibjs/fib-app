@@ -1,7 +1,15 @@
 
-v1.13.25 / 2019-03-16
+v1.13.26 / 2019-03-19
 ==================
 
+  * feat: throw error when trying to find invalid association name for `findby`.
+  * fix: wrong arg when _find in base-extend rest find.
+  * test case code normalization.
+
+v1.13.25 / 2019-03-16
+=====================
+
+  * Release v1.13.25
   * support use `join_where` option in query for has-many assoc.
   * apply model's field `associations`.
   * normalize test case code.
