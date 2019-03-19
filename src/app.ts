@@ -21,7 +21,7 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     get db (): FibApp.AppORMPool<FibApp.FibAppORM> { return this.ormPool }
 
     filterRequest: FibApp.FibAppSetupChainFn;
-    diagram: any;
+    diagram: () => any;
 
     graphqlTypeMap: any;
     test: FibApp.FibAppClassTestUtils;

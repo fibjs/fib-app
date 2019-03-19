@@ -5,14 +5,14 @@ import _extend = require('./extend');
 import _function = require('./function');
 import _view = require('./view');
 
-import { bind as bind_filter_request, parse_req_resource_and_hdlr_type } from '../utils/filter_request'
+import { parse_req_resource_and_hdlr_type, filterRequest } from '../utils/filter_request'
 import { run_graphql, is_graphql_request } from '../utils/graphql';
 import { run_batch } from '../utils/batch-request';
 
 
 export function bind (app: FibApp.FibAppClass) {
     // bind it firstly
-    bind_filter_request(app)
+    app.filterRequest = filterRequest
 
     const api = app.api = {} as FibApp.FibAppInternalApis;
     const viewApi = app.viewApi = {} as FibApp.FibAppInternalViewApis;
