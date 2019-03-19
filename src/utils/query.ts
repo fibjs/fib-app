@@ -25,16 +25,16 @@ export function query_filter_join_where (req: FibApp.FibAppReq) {
 
 export function query_filter_findby (
     findby: FibApp.FibAppReqQuery['findby'],
-    exec_model: FxOrmModel.Model,
+    base_model: FxOrmModel.Model,
     opts: {
-        pre_exec?: FxOrmNS.IChainFind
+        extend_in_rest?: string,
         req: FibApp.FibAppReq
     }
 ): {
     exists: FxOrmQuery.ChainWhereExistsInfo[] | null
     findby_infos: FibApp.FilteredFindByInfo[]
 } {
-    const { req } = opts
+    const { req, extend_in_rest = '' } = opts
 
     const __wrapper = { exists: null, findby_infos: [] }
 
@@ -44,6 +44,7 @@ export function query_filter_findby (
 
     let found_assoc: FxOrmAssociation.InstanceAssociationItem;
     
+    const exec_model = extend_in_rest && base_model.associations[extend_in_rest] ? base_model.associations[extend_in_rest].association.model : base_model;
     const exec_instance = new exec_model()
 
     ;(() => {
@@ -54,7 +55,7 @@ export function query_filter_findby (
             const hasmany_assoc = found_assoc as FxOrmNS.InstanceAssociationItem_HasMany;
 
             // TODO: make sure order of mg_ks is corresponding to mks
-            const mg_ks = Object.values(hasmany_assoc.mergeId).map(x => x.mapsTo);
+            const mg_ks = Object.keys(hasmany_assoc.mergeId).map(k => hasmany_assoc.mergeId[k].mapsTo || k);
             const mks = exec_model.id;
 
             if (!checkout_acl(req.session, 'find', exec_model.ACL, findby.extend)) return ;

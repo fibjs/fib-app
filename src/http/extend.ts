@@ -292,11 +292,8 @@ export function setup(app: FibApp.FibAppClass) {
                 _find(
                     req,
                     obj.inst[_association.getAccessor].bind(obj.inst),
-                    {
-                        bmodel: obj.inst.model(),
-                        binstance: obj.inst,
-                        extend
-                    }
+                    cls,
+                    extend
                 ),
                 !is_count_required(req.query) ? 'results' : ''
             ) 

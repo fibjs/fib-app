@@ -157,7 +157,7 @@ export function setup (app: FibApp.FibAppClass) {
         
         return {
             success: found_result_selector(
-                _find(req, cls.find.bind(cls), {bmodel: cls}),
+                _find(req, cls.find.bind(cls), cls),
                 !is_count_required(req.query) ? 'results' : ''
             )
         }
