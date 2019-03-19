@@ -65,6 +65,34 @@ describe("extend multiple level", () => {
         })
     });
 
+    it('findby with non-existing extend', () => {
+        var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                find_level(
+                    findby: {
+                        extend: "non_existed_extend",
+                        where: {
+                            name: "l1-l2:name"
+                        }
+                    }
+                ){
+                    id,
+                    name
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+
+        assert.equal(
+            rep.json().errors[0].message,
+            "invalid association symbol 'non_existed_extend' for model 'level'"
+        )
+    });
+
     describe('find where/whereExists/join_where sublevel with has-many assoc', () => {
         const t = Date.now();
         const all_many_sublevels = TESTDATA.l1.many_sublevels;
@@ -415,6 +443,7 @@ describe("extend multiple level", () => {
             }
         );
     }
+
     it('find by sublevel with has-one assoc', () => {
         ;[
             null

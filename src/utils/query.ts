@@ -23,6 +23,18 @@ export function query_filter_join_where (req: FibApp.FibAppReq) {
     return join_where
 }
 
+function assert_valid_findby (
+    found_assoc: FxOrmAssociation.InstanceAssociationItem,
+    findby: FibApp.ReqFindByItem,
+    exec_model: FxOrmModel.Model
+) {
+    if (!found_assoc) {
+        throw `invalid association symbol '${findby.extend}' for model '${exec_model.model_name || exec_model.table}'`
+    }
+
+    return true
+}
+
 export function query_filter_findby (
     findby: FibApp.FibAppReqQuery['findby'],
     base_model: FxOrmModel.Model,
@@ -48,9 +60,11 @@ export function query_filter_findby (
     const exec_instance = new exec_model()
 
     ;(() => {
+        if (!findby.on)
+            return ;
+
         if (
-            findby.on
-            && (found_assoc = Helpers.getManyAssociationItemFromInstanceByExtname(exec_instance, findby.extend))
+            found_assoc = Helpers.getManyAssociationItemFromInstanceByExtname(exec_instance, findby.extend)
         ) {
             const hasmany_assoc = found_assoc as FxOrmNS.InstanceAssociationItem_HasMany;
 
@@ -76,16 +90,18 @@ export function query_filter_findby (
 
             __wrapper.exists = convert_exists(__wrapper.exists)
         }
+
+        assert_valid_findby(found_assoc, findby, exec_model);
     })();
 
     ;(() => {
+        if (!findby.where)
+            return ;
+
         if (
-            findby.where
-            && (
-                (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('hasOne', exec_instance, findby.extend))
-                || (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('hasMany', exec_instance, findby.extend))
-                || (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('extendsTo', exec_instance, findby.extend))
-            )
+            (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('hasOne', exec_instance, findby.extend))
+            || (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('hasMany', exec_instance, findby.extend))
+            || (found_assoc = Helpers.getAssociationItemFromInstanceByExtname('extendsTo', exec_instance, findby.extend))
         ) {
             const findby_conditions = findby.where
             if (!filter_conditions(findby_conditions)) return ;
@@ -115,6 +131,8 @@ export function query_filter_findby (
                 conditions: findby_conditions
             })
         }
+
+        assert_valid_findby(found_assoc, findby, exec_model);
     })();
     
     return __wrapper
