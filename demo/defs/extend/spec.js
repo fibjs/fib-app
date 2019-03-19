@@ -1,6 +1,7 @@
 const test = require('test');
 test.setup();
 
+const util = require('util');
 const http = require('http');
 
 const { check_result, cutOffMilliSeconds, cutOffSeconds } = require('../../test/_utils');
@@ -8,41 +9,33 @@ const { check_result, cutOffMilliSeconds, cutOffSeconds } = require('../../test/
 const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
 const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
 tSrvInfo.server.run(() => void 0)
+const mockData = require('./__test__/mock-data')
 
 describe("extend", () => {
     var ids = [];
+    var StoneCity = {
+        code: 'ST',
+        name: 'Stone City'
+    }
 
-    before(() => {
-        tappInfo.utils.dropModelsSync();
-    });
+    const CHECK_EXCLUDE_FIELDS = [
+        'code',
+        'createdAt',
+        'updatedAt'
+    ]
 
-    after(() => tappInfo.utils.cleanLocalDB())
-
-    it('init data', () => {
+    function init_base () {
         var rep = http.post(tSrvInfo.appUrlBase + '/people', {
-            json: [{
-                name: 'tom',
-                sex: "male",
-                age: 35
-            }, {
-                name: 'alice',
-                sex: "female",
-                age: 32
-            }, {
-                name: 'jack',
-                sex: "male",
-                age: 8
-            }, {
-                name: 'lily',
-                sex: "female",
-                age: 4
-            }]
+            json: mockData.init_people.map(x => {
+                x.city = StoneCity
+                return x
+            })
         });
 
         rep.json().forEach(r => ids.push(r.id));
-    });
+    }
 
-    it('init extend', () => {
+    function init_extend () {
         var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
             json: {
                 id: ids[1]
@@ -103,7 +96,16 @@ describe("extend", () => {
 
         add_childs(ids[0]);
         add_childs(ids[1]);
+    }
+
+    before(() => {
+        tappInfo.utils.dropModelsSync();
+
+        init_base();
+        init_extend();
     });
+
+    after(() => tappInfo.utils.cleanLocalDB());
 
     it('get extend', () => {
         var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife`, {
@@ -248,9 +250,9 @@ describe("extend", () => {
             }
         });
         check_result(rep.json(), {
-            "code": 4040602,
+            // "code": 4040602,
             "message": `Object '${ids[1]}' not found in class 'people.childs'.`
-        });
+        }, CHECK_EXCLUDE_FIELDS);
     });
 
     it('delete extend', () => {
@@ -260,9 +262,9 @@ describe("extend", () => {
         rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[1]}/husbands/${ids[0]}`)
         assert.equal(rep.statusCode, 404);
         check_result(rep.json(), {
-            "code": 4040603,
+            // "code": 4040603,
             "message": `'husbands' in class 'people' does not support this operation`
-        })
+        }, CHECK_EXCLUDE_FIELDS)
 
         rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[0]}/wife/${ids[1]}`);
         assert.equal(rep.statusCode, 200);
@@ -295,117 +297,133 @@ describe("extend", () => {
         assert.equal(rep.statusCode, 200)
     });
 
-    it('create extend object', () => {
-        var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
-            json: {
-                name: 'jack_li',
-                sex: "male",
-                age: 8
-            }
-        });
-        assert.equal(rep.statusCode, 201);
-        ids.push(rep.json().id);
+    describe('extend - hasMany', () => {
+        it('create extend object - hasMany', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs`, {
+                json: {
+                    name: 'jack_li',
+                    sex: "male",
+                    age: 8,
+                    city: StoneCity
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+            ids.push(rep.json().id);
 
-        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
-            query: {
-                keys: 'name,age'
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "name": "jack_li",
-            "age": 8
-        });
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+                query: {
+                    keys: 'name,age'
+                }
+            });
 
-        var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[4]}/childs`, {
-            json: [{
-                name: 'jack_li_0',
-                sex: "male",
-                age: 8
-            }, {
-                name: 'jack_li_1',
-                sex: "male",
-                age: 9
-            }]
-        });
-        assert.equal(rep.statusCode, 201);
-        rep.json().forEach(r => ids.push(r.id));
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "name": "jack_li",
+                "age": 8
+            });
 
-        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
-            query: {
-                keys: 'name,age'
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "name": "jack_li",
-            "age": 8
-        });
+            var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[4]}/childs`, {
+                json: [{
+                    name: 'jack_li_0',
+                    sex: "male",
+                    age: 8,
+                    city: StoneCity
+                }, {
+                    name: 'jack_li_1',
+                    sex: "male",
+                    age: 9,
+                    city: StoneCity
+                }]
+            });
+            assert.equal(rep.statusCode, 201);
+            rep.json().forEach(r => ids.push(r.id));
 
-        var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
-            json: {
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+                query: {
+                    keys: 'name,age'
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "name": "jack_li",
+                "age": 8
+            });
+
+            var rep = http.post(tSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
+                json: {
+                    name: 'ly_li',
+                    sex: "female",
+                    age: 8,
+                    city: StoneCity
+                }
+            });
+            assert.equal(rep.statusCode, 201);
+
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
+                query: {
+                    keys: 'name,age'
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
                 name: 'ly_li',
-                sex: "female",
                 age: 8
-            }
-        });
-        assert.equal(rep.statusCode, 201);
-
-        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[4]}/wife`, {
-            query: {
-                keys: 'name,age'
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            name: 'ly_li',
-            age: 8
-        });
-    });
-
-    it('change extend object', () => {
-        var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
-            json: {
-                name: 'jack_li',
-                sex: "male",
-                age: 18
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-
-        var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
-            query: {
-                keys: 'name,age'
-            }
-        });
-        assert.equal(rep.statusCode, 200);
-        check_result(rep.json(), {
-            "name": "jack_li",
-            "age": 18
+            });
         });
 
-        rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`);
-        assert.equal(rep.statusCode, 200);
+        it('change extend object', () => {
+            var rep = http.put(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+                json: {
+                    name: 'jack_li',
+                    sex: "male",
+                    age: 18
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+
+            var rep = http.get(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`, {
+                query: {
+                    keys: 'name,age'
+                }
+            });
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "name": "jack_li",
+                "age": 18
+            });
+
+            rep = http.del(tSrvInfo.appUrlBase + `/people/${ids[0]}/childs/${ids[4]}`);
+            assert.equal(rep.statusCode, 200);
+        });
     });
 
     it("multi level create", () => {
         var rep = http.post(tSrvInfo.appUrlBase + '/people', {
-            json: [{
-                name: 'tom',
-                sex: "male",
-                age: 35,
-                wife: {
-                    name: 'lily',
-                    sex: "female",
+            json: [
+                {
+                    name: 'tom',
+                    sex: "male",
                     age: 35,
-                    childs: [{
-                        name: 'coco',
+                    city: StoneCity,
+                    wife: {
+                        name: 'lily',
                         sex: "female",
-                        age: 12,
-                    }]
+                        age: 35,
+                        city: StoneCity,
+                        childs: [
+                            {
+                                name: 'coco',
+                                sex: "female",
+                                age: 12,
+                                city: StoneCity
+                            }
+                        ]
+                    }
                 }
-            }]
+            ]
         });
+
+        assert.equal(rep.statusCode, 201);
     })
 
     it("graphql query hasMany-extend with extra", () => {
@@ -425,11 +443,13 @@ describe("extend", () => {
                 name: 'tom_with_friend',
                 sex: "male",
                 age: 35,
+                city: StoneCity,
                 friends: [
                     {
                         name: 'friend_of_tom',
                         sex: "female",
                         age: 35,
+                        city: StoneCity,
                         extra: {
                             hobby: 'train',
                             meeting_time: Date.now()
@@ -439,6 +459,7 @@ describe("extend", () => {
                                 name: 'coco_of_friend_of_tom',
                                 sex: "female",
                                 age: 12,
+                                city: StoneCity,
                             }
                         ]
                     }
@@ -458,7 +479,11 @@ describe("extend", () => {
             testdata.friends[0].extra.hobby = 'train2'
 
             return http.put(tSrvInfo.appUrlBase + `/people/${base_obj.id}/friends/${ext_obj.id}`, {
-                json: testdata.friends[0]
+                json: util.omit(
+                    testdata.friends[0],
+                    // TODO: should support auto epost here
+                    ['city', 'childs']
+                )
             });
         }
 

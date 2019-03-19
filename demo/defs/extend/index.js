@@ -1,11 +1,14 @@
 module.exports = db => {
     var People = db.models.people;
+    var City = db.models.city;
 
     People.hasOne("mother", People);
     People.hasOne("father", People);
     People.hasOne("husband", People);
     People.hasOne("wife", People, {reverse: 'husbands'});
     People.hasMany("childs", People);
+
+    People.hasOne("city", City, {required: true});
 
     People.hasMany("friends", People, {
         hobby: String,

@@ -9,6 +9,12 @@ const tappInfo = require('../test/support/spec_helper').getRandomSqliteBasedApp(
 const tSrvInfo = require('../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
 const faker = require('../faker');
 
+const EXCLUDE_KEYS = [
+    'createdAt',
+    'updatedAt',
+    'id'
+];
+
 describe('app apis', () => {
     let postData = null
     let findCondition = null
@@ -37,6 +43,20 @@ describe('app apis', () => {
         putData = {
             age: 16
         }
+
+        app.dbPool(db => {
+            const postResult = app.api.post(
+                reqInfo,
+                db, db.models.person,
+                postData
+            )
+
+            app.test.internalApiResultAssert.ok(postResult)
+
+            findCondition = {
+                id: getId = postResult.success.id
+            }
+        })
     })
     
     after(() => tappInfo.utils.cleanLocalDB());
@@ -71,25 +91,6 @@ describe('app apis', () => {
         assert.isFunction(app.api.elink)
     })
 
-    it('util: app.api.post', () => {
-        app.dbPool(db => {
-            const postResult = app.api.post(
-                reqInfo,
-                db, db.models.person,
-                postData
-            )
-
-            app.test.internalApiResultAssert.ok(postResult)
-            
-            check_result({id: postResult.success.id}, {id: postData.id})
-
-            getId = postData.id
-            findCondition = {
-                id: getId
-            }
-        })
-    })
-
     it('util: app.api.get', () => {
         app.dbPool(db => {
             const getResult = app.api.get(
@@ -102,10 +103,7 @@ describe('app apis', () => {
 
             const { success: gotItem } = getResult || {}
 
-            check_result(
-                gotItem,
-                postData,
-            )
+            check_result(gotItem, postData, EXCLUDE_KEYS)
         })
     })
 
@@ -124,7 +122,7 @@ describe('app apis', () => {
             app.test.internalApiResultAssert.ok(findResult)
 
             const [ foundItem ] = findResult.success || []
-            check_result(foundItem, postData)
+            check_result(foundItem, postData, EXCLUDE_KEYS)
         })
     })
 
@@ -140,7 +138,7 @@ describe('app apis', () => {
             app.test.internalApiResultAssert.ok(putResult)
 
             const { success: putItem } = putResult || {}
-            check_result({id: putItem.id}, {id: postData.id})
+            check_result({id: putItem.id}, {id: getId}, EXCLUDE_KEYS)
         })
     })
 
@@ -155,7 +153,7 @@ describe('app apis', () => {
             app.test.internalApiResultAssert.ok(delResult)
 
             const { success: delItem } = delResult || {}
-            check_result({id: delItem.id}, {id: postData.id})
+            check_result({id: delItem.id}, {id: getId}, EXCLUDE_KEYS)
         })
     })
 

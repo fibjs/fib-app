@@ -21,7 +21,8 @@ describe("extend multiple level", () => {
         var rep = http.post(tSrvInfo.appUrlBase + '/level', {
             json: TESTDATA.l1
         });
-
+        
+        assert.equal(rep.statusCode, 201)
         top_id = rep.json().id
     });
 
@@ -107,6 +108,7 @@ describe("extend multiple level", () => {
                         on: { many_sublevels_id: { ne: ${t} } }
                     `,
                     extra_cond: ``,
+                    // debug_only: true
                 },
                 [
                     { name: `l1:name` },
@@ -121,7 +123,7 @@ describe("extend multiple level", () => {
                         extend: "many_sublevels"
                         on: { many_sublevels_id: "${t}" }
                     `,
-                    extra_cond: ''
+                    extra_cond: ``
                 },
                 [
                     undefined
@@ -135,7 +137,7 @@ describe("extend multiple level", () => {
                         extend: "many_sublevels"
                         on: { since: { eq: "${t}" } }
                     `,
-                    extra_cond: ''
+                    extra_cond: ``
                 },
                 [
                     undefined
@@ -316,8 +318,11 @@ describe("extend multiple level", () => {
             [
                 'only join_where for extra fields',
                 {
-                    l1_where: '',
-                    l1_findby_kv: ``,
+                    l1_where: `
+                        order: "-name"
+                    `,
+                    l1_findby_kv: `
+                    `,
                     extra_cond: `join_where: {
                         since: {
                             ne: "${all_many_sublevels[1].extra.since}"
@@ -325,7 +330,8 @@ describe("extend multiple level", () => {
                                 is_date: true
                             }
                         }
-                    }`
+                    }`,
+                    // debug_only: true,
                 },
                 [
                     { name: `l1:name` },

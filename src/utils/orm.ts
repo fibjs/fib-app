@@ -1,3 +1,5 @@
+import { buildCleanInstance } from "./orm-assoc";
+
 export function default_settings (): FibApp.FibAppOrmSettings {
     return {
         'app.orm.common_fields.createdBy': 'createdBy',
@@ -35,7 +37,10 @@ interface InternalApiInfoSettingOptions {
     req_info?: FibApp.FibAppReq
 }
 export function create_instance_for_internal_api (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {
-    const o = new cls(options.data)
+    /**
+     * always use shallow copy in every level
+     */
+    const o = buildCleanInstance(cls, options.data)
     attach_internal_api_requestinfo_to_instance(o, options)
     
     return o

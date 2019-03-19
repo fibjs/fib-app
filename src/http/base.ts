@@ -1,5 +1,4 @@
 /// <reference types="@fxjs/orm" />
-
 import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
@@ -11,18 +10,13 @@ import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
 import { is_count_required, found_result_selector } from '../utils/query';
-
-function map_ro_result (ro: FxOrmInstance.Instance) {
-    return {
-        id: ro.id,
-        createdAt: ro.createdAt
-    };
-}
+import { shouldSetSingle, execLinkers, buildPersitedInstance, getValidDataFieldsFromModel, getOneMergeIdFromAssocHasOne } from '../utils/orm-assoc';
+import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
 
-    api.post = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, data: FibApp.FibAppReqData) => {
+    api.post = (req, orm, cls, data) => {
         const acl = checkout_acl(req.session, 'create', cls.ACL) as FibAppACL.AclPermissionType__Create;
         if (!acl)
             return err_info(4030001, {classname: cls.model_name}, cls.cid);
@@ -32,30 +26,64 @@ export function setup (app: FibApp.FibAppClass) {
         }
         
         const _createBy = cls.associations[spec_keys['createdBy']];
-        let _opt;
         let instances = [];
-        const extdata_list = [];
 
-        let delr = !orm.settings.get(`rest.model.keep_association.post.${cls.model_name}`)
         function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
 
-            const ext_d = {};
-            for (const k in cls.associations) {
-                if (d[k] !== undefined) {
-                    ext_d[k] = d[k];
-                    if (delr)
-                        delete d[k];
-                }
-            }
-            extdata_list.push(ext_d);
+            let o: FxOrmNS.Instance = ormUtils.create_instance_for_internal_api(cls, {
+                data: d,
+                req_info: req
+            })
 
-            const o: FxOrmNS.Instance = ormUtils.create_instance_for_internal_api(cls, {data: d, req_info: req})
             if (_createBy !== undefined) {
-                _opt = Object.keys(Helpers.getOneAssociationItemFromInstanceByExtname(o, spec_keys['createdBy']).field)[0];
+                const _opt = Object.keys(Helpers.getOneAssociationItemFromInstanceByExtname(o, spec_keys['createdBy']).field)[0];
                 o[_opt] = req.session.id;
             }
-            o.saveSync();
+
+            const linkers_after_host_save: Function[] = [];
+
+            for (const k in cls.associations) {
+                if (d[k] === undefined) {
+                    continue ;
+                }
+
+                const dkdata = d[k];
+                delete d[k];
+
+                const assoc_info = cls.associations[k];
+                const is_assoc_extendsTo = assoc_info.type === 'extendsTo';
+                
+                if (!is_assoc_extendsTo) {
+                    const res = api.epost(req, orm, cls, o, k, dkdata);
+                    // only capture the 1st error emitted as soon as possible
+                    if (res.error)
+                        throw new Error(res.error.message);
+
+                    const KEYS_TO_LEFT = getValidDataFieldsFromModel(assoc_info.association.model)
+                    o[k] = filterInstanceAsItsOwnShape(
+                        res.success,
+                        // data => new assoc_info.association.model(data.id || undefined)
+                        data => buildPersitedInstance(assoc_info.association.model, data.id, KEYS_TO_LEFT)
+                    )
+
+                    if (shouldSetSingle(assoc_info)) {
+                        o[`${getOneMergeIdFromAssocHasOne(assoc_info.association)}`] = res.success.id
+                    }
+                } else {
+                    // make instance as non `is_new`
+                    linkers_after_host_save.push(() => {
+                        o[assoc_info.association.setAccessor + 'Sync'].call(o, dkdata)
+                    })
+                }
+            }
+
+            o.saveSync.call(o, {}, {saveAssociations: false});
+            
+            execLinkers(linkers_after_host_save);
+
+            if (o.$webx_lazy_linkers)
+                execLinkers(o.$webx_lazy_linkers, o);
 
             return o
         }
@@ -64,20 +92,10 @@ export function setup (app: FibApp.FibAppClass) {
             instances = data.map(d => _create(d));
         else
             instances = [_create(data)];
-        
-        // if not delr in previous step, `o.saveSync` would do associatation operation automatically.
-        delr && extdata_list.forEach((extdata, i) => {
-            for (const k in extdata) {
-                const res = api.epost(req, orm, cls, instances[i], k, extdata[k]);
-                // only capture the 1st error emitted as soon as possible
-                if (res.error)
-                    throw new Error(res.error.message);
-            }
-        })
 
         return {
             status: 201,
-            success: Array.isArray(data) ? instances.map(map_ro_result) : instances.map(map_ro_result)[0]
+            success: Array.isArray(data) ? instances.map(map_to_result) : instances.map(map_to_result)[0]
         };
     };
 

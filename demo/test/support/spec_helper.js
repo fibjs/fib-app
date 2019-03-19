@@ -43,6 +43,10 @@ const getProtocol = exports.getProtocol = function () {
     return process.env.WEBX_TEST_SQLITE ? 'sqlite' : 'mysql';
 }
 
+const getUseUUID = exports.getUseUUID = function () {
+    return !!process.env.UUID || getProtocol() === 'sqlite';
+}
+
 const getStaticTestDBName = exports.getStaticTestDBName = function () {
     return `fibapp-test-${getProtocol()}-${runtimeTime}`;
 }
@@ -100,7 +104,7 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
 
 exports.getApp = function (conn = 'sqlite:test.db', ...args) {
     args[Math.max(args.length - 1, 0)] = args[Math.max(args.length - 1, 0)] || {}
-    args[args.length - 1].uuid = true
+    args[args.length - 1].uuid = getUseUUID();
 
     const app = new App(conn, ...args);
 

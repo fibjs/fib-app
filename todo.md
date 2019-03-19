@@ -115,6 +115,7 @@ extend:cls: delete
     - [x] eput
 - [ ] app view-service-api
 - [ ] fallback when api, view-api, view-serivce-api all exist
+- [ ] binary data create/update/get/find sample
 
 ## new features
 
@@ -128,3 +129,4 @@ extend:cls: delete
 
 * [ ] support built-in rpc feature
 * [ ] support built-in emitter
+* [ ] return error when required field is not exists in fib-app level.
