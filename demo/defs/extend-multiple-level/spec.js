@@ -9,7 +9,7 @@ const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedA
 const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, { appPath: '/api' });
 tSrvInfo.server.run(() => void 0)
 
-odescribe("extend multiple level", () => {
+describe("extend multiple level", () => {
     var l1_id;
     var l1a_id;
     var TESTDATA = require('./__test__/mock-data.json');
@@ -330,6 +330,217 @@ odescribe("extend multiple level", () => {
                 ]
             ],
             [
+                'get l2 by l1 --- [1]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1:name"
+                        }
+                    `,
+                    l2args: ``,
+                    extra_cond: ``,
+                },
+                [
+                    { name: `l1:name` },
+                    l1_many_sublevels
+                ]
+            ],
+            [
+                'get l2 by l1 --- [2]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: ``,
+                    extra_cond: ``,
+                    // debug_only: true
+                },
+                [
+                    { name: `l1a:name` },
+                    l1a_many_sublevels
+                ]
+            ],
+            [
+                'get l2 by l1, findby l3 in l2 --- [1]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: `
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1_many_sublevels[2].subl_one_descendant_level.name}"
+                            }
+                        }
+                    `,
+                    extra_cond: ``,
+                },
+                [
+                    { name: `l1a:name` },
+                    []
+                ]
+            ],
+            [
+                'get l2 by l1, findby l3 in l2 --- [2]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: `
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                            }
+                        }
+                    `,
+                    extra_cond: ``,
+                    // debug_only: true
+                },
+                [
+                    { name: `l1a:name` },
+                    [ l1a_many_sublevels[2] ]
+                ]
+            ],
+            [
+                'get l2 by l1, findby l3 in l2, where in l2 --- [3]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: `
+                        where: {
+                            name: "${l1a_many_sublevels[2].name}"
+                        }
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                            }
+                        }
+                    `,
+                    extra_cond: ``,
+                    // debug_only: true
+                },
+                [
+                    { name: `l1a:name` },
+                    [ l1a_many_sublevels[2] ]
+                ]
+            ],
+            [
+                'get l2 by l1, findby l3 in l2, join_where in l2 --- [4]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: `
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                            }
+                        }
+                    `,
+                    extra_cond: `
+                        join_where: {
+                            since: {
+                                ne: "${l1a_many_sublevels[2].extra.since}"
+                                modifiers: {
+                                    is_date: true
+                                }
+                            }
+                        }
+                    `,
+                    // debug_only: true
+                },
+                [
+                    { name: `l1a:name` },
+                    []
+                ]
+            ],
+            [
+                'get l2 by l1, findby l3 in l2, join_where in l2 ---  [5]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: `
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                            }
+                        }
+                    `,
+                    extra_cond: `
+                        join_where: {
+                            since: {
+                                eq: "${l1a_many_sublevels[2].extra.since}"
+                                modifiers: {
+                                    is_date: true
+                                }
+                            }
+                        }
+                    `,
+                    // debug_only: true
+                },
+                [
+                    { name: `l1a:name` },
+                    [ l1a_many_sublevels[2] ]
+                ]
+            ],
+            [
+                'get l2 by l1, findby l3 in l2, where & join_where in l2 --- [6]',
+                {
+                    l1args: `
+                        where: {
+                            name: "l1a:name"
+                        }
+                    `,
+                    l2args: `
+                        where: {
+                            name: {
+                                like: "%${l1a_many_sublevels[1].name}%"
+                            }
+                        }
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1a_many_sublevels[1].subl_one_descendant_level.name}"
+                            }
+                        }
+                    `,
+                    extra_cond: `
+                        join_where: {
+                            since: {
+                                eq: "${l1a_many_sublevels[1].extra.since}"
+                                modifiers: {
+                                    is_date: true
+                                }
+                            }
+                        }
+                    `,
+                    // debug_only: true
+                },
+                [
+                    { name: `l1a:name` },
+                    [ l1a_many_sublevels[1] ]
+                ]
+            ],
+            [
                 'only join_where for extra fields',
                 {
                     l1args: `
@@ -424,20 +635,18 @@ odescribe("extend multiple level", () => {
                         'many_sublevels'
                     ]
                 )
+
+                const mapper = x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })
                 
                 check_result(
                     rep.json().data.find_level[0].many_sublevels
-                        .map(
-                            x => ({
-                                name: x.name,
-                                extra: x.extra,
-                                subl_one_descendant_level: x.subl_one_descendant_level
-                            })
-                        ),
+                        .map(mapper),
                     // extra_results is order by 'name'
-                    extra_results,
-                    [
-                    ]
+                    extra_results
                 );
             })
         });

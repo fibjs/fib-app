@@ -22,7 +22,16 @@ export = function<ReponseT = any> (
     const query = req.query;
 
     let exists_args = [];
-    let init_conditions = {};
+    let init_conditions: FibApp.FibAppReqQuery['where'] = {};
+
+    /**
+     * NOTICE: temp solution to resolve no select extra data in
+     * HASMANY_association.getAccessor method
+     */
+    let extend_find_l1_info = {
+        results: null as FxOrmInstance.Instance[],
+        ids_set: null as Set<string | number>
+    }
 
     ;(() => {
         if (!base_model)
@@ -32,12 +41,22 @@ export = function<ReponseT = any> (
         var { exists: findby_exists, findby_infos } = query_filter_findby(findby, base_model, { req, extend_in_rest });
         
         if (findby_infos && findby_infos.length) {
+            let ids: string[] = [];
             findby_infos.forEach(findby_info => {
                 if (findby_info.accessor_payload && findby_info.accessor && findby_info.conditions) {
-                    finder = findby_info.accessor_payload[findby_info.accessor]
-                    init_conditions = util.extend(init_conditions, findby_info.conditions);
+                    const findby_finder = findby_info.accessor_payload[findby_info.accessor]
+
+                    const idHolders = findby_finder(findby_info.conditions)
+                        .only(base_model.keys)
+                        .allSync()
+
+                    ids = ids.concat( idHolders.map(x => x[base_model.keys + '']) )
                 }
-            })
+            });
+
+            if (!init_conditions.id) { // pointless here but I still leave it.
+                init_conditions.id = { in: ids };
+            }
         }
 
         if (Array.isArray(findby_exists))
@@ -70,6 +89,15 @@ export = function<ReponseT = any> (
     var objs = [];
     if (limit > 0) {
         objs = exec.allSync();
+
+        if (extend_find_l1_info.results && extend_find_l1_info.ids_set) {
+            for (let idx in objs) {
+                if (extend_find_l1_info.ids_set.has(objs[idx].id)) {
+                    const replace_to = extend_find_l1_info.results.find(x => x.id === objs[idx].id)
+                    if (replace_to) objs[idx] = replace_to
+                }
+            }
+        }
     }
     
     objs = objs.map(obj => {
