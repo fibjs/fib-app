@@ -25,6 +25,7 @@ describe('fib-app', function () {
     if (!process.env.FIBAPP_NO_APP_SPEC) {
         require('./classes');
         require('./extend');
+        require('./extend-operation');
         require('./reverse');
         
         require('./acl');

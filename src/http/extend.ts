@@ -11,7 +11,7 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 
-import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker__AfterSave, getValidDataFieldsFromModel, getOneMergeIdFromAssocExtendsTo, buildShellInstance, addHiddenProperty, safeUpdateHasManyAssociatedInstanceWithExtra, buildCleanInstance } from '../utils/orm-assoc';
+import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker__AfterSave, getValidDataFieldsFromModel, addHiddenProperty, safeUpdateHasManyAssociatedInstanceWithExtra, buildCleanInstance, addHiddenLazyLinker__BeforeSave } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 
@@ -218,8 +218,12 @@ export function setup(app: FibApp.FibAppClass) {
                 execLinkers(ro.$webx_lazy_linkers_before_save, ro);
 
             if (rel_assoc_info.association.reversed) {
-                obj.inst[extend] = ro;
-                obj.inst.saveSync.call(obj.inst, {}, {saveAssociations: false});
+                addHiddenLazyLinker__BeforeSave(obj.inst, [
+                    () => {
+                        obj.inst[extend] = Array.isArray(data) ? rinstances : rinstances[0];
+                        obj.inst.saveSync.call(obj.inst, {}, {saveAssociations: false});
+                    }
+                ])
             } else if (!is_extendsTo) {
                 ro.saveSync.call(ro, {}, {saveAssociations: false});
             }

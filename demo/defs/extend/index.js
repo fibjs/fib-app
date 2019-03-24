@@ -7,6 +7,7 @@ module.exports = db => {
     People.hasOne("husband", People);
     People.hasOne("wife", People, {reverse: 'husbands'});
     People.hasMany("childs", People);
+    People.hasOne("doctor", People, {reverse: 'patients'});
 
     People.hasOne("city", City, {required: true});
 

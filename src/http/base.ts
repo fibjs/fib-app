@@ -11,7 +11,7 @@ import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
 import { is_count_required, found_result_selector } from '../utils/query';
-import { shouldSetSingle, execLinkers, buildShellInstance, getValidDataFieldsFromModel, getOneMergeIdFromAssocHasOne, buildCleanInstance } from '../utils/orm-assoc';
+import { shouldSetSingle, execLinkers, getValidDataFieldsFromModel, getOneMergeIdFromAssocHasOne, buildCleanInstance } from '../utils/orm-assoc';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 
 export function setup (app: FibApp.FibAppClass) {
