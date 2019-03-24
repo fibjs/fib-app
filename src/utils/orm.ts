@@ -1,4 +1,4 @@
-import { buildCleanInstance } from "./orm-assoc";
+import { buildCleanInstance, getValidDataFieldsFromModel } from "./orm-assoc";
 
 export function default_settings (): FibApp.FibAppOrmSettings {
     return {
@@ -34,13 +34,21 @@ export function get_field_updatedat (settings: FxOrmNS.SettingInstance) {
 /* fib-app specified properties about :start */
 interface InternalApiInfoSettingOptions {
     data: any,
-    req_info?: FibApp.FibAppReq
+    req_info?: FibApp.FibAppReq,
+    
+    keys_to_left?: string[],
 }
 export function create_instance_for_internal_api (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {
     /**
      * always use shallow copy in every level
      */
-    const o = buildCleanInstance(cls, options.data)
+    let { keys_to_left } = options;
+    if (!keys_to_left)
+        keys_to_left = getValidDataFieldsFromModel(cls)
+        
+    const o = buildCleanInstance(cls, options.data, {
+        keys_to_left: keys_to_left
+    })
     attach_internal_api_requestinfo_to_instance(o, options)
     
     return o

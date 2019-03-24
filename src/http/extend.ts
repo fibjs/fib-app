@@ -11,7 +11,7 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 
-import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker, getValidDataFieldsFromModel, getOneMergeIdFromAssocExtendsTo, buildPersitedInstance, addHiddenProperty } from '../utils/orm-assoc';
+import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker__AfterSave, getValidDataFieldsFromModel, getOneMergeIdFromAssocExtendsTo, buildShellInstance, addHiddenProperty, safeUpdateHasManyAssociatedInstanceWithExtra, buildCleanInstance } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 
@@ -153,6 +153,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         const is_extendsTo = rel_assoc_info.type === 'extendsTo';
 
+        const KEYS_TO_LEFT = getValidDataFieldsFromModel(key_model);
         function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
             // this field has been used in probable parent call to `api.epost` in `api.post`
@@ -161,7 +162,8 @@ export function setup(app: FibApp.FibAppClass) {
 
             const ro = ormUtils.create_instance_for_internal_api(key_model, {
                 data: d,
-                req_info: req
+                req_info: req,
+                keys_to_left: KEYS_TO_LEFT
             })
             if (dextra)
                 addHiddenProperty(ro, '$extra', dextra);
@@ -191,11 +193,15 @@ export function setup(app: FibApp.FibAppClass) {
                     if (res.error)
                         throw new Error(res.error.message);
         
-                    const KEYS_TO_LEFT = getValidDataFieldsFromModel(assoc_info.association.model)
                     ro[k] = filterInstanceAsItsOwnShape(
                         res.success,
-                        // data => new assoc_info.association.model(data.id || undefined)
-                        (data) => buildPersitedInstance(assoc_info.association.model, data.id, KEYS_TO_LEFT)
+                        // (data) => buildShellInstance(assoc_info.association.model, data.id)
+                        data => buildCleanInstance(
+                            assoc_info.association.model, data,
+                            {
+                                keys_to_left: getValidDataFieldsFromModel(assoc_info.association.model, false)
+                            }
+                        )
                     )
 
                     if (shouldSetSingle(assoc_info)) {
@@ -207,26 +213,30 @@ export function setup(app: FibApp.FibAppClass) {
                     })
                 }
             }
+            
+            if (ro.$webx_lazy_linkers_before_save)
+                execLinkers(ro.$webx_lazy_linkers_before_save, ro);
 
-            if (key_model.reversed) {
+            if (rel_assoc_info.association.reversed) {
                 obj.inst[extend] = ro;
                 obj.inst.saveSync.call(obj.inst, {}, {saveAssociations: false});
             } else if (!is_extendsTo) {
                 ro.saveSync.call(ro, {}, {saveAssociations: false});
             }
 
-            if (ro.$webx_lazy_linkers)
-                execLinkers(ro.$webx_lazy_linkers, ro);
+            if (ro.$webx_lazy_linkers_after_save)
+                execLinkers(ro.$webx_lazy_linkers_after_save, ro);
 
             execLinkers(linkers_after_host_save);
 
             return ro
         }
 
-        if (Array.isArray(data))
+        if (Array.isArray(data)) {
             rinstances = data.map(d => _create(d));
-        else
+        } else {
             rinstances = [_create(data)];
+        }
 
         const isomorphicLinker = (host: FxOrmInstance.Instance) => {
             if (!host.id) {
@@ -247,15 +257,10 @@ export function setup(app: FibApp.FibAppClass) {
                 const linkAccessor = getAccessorForPost(rel_assoc_info, host, askorOptions)
 
                 if (isMany && ro.$extra) {
-                    const assoc = rel_assoc_info.association
-                    let extra = ro.$extra || {}
-                    delete ro.$extra
-
-                    if (askorOptions.has_associated_instance_in_many) {
-                        host[assoc.delAccessor + 'Sync'](ro)
-                    }
-                    
-                    host[assoc.addAccessor + 'Sync'](ro, extra)
+                    const assoc = rel_assoc_info.association as FxOrmAssociation.InstanceAssociationItem_HasMany;
+                    safeUpdateHasManyAssociatedInstanceWithExtra(
+                        assoc, host, ro, askorOptions.has_associated_instance_in_many
+                    )
                 } else {
                     host[linkAccessor + 'Sync'](ro)
                 }
@@ -263,7 +268,7 @@ export function setup(app: FibApp.FibAppClass) {
         }
 
         if (!obj.inst.id)
-            addHiddenLazyLinker(obj.inst, [isomorphicLinker])
+            addHiddenLazyLinker__AfterSave(obj.inst, [isomorphicLinker])
         else
             execLinkers([isomorphicLinker], obj.inst);
 

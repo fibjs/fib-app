@@ -87,10 +87,16 @@ export function addHiddenProperty<T = any> (instance: FxOrmInstance.Instance, p:
 	});
 }
 
-export function addHiddenLazyLinker (instance: FxOrmInstance.Instance, linkers: Function[] = []) {
-    linkers = (instance.$webx_lazy_linkers || []).concat(linkers)
+export function addHiddenLazyLinker__AfterSave (instance: FxOrmInstance.Instance, linkers: Function[] = []) {
+    linkers = (instance.$webx_lazy_linkers_after_save || []).concat(linkers)
     
-    addHiddenProperty<Function[]>(instance, '$webx_lazy_linkers', linkers)
+    addHiddenProperty<Function[]>(instance, '$webx_lazy_linkers_after_save', linkers)
+}
+
+export function addHiddenLazyLinker__BeforeSave (instance: FxOrmInstance.Instance, linkers: Function[] = []) {
+    linkers = (instance.$webx_lazy_linkers_before_save || []).concat(linkers)
+    
+    addHiddenProperty<Function[]>(instance, '$webx_lazy_linkers_before_save', linkers)
 }
 
 export function execLinkers (linkers: Function[], ...args: any[]) {
@@ -100,23 +106,32 @@ export function execLinkers (linkers: Function[], ...args: any[]) {
 export function buildCleanInstance (
     model: FxOrmModel.Model,
     data: FxOrmInstance.InstanceDataPayload,
-    keys_to_left?: string[]
+    opts: {
+        keys_to_left?: string[]
+    }
 ) {
+    let { keys_to_left = null } = opts || {}
+
     if (!Array.isArray(keys_to_left))
         keys_to_left = getValidDataFieldsFromModel(model);
 
     data = util.pick(data, keys_to_left);
     
-    const inst = new model({ [model.id + '']: data.id });
+    const is_no_keys = model.id.some(iditem => !data.hasOwnProperty(iditem) || !data[iditem])
+    // if no key, use pure Shell mode, or use new Mode
+    const picked = is_no_keys ? undefined : model.id.map(iditem => data[iditem])
+
+    const inst = new model(picked);
 
     keys_to_left.forEach(key => {
-        inst.set(key, data[key])
+        if (data.hasOwnProperty(key))
+            inst.set(key, data[key]);
     })
 
     return inst;
 }
 
-export function buildPersitedInstance (
+export function buildShellInstance (
     model: FxOrmModel.Model,
     id: FibApp.AppIdType,
     extra_data?: FxOrmInstance.InstanceDataPayload
@@ -128,14 +143,35 @@ export function buildPersitedInstance (
     return inst
 }
 
-export function getValidDataFieldsFromModel (model: FxOrmModel.Model) {
+export function getValidDataFieldsFromModel (model: FxOrmModel.Model, keep_associations: boolean = true) {
     return []
         .concat(
             Object.keys(model.allProperties)
         )
         .concat(
-            Object.keys(model.associations)
-                .filter(k => model.associations[k].type !== 'extendsTo')
+            keep_associations
+            ? Object.keys(model.associations).filter(k => model.associations[k].type !== 'extendsTo')
+            : []
         )
-        .concat('extra')
+        .concat(
+            keep_associations
+            ? 'extra'
+            : []
+        )
+}
+
+export function safeUpdateHasManyAssociatedInstanceWithExtra (
+    assoc: FxOrmAssociation.InstanceAssociationItem_HasMany,
+    host_instance: FxOrmInstance.Instance,
+    associated_instance: FxOrmInstance.Instance,
+    has_associated_instance_in_many: boolean
+) {
+    let extra = associated_instance.$extra || {}
+    delete associated_instance.$extra
+
+    if (has_associated_instance_in_many) {
+        host_instance[assoc.delAccessor + 'Sync'](associated_instance)
+    }
+    
+    host_instance[assoc.addAccessor + 'Sync'](associated_instance, extra)
 }

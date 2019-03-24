@@ -1,4 +1,5 @@
 /// <reference types="@fxjs/orm" />
+import util = require('util');
 import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
@@ -10,7 +11,7 @@ import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
 import ormUtils = require('../utils/orm');
 import { is_count_required, found_result_selector } from '../utils/query';
-import { shouldSetSingle, execLinkers, buildPersitedInstance, getValidDataFieldsFromModel, getOneMergeIdFromAssocHasOne } from '../utils/orm-assoc';
+import { shouldSetSingle, execLinkers, buildShellInstance, getValidDataFieldsFromModel, getOneMergeIdFromAssocHasOne, buildCleanInstance } from '../utils/orm-assoc';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 
 export function setup (app: FibApp.FibAppClass) {
@@ -28,12 +29,14 @@ export function setup (app: FibApp.FibAppClass) {
         const _createBy = cls.associations[spec_keys['createdBy']];
         let instances = [];
 
+        const KEYS_TO_LEFT = getValidDataFieldsFromModel(cls);
         function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
 
             let o: FxOrmNS.Instance = ormUtils.create_instance_for_internal_api(cls, {
                 data: d,
-                req_info: req
+                req_info: req,
+                keys_to_left: KEYS_TO_LEFT
             })
 
             if (_createBy !== undefined) {
@@ -60,30 +63,35 @@ export function setup (app: FibApp.FibAppClass) {
                     if (res.error)
                         throw new Error(res.error.message);
 
-                    const KEYS_TO_LEFT = getValidDataFieldsFromModel(assoc_info.association.model)
                     o[k] = filterInstanceAsItsOwnShape(
                         res.success,
-                        // data => new assoc_info.association.model(data.id || undefined)
-                        data => buildPersitedInstance(assoc_info.association.model, data.id, KEYS_TO_LEFT)
+                        // data => buildShellInstance(assoc_info.association.model, data.id)
+                        data => buildCleanInstance(
+                            assoc_info.association.model, data, {
+                                keys_to_left: getValidDataFieldsFromModel(assoc_info.association.model, false)
+                            }
+                        )
                     )
 
                     if (shouldSetSingle(assoc_info)) {
                         o[`${getOneMergeIdFromAssocHasOne(assoc_info.association)}`] = res.success.id
                     }
                 } else {
-                    // make instance as non `is_new`
                     linkers_after_host_save.push(() => {
                         o[assoc_info.association.setAccessor + 'Sync'].call(o, dkdata)
                     })
                 }
             }
 
-            o.saveSync.call(o, {}, {saveAssociations: false});
+            if (o.$webx_lazy_linkers_before_save)
+                execLinkers(o.$webx_lazy_linkers_before_save, o);
+            
+            util.sync(o.save).call(o, {}, {saveAssociations: false});
             
             execLinkers(linkers_after_host_save);
 
-            if (o.$webx_lazy_linkers)
-                execLinkers(o.$webx_lazy_linkers, o);
+            if (o.$webx_lazy_linkers_after_save)
+                execLinkers(o.$webx_lazy_linkers_after_save, o);
 
             return o
         }
