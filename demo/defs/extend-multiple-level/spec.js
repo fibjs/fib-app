@@ -9,8 +9,9 @@ const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedA
 const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, { appPath: '/api' });
 tSrvInfo.server.run(() => void 0)
 
-describe("extend multiple level", () => {
-    var top_id;
+odescribe("extend multiple level", () => {
+    var l1_id;
+    var l1a_id;
     var TESTDATA = require('./__test__/mock-data.json');
 
     after(() => tappInfo.utils.cleanLocalDB())
@@ -19,11 +20,12 @@ describe("extend multiple level", () => {
         tappInfo.utils.dropModelsSync();
 
         var rep = http.post(tSrvInfo.appUrlBase + '/level', {
-            json: TESTDATA.l1
+            json: TESTDATA
         });
         
         assert.equal(rep.statusCode, 201)
-        top_id = rep.json().id
+        l1_id = rep.json()[0].id
+        l1a_id = rep.json()[1].id
     });
 
     it('find level', () => {
@@ -31,6 +33,8 @@ describe("extend multiple level", () => {
             'l1',
             'l1-l2',
             'l1-l2-l3',
+
+            'l1a',
         ].forEach(key => {
             var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
@@ -49,19 +53,28 @@ describe("extend multiple level", () => {
             });
             
             assert.equal(rep.statusCode, 200);
-            if (key === 'l1') {
-                check_result(rep.json().data.find_level[0], {
-                    "id": top_id,
-                    "name": `${key}:name`
-                })
-            } else {
-                check_result(rep.json().data.find_level[0], {
-                    "name": `${key}:name`
-                }, [
+            switch (key) {
+                case 'l1':
+                    check_result(rep.json().data.find_level[0], {
+                        "id": l1_id,
+                        "name": `${key}:name`
+                    })
+                    break
+                case 'l1a':
+                    check_result(rep.json().data.find_level[0], {
+                        "id": l1a_id,
+                        "name": `${key}:name`
+                    })
+                    break
+                default:
+                    check_result(rep.json().data.find_level[0], {
+                        "name": `${key}:name`
+                    }, [
                         'createdAt',
                         'updatedAt',
                         'id'
-                ]);
+                    ]);
+                    break
             }
         })
     });
@@ -96,13 +109,14 @@ describe("extend multiple level", () => {
 
     describe('find where/whereExists/join_where sublevel with has-many assoc', () => {
         const t = Date.now();
-        const all_many_sublevels = TESTDATA.l1.many_sublevels;
+        const l1_many_sublevels = TESTDATA[0].many_sublevels;
+        const l1a_many_sublevels = TESTDATA[1].many_sublevels;
         
         ;[
             [
                 'only findby in association, use `ne`',
                 {
-                    l1_where: '',
+                    l1args: '',
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: { ne: ${t} } }
@@ -112,13 +126,13 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels
+                    l1_many_sublevels
                 ]
             ],
             [
                 'only findby in association, use `eq`',
                 {
-                    l1_where: '',
+                    l1args: '',
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: "${t}" }
@@ -132,7 +146,7 @@ describe("extend multiple level", () => {
             [
                 'only findby in association, invalid Date arg',
                 {
-                    l1_where: '',
+                    l1args: '',
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { since: { eq: "${t}" } }
@@ -146,12 +160,12 @@ describe("extend multiple level", () => {
             [
                 'only findby in association, valid Date arg',
                 {
-                    l1_where: '',
+                    l1args: '',
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: {
                             since: {
-                                lte: "${all_many_sublevels[0].extra.since}"
+                                lte: "${l1_many_sublevels[0].extra.since}"
                                 modifiers: {
                                     is_date: true
                                 }
@@ -162,13 +176,13 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels
+                    l1_many_sublevels
                 ]
             ],
             [
-                'host where, findby in association 1',
+                'l1 where, findby in association - 1',
                 {
-                    l1_where: `where: { id: { eq: ${t} } }`,
+                    l1args: `where: { id: { eq: ${t} } }`,
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: { ne: ${t} } }
@@ -180,9 +194,9 @@ describe("extend multiple level", () => {
                 ]
             ],
             [
-                'host where, findby in association 2',
+                'l1 where, findby in association - 2',
                 {
-                    l1_where: `where: { level_f: { eq: "non-exist-level_f-value" } }`,
+                    l1args: `where: { level_f: { eq: "non-exist-level_f-value" } }`,
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: { ne: ${t} } }
@@ -194,9 +208,9 @@ describe("extend multiple level", () => {
                 ]
             ],
             [
-                'host where, findby in association 3',
+                'l1 where, findby in association - 3',
                 {
-                    l1_where: `where: { level_f: "l1:level_f" }`,
+                    l1args: `where: { level_f: "l1:level_f" }`,
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: { ne: ${t} } }
@@ -205,13 +219,13 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels
+                    l1_many_sublevels
                 ]
             ],
             [
-                'host where, findby in association 4',
+                'l1 where, findby in association - 4',
                 {
-                    l1_where: `where: { level_f: "l1:level_f" }`,
+                    l1args: `where: { level_f: "l1:level_f" }`,
                     l1_findby_kv: `
                         extend: "one_l2"
                         where: { name: { eq: "l1-l2:name" } }
@@ -221,13 +235,13 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels
+                    l1_many_sublevels
                 ]
             ],
             [
-                'host where, findby in association 5',
+                'l1 where, findby in association - 5',
                 {
-                    l1_where: `where: { level_f: "l1:level_f" }`,
+                    l1args: `where: { level_f: "l1:level_f" }`,
                     l1_findby_kv: `
                         extend: "one_l2"
                         where: { name: { eq: "non-exist--one_l2-value" } }
@@ -240,26 +254,26 @@ describe("extend multiple level", () => {
                 ]
             ],
             [
-                'host where, findby in association, extend where',
+                'l1 where, findby in l1 association, l2 where',
                 {
-                    l1_where: `where: { level_f: "l1:level_f" }`,
+                    l1args: `where: { level_f: "l1:level_f" }`,
                     l1_findby_kv: `
                         extend: "one_l2"
                         where: { name: { eq: "l1-l2:name" } }
                     `,
-                    l2_where: `where: { name: { ne: "${all_many_sublevels[1].name}" } }`,
+                    l2args: `where: { name: { ne: "${l1_many_sublevels[1].name}" } }`,
                     extra_cond: ``,
                     // debug_only: true,
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels.filter( x => x !== all_many_sublevels[1])
+                    l1_many_sublevels.filter( x => x !== l1_many_sublevels[1])
                 ]
             ],
             [
-                'host where with multiple conditions, findby in association',
+                'l1 where with multiple conditions, findby in association',
                 {
-                    l1_where: `where: { id: { ne: ${t} }, name: "l1:name" }`,
+                    l1args: `where: { id: { ne: ${t} }, name: "l1:name" }`,
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: { ne: ${t} } }
@@ -268,13 +282,13 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels
+                    l1_many_sublevels
                 ]
             ],
             [
-                'host where with multiple conditions using `like`, findby in association',
+                'l1 where with multiple conditions using `like`, findby in association',
                 {
-                    l1_where: `where: { name: { like: "%:name%" } }`,
+                    l1args: `where: { name: { like: "%:name%" } }`,
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: { many_sublevels_id: { ne: ${t} } }
@@ -283,18 +297,18 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    all_many_sublevels
+                    l1_many_sublevels
                 ]
             ],
             [
-                'findby in association, join_where for extra fields',
+                'findby in l1 association, join_where for l2 extra fields',
                 {
-                    l1_where: '',
+                    l1args: '',
                     l1_findby_kv: `
                         extend: "many_sublevels"
                         on: {
                             since: {
-                                eq: "${all_many_sublevels[0].extra.since}"
+                                eq: "${l1_many_sublevels[0].extra.since}"
                                 modifiers: {
                                     is_date: true
                                 }
@@ -303,7 +317,7 @@ describe("extend multiple level", () => {
                     `,
                     extra_cond: `join_where: {
                         since: {
-                            eq: "${all_many_sublevels[0].extra.since}"
+                            eq: "${l1_many_sublevels[0].extra.since}"
                             modifiers: {
                                 is_date: true
                             }
@@ -312,20 +326,25 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    [all_many_sublevels[0]]
+                    [l1_many_sublevels[0]]
                 ]
             ],
             [
                 'only join_where for extra fields',
                 {
-                    l1_where: `
+                    l1args: `
                         order: "-name"
+                        where: {
+                            name: {
+                                ne: "l1a:name"
+                            } 
+                        }
                     `,
                     l1_findby_kv: `
                     `,
                     extra_cond: `join_where: {
                         since: {
-                            ne: "${all_many_sublevels[1].extra.since}"
+                            ne: "${l1_many_sublevels[1].extra.since}"
                             modifiers: {
                                 is_date: true
                             }
@@ -335,7 +354,7 @@ describe("extend multiple level", () => {
                 },
                 [
                     { name: `l1:name` },
-                    [all_many_sublevels[0], all_many_sublevels[2]]
+                    [l1_many_sublevels[0], l1_many_sublevels[2]]
                 ]
             ],
         ].forEach(([
@@ -348,9 +367,9 @@ describe("extend multiple level", () => {
                 return 
 
             it(desc, () => {
-                const l1_where = w.l1_where || ''
+                const l1args = w.l1args || ''
                 const l1_findby_kv = w.l1_findby_kv || ''
-                const l2_where = w.l2_where || ''
+                const l2args = w.l2args || ''
                 const extra_cond = w.extra_cond || ''
 
                 var rep = http.post(tSrvInfo.appUrlBase + `/`, {
@@ -359,7 +378,7 @@ describe("extend multiple level", () => {
                     },
                     body: `{
                         find_level(
-                            ${l1_where}
+                            ${l1args}
                             findby: {
                                 ${l1_findby_kv}
                             }
@@ -368,13 +387,17 @@ describe("extend multiple level", () => {
                             name,
                             many_sublevels(
                                 order: "name"
-                                ${l2_where}
+                                ${l2args}
                                 ${extra_cond ? extra_cond : ''}
                             ){
                                 id,
                                 name,
                                 extra{
                                     since
+                                }
+                                subl_one_descendant_level{
+                                    name
+                                    descendant_level_f
                                 }
                             }
                         }
@@ -404,9 +427,17 @@ describe("extend multiple level", () => {
                 
                 check_result(
                     rep.json().data.find_level[0].many_sublevels
-                        .map(x => ({ name: x.name, extra: x.extra })),
+                        .map(
+                            x => ({
+                                name: x.name,
+                                extra: x.extra,
+                                subl_one_descendant_level: x.subl_one_descendant_level
+                            })
+                        ),
                     // extra_results is order by 'name'
-                    extra_results
+                    extra_results,
+                    [
+                    ]
                 );
             })
         });
@@ -445,9 +476,9 @@ describe("extend multiple level", () => {
                 }
             ],
             [
-                'host where, findby',
+                'l1 where, findby',
                 {
-                    where: `where: { name: "l11:name" }`,
+                    where: `where: { name: "l1a:name" }`,
                     undefined
                 }
             ]
@@ -656,14 +687,14 @@ describe("extend multiple level", () => {
     describe('extendsTo association', () => {
         let add_count = 0;
         function count_increament () {
-            return TESTDATA.l1.lproperty.weight + (++add_count)
+            return TESTDATA[0].lproperty.weight + (++add_count)
         }
         function cur_weight () {
-            return TESTDATA.l1.lproperty.weight + add_count
+            return TESTDATA[0].lproperty.weight + add_count
         }
 
         function get_uniq_extendsTo_property () {
-            var rep = http.get(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
+            var rep = http.get(tSrvInfo.appUrlBase + `/level/${l1_id}/lproperty`, {
                 query: {}
             });
 
@@ -712,7 +743,7 @@ describe("extend multiple level", () => {
             ;[
                 null
             ].forEach(key => {
-                var rep = http.put(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
+                var rep = http.put(tSrvInfo.appUrlBase + `/level/${l1_id}/lproperty`, {
                     query: {},
                     json: {
                         weight: count_increament()
@@ -730,7 +761,7 @@ describe("extend multiple level", () => {
             assert_uniq_extendsTo_property(l1_lproperty);
 
             remove_it: {
-                var rep = http.del(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty/${l1_lproperty.id}`, {
+                var rep = http.del(tSrvInfo.appUrlBase + `/level/${l1_id}/lproperty/${l1_lproperty.id}`, {
                     query: {},
                     body: {}
                 });
@@ -748,10 +779,10 @@ describe("extend multiple level", () => {
             }
 
             recreate: {
-                var rep = http.post(tSrvInfo.appUrlBase + `/level/${top_id}/lproperty`, {
+                var rep = http.post(tSrvInfo.appUrlBase + `/level/${l1_id}/lproperty`, {
                     query: {},
                     json: {
-                        ...TESTDATA.l1.lproperty,
+                        ...TESTDATA[0].lproperty,
                         weight: count_increament(),
                     }
                 });
