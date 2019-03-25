@@ -12,4 +12,7 @@ module.exports = [
     require('./json'),
     require('./nographql'),
     require('./hooks'),
+    (db) => {
+        db.settings.set('rest.model.disable_access_composite_table', true)
+    }
 ];
