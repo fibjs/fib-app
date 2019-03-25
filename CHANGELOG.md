@@ -1,7 +1,19 @@
 
-v1.13.27 / 2019-03-20
+v1.13.28 / 2019-03-25
 ==================
 
+  * support orm level option `rest.model.disable_access_composite_table`.
+  * code robust for better performance and sqlite compat in fibjs <= 0.22
+  * fix mismatch between find conditions(`findby`) with found results in when multiple-level associations.
+  * equivalent transformation of test cases for next feature.
+  * add test cases about extend operation.
+  * code robust
+  * refactor internal app api `post`, `epost`.
+
+v1.13.27 / 2019-03-20
+=====================
+
+  * Release v1.13.27
   * fix: unrecognized table alias when do `findBy*` in self-hasone-assoc.
   * code style change.
 
