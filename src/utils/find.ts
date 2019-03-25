@@ -28,10 +28,7 @@ export = function<ReponseT = any> (
      * NOTICE: temp solution to resolve no select extra data in
      * HASMANY_association.getAccessor method
      */
-    let extend_find_l1_info = {
-        results: null as FxOrmInstance.Instance[],
-        ids_set: null as Set<string | number>
-    }
+    let findby_get_nil: boolean = false;
 
     ;(() => {
         if (!base_model)
@@ -41,7 +38,7 @@ export = function<ReponseT = any> (
         var { exists: findby_exists, findby_infos } = query_filter_findby(findby, base_model, { req, extend_in_rest });
         
         if (findby_infos && findby_infos.length) {
-            let ids: string[] = [];
+            let findby_ids: string[] = [];
             findby_infos.forEach(findby_info => {
                 if (findby_info.accessor_payload && findby_info.accessor && findby_info.conditions) {
                     const findby_finder = findby_info.accessor_payload[findby_info.accessor]
@@ -50,13 +47,15 @@ export = function<ReponseT = any> (
                         .only(base_model.keys)
                         .allSync()
 
-                    ids = ids.concat( idHolders.map(x => x[base_model.keys + '']) )
+                    findby_ids = findby_ids.concat( idHolders.map(x => x[base_model.keys + '']) )
                 }
             });
 
             if (!init_conditions.id) { // pointless here but I still leave it.
-                init_conditions.id = { in: ids };
+                init_conditions.id = { in: findby_ids };
             }
+
+            findby_get_nil = !findby_ids.length
         }
 
         if (Array.isArray(findby_exists))
@@ -87,17 +86,8 @@ export = function<ReponseT = any> (
     
     // avoid unnecessary find action such as `exec.allSync()`
     var objs = [];
-    if (limit > 0) {
+    if (limit > 0 && !findby_get_nil) {
         objs = exec.allSync();
-
-        if (extend_find_l1_info.results && extend_find_l1_info.ids_set) {
-            for (let idx in objs) {
-                if (extend_find_l1_info.ids_set.has(objs[idx].id)) {
-                    const replace_to = extend_find_l1_info.results.find(x => x.id === objs[idx].id)
-                    if (replace_to) objs[idx] = replace_to
-                }
-            }
-        }
     }
     
     objs = objs.map(obj => {
@@ -115,7 +105,7 @@ export = function<ReponseT = any> (
     if (is_count_required(query))
         return {
             results: objs,
-            count: exec.countSync()
+            count: findby_get_nil ? 0 : exec.countSync()
         };
 
     return {
