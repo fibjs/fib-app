@@ -1,5 +1,7 @@
 import uuid = require('uuid')
-import { prependHook } from './_tools';
+import ORM = require('@fxjs/orm')
+const Helpers = ORM.Helpers;
+const { prependHook } = Helpers;
 
 export default function (
     orm: FxOrmNS.ORM,

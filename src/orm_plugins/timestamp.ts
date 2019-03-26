@@ -1,5 +1,7 @@
 import util = require('util')
-import { prependHook } from './_tools';
+import ORM = require('@fxjs/orm')
+const Helpers = ORM.Helpers;
+const { prependHook } = Helpers;
 
 interface PluginOptions__Timestamp {
 	createdProperty?: string | false
