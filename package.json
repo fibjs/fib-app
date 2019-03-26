@@ -41,7 +41,7 @@
     "fib-typify": "^0.5.2"
   },
   "peerDependencies": {
-    "@fxjs/orm": ">= 1.9.2 < 2"
+    "@fxjs/orm": ">= 1.9.3 < 2"
   },
   "ci": {
     "type": "travis, appveyor",
