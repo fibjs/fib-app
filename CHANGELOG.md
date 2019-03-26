@@ -1,7 +1,14 @@
 
-v1.13.29 / 2019-03-27
+v1.13.30 / 2019-03-27
 ==================
 
+  * upgrade orm to fix bug about orm hooks.
+  * fix peer dependencies.
+
+v1.13.29 / 2019-03-27
+=====================
+
+  * Release v1.13.29
   * assert there's always non-empty `this.id` in OACL function internally.
   * use `prependHook` in orm's Helpers instead.
   * upgrade orm to use correct hook patch.
