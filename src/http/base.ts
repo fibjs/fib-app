@@ -86,7 +86,7 @@ export function setup (app: FibApp.FibAppClass) {
             if (o.$webx_lazy_linkers_before_save)
                 execLinkers(o.$webx_lazy_linkers_before_save, o);
             
-            util.sync(o.save).call(o, {}, {saveAssociations: false});
+            o.saveSync.call(o, {}, {saveAssociations: false});
             
             execLinkers(linkers_after_host_save);
 
