@@ -77,6 +77,12 @@ module.exports = db => {
             };
         },
         OACL: function (session) {
+            assert.isObject(this)
+            assert.property(this, 'id')
+            assert.ok(this.id)
+            assert.ok(this.id !== null)
+            assert.ok(this.id !== undefined)
+
             if (session.id == '54321') {
                 var acl = {};
                 acl[session.id] = {

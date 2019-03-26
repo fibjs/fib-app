@@ -319,7 +319,10 @@ export function setup(app: FibApp.FibAppClass) {
                     req,
                     obj.inst[_association.getAccessor].bind(obj.inst),
                     cls,
-                    extend
+                    {
+                        base_instance: obj.inst,
+                        extend_in_rest: extend
+                    }
                 ),
                 !is_count_required(req.query) ? 'results' : ''
             ) 

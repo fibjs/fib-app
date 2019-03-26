@@ -5,7 +5,11 @@ import {
     checkout_robj_acl
 } from './checkout_acl';
 
-export function filter (obj: FxOrmNS.Instance | FibApp.FibDataPayload, keys: boolean | string | string[], readonly_keys?: FibAppACL.RoleActDescriptor) {
+export function filter <T = FxOrmInstance.Instance | FibApp.FibDataPayload> (
+    obj: FxOrmInstance.Instance | FibApp.FibDataPayload,
+    keys: boolean | string | string[],
+    readonly_keys?: FibAppACL.RoleActDescriptor
+): T {
     if (Array.isArray(keys)) {
         if (Array.isArray(readonly_keys)) {
             keys = util.intersection(keys, readonly_keys)
@@ -15,7 +19,7 @@ export function filter (obj: FxOrmNS.Instance | FibApp.FibDataPayload, keys: boo
     }
 
     if (!Array.isArray(keys)) {
-        return obj;
+        return obj as T;
     }
     let objModelProperties = Object.keys(obj)
     /**
@@ -38,7 +42,7 @@ export function filter (obj: FxOrmNS.Instance | FibApp.FibDataPayload, keys: boo
         }
         delete obj[k];
     });
-    return obj;
+    return obj as T;
 };
 
 export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmNS.Instance) {

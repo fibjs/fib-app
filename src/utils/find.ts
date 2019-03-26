@@ -17,8 +17,11 @@ export = function<ReponseT = any> (
     req: FibApp.FibAppReq,
     finder: FxOrmQuery.IChainFind['find'],
     base_model: FxOrmModel.Model,
-    extend_in_rest?: FibAppACL.ACLExtendModelNameType
-): FibApp.FibAppIneternalApiFindResult<ReponseT> {
+    ext_info?: {
+        base_instance: FxOrmInstance.Instance,
+        extend_in_rest: FibAppACL.ACLExtendModelNameType
+    }
+): FibApp.FibAppIneternalApiFindResult<FxOrmInstance.Instance> {
     const query = req.query;
 
     let exists_args = [];
@@ -33,7 +36,8 @@ export = function<ReponseT = any> (
     ;(() => {
         if (!base_model)
             return ;
-            
+        
+        const { extend_in_rest = undefined } = ext_info || {}
         var findby = parse_json_queryarg<FibApp.FibAppReqQuery['findby']>(req, 'findby');
         var { exists: findby_exists, findby_infos } = query_filter_findby(findby, base_model, { req, extend_in_rest });
         
@@ -85,15 +89,15 @@ export = function<ReponseT = any> (
         .map(order => exec = exec.order(order));
     
     // avoid unnecessary find action such as `exec.allSync()`
-    var objs = [];
+    var objs: FxOrmInstance.Instance[] = [];
     if (limit > 0 && !findby_get_nil) {
         objs = exec.allSync();
     }
     
     objs = objs.map(obj => {
         let a: FibAppACL.RoleActDescriptor | false;
-        if (extend_in_rest !== undefined)
-            a = checkout_robj_acl(req.session, 'read', new base_model(), obj, extend_in_rest);
+        if (ext_info)
+            a = checkout_robj_acl(req.session, 'read', ext_info.base_instance, obj, ext_info.extend_in_rest);
         else
             a = checkout_obj_acl(req.session, 'read', obj);
         if (!a)
