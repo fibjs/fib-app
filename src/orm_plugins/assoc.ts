@@ -4,8 +4,7 @@ export default function (
     }
 ): FxOrmNS.Plugin {
 	function beforeDefine (name: string, properties: FxOrmNS.ModelPropertyDefinitionHash, opts: FxOrmNS.ModelOptions) {
-        if (opts.extension) {
-            // add it to enable uuid for model created in `.extendsTo`
+        if (opts.extension && !properties.id) {
             opts.__webx_use_uuid = true;
         }
     }

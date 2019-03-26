@@ -86,8 +86,11 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
         default:
             throw `invalid rel_assoc_info.type ${rel_type}`
         case 'extendsTo':
-            __opt = assoc.model.find({});
-            rid = iobj.inst.id;
+            const assoc_id = assoc.model.id.length > 1 ? assoc.model.id.filter(x => x !== 'id')[0] : assoc.model.id[0]
+            if (!assoc_id)
+                __opt = null
+            else
+                __opt = assoc.model.find({ [`${assoc_id}`]: id }).limit(1);
             break
         case 'hasOne':
             if (rel_assoc_info.association.reversed)
@@ -113,9 +116,9 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
 
     var riobj: FibApp.FibAppInternalCommExtendObj = {
         base: iobj.inst,
-        inst: is_extendsTo ? __opt.firstSync() : __opt.where({
-            id: rid
-        }).firstSync()
+        inst: is_extendsTo ? 
+            ( !__opt ? null : __opt.firstSync() )
+            : __opt.where({ id: rid }).firstSync()
     };
 
     if (is_extendsTo && riobj.inst === null) {
