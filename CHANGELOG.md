@@ -1,7 +1,15 @@
 
-v1.13.28 / 2019-03-25
+v1.13.29 / 2019-03-27
 ==================
 
+  * assert there's always non-empty `this.id` in OACL function internally.
+  * use `prependHook` in orm's Helpers instead.
+  * upgrade orm to use correct hook patch.
+
+v1.13.28 / 2019-03-25
+=====================
+
+  * Release v1.13.28
   * support orm level option `rest.model.disable_access_composite_table`.
   * code robust for better performance and sqlite compat in fibjs <= 0.22
   * fix mismatch between find conditions(`findby`) with found results in when multiple-level associations.
