@@ -387,8 +387,6 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
 
         return res;
     };
-
-    return ormInstance;
 };
 
 function get_extend_paging_unique_name (

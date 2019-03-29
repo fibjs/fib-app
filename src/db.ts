@@ -10,15 +10,17 @@ import orm_utils = require('./utils/orm')
 import orm_plugins = require('./orm_plugins')
 
 export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppORMPool<FibApp.FibAppORM> => {
-    var defs = [];
+    let defs: FibApp.FibAppOrmDefineFn[] = [];
     opts = opts || {};
-    var sync_lock = new coroutine.Lock();
-    var syned = false;
-    var use_uuid = opts.uuid;
+    const sync_info = {
+        lock: new coroutine.Lock(),
+        finished: false
+    }
+    const use_uuid = opts.uuid;
 
-    var ormPool = Pool({
+    const pool = <FibApp.AppORMPool<FibApp.FibAppORM>>Pool({
         create: function (): FibApp.FibAppORM {
-            var ormInstance: FibApp.FibAppORM = orm.connectSync(connStr) as FibApp.FibAppORM;
+            const ormInstance = <FibApp.FibAppORM>orm.connectSync(connStr);
             orm_utils.set_orm_default_settings(ormInstance)
             
             ormInstance.use(orm_plugins.app, {app})
@@ -34,27 +36,27 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
 
             defs.forEach(def => def(ormInstance));
 
-            sync_lock.acquire();
+            sync_info.lock.acquire();
             try {
-                if (!syned) {
+                if (!sync_info.finished) {
                     ormInstance.syncSync();
-                    syned = true;
+                    sync_info.finished = true;
                 }
             } finally {
-                sync_lock.release();
+                sync_info.lock.release();
             }
 
-            ormInstance = graphql(app, ormInstance);
+            graphql(app, ormInstance);
 
             return ormInstance;
         },
         maxsize: opts.maxsize,
         timeout: opts.timeout,
         retry: opts.retry
-    }) as FibApp.AppORMPool<FibApp.FibAppORM>;
+    });
 
-    ormPool.app = app;
-    ormPool.use = (def: FibApp.FibAppOrmDefineFn | FibApp.FibAppOrmDefineFn[]) => defs = defs.concat(def);
+    pool.app = app;
+    pool.use = (def) => defs = defs.concat(def);
 
-    return ormPool;
+    return pool;
 };

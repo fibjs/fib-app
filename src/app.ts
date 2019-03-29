@@ -15,17 +15,13 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     api: FibApp.FibAppInternalApis;
     viewApi: FibApp.FibAppInternalViewApis;
 
-    
     ormPool: FibApp.AppORMPool<FibApp.FibAppORM>;
     get dbPool (): FibApp.AppORMPool<FibApp.FibAppORM> { return this.ormPool }
     get db (): FibApp.AppORMPool<FibApp.FibAppORM> { return this.ormPool }
 
-    filterRequest: FibApp.FibAppSetupChainFn;
-    diagram: () => any;
-
-    graphqlTypeMap: any;
+    filterRequest: FibApp.FibAppClass['filterRequest'];
+    diagram: FibApp.FibAppClass['diagram'];
     test: FibApp.FibAppClassTestUtils;
-
     utils: FibApp.FibAppClassUtils;
 
     readonly __opts: FibApp.FibAppOpts;

@@ -190,16 +190,7 @@ declare namespace FibApp {
         | FibAppIneternalApiFunction__Edel
         | FibAppIneternalApiFunction__Elink
 
-    interface FibAppSetupChainFn {
-        (origReq: FibAppHttpRequest, classname: string, func: FibAppFilterableApiFunction__WithModel): void;
-        (origReq: FibAppHttpRequest, classname: string, func: FibAppFilterableApiFunction__NullModel): void;
-
-        (origReq: FibAppHttpRequest, classname: string, id: AppIdType, func: FibAppInternalApiFunction): void;
-        (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, efunc: FibAppInternalApiFunction): void;
-        (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, rid: AppIdType, efunc: FibAppInternalApiFunction): void;
-
-        (origReq: FibAppHttpRequest, classname: string, func: FibAppFilterableViewFunction): void;
-    }
+    type FibAppSetupChainFn = FibApp.FibAppClass['filterRequest']
 
     interface FibAppHookBeforeResponse {
         (req: FibAppReq, responseObj: FibAppResponse): void
@@ -343,12 +334,21 @@ declare namespace FibApp {
         // alias of 'ormPool'
         readonly db: AppORMPool<FibAppORM>;
 
-        diagram: any;
-        filterRequest: FibAppSetupChainFn;
+        /* advanced api :start */
+        diagram: () => any;
+        filterRequest: {
+            (origReq: FibAppHttpRequest, classname: string, func: FibAppFilterableApiFunction__WithModel): void;
+            (origReq: FibAppHttpRequest, classname: string, func: FibAppFilterableApiFunction__NullModel): void;
 
+            (origReq: FibAppHttpRequest, classname: string, id: AppIdType, func: FibAppInternalApiFunction): void;
+            (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, efunc: FibAppInternalApiFunction): void;
+            (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string, rid: AppIdType, efunc: FibAppInternalApiFunction): void;
+
+            (origReq: FibAppHttpRequest, classname: string, func: FibAppFilterableViewFunction): void;
+        };
         test: FibAppClassTestUtils;
-
         utils: FibAppClassUtils;
+        /* advanced api :end */
 
         readonly __opts: FibAppOpts;
 
