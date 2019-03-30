@@ -1,7 +1,15 @@
 
-v1.13.30 / 2019-03-27
+v1.13.31 / 2019-03-30
 ==================
 
+  * [db pool]support reload orm.
+  * typo change.
+  * fix logic when fetch Extend Association field.
+
+v1.13.30 / 2019-03-27
+=====================
+
+  * Release v1.13.30
   * upgrade orm to fix bug about orm hooks.
   * fix peer dependencies.
 
