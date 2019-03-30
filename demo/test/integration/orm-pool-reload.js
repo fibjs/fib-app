@@ -86,8 +86,8 @@ describe('orm pool reload', () => {
 
             /**
              * `app.db.use()` equals to `app.db.use([], { reload: true })`,
-             *  that only re init the orm definition function in app, but never
-             *  effect the existed orm-pool's worker.
+             *  that only re init the orm definition function in app, but no
+             *  effect on the existed orm-pool's worker.
              */
             assert.property(orm.models, 're_m1');
         });
