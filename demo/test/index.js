@@ -36,6 +36,8 @@ describe('fib-app', function () {
         
         require('./user');
         require('../defs/hooks/spec')
+
+        require('./integration/orm-pool-reload')
     }
 
     if (!process.env.FIBAPP_NO_MODEL_SPEC) {

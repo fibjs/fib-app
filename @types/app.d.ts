@@ -17,7 +17,12 @@ declare namespace FibApp {
     }
     interface AppORMPool<T1> extends FibPoolNS.FibPoolFunction<T1> {
         app: FibAppClass
-        use(defs: FibAppOrmDefineFn | FibAppOrmDefineFn[]): FibAppOrmDefineFn[];
+        use(
+            defs?: FibAppOrmDefineFn | FibAppOrmDefineFn[],
+            opts?: {
+                reload?: boolean
+            }
+        ): FibAppOrmDefineFn[];
     }
     // compatible
     type AppDBPool<T1> = AppORMPool<T1>

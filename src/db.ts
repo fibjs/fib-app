@@ -46,7 +46,9 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
                 sync_info.lock.release();
             }
 
-            graphql(app, ormInstance);
+            // only init graphql when models is not empty
+            if (ormInstance.models && Object.keys(ormInstance.models).length)
+                graphql(app, ormInstance);
 
             return ormInstance;
         },
@@ -56,7 +58,23 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
     });
 
     pool.app = app;
-    pool.use = (def) => defs = defs.concat(def);
+    pool.use = (def, opts) => {
+        if (!def && !opts) {
+            opts = { reload: true };
+        }
+        
+        const {
+            reload = false
+        } = opts || <typeof opts>{}
+        
+        if (reload)
+            defs = [];
+            
+        if (def)
+            defs = defs.concat(def)
+
+        return defs;
+    };
 
     return pool;
 };
