@@ -17,7 +17,7 @@ function generateRandomConn () {
         return {
             dbName,
             protocol: getProtocol(),
-            conn: `sqlite:${dbName}`
+            conn: `sqlite:${dbName}.db`
         }
     }
         

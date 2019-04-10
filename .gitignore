@@ -1,6 +1,7 @@
 node_modules
 test.db*
 test*.db*
+fibapp-test-sqlite-*
 package-lock.json
 
 cov-out
