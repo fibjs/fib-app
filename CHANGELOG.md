@@ -1,7 +1,14 @@
 
-v1.13.31 / 2019-03-30
+v1.13.32 / 2019-04-10
 ==================
 
+  * upgrade orm.
+  * fix literal mistake.
+
+v1.13.31 / 2019-03-30
+=====================
+
+  * Release v1.13.31
   * [db pool]support reload orm.
   * typo change.
   * fix logic when fetch Extend Association field.
