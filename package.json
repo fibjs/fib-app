@@ -21,7 +21,7 @@
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
   "dependencies": {
-    "@fxjs/orm": "^1.9.4",
+    "@fxjs/orm": "^1.9.6",
     "@types/fibjs": "^0.26.5",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.2",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@fibjs/ci": "^2.2.0",
     "@fibjs/detect-port": "^1.0.1",
-    "cheerio": "^1.0.0-rc.2",
+    "cheerio": "^1.0.0-rc.3",
     "ejs": "^2.6.1",
     "faker": "^4.1.0",
     "fib-pug": "0.0.2",
