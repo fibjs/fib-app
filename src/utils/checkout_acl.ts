@@ -5,6 +5,19 @@
 
 import * as util from 'util';
 
+export function default_session_for_acl (session_obj: FibApp.FibAppSession | null | undefined): FibApp.FibAppSession {
+    if (!session_obj || typeof session_obj !== 'object')
+        session_obj = {};
+
+    if (session_obj.id === undefined  || session_obj.id === null)
+        session_obj.id = null;
+
+    if (!Array.isArray(session_obj.roles))
+        session_obj.roles = [];
+
+    return session_obj;
+}
+
 function compute_acl_def (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmNS.Instance): FibAppACL.ACLDefinition | FibAppACL.OACLDefinition {
     if (!util.isFunction(def))
         return def as any
