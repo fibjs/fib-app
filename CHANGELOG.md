@@ -1,7 +1,16 @@
 
-v1.13.32 / 2019-04-10
+v1.13.33 / 2019-04-15
 ==================
 
+  * code clean.
+  * upgrade @fxjs/orm to fix probabel fatal error.
+  * feat, filter_request: support default session object.
+  * [test] change default sqlite db uri.
+
+v1.13.32 / 2019-04-10
+=====================
+
+  * Release v1.13.32
   * upgrade orm.
   * fix literal mistake.
 
