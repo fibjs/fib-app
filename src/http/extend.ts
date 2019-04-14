@@ -1,4 +1,3 @@
-import uuid = require('uuid');
 import util = require('util');
 import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;

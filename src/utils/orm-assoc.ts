@@ -1,7 +1,6 @@
 /// <reference types="@fxjs/orm" />
 import util = require('util')
 import ORM = require('@fxjs/orm');
-const Helpers = ORM.Helpers;
 
 export function check_hasmanyassoc_with_extraprops (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false {
     var has_many_association = instance.__opts.many_associations.find(a => a.name === extend_name);

@@ -1,7 +1,7 @@
 /// <reference lib="es2017" />
 
 import util = require('util');
-import  ORM = require('@fxjs/orm');
+import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
 import { checkout_acl } from './checkout_acl';

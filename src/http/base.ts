@@ -1,5 +1,4 @@
 /// <reference types="@fxjs/orm" />
-import util = require('util');
 import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
