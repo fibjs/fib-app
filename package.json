@@ -4,11 +4,14 @@
   "description": "",
   "main": "./lib",
   "types": "@types/index.d.ts",
+  "repository": "git://github.com/fibjs/fib-app.git",
   "scripts": {
     "build": "fib-typify src -o lib",
     "test:cov": "fibjs --cov ./demo/test/index.js",
     "test": "fibjs ./demo/test/index.js",
     "ci": "npm run build && npm run test",
+    "ci-mysql": "npm run build && npm run test",
+    "ci-sqlite": "npm run build && cross-env WEBX_TEST_SQLITE=1 npm run test",
     "prepublishOnly": "npm run build"
   },
   "author": "Liu Hu <lion@9465.net>",
@@ -21,7 +24,7 @@
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
   "dependencies": {
-    "@fxjs/orm": "^1.9.7",
+    "@fxjs/orm": "^1.10.0-alpha.1",
     "@types/fibjs": "^0.26.5",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.2",
@@ -34,6 +37,7 @@
     "@fibjs/ci": "^2.2.0",
     "@fibjs/detect-port": "^1.0.1",
     "cheerio": "^1.0.0-rc.3",
+    "cross-env": "^5.2.0",
     "ejs": "^2.6.1",
     "faker": "^4.1.0",
     "fib-pug": "0.0.2",
