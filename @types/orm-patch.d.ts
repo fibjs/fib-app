@@ -1,4 +1,4 @@
-/// <reference types="fibjs" />
+/// <reference types="@fibjs/types" />
 /// <reference types="@fxjs/orm" />
 
 /// <reference path="../@types/index.d.ts" />

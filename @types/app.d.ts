@@ -1,4 +1,4 @@
-/// <reference types="fibjs" />
+/// <reference types="@fibjs/types" />
 /// <reference types="@fxjs/orm" />
 /// <reference types="fib-session" />
 /// <reference types="fib-pool" />

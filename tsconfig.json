@@ -2,6 +2,14 @@
     "compilerOptions": {
         "target": "es6",
         "module": "commonjs",
-        "noImplicitUseStrict": true
+        "noImplicitAny": true,
+        "noImplicitUseStrict": true,
+        "inlineSourceMap": false,
+        "types": [
+            "@fibjs/types"
+        ],
+        "typeRoots": [
+            "@types/index.d.ts"
+        ]
     }
 }
