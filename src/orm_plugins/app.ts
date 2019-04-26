@@ -16,7 +16,7 @@ function int (bool: boolean) {
 
 
 const slice = Array.prototype.slice;
-export default function (ormInstance: FibApp.FibAppORM, opts) {
+export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptions) {
     ormInstance.app = opts.app;
 
     const orm_definition_hash: {[model_name: string]: {
@@ -97,7 +97,7 @@ function compatSetup (
             model = arguments[1] = null
         }
 
-        var assoc_model = null;
+        var assoc_model: FibApp.FibAppORMModel = null;
         m.extends[extend_name] = {
             type: 'hasOne',
             model: model,
@@ -125,7 +125,7 @@ function compatSetup (
             orm_hasMany_opts = arguments[2]
         }
 
-        var assoc_model = null;
+        var assoc_model: FibApp.FibAppORMModel = null;
         m.extends[extend_name] = {
             type: 'hasMany',
             model: model,
@@ -146,7 +146,7 @@ function compatSetup (
         orm_extendsTo_opts = orm_extendsTo_opts || {};
         orm_extendsTo_opts.hooks = orm_extendsTo_opts.hooks || {};
 
-        var assoc_model = null;
+        var assoc_model: FibApp.FibAppORMModel = null;
         m.extends[extend_name] = {
             type: 'extendsTo',
             // it's pointless, just keep same format with `hasMany`
