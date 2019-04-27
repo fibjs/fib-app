@@ -27,7 +27,7 @@
     "@fibjs/types": "0.0.3",
     "@fxjs/orm": "^1.10.0",
     "fib-graphql": "^1.0.0",
-    "fib-pool": "^1.5.2",
+    "fib-pool": "^1.5.3",
     "graphql-iso-date": "^3.4.0",
     "graphql-type-json": "^0.1.4",
     "viz.js": "1.8.0"
@@ -41,8 +41,8 @@
     "faker": "^4.1.0",
     "fib-pug": "0.0.2",
     "fib-push": "^1.4.1",
-    "fib-typify": "^0.5.2",
-    "fib-session": "^0.4.1"
+    "fib-session": "^0.4.1",
+    "fib-typify": "^0.5.2"
   },
   "peerDependencies": {
     "@fxjs/orm": ">= 1.9.7 < 2",
