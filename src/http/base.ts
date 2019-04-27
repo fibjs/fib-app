@@ -134,7 +134,7 @@ export function setup (app: FibApp.FibAppClass) {
 
         data = filter(data, obj.acl as FibAppACL.AclPermissionType__Write);
 
-        const rdata = {};
+        const rdata = <FxOrmInstance.InstanceDataPayload>{};
 
         let delr = !orm.settings.get(`rest.model.keep_association.put.${cls.model_name}`)
         for (const k in cls.associations) {
@@ -194,7 +194,7 @@ function parseFibAppOrmModelServices (cb_name: string | number, services: FibApp
         return null
 
     if (typeof services[cb_name] !== 'function') {
-        let response = undefined
+        let response: any = undefined
         try {
             response = JSON.parse(
                 JSON.stringify(services[cb_name])

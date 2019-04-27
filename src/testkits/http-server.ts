@@ -6,7 +6,7 @@ export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRou
     const { appPath = DEFAULT_APP_PATH } = opts || {}
     
     return new mq.Routing({
-        '/set_session': req => {
+        '/set_session': (req: FibApp.FibAppHttpRequest) => {
             var data = req.json();
             req.session.id = data.id;
             req.session.roles = data.roles;
@@ -45,7 +45,7 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
         routing
     ])
 
-    function sessionAs (sessionInfo) {
+    function sessionAs (sessionInfo: Fibjs.AnyObject) {
         http.post(serverBase + '/set_session', {
             json: sessionInfo
         });

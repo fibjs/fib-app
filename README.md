@@ -757,6 +757,13 @@ app.dbPool(orm => {
   setTimeout(() => {
     doSomething(orm)
   })
+
+  // right
+  setTimeout(() => {
+    app.dbPool(new_orm => {
+      doSomethingSync(orm)
+    })
+  })
 })
 
 // false!

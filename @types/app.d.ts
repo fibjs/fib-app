@@ -203,6 +203,7 @@ declare namespace FibApp {
 
     interface FibAppHttpRequest extends Class_HttpRequest, FibSessionNS.HttpRequest {
         error?: FibAppFinalError
+        session: FibSessionNS.SessionProxy
     }
 
     interface FibAppReqQuery {

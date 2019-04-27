@@ -1,6 +1,5 @@
 /// <reference types="@fxjs/orm" />
 import util = require('util')
-import ORM = require('@fxjs/orm');
 
 export function check_hasmanyassoc_with_extraprops (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false {
     var has_many_association = instance.__opts.many_associations.find(a => a.name === extend_name);
@@ -9,7 +8,7 @@ export function check_hasmanyassoc_with_extraprops (instance: FxOrmNS.Instance, 
     return has_extra_fields ? has_many_association : false
 }
 
-export function extra_save (instance: FxOrmNS.Instance, rinstance: FxOrmNS.Instance, _many_assoc: FxOrmNS.InstanceAssociationItem_HasMany, extra: any, just_set: boolean = false) {
+export function extra_save (instance: FxOrmNS.Instance, rinstance: FxOrmNS.Instance, _many_assoc: FxOrmNS.InstanceAssociationItem_HasMany, extra: any, just_set: boolean = false): void {
     if (Array.isArray(extra))
         return extra.forEach(item => extra_save(instance, rinstance, _many_assoc, item))
 
