@@ -40,13 +40,21 @@ const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
     }
 };
 
+interface FieldsResolveType {
+    [k: string]: {
+        type: string
+        resolve: Function
+        args?: FibApp.GraphQLResolverArgs
+    }
+}
+
 export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
-    var types = {};
+    var types = <Fibjs.AnyObject>{};
     var graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
 
-    function get_resolve(m: FibApp.FibAppORMModel) {
+    function get_resolve(m: FibApp.FibAppORMModel): FibApp.GraphQLResolverArgs[any]['type'] {
         return (
-            function (parent, args, req) {
+            function (parent: any, args: any, req: FibApp.FibAppHttpRequest) {
                 var res = debugFunctionWrapper(app.api.get)({
                     session: req.session,
                     query: {} as FibApp.FibAppReqQuery
@@ -64,7 +72,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
 
     function find_resolve(m: FibApp.FibAppORMModel, count_mode: 'count_only' | 'find_only' | 'paging' = 'find_only') {
         return (
-            function (parent, args, req) {
+            function (parent: any, args: any, req: FibApp.FibAppHttpRequest) {
                 let selector = null
 
                 switch (count_mode) {
@@ -161,7 +169,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
 
         return (
             function () {
-                var extra_fields = {};
+                var extra_fields = <FieldsResolveType>{};
                 for (var extraf in many_association.props) {
                     var orig_type = many_association.props[extraf].type
                     
@@ -169,7 +177,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                         throw `valid type required for model ${m.model_name}'s extended extra field ${extraf}`
                     }
 
-                    extra_fields[extraf] = {
+                    extra_fields[extraf] = <FieldsResolveType[any]>{
                         type: graphqlTypeMap[orig_type]
                     };
                 }
@@ -211,11 +219,11 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         )
     }
 
-    var extend_paging_types = {}
+    var extend_paging_types = <Fibjs.AnyObject>{}
     function get_fields(m: FibApp.FibAppORMModel, no_extra_fields: boolean = false) {
         return (
             function () {
-                var fields = {}
+                var fields = <FieldsResolveType>{}
 
                 var properties = m.properties;
                 for (var p in properties) {
@@ -225,7 +233,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                         throw `valid type required for model ${m.model_name}'s field ${p}`
                     }
 
-                    fields[p] = {
+                    fields[p] = <typeof fields[any]>{
                         type: type
                     };
                 }
@@ -260,7 +268,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                             let type_has_many = new graphql.GraphQLList(types[assoc_model.model_name].type)
                             let type_has_many_mixin_extra = null
 
-                            let has_many_association = null
+                            let has_many_association: FxOrmNS.InstanceAssociationItem_HasMany | false = null
                             
                             if (!no_extra_fields) {
                                 has_many_association = check_hasmanyassoc_with_extraprops((new m()), f)

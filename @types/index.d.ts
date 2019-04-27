@@ -5,7 +5,7 @@
 /// <reference path="./common.d.ts" />
 /// <reference path="./acl.d.ts" />
 /// <reference path="./req.d.ts" />
-/// <reference path="./orm-patch.d.ts" />
+/// <reference path="./orm.d.ts" />
 
 /// <reference path="./app.d.ts" />
 

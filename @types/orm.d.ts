@@ -65,12 +65,14 @@ declare namespace FibApp {
     }
 
     interface FibAppOrmModelDefOptions extends FxOrmNS.ModelOptions {
-        ACL?: FibAppACL.FibACLDef
-        OACL?: FibAppACL.FibOACLDef
-        functions?: FibAppOrmModelFunctionHash
-        viewFunctions?: FibAppOrmModelViewFunctionHash
-        viewServices?: FibAppOrmModelViewServiceHash
-        no_graphql?: boolean
+        webx?: {
+            ACL?: FibAppACL.FibACLDef
+            OACL?: FibAppACL.FibOACLDef
+            functions?: FibAppOrmModelFunctionHash
+            viewFunctions?: FibAppOrmModelViewFunctionHash
+            viewServices?: FibAppOrmModelViewServiceHash
+            no_graphql?: boolean
+        }
     }
     interface ExtendModelWrapper {
         type: 'hasOne' | 'hasMany' | 'extendsTo';
@@ -78,11 +80,17 @@ declare namespace FibApp {
         model: FibApp.FibAppORMModel;
         assoc_model: FibApp.FibAppORMModel;
     }
+    /**
+     * @deprecated
+     */
     interface FibAppFixedOrmExtendModelWrapper extends ExtendModelWrapper {
         model_associated_models: {
             [modelName: string]: FibAppORMModel
         }
     }
+    /**
+     * @deprecated
+     */
     interface FibAppOrmModelExtendsInfoHash {
         [ext_name: string]: FibAppFixedOrmExtendModelWrapper
     }
@@ -90,18 +98,31 @@ declare namespace FibApp {
     type FibAppOrmModelExtendsInfo = FibAppOrmModelExtendsInfoHash
     
     interface FibAppORMModel extends FxOrmNS.Model {
-        // globally unique class id
-        cid: number
-        model_name: string;
-        ACL: FibAppACL.FibACLDef// FibAppACL.ACLDefinition
-        OACL: FibAppACL.FibOACLDef// FibAppACL.OACLDefinition
-        functions: FibAppOrmModelFunctionHash
-        viewFunctions: FibAppOrmModelViewFunctionHash
-        viewServices: FibAppOrmModelViewServiceHash
-        no_graphql: boolean
 
-        // @deprecated, use orignal Model's field `associations`
-        extends: FibAppOrmModelExtendsInfoHash;
+        $webx: {
+            // globally unique class id
+            cid: number
+            model_name: string
+            ACL: FibAppACL.FibACLDef
+            OACL: FibAppACL.FibOACLDef
+            functions: FibAppOrmModelFunctionHash
+            viewFunctions: FibAppOrmModelViewFunctionHash
+            viewServices: FibAppOrmModelViewServiceHash
+            no_graphql: boolean,
+
+            // @deprecated, use orignal Model's field `associations`
+            extends: FibAppOrmModelExtendsInfoHash
+        }
+        // @deprecated, use model $webx[xxx] instead
+        readonly cid: FibAppORMModel['$webx']['cid']
+        readonly model_name: FibAppORMModel['$webx']['model_name']
+        readonly ACL: FibAppORMModel['$webx']['ACL']
+        readonly OACL: FibAppORMModel['$webx']['OACL']
+        readonly functions: FibAppORMModel['$webx']['functions']
+        readonly viewFunctions: FibAppORMModel['$webx']['viewFunctions']
+        readonly viewServices: FibAppORMModel['$webx']['viewServices']
+        readonly no_graphql: FibAppORMModel['$webx']['no_graphql']
+        readonly extends: FibAppORMModel['$webx']['extends']
     }
 
     interface FibAppOrmSettings {

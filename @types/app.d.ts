@@ -5,7 +5,7 @@
 
 /// <reference path="req.d.ts" />
 /// <reference path="test.d.ts" />
-/// <reference path="orm-patch.d.ts" />
+/// <reference path="orm.d.ts" />
 
 declare namespace FibApp {
     type FibModelCountTypeMACRO = number;
@@ -27,8 +27,13 @@ declare namespace FibApp {
     // compatible
     type AppDBPool<T1> = AppORMPool<T1>
 
+    interface GraphQLResolverArgs {
+        [k: string]: {
+            type: Function
+        }
+    }
     // constant type
-    interface FibAppApiCommnPayload_hasManyArgs {
+    interface FibAppApiCommnPayload_hasManyArgs extends GraphQLResolverArgs {
         where: { type: Function }
         join_where: { type: Function }
         findby: { type: Function }

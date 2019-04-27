@@ -3,8 +3,8 @@ var Viz = require('viz.js');
 const NO_GRAPHQL_COLOR = 'lightgray'// '#ec8888'
 
 export = function () {
-    var models = [];
-    var exts = [];
+    var models: string[] = [];
+    var exts: string[] = [];
 
     this.db((db: FibApp.FibAppORM) => {
         var m: FibApp.FibAppORMModel;

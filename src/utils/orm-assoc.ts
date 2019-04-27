@@ -1,5 +1,6 @@
 /// <reference types="@fxjs/orm" />
 import util = require('util')
+import { addHiddenProperty } from './obj';
 
 export function check_hasmanyassoc_with_extraprops (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false {
     var has_many_association = instance.__opts.many_associations.find(a => a.name === extend_name);
@@ -75,14 +76,6 @@ export function getOneMergeIdFromAssocExtendsTo (
     association: FxOrmAssociation.InstanceAssociationItem
 ) {
     return Object.keys(association.field)[0]
-}
-
-export function addHiddenProperty<T = any> (instance: FxOrmInstance.Instance, p: string, v: T) {
-	Object.defineProperty(instance, p, {
-        value: v,
-        writable: true,
-		enumerable: false
-	});
 }
 
 export function addHiddenLazyLinker__AfterSave (instance: FxOrmInstance.Instance, linkers: Function[] = []) {

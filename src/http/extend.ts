@@ -10,9 +10,10 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 
-import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker__AfterSave, getValidDataFieldsFromModel, addHiddenProperty, safeUpdateHasManyAssociatedInstanceWithExtra, buildCleanInstance, addHiddenLazyLinker__BeforeSave } from '../utils/orm-assoc';
+import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker__AfterSave, getValidDataFieldsFromModel, safeUpdateHasManyAssociatedInstanceWithExtra, buildCleanInstance, addHiddenLazyLinker__BeforeSave } from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
+import { addHiddenProperty } from '../utils/obj';
 
 export function setup(app: FibApp.FibAppClass) {
     const api = app.api;

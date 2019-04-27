@@ -35,6 +35,10 @@ function assert_valid_findby (
     return true
 }
 
+interface QueryFilterFindbyResult {
+    exists: FxOrmQuery.ChainWhereExistsInfo[] | null
+    findby_infos: FibApp.FilteredFindByInfo[]
+}
 export function query_filter_findby (
     findby: FibApp.FibAppReqQuery['findby'],
     base_model: FxOrmModel.Model,
@@ -42,13 +46,10 @@ export function query_filter_findby (
         extend_in_rest?: string,
         req: FibApp.FibAppReq
     }
-): {
-    exists: FxOrmQuery.ChainWhereExistsInfo[] | null
-    findby_infos: FibApp.FilteredFindByInfo[]
-} {
+): QueryFilterFindbyResult {
     const { req, extend_in_rest = '' } = opts
 
-    const __wrapper = { exists: null, findby_infos: [] }
+    const __wrapper: QueryFilterFindbyResult = { exists: null, findby_infos: [] }
 
     if (!findby) return __wrapper;
 
@@ -109,7 +110,7 @@ export function query_filter_findby (
             if (!checkout_acl(req.session, 'find', exec_model.ACL, findby.extend)) return ;
 
             let accessor_fn = null ,
-                accessor_name = null,
+                accessor_name: string = null,
                 accessor_payload = null;
                 
             const findby_accessor_name = found_assoc.modelFindByAccessor || `findBy${ucfirst(findby.extend)}`;
@@ -226,7 +227,7 @@ function filter_link_tuple (tuple: any): any[] {
 }
 
 function is_valid_string_tuple (tuple: any): any {
-    return tuple.every(x => typeof x === 'string') 
+    return tuple.every((x: any) => typeof x === 'string') 
 }
 
 function filter_exist_item_link (exist_item: FxOrmQuery.ChainWhereExistsInfo) {
