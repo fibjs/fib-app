@@ -289,6 +289,12 @@ declare namespace FibApp {
         viewPathPrefix?: string
         graphQLPathPrefix?: string
         batchPathPrefix?: string
+
+        hooks?: Hooks
+    }
+
+    interface Hooks {
+        beforeSetupRoute?: FxOrmHook.HookActionCallback
     }
 
     interface GetTestRoutingOptions {

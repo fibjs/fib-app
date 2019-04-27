@@ -1,4 +1,6 @@
 import * as mq from 'mq';
+import * as util from 'util';
+
 import setupApis = require('./http');
 
 import setupTest = require('./testkits')
@@ -31,8 +33,9 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     constructor(connStr: string) {
         super();
 
-        const dbSetupOpts: FibApp.FibAppDbSetupOpts = arguments[arguments.length - 1]
-        const appOpts: FibApp.FibAppOpts = (arguments[1] === dbSetupOpts ? null : arguments[1]) || {}
+        const args = Array.prototype.slice.apply(arguments);
+        const dbSetupOpts: FibApp.FibAppDbSetupOpts = util.last(args)
+        const appOpts: FibApp.FibAppOpts = (args[1] === dbSetupOpts ? null : args[1]) || {}
 
         Object.defineProperty(this, '__opts', {
             value: filterFibAppOptions(appOpts),
@@ -42,6 +45,8 @@ class App extends mq.Routing implements FibApp.FibAppClass {
         // just for compatible
         this.__opts.graphqlTypeMap = this.__opts.graphqlTypeMap || (dbSetupOpts as any).graphqlTypeMap || {}
         this.ormPool = setupDb(this, connStr, dbSetupOpts);
+
+        appOpts.hooks = appOpts.hooks || {};
 
         setupApis.bind(this);
         
