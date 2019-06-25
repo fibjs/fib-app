@@ -117,7 +117,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, data: FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, data_or_id: FibApp.IdPayloadVar | FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         const rel_assoc_info = cls.associations[extend];
         if (rel_assoc_info === undefined)
             return err_info(4040001, {
@@ -137,6 +137,11 @@ export function setup(app: FibApp.FibAppClass) {
                 return obj as FibApp.FibAppApiFunctionResponse;
         }
 
+        // TODO: add test about epost redirect to elink
+        if (!util.isObject(data_or_id))
+            return api.elink(req, orm, cls, obj.inst.id, extend, { id: data_or_id })
+
+        const data = data_or_id as FibApp.FibDataPayload
         ormUtils.attach_internal_api_requestinfo_to_instance(obj.inst, { data: null, req_info: req })
 
         const acl = checkout_obj_acl(req.session, 'create', obj.inst, extend) as FibAppACL.AclPermissionType__Create;
