@@ -29,7 +29,7 @@ function assert_valid_findby (
     exec_model: FxOrmModel.Model
 ) {
     if (!found_assoc) {
-        throw `invalid association symbol '${findby.extend}' for model '${exec_model.model_name || exec_model.table}'`
+        throw new Error(`invalid association symbol '${findby.extend}' for model '${exec_model.model_name || exec_model.table}'`)
     }
 
     return true

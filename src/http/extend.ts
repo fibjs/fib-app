@@ -364,7 +364,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         switch (rel_type) {
             default:
-                throw `invalid rel_assoc_info.type ${rel_type}`
+                throw new Error(`invalid rel_assoc_info.type ${rel_type}`)
             case 'extendsTo': 
                 robj.base[Helpers.getExtendsToAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
                 break

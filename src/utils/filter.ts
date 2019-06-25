@@ -38,7 +38,7 @@ export function filter <T = FxOrmInstance.Instance | FibApp.FibDataPayload> (
         try {
             obj[k] = undefined;
         } catch (e) {
-            throw `error occured when trying to set obj['${k}'] = undefined`
+            throw new Error(`error occured when trying to set obj['${k}'] = undefined`)
         }
         delete obj[k];
     });

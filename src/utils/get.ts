@@ -84,7 +84,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
 
     switch (rel_type) {
         default:
-            throw `invalid rel_assoc_info.type ${rel_type}`
+            throw new Error(`invalid rel_assoc_info.type ${rel_type}`)
         case 'extendsTo':
             const assoc_id = assoc.model.id.length > 1 ? assoc.model.id.filter(x => x !== 'id')[0] : assoc.model.id[0]
             if (!assoc_id)

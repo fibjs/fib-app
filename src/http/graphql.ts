@@ -174,7 +174,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                     var orig_type = many_association.props[extraf].type
                     
                     if (!graphqlTypeMap[orig_type]) {
-                        throw `valid type required for model ${m.model_name}'s extended extra field ${extraf}`
+                        throw new Error(`valid type required for model ${m.model_name}'s extended extra field ${extraf}`)
                     }
 
                     extra_fields[extraf] = <FieldsResolveType[any]>{
@@ -206,7 +206,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                     var orig_type = many_association.props[extraf].type
                     
                     if (!graphqlTypeMap[orig_type]) {
-                        throw `valid type required for model ${m.model_name}'s extended extra field ${extraf}`
+                        throw new Error(`valid type required for model ${m.model_name}'s extended extra field ${extraf}`)
                     }
 
                     basic_fields[extraf] = {
@@ -230,7 +230,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                     var type = graphqlTypeMap[properties[p].type]
 
                     if (!type) {
-                        throw `valid type required for model ${m.model_name}'s field ${p}`
+                        throw new Error(`valid type required for model ${m.model_name}'s field ${p}`)
                     }
 
                     fields[p] = <typeof fields[any]>{
@@ -242,7 +242,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                 for (var f in _associations) {
                     var rel_assoc_info = _associations[f];
                     if (rel_assoc_info.type !== 'extendsTo' && !rel_assoc_info.association.model) {
-                        throw `association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_assoc_info, null, '\t')}`
+                        throw new Error(`association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_assoc_info, null, '\t')}`)
                     }
 
                     const assoc_model = rel_assoc_info.association.model;

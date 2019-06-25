@@ -11,7 +11,7 @@ function throw_invalid_definition (name: string, error_r_key: number) {
     const error_reason = error_reasons[error_r_key]
 
     if (error_reason)
-        throw `error occured when finding pre-define orm model ${name}, reason: ${error_reason}`
+    throw new Error(`error occured when finding pre-define orm model ${name}, reason: ${error_reason}`)
 }
 function int (bool: boolean) {
     return bool ? 1 : 0
