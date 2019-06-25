@@ -108,10 +108,7 @@ declare namespace FibApp {
             functions: FibAppOrmModelFunctionHash
             viewFunctions: FibAppOrmModelViewFunctionHash
             viewServices: FibAppOrmModelViewServiceHash
-            no_graphql: boolean,
-
-            // @deprecated, use orignal Model's field `associations`
-            extends: FibAppOrmModelExtendsInfoHash
+            no_graphql: boolean
         }
         // @deprecated, use model $webx[xxx] instead
         readonly cid: FibAppORMModel['$webx']['cid']
@@ -122,7 +119,6 @@ declare namespace FibApp {
         readonly viewFunctions: FibAppORMModel['$webx']['viewFunctions']
         readonly viewServices: FibAppORMModel['$webx']['viewServices']
         readonly no_graphql: FibAppORMModel['$webx']['no_graphql']
-        readonly extends: FibAppORMModel['$webx']['extends']
     }
 
     interface FibAppOrmSettings {
