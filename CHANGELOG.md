@@ -1,7 +1,22 @@
 
-v1.13.33 / 2019-04-15
+v1.13.34 / 2019-06-25
 ==================
 
+  * remove pointless `extends` field in model
+  * allow elink auto redirect to epost
+  * use @fxjs/orm@1.10.2
+  * use `model_define_opts.webx` as FibAppORMModel's webx first-class config source, whose options' fallback to field in`model_define_opts`
+  * upgrade fib-pool
+  * support Hooks
+  * upgrade dependencies; mark 'fib-session' to devDependencies.
+  * typo fix.
+  * use latest @fxjs/orm, replace '@types/fibjs' with '@fibjs/types'
+  * upgrade @fxjs/orm; add test script.
+
+v1.13.33 / 2019-04-15
+=====================
+
+  * Release v1.13.33
   * code clean.
   * upgrade @fxjs/orm to fix probabel fatal error.
   * feat, filter_request: support default session object.
