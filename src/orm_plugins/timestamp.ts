@@ -42,39 +42,34 @@ export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp
 			properties[plugin_opts.expireProperty] = plugin_opts.type;
 
 		opts.hooks = opts.hooks || {};
-
-		if (plugin_opts.createdProperty)
-			prependHook(opts.hooks, 'beforeCreate', function (next: FxOrmHook.HookActionNextFunction) {
-				const createdProperty = plugin_opts.createdProperty as string
-				const updatedProperty = plugin_opts.updatedProperty as string
-
-				this[createdProperty] = this[updatedProperty] = new Date();
-
-				next()
-			});
-
-		if (plugin_opts.updatedProperty)
-			prependHook(opts.hooks, 'beforeSave', function (next: FxOrmHook.HookActionNextFunction) {
-				const createdProperty = plugin_opts.createdProperty as string
-				const updatedProperty = plugin_opts.updatedProperty as string
-
-				if (this.__opts.changes.length > 0) {
-					delete this[createdProperty];
-					this[updatedProperty] = new Date();
-				}
-
-				next()
-			});
-
-		if (plugin_opts.expireProperty)
-			prependHook(opts.hooks, 'beforeSave', function (next: FxOrmHook.HookActionNextFunction) {
-				this[plugin_opts.expireProperty as string] = plugin_opts.expire();
-
-				next()
-			});
 	}
 
 	return {
-		beforeDefine: beforeDefine
+		beforeDefine: beforeDefine,
+		define (model: FxOrmModel.Model) {
+			if (plugin_opts.createdProperty)	
+				model.beforeCreate(function () {
+					const createdProperty = plugin_opts.createdProperty as string
+					const updatedProperty = plugin_opts.updatedProperty as string
+
+					this[createdProperty] = this[updatedProperty] = new Date();
+				}, { oldhook: 'prepend' })
+
+			if (plugin_opts.updatedProperty)	
+				model.beforeSave(function () {
+					const createdProperty = plugin_opts.createdProperty as string
+					const updatedProperty = plugin_opts.updatedProperty as string
+
+					if (this.__opts.changes.length > 0) {
+						delete this[createdProperty];
+						this[updatedProperty] = new Date();
+					}
+				}, { oldhook: 'prepend' })
+
+			if (plugin_opts.expireProperty)	
+				model.beforeSave(function () {
+					this[plugin_opts.expireProperty as string] = plugin_opts.expire();
+				}, { oldhook: 'prepend' })
+		}
 	}
 };
