@@ -1,7 +1,17 @@
 
-v1.13.34 / 2019-06-25
+v1.13.35 / 2019-06-28
 ==================
 
+  * bugfix: typo fix
+  * feat: add FibAppOpts['hideErrorStack']
+  * typo robust.
+  * bugfix: use 'prepend' instead of 'overwrite' when change models' hook.
+  * throw Error with error message rather string only.
+
+v1.13.34 / 2019-06-25
+=====================
+
+  * Release v1.13.34
   * remove pointless `extends` field in model
   * allow elink auto redirect to epost
   * use @fxjs/orm@1.10.2
