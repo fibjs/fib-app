@@ -21,7 +21,8 @@ export function setup (app: FibApp.FibAppClass) {
             try {
                 return f(_req, data);
             } catch (e) {
-                console.error(e.stack);
+                if (!app.__opts.hideErrorStack)
+                    console.error(e.stack);
                 return err_info(5000002, {
                     function: func,
                     classname: classname,

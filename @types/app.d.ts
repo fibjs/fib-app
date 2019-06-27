@@ -296,6 +296,8 @@ declare namespace FibApp {
         batchPathPrefix?: string
 
         hooks?: Hooks
+
+        hideErrorStack?: boolean
     }
 
     interface Hooks {

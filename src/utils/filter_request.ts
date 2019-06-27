@@ -109,7 +109,8 @@ export function filterRequest(
         try {
             result = func.apply(undefined, [_req, db, cls].concat(earg, [data]));
         } catch (e) {
-            console.error(e.stack);
+            if (!this.__opts.hideErrorStack)
+                console.error(e.stack);
             if (e.type === 'validation') {
                 result = {
                     error: {
