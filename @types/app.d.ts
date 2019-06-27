@@ -170,16 +170,13 @@ declare namespace FibApp {
     type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 
     type GraphQLQueryString = string
-    interface FibAppDbGraphQLHandler {
-        (query: GraphQLQueryString, req: FibAppHttpRequest): any
-    }
-    interface FibAppORM extends FxOrmNS.FibORM {
+    interface FibAppORM extends FxOrmNS.ORM {
         app: FibAppClass
         /* override :start */
         models: { [key: string]: FibAppORMModel };
         /* override :end */
 
-        graphql?: FibAppDbGraphQLHandler
+        graphql<T = any> (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T
         define(name: string, properties: FxOrmModel.ModelPropertyDefinitionHash, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
     }
     // compatible

@@ -129,9 +129,3 @@ declare namespace FibApp {
         [extend_property: string]: any
     }
 }
-
-declare namespace FxOrmNS {
-    interface ORM {
-        graphql<T = any> (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T
-    }
-}
