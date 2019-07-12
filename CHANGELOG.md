@@ -1,7 +1,13 @@
 
-v1.13.35 / 2019-06-28
+v1.13.36 / 2019-07-12
 ==================
 
+  * feat: lazyload viz.js
+
+v1.13.35 / 2019-06-28
+=====================
+
+  * Release v1.13.35
   * bugfix: typo fix
   * feat: add FibAppOpts['hideErrorStack']
   * typo robust.
