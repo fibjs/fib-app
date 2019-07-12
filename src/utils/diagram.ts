@@ -1,30 +1,29 @@
-var Viz = require('viz.js');
-
 const NO_GRAPHQL_COLOR = 'lightgray'// '#ec8888'
 
 export = function () {
-    var models: string[] = [];
-    var exts: string[] = [];
+    const Viz = require('viz.js');
+
+    const models: string[] = [];
+    const exts: string[] = [];
 
     this.db((db: FibApp.FibAppORM) => {
-        var m: FibApp.FibAppORMModel;
-        // var m1: FibApp.ExtendModelWrapper;
-        var ks: string[];
+        let m: FibApp.FibAppORMModel;
+        let ks: string[];
 
-        for (var name in db.models) {
+        for (const name in db.models) {
             m = db.models[name];
             ks = [];
-            for (var k in m.properties) {
+            for (const k in m.properties) {
                 ks.push(`+ ${k} : ${m.properties[k].type}`);
             }
 
-            var is_nographql = m.no_graphql
+            const is_nographql = m.no_graphql
 
             models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
-            for (var e in m.associations) {
-                var assoc_info = m.associations[e];
-                var one = assoc_info.type === "hasOne" && !assoc_info.association.reversed;
-                var extendsTo = assoc_info.type === "extendsTo";
+            for (const e in m.associations) {
+                const assoc_info = m.associations[e];
+                const one = assoc_info.type === "hasOne" && !assoc_info.association.reversed;
+                const extendsTo = assoc_info.type === "extendsTo";
                 if (!extendsTo)
                     exts.push(`${m.model_name} -> ${assoc_info.association.model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
                 else
@@ -33,7 +32,7 @@ export = function () {
         }
     });
 
-    var dot = `
+    const dot = `
 digraph
 {
 rankdir=TB;

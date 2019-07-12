@@ -25,7 +25,7 @@
   "license": "ISC",
   "dependencies": {
     "@fibjs/types": "0.0.3",
-    "@fxjs/orm": "^1.10.2",
+    "@fxjs/orm": "^1.10.3",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.3",
     "graphql-iso-date": "^3.4.0",
