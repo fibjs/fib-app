@@ -8,3 +8,5 @@ cov-out
 *.lcov
 
 lib
+
+docs/.vuepress/dist

@@ -2,7 +2,7 @@
 
 `fib-app` 内置了一套简明的 ACL 规则, 定义了系统中不同身份, 不同 id 的用户对每个类和对象的**可访问性**. 基于内置的 [fib-session] 服务, `fib-app` 对来自客户端的 http 请求(包括 rest 和 graphql)信息标记了访问者的**身份**.
 
-在 [README.md] 的[权限]和[扩展对象权限]中, 已说明了通过 http API 对一个 orm 类进行 CURD 操作时, 权限判定的简明过程. 阅读本文, 你可以更深入其中的与原理.
+在[权限]和[扩展对象权限]中, 已说明了通过 http API 对一个 orm 类进行 CURD 操作时, 权限判定的简明过程. 阅读本文, 你可以更深入其中的与原理.
 
 ## 关键词
 
@@ -360,7 +360,7 @@ ACL 所有特性均如上文所述.
 
 OACL 是**与某个具体实例对象**相关的操作的 ACL 判定依据, 它的内部运行机制与 ACL 完全一致.
 
-关于 OACL 的示例可参考 [README.md] 中关于[扩展对象权限](../README.md#扩展对象权限)一节.
+关于 OACL 的示例可参考[指南]中关于[扩展对象权限]一节.
 
 OACL 具有以下特性:
 - OACL 的判定优先级比 ACL 更高
@@ -455,7 +455,7 @@ ACL (session) {
 }
 ```
 
-`extends` 的中对某个 Model 的 ACL/OACL 判定的优先级低于该 Model 自身定义的 ACL/OACL. 关于这一点, 在 README.md 的[扩展对象权限]一节有生动的说明. 我们再进一步分析, 对于具有 `Person.hasMany('pets', Pet)` 关系的 `Person` 和 `Pet` 两种对象, 对操作 read 的判定顺序为
+`extends` 的中对某个 Model 的 ACL/OACL 判定的优先级低于该 Model 自身定义的 ACL/OACL. 关于这一点, 在[指南]的[扩展对象权限]一节有生动的说明. 我们再进一步分析, 对于具有 `Person.hasMany('pets', Pet)` 关系的 `Person` 和 `Pet` 两种对象, 对操作 read 的判定顺序为
 
 * `pets.OACL[PET_ID -> ROLE -> *]#read`, 若为 false 则继续往下
 * `person.OACL[PERSON_ID -> ROLE -> *]#read` => `extends:pets[PET_ID -> ROLE -> *]#read`, 若为 false 则继续往下
@@ -611,9 +611,9 @@ ACL(session) {
 
 可以看到, 基于 `fib-app` 的 ACL 系统, 你已经可以基于 `session.id` 和 `session.roles` 来控制对 `fib-app` 中一个实体的访问, 如果有更高的要求(比如引入基于 RBAC 的权限控制系统), 你还可以在 Model 的 ACL/OACL 函数中做进一步定义.
 
-[Model Function]:./app-model-function.md
-[README.md]:../README.md
-[主体]:../README.md#主体
-[权限]:../README.md#权限
-[扩展对象权限]:../README.md#扩展对象权限
+[Model Function]:./app-model-extends.html#model-function
+[指南]:./guide.html
+[主体]:./guide.html#主体
+[权限]:./guide.html#权限
+[扩展对象权限]:./guide.html#扩展对象权限
 [fib-session]:https://github.com/fibjs/fib-session
