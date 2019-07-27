@@ -354,6 +354,13 @@ declare namespace FibApp {
         readonly isDebug: boolean;
     }
 
+    interface RpcMethod extends FibRpcInvoke.JsonRpcInvokedFunction {
+        (ctx: {
+            $session: FibApp.FibAppSession,
+            $request: FibApp.FibAppReq
+        }): any
+    }
+
     export class FibAppClass extends Class_Routing {
         api: FibAppInternalApis;
         viewApi: FibAppInternalViewApis;
@@ -363,7 +370,6 @@ declare namespace FibApp {
         // alias of 'ormPool'
         readonly db: AppORMPool<FibAppORM>;
 
-        // readonly rpcHandlers: FibRpcHandlerModule.FibRpcHdlr
         readonly rpcCall: {
             <TS = any, TERR = any>(
                 req: FibRpcJsonRpcSpec.RequestPayload | FibApp.FibAppHttpRequest,
@@ -372,6 +378,12 @@ declare namespace FibApp {
                 }
             ): TS | FibRpc.FibRpcError<TERR>
         }
+
+        addRpcMethod (name: string, fn: RpcMethod): number
+        hasRpcMethod (name: string): boolean
+        removeRpcMethod (name: string): number
+        allRpcMethodNames (): string[]
+        clearRpcMethods (): void
 
         /* advanced api :start */
         diagram: () => any;

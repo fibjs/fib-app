@@ -2,6 +2,9 @@ const test = require('test');
 test.setup();
 
 const querystring = require('querystring');
+const coroutine = require('coroutine');
+const Rpc = require('fib-rpc');
+
 const { check_result } = require('../../test/_utils');
 
 const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
@@ -1114,7 +1117,7 @@ describe("classes - person", () => {
         });
     });
 
-    describe("rpc", () => {
+    describe("built-in rpc", () => {
         it("call rpc method", () => {
             var rep = http.post(tSrvInfo.serverBase + `/rpc`, {
                 json: {
@@ -1219,6 +1222,128 @@ describe("classes - person", () => {
                         "message": "Method not found."
                     }
                 });
+            });
+        });
+    });
+
+    describe("rpc operation", () => {
+        var noOp = () => void 0
+
+        var integerAdd = ({ $session, v1, v2 }) => {
+            assert.exist($session)
+
+            if (!Number.isInteger(v1) || !Number.isInteger(v2))
+                throw Rpc.rpcError(-1, 'addend must be integer')
+                
+            return v1 + v2
+        }
+
+        beforeEach(() => {
+            tappInfo.app.clearRpcMethods()
+
+            assert.strictEqual(tappInfo.app.hasRpcMethod('anything', noOp), false);
+            assert.deepEqual(tappInfo.app.allRpcMethodNames(), []);
+        });
+
+        it("addRpcMethod", () => {
+            assert.strictEqual(
+                tappInfo.app.addRpcMethod('personMethod.test', noOp),
+                1
+            );
+
+            assert.throws(() => {
+                tappInfo.app.addRpcMethod('personMethod.test', noOp);
+            });
+
+            assert.strictEqual(
+                tappInfo.app.hasRpcMethod('personMethod.test', noOp),
+                true
+            );
+        });
+
+        it("removeRpcMethod", () => {
+            assert.strictEqual(
+                tappInfo.app.addRpcMethod('personMethod.test', noOp),
+                1
+            );
+
+            assert.strictEqual(
+                tappInfo.app.hasRpcMethod('personMethod.test', noOp),
+                true
+            );
+
+            assert.strictEqual(
+                tappInfo.app.removeRpcMethod('personMethod.test', noOp),
+                0
+            );
+
+            assert.strictEqual(
+                tappInfo.app.hasRpcMethod('personMethod.test', noOp),
+                false
+            );
+        });
+
+        it("parallel add/remove", () => {
+            var happended = false
+
+            const counts = Array.apply(null, { length: 100 }).map((_, idx) => idx + 1)
+
+            coroutine.parallel(
+                counts,
+                (count) => {
+                    if (!happended) happended = true;
+                    
+                    assert.strictEqual(
+                        tappInfo.app.addRpcMethod(`personMethod.${count}`, noOp),
+                        count
+                    );
+                }
+            );
+            
+            assert.deepEqual(
+                tappInfo.app.allRpcMethodNames(),
+                counts.map(c => `personMethod.${c}`)
+            );
+            assert.equal(happended, true)
+
+            happended = false;
+            coroutine.parallel(
+                counts.reverse(),
+                (cur) => {
+                    if (!happended) happended = true;
+                    
+                    assert.strictEqual(
+                        tappInfo.app.removeRpcMethod(`personMethod.${cur}`, noOp),
+                        cur - 1
+                    );
+                }
+            );
+            assert.equal(happended, true)
+        });
+
+        describe("use it", () => {
+            it("orm less, simple", () => {
+                tappInfo.app.addRpcMethod('xxx.integerAdd', integerAdd);
+
+                var response = tappInfo.app.rpcCall({
+                    id: 12345,
+                    method: 'xxx.integerAdd',
+                    params: { v1: 2, v2: 1 }
+                });
+
+                assert.deepEqual(
+                    response.result, 3
+                );
+                
+                var response = tappInfo.app.rpcCall({
+                    id: 12345,
+                    method: 'xxx.integerAdd',
+                    params: { v1: 2.1, v2: 1 }
+                });
+
+                assert.deepEqual(
+                    response.error, { code: -1, message: 'addend must be integer' }
+                );
             });
         });
     });
