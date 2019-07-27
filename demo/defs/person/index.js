@@ -23,8 +23,8 @@ module.exports = db => {
             },
 
             getPersonByName: (req, data) => {
-                var app = db.app
-                var findRep = app.api.find({
+                const app = db.app
+                const findRep = app.api.find({
                     ...req,
                     query: {
                         ...req.query,
@@ -77,6 +77,27 @@ module.exports = db => {
                     success: Object.keys(db.models)
                 }
             }
-        }
+        },
+        webx: {
+            rpc: {
+                _getPersonByName ({ name, $session }) {
+                    assert.property($session, 'id')
+                    assert.isArray($session.roles)
+                    
+                    const app = db.app
+                    const findRep = app.api.find({
+                        session: $session,
+                        query: {
+                            where: {name: { eq: name }}
+                        }
+                    }, db, db.models['person'])
+
+                    if (findRep.error)
+                        throw findRep.error
+
+                    return findRep.success.map(x => util.pick(x, 'name'))
+                }
+            }
+        },
     });
 };

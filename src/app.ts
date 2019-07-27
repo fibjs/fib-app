@@ -64,9 +64,12 @@ export = App;
 function filterFibAppOptions (__opts: FibApp.FibAppOpts) {
     __opts.apiPathPrefix = __opts.apiPathPrefix || ''
     __opts.viewPathPrefix = __opts.viewPathPrefix || ''
-    __opts.graphQLPathPrefix = __opts.graphQLPathPrefix || '/'
-    __opts.batchPathPrefix = __opts.batchPathPrefix || '/'
 
+    __opts.graphQLPathPrefix = __opts.graphQLPathPrefix || '/'
+    __opts.rpcPathPrefix = __opts.rpcPathPrefix || '/rpc'
+
+    __opts.batchPathPrefix = __opts.batchPathPrefix || '/'
+    
     __opts.graphqlTypeMap = __opts.graphqlTypeMap || {}
 
     return __opts

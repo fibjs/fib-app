@@ -5,7 +5,7 @@
 
 import * as util from 'util';
 
-export function default_session_for_acl (session_obj: FibApp.FibAppSession | null | undefined): FibApp.FibAppSession {
+export function default_session_for_acl (session_obj?: FibApp.FibAppSession | null): FibApp.FibAppSession {
     if (!session_obj || typeof session_obj !== 'object')
         session_obj = {};
 

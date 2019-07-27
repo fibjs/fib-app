@@ -5,7 +5,7 @@
 import json = require('json');
 import util = require('util');
 
-import { fill_error, err_info, render_error } from "./err_info";
+import { fill_error, err_info, render_error, APPError } from "./err_info";
 import { ouputMap } from './mimes';
 import { default_session_for_acl } from './checkout_acl';
 
@@ -22,14 +22,14 @@ function fill_undefined_error(req: FibApp.FibAppHttpRequest, cls: FibApp.FibAppO
     }, cls ? cls.cid : -1));
 }
 
-export function filterRequest(
+export const filterRequest: FibApp.FibAppClass['filterRequest'] = function (
     this: FibApp.FibAppClass,
     app_httprequest: FibApp.FibAppHttpRequest,
     classname: string
 ) {
     const arglen = arguments.length;
     const earg = _slice.call(arguments, 2, arglen - 1);
-    const func: FibApp.FibAppFunctionToBeFilter = arguments[arglen - 1];
+    const handler: FibApp.FibAppFunctionToBeFilter = arguments[arglen - 1];
 
     const app = this;
 
@@ -37,7 +37,7 @@ export function filterRequest(
         let data;
 
         // check empty data
-        if (app_httprequest.length == 0 && func.length === arglen + 1)
+        if (app_httprequest.length == 0 && handler.length === arglen + 1)
             return fill_error(app_httprequest,
                 err_info(4000001, {
                     method: app_httprequest.method
@@ -73,41 +73,28 @@ export function filterRequest(
                     }));
         }
 
-        const _req: FibApp.FibAppReq = {
-            session: default_session_for_acl(app_httprequest.session as FibApp.FibAppSession),
-            query: app_httprequest.query.toJSON(),
-            request: app_httprequest,
+        const _req = makeFibAppReqInfo(
+            app_httprequest,
+            app,
+            {
+                classname,
+                handler,
+                extend_args: earg
+            })
 
-            req_resource_type: parse_req_resource_and_hdlr_type(app_httprequest).requestedResultType,
-            req_resource_basecls: classname,
-            req_resource_extend: undefined,
-            req_resource_handler_type: undefined
-        }
-
-        if (is_internal_base_api_fn(app, func)) {
-            _req.req_resource_handler_type = 'builtInBaseRest'
-        } else if (is_internal_ext_api_fn(app, func)) {
-            _req.req_resource_handler_type = 'builtInExtRest'
-            _req.req_resource_extend = earg[1]
-        } else {
-            _req.req_resource_handler_type = 'modelFunction'
-        }
-
-        const where = _req.query.where;
-        if (where !== undefined)
-            try {
-                _req.query.where = json.decode(where as string);
-            } catch (e) {
+        try {
+            const where = normalizeQueryWhere(_req);
+            if (where) _req.query.where = where
+        } catch (error) {
+            if (error instanceof APPError && error.code === 'INVALID_QUERY_WHERE')
                 return fill_error(app_httprequest, err_info(4000003));
-            }
-
-        const keys = _req.query.keys;
-        if (keys !== undefined && typeof keys === 'string')
-            _req.query.keys = keys.split(',');
+            
+            throw error;
+        }
 
         let result: FibApp.FibAppResponse = null;
         try {
-            result = func.apply(undefined, [_req, db, cls].concat(earg, [data]));
+            result = handler.apply(undefined, ([_req, db, cls] as any[]).concat(earg, [data]));
         } catch (e) {
             if (!this.__opts.hideErrorStack)
                 console.error(e.stack);
@@ -169,9 +156,71 @@ export function filterRequest(
         _req.response_headers = util.extend({
             'Content-Type': ouputMap[_req.req_resource_type] || ouputMap.json
         }, _req.response_headers)
-
-        app_httprequest.response.setHeader(_req.response_headers);
+        
+        if (_req && _req.response_headers)
+            app_httprequest.response.setHeader(_req.response_headers);
     });
+}
+
+export function normalizeQueryWhere (_req: FibApp.FibAppReq): FibApp.FibAppReq['query']['where'] {
+    let _where;
+    if (_req.query.where !== undefined)
+        try {
+            _where = json.decode(_req.query.where as string);
+        } catch (error) {
+            throw (new APPError('INVALID_QUERY_WHERE', error.message));
+        }
+
+    return _where
+}
+
+export function makeFibAppReqInfo (
+    orequest: FibApp.FibAppHttpRequest,
+    app: FibApp.FibAppClass,
+    {
+        classname = null,
+        handler = null,
+        extend_args: earg = []
+    }: {
+        classname: string,
+        handler?: FibApp.FibAppFunctionToBeFilter,
+        extend_args?: [
+            /* extend_id | extend_instance */
+            (FibApp.AppIdType | FibApp.FibDataPayload)?,
+            /* extend_name */
+            string?,
+            /* rid */
+            FibApp.AppIdType?,
+        ]
+    }
+): FibApp.FibAppReq {
+    const _req: FibApp.FibAppReq = {
+        session: default_session_for_acl(orequest.session as FibApp.FibAppSession),
+        query: orequest.query.toJSON(),
+        request: orequest,
+
+        req_resource_type: parse_req_resource_and_hdlr_type(orequest).requestedResultType,
+        req_resource_basecls: classname,
+        req_resource_extend: undefined,
+        req_resource_handler_type: undefined
+    }
+
+    if (handler) {
+        if (is_internal_base_api_fn(app, handler)) {
+            _req.req_resource_handler_type = 'builtInBaseRest'
+        } else if (is_internal_ext_api_fn(app, handler)) {
+            _req.req_resource_handler_type = 'builtInExtRest'
+            _req.req_resource_extend = earg[1]
+        } else {
+            _req.req_resource_handler_type = 'modelFunction'
+        }
+    }
+
+    const keys = _req.query.keys;
+    if (keys !== undefined && typeof keys === 'string')
+        _req.query.keys = keys.split(',');
+
+    return _req
 }
 
 function is_internal_base_api_fn(app: FibApp.FibAppClass, func: any | Function) {

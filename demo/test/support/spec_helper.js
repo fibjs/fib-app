@@ -141,25 +141,24 @@ exports.getRandomSqliteBasedApp = function (...args) {
 }
 
 exports.mountAppToSrv = function (app, options = {}) {
-    const mountedInfo = app.test.mountAppToSessionServer(app, options)
-
-    // change routing for it
-    mountedInfo.routing.all(
-        '/push',
-        ws.upgrade((conn, req) => {
-            conn.onmessage = msg => {
-                var cmd = msg.json();
-                switch (cmd.act) {
-                    case 'on':
-                        push.on(cmd.ch, conn, cmd.timestamp);
-                        break;
-                    case 'off':
-                        push.off(cmd.ch, conn);
-                        break;
-                }
-            };
-        })
-    )
+    const mountedInfo = app.test.mountAppToSessionServer(app, {
+        ...options,
+        initRouting (routing) {
+            routing['/push'] = ws.upgrade((conn) => {
+                conn.onmessage = msg => {
+                    var cmd = msg.json();
+                    switch (cmd.act) {
+                        case 'on':
+                            push.on(cmd.ch, conn, cmd.timestamp);
+                            break;
+                        case 'off':
+                            push.off(cmd.ch, conn);
+                            break;
+                    }
+                };
+            })
+        }
+    })
 
     return mountedInfo
 }

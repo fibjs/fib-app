@@ -1,5 +1,6 @@
 /// <reference types="@fibjs/types" />
 /// <reference types="@fxjs/orm" />
+/// <reference types="fib-rpc" />
 
 /// <reference path="../@types/index.d.ts" />
 
@@ -109,6 +110,8 @@ declare namespace FibApp {
             viewFunctions: FibAppOrmModelViewFunctionHash
             viewServices: FibAppOrmModelViewServiceHash
             no_graphql: boolean
+
+            rpc: FibRpcInvoke.FibRpcFnHash
         }
         // @deprecated, use model $webx[xxx] instead
         readonly cid: FibAppORMModel['$webx']['cid']

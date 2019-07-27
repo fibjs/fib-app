@@ -32,7 +32,7 @@ declare namespace FibApp {
     type FibAppModelViewFunctionResponse = FibAppResponse<string>
 
     interface FibAppFinalError {
-        code: number;
+        code: number | string;
         name?: string;
         message: string;
 

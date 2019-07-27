@@ -11,7 +11,7 @@ function throw_invalid_definition (name: string, error_r_key: number) {
     const error_reason = error_reasons[error_r_key]
 
     if (error_reason)
-    throw new Error(`error occured when finding pre-define orm model ${name}, reason: ${error_reason}`)
+        throw new Error(`error occured when finding pre-define orm model ${name}, reason: ${error_reason}`)
 }
 function int (bool: boolean) {
     return bool ? 1 : 0
@@ -65,7 +65,9 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
             functions: webx_config_opts.functions || {},
             viewFunctions: webx_config_opts.viewFunctions || {},
             viewServices: webx_config_opts.viewServices || {},
-            no_graphql: !(webx_config_opts.no_graphql === undefined || webx_config_opts.no_graphql === false)
+            no_graphql: !(webx_config_opts.no_graphql === undefined || webx_config_opts.no_graphql === false),
+            
+            rpc: {...webx_config_opts.rpc}
         };
 
         m.$webx.cid = cls_id++;
