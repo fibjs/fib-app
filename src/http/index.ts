@@ -7,9 +7,11 @@ import _view = require('./view');
 
 import { parse_req_resource_and_hdlr_type, filterRequest } from '../utils/filter_request'
 import { run_graphql, is_graphql_request } from '../utils/graphql';
+import { bind_rpc } from './rpc';
 import { run_batch } from '../utils/batch-request';
 import * as Hook from './hook';
 
+const ROOT_PATH = '/'
 export function bind (app: FibApp.FibAppClass) {
     // bind it firstly
     app.filterRequest = filterRequest
@@ -25,6 +27,7 @@ export function bind (app: FibApp.FibAppClass) {
     const apiPathPrefix = app.__opts.apiPathPrefix
     const viewPathPrefix = app.__opts.viewPathPrefix
     const graphQLPathPrefix = app.__opts.graphQLPathPrefix
+    const rpcPathPrefix = app.__opts.rpcPathPrefix
     const batchPathPrefix = app.__opts.batchPathPrefix
 
     const enableFilterApiCollection = apiPathPrefix === viewPathPrefix
@@ -71,16 +74,14 @@ export function bind (app: FibApp.FibAppClass) {
         if (err)
             throw err;
 
-        if (!apiPathPrefix && viewPathPrefix) {
-            setupViewRoute()
-            setupApiRoute()
-        } else {
-            setupApiRoute()
-            setupViewRoute()
+        /* setup rpc :start */
+        if (rpcPathPrefix && rpcPathPrefix !== ROOT_PATH) {
+            bind_rpc(app)
         }
+        /* setup rpc :end */
 
         /* setup graphql :start */
-        const mergeRootAndGraphqlRoot = !graphQLPathPrefix || graphQLPathPrefix === '/'
+        const mergeRootAndGraphqlRoot = !graphQLPathPrefix || graphQLPathPrefix === ROOT_PATH
         if (!mergeRootAndGraphqlRoot)
             app.post(graphQLPathPrefix, (req: FibApp.FibAppHttpRequest) => {
                 if (!is_graphql_request(req))
@@ -89,16 +90,24 @@ export function bind (app: FibApp.FibAppClass) {
                 run_graphql(app, req)
             })
         /* setup graphql :end */
+
+        if (!apiPathPrefix && viewPathPrefix) {
+            setupViewRoute()
+            setupApiRoute()
+        } else {
+            setupApiRoute()
+            setupViewRoute()
+        }
     
         /* setup batch task :end */
-        const mergeRootAndBatchRoot = !batchPathPrefix || batchPathPrefix === '/'
+        const mergeRootAndBatchRoot = !batchPathPrefix || batchPathPrefix === ROOT_PATH
         if (!mergeRootAndBatchRoot)
             app.post(batchPathPrefix, (req: FibApp.FibAppHttpRequest) => run_batch(app, req))
         /* setup batch task :end */
         
     
         /* finally, root setup */
-        app.post('/', (req: FibApp.FibAppHttpRequest) => {
+        app.post(ROOT_PATH, (req: FibApp.FibAppHttpRequest) => {
             if (is_graphql_request(req))
                 return mergeRootAndGraphqlRoot && run_graphql(app, req);
     

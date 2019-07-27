@@ -1,18 +1,41 @@
+import http = require('http')
+import util = require('util')
 import mq = require('mq')
 
-const DEFAULT_APP_PATH = '/api'
-
 export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRoutingOptions) {
-    const { appPath = DEFAULT_APP_PATH } = opts || {}
+    const {
+        initRouting = null
+    } = opts || {}
     
-    return new mq.Routing({
+    const routingObj = <any>{
         '/set_session': (req: FibApp.FibAppHttpRequest) => {
             var data = req.json();
             req.session.id = data.id;
             req.session.roles = data.roles;
         },
-        [`${appPath}`]: app
+    }
+
+    if (typeof initRouting === 'function')
+        initRouting(routingObj)
+
+    Array.from(
+        new Set([,
+            app.__opts.graphQLPathPrefix,
+            app.__opts.rpcPathPrefix,
+            app.__opts.apiPathPrefix,
+            app.__opts.viewPathPrefix,
+            app.__opts.batchPathPrefix
+        ])
+    )
+    .filter(x => !!x)
+    .forEach((path,) => {
+        if (!path) return ;
+
+        path = ensureSlashStart(path)
+        routingObj[path] = app
     })
+
+    return new mq.Routing(routingObj)
 }
 
 function ensureSlashStart (str: string = '') {
@@ -23,9 +46,6 @@ function ensureSlashStart (str: string = '') {
 }
 
 export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibApp.GetTestServerOptions): FibApp.SessionTestServerInfo {
-    const http = require('http')
-    const util = require('util')
-
     const Session = require('fib-session')
     const detectPort = require('@fibjs/detect-port')
 
@@ -35,15 +55,15 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
         timeout: 60 * 1000
     });
 
-    const { appPath = DEFAULT_APP_PATH } = options
-    const serverBase = `http://127.0.0.1:${port}`
-    const appUrlBase = `${serverBase}${ensureSlashStart(appPath)}`
-
     const routing = getTestRouting(app, options)
+
+    const serverBase = `http://127.0.0.1:${port}`
+    const appUrlBase = `${serverBase}${ensureSlashStart(app.__opts.apiPathPrefix)}`
+
     const server = new http.Server(port, [
         session.cookie_filter,
         routing
-    ])
+    ] as any)
 
     function sessionAs (sessionInfo: Fibjs.AnyObject) {
         http.post(serverBase + '/set_session', {

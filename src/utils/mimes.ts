@@ -6,4 +6,6 @@ export const ouputMap = {
     get 'javascript' () {
         return this.js
     },
+
+    'unknown': '*/*; charset=utf8'
 }

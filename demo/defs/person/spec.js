@@ -1113,6 +1113,115 @@ describe("classes - person", () => {
             ]
         });
     });
+
+    describe("rpc", () => {
+        it("call rpc method", () => {
+            var rep = http.post(tSrvInfo.serverBase + `/rpc`, {
+                json: {
+                    id: 1234,
+                    method: 'person._getPersonByName',
+                    params: {
+                        name: 'tom'
+                    }
+                }
+            });
+
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "id": 1234,
+                "result": [{
+                    "name": "tom"
+                }]
+            });
+        });
+
+        it("call fallback to functions method", () => {
+            var rep = http.post(tSrvInfo.serverBase + `/rpc`, {
+                json: {
+                    id: 1234,
+                    method: 'person.getPersonByName',
+                    params: {
+                        name: 'tom'
+                    }
+                }
+            });
+
+            assert.equal(rep.statusCode, 200);
+            check_result(rep.json(), {
+                "id": 1234,
+                "result": {
+                    "message": "ok",
+                    "data": [
+                      {
+                        "name": "tom"
+                      }
+                    ]
+                }
+            });
+        });
+
+        it("call in memory", () => {
+            const response = tappInfo.app.rpcCall({
+                id: 12345,
+                method: 'person.getPersonByName',
+                params: {
+                    name: 'tom'
+                }
+            });
+
+            assert.deepEqual(
+                response.result.data, [
+                    {
+                        "name": "tom"
+                    }
+                ]
+            )
+        });
+
+        describe('exception', () => {
+            it('no model', () => {
+                var rep = http.post(tSrvInfo.serverBase + `/rpc`, {
+                    json: {
+                        id: 1234,
+                        method: 'model_no_exist.getPersonByName',
+                        params: {
+                            name: 'tom'
+                        }
+                    }
+                });
+
+                assert.equal(rep.statusCode, 200);
+                check_result(rep.json(), {
+                    "id": 1234,
+                    "error": {
+                        code: -32601,
+                        "message": "Method not found."
+                    }
+                });
+            });
+
+            it('no rpc method or any fallback function', () => {
+                var rep = http.post(tSrvInfo.serverBase + `/rpc`, {
+                    json: {
+                        id: 1234,
+                        method: 'person.non_existed_rpc_method_or_function',
+                        params: {
+                            name: 'tom'
+                        }
+                    }
+                });
+
+                assert.equal(rep.statusCode, 200);
+                check_result(rep.json(), {
+                    "id": 1234,
+                    "error": {
+                        code: -32601,
+                        "message": "Method not found."
+                    }
+                });
+            });
+        });
+    });
 });
 
 if (require.main === module) {

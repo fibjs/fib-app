@@ -2,6 +2,7 @@
 /// <reference types="@fxjs/orm" />
 /// <reference types="fib-session" />
 /// <reference types="fib-pool" />
+/// <reference types="fib-rpc" />
 
 /// <reference path="req.d.ts" />
 /// <reference path="test.d.ts" />
@@ -182,7 +183,12 @@ declare namespace FibApp {
     // compatible
     type FibAppDb = FibAppORM
 
-    type FibAppFunctionToBeFilter = FibAppFilterableApiFunction__WithModel | FibAppFilterableApiFunction__NullModel | FibAppOrmModelFunction | FibAppInternalApiFunction
+    type FibAppFunctionToBeFilter = (
+        FibAppFilterableApiFunction__WithModel
+        | FibAppFilterableApiFunction__NullModel
+        | FibAppOrmModelFunction
+        | FibAppInternalApiFunction
+    )
 
     type FibAppInternalApiFunction =
         FibAppIneternalApiFunction__Get
@@ -205,7 +211,11 @@ declare namespace FibApp {
 
     interface FibAppHttpRequest extends Class_HttpRequest, FibSessionNS.HttpRequest {
         error?: FibAppFinalError
-        session: FibSessionNS.SessionProxy
+        session: FibApp.FibAppSession/* FibSessionNS.SessionProxy */
+
+        id?: FibRpcJsonRpcSpec.JsonRpcId
+
+        [k: string]: any
     }
 
     interface FibAppReqQuery {
@@ -291,6 +301,7 @@ declare namespace FibApp {
         viewPathPrefix?: string
         graphQLPathPrefix?: string
         batchPathPrefix?: string
+        rpcPathPrefix?: string
 
         hooks?: Hooks
 
@@ -302,7 +313,9 @@ declare namespace FibApp {
     }
 
     interface GetTestRoutingOptions {
-        appPath?: string
+        initRouting?: {
+            (routing: /* Class_Routing |  */{[k: string]: Function}): void
+        }
     }
 
     interface GetTestServerOptions extends GetTestRoutingOptions {
@@ -349,6 +362,16 @@ declare namespace FibApp {
         readonly dbPool: AppORMPool<FibAppORM>;
         // alias of 'ormPool'
         readonly db: AppORMPool<FibAppORM>;
+
+        // readonly rpcHandlers: FibRpcHandlerModule.FibRpcHdlr
+        readonly rpcCall: {
+            <TS = any, TERR = any>(
+                req: FibRpcJsonRpcSpec.RequestPayload | FibApp.FibAppHttpRequest,
+                opts?: {
+                    session?: FibApp.FibAppSession
+                }
+            ): TS | FibRpc.FibRpcError<TERR>
+        }
 
         /* advanced api :start */
         diagram: () => any;
