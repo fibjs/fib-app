@@ -27,6 +27,13 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     utils: FibApp.FibAppClassUtils;
 
     readonly __opts: FibApp.FibAppOpts;
+
+    addRpcMethod: FibApp.FibAppClass['addRpcMethod'];
+    hasRpcMethod: FibApp.FibAppClass['hasRpcMethod'];
+    removeRpcMethod: FibApp.FibAppClass['removeRpcMethod'];
+    allRpcMethodNames: FibApp.FibAppClass['allRpcMethodNames'];
+    clearRpcMethods: FibApp.FibAppClass['clearRpcMethods'];
+    rpcCall: FibApp.FibAppClass['rpcCall'];
     
     constructor(connStr: string, appConfig: FibApp.FibAppOpts, opts: FibApp.FibAppDbSetupOpts)
     constructor(connStr: string, opts: FibApp.FibAppDbSetupOpts)
@@ -67,7 +74,8 @@ function filterFibAppOptions (__opts: FibApp.FibAppOpts) {
 
     __opts.graphQLPathPrefix = __opts.graphQLPathPrefix || '/'
     __opts.rpcPathPrefix = __opts.rpcPathPrefix || '/rpc'
-
+    __opts.websocketPathPrefix = __opts.websocketPathPrefix || '/websocket'
+    
     __opts.batchPathPrefix = __opts.batchPathPrefix || '/'
     
     __opts.graphqlTypeMap = __opts.graphqlTypeMap || {}

@@ -297,11 +297,33 @@ declare namespace FibApp {
     interface FibAppOpts {
         graphqlTypeMap?: FibAppGraphQLTypeMap
 
+        /**
+         * @default '/'
+         */
         apiPathPrefix?: string
+        /**
+         * @default '/'
+         */
         viewPathPrefix?: string
+        /**
+         * @default '/'
+         */
         graphQLPathPrefix?: string
+        /**
+         * @default '/'
+         * @recommended '/'
+         */
         batchPathPrefix?: string
+        /**
+         * @notice cannot be '/'
+         * @default '/rpc'
+         */
         rpcPathPrefix?: string
+        /**
+         * @notice cannot be '/'
+         * @default '/websocket'
+         */
+        websocketPathPrefix?: string
 
         hooks?: Hooks
 
@@ -327,6 +349,11 @@ declare namespace FibApp {
         server: Class_HttpServer
         routing: Class_Routing
         port: number,
+        httpHost: string,
+        websocketHost: string,
+        /**
+         * @alias httpHost
+         */
         serverBase: string,
         appUrlBase: string,
         utils: {

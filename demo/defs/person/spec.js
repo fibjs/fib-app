@@ -1233,7 +1233,7 @@ describe("classes - person", () => {
             assert.exist($session)
 
             if (!Number.isInteger(v1) || !Number.isInteger(v2))
-                throw Rpc.rpcError(-1, 'addend must be integer')
+                throw Rpc.rpcError(-1, 'Addend must be integer')
                 
             return v1 + v2
         }
@@ -1342,8 +1342,23 @@ describe("classes - person", () => {
                 });
 
                 assert.deepEqual(
-                    response.error, { code: -1, message: 'addend must be integer' }
+                    response.error, { code: -1, message: 'Addend must be integer' }
                 );
+            });
+
+            it("from websocket client", () => {
+                tappInfo.app.addRpcMethod('integerAdd.123', integerAdd);
+
+                // const remoting = Rpc.connect(`${tSrvInfo.websocketHost}${tappInfo.app.__opts.websocketPathPrefix}`);
+                const remoting = Rpc.open_connect(`${tSrvInfo.websocketHost}/websocket`);
+
+                try {
+                    remoting['integerAdd.123']({v1: 1.1, v2: 2})
+                } catch (err_msg) {
+                    assert.equal(err_msg, 'Addend must be integer')
+                }
+
+                assert.equal(remoting['integerAdd.123']({v1: 1, v2: 2}), 3)
             });
         });
     });

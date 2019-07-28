@@ -24,7 +24,8 @@ export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRou
             app.__opts.rpcPathPrefix,
             app.__opts.apiPathPrefix,
             app.__opts.viewPathPrefix,
-            app.__opts.batchPathPrefix
+            app.__opts.batchPathPrefix,
+            app.__opts.websocketPathPrefix,
         ])
     )
     .filter(x => !!x)
@@ -57,8 +58,9 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
 
     const routing = getTestRouting(app, options)
 
-    const serverBase = `http://127.0.0.1:${port}`
-    const appUrlBase = `${serverBase}${ensureSlashStart(app.__opts.apiPathPrefix)}`
+    const httpHost = `http://127.0.0.1:${port}`
+    const websocketHost = `ws://127.0.0.1:${port}`
+    const appUrlBase = `${httpHost}${ensureSlashStart(app.__opts.apiPathPrefix)}`
 
     const server = new http.Server(port, [
         session.cookie_filter,
@@ -66,7 +68,7 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
     ] as any)
 
     function sessionAs (sessionInfo: Fibjs.AnyObject) {
-        http.post(serverBase + '/set_session', {
+        http.post(httpHost + '/set_session', {
             json: sessionInfo
         });
     }
@@ -75,7 +77,9 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
         app,
         server,
         port,
-        serverBase,
+        httpHost,
+        serverBase: httpHost,
+        websocketHost,
         appUrlBase,
         routing,
         utils: {

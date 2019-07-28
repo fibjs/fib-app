@@ -1,5 +1,7 @@
 import http = require('http')
 import util = require('util')
+import ws = require('ws')
+
 import coroutine = require('coroutine')
 
 import Rpc = require('fib-rpc')
@@ -65,7 +67,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
     
     const dynamic_handlers = Rpc.open_handler(methods, { log_error_stack: shouldLogError })
     
-    const entry_handlers = Rpc.open_handler(
+    const httpcallee_handlers = Rpc.open_handler(
         (
             input: Fibjs.AnyObject & {
                 __$rpc_id: string
@@ -177,7 +179,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                 params = reqObj.params || {};
             }
 
-            const response = Rpc.httpCall(entry_handlers, {
+            const response = Rpc.httpCall(httpcallee_handlers, {
                 id: rpcId,
                 method: '*',
                 params: util.extend({}, params, {
@@ -196,4 +198,22 @@ export function bind_rpc (app: FibApp.FibAppClass) {
 
         req.response.json(result)
     });
+
+    const websocketPathPrefix = app.__opts.websocketPathPrefix
+
+    if (websocketPathPrefix && websocketPathPrefix !== '/') {
+        app.all(websocketPathPrefix, ws.upgrade(
+            (ws_conn: Class_WebSocket, request: FibApp.FibAppHttpRequest) => {
+                ws_conn.onmessage = ((msg: FibRpcInvoke.FibRpcInvokeWsSocketMessage) => {
+                    const input = msg.json()
+
+                    const result = app.rpcCall(input, {
+                        session: request.session
+                    })
+
+                    ws_conn.send(JSON.stringify(result))
+                })
+            }
+        ))
+    }
 }
