@@ -1,7 +1,18 @@
 
-v1.13.37 / 2019-07-19
+v1.13.38 / 2019-07-29
 ==================
 
+  * feat: better process of rpc methods based on `fib-rpc`'s interceptor
+  * fix travis ci config.
+  * support FibAppOpts['websocketPathPrefix']
+  * support rpcMethods operation for fib-app
+  * support `app.rpcCall`
+  * add vuepress based doc src
+
+v1.13.37 / 2019-07-19
+=====================
+
+  * Release v1.13.37
   * upgrade orm minor version
 
 v1.13.36 / 2019-07-12
