@@ -1,7 +1,13 @@
 
-v1.13.38 / 2019-07-29
+v1.13.39 / 2019-07-29
 ==================
 
+  * bugfix: little fix about testkits.http-server
+
+v1.13.38 / 2019-07-29
+=====================
+
+  * Release v1.13.38
   * feat: better process of rpc methods based on `fib-rpc`'s interceptor
   * fix travis ci config.
   * support FibAppOpts['websocketPathPrefix']
