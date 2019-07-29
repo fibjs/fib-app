@@ -382,7 +382,7 @@ declare namespace FibApp {
     }
 
     interface RpcMethod extends FibRpcInvoke.JsonRpcInvokedFunction {
-        (ctx: {
+        (params: Fibjs.AnyObject & {
             $session: FibApp.FibAppSession,
             $request: FibApp.FibAppReq
         }): any

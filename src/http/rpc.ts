@@ -14,13 +14,13 @@ export function bind_rpc (app: FibApp.FibAppClass) {
     const methodMap = new Map<string, FibApp.RpcMethod>()
     const methods_lock = new coroutine.Lock()
     // this must be one immutable object, which as fib-rpc's handlers dictionary
-    const methods = <{[k: string]: FibApp.RpcMethod}>{}
+    const rpcMethods = <{[k: string]: FibApp.RpcMethod}>{}
 
     function syncMethodToMethods (name: string) {
         if (methodMap.has(name))
-            methods[name] = methodMap.get(name)
+            rpcMethods[name] = methodMap.get(name)
         else
-            delete methods[name]
+            delete rpcMethods[name]
     }
 
     app.addRpcMethod = function (name, fn) {
@@ -65,93 +65,75 @@ export function bind_rpc (app: FibApp.FibAppClass) {
     }
     Object.defineProperty(app, 'clearRpcMethods', { value: app.clearRpcMethods, writable: false, configurable: false})
     
-    const dynamic_handlers = Rpc.open_handler(methods, { log_error_stack: shouldLogError })
-    
     const httpcallee_handlers = Rpc.open_handler(
-        (
-            input: Fibjs.AnyObject & {
-                __$rpc_id: string
-                __$method: string,
-                $session: FibApp.FibAppSession,
-                data: FibApp.FibDataPayload
-            }
-        ) => {
-            const {
-                __$rpc_id = null,
-                __$method = '',
-            } = input || {};
+        rpcMethods,
+        {
+            log_error_stack: shouldLogError,
+            interceptor (reqInfo) {
+                if (!reqInfo.method)
+                    return undefined
 
-            const rpcParams = util.omit(input, ['__$rpc_id', '__$method'])
+                const method = reqInfo.method
 
-            if (app.hasRpcMethod(__$method)) {
-                const result = Rpc.httpCall(dynamic_handlers, {
-                    id: __$rpc_id,
-                    method: __$method,
-                    params: rpcParams
-                }).json();
+                return (rpcParams: Fibjs.AnyObject & {$session: FibApp.FibAppSession}) => {
+                    if (!method || typeof method !== 'string')
+                        throw Rpc.rpcError(-32601)
+                        
+                    const [ modelName, rpcMehthod ] = (method).split('.')
 
-                if (result.error)
-                    throw Rpc.rpcError(result.error.code, result.error.message)
-                
-                return result.result
-            }
+                    if (!modelName)
+                        throw Rpc.rpcError(-32601)
+                        
+                    return app.dbPool((orm: FibApp.FibAppORM) => {
+                        const model = orm.models[modelName]
+                        if (!model)
+                            throw Rpc.rpcError(-32601)
 
-            if (!__$method || typeof __$method !== 'string')
-                throw Rpc.rpcError(-32601)
-                
-            const [ modelName, rpcMehthod ] = (__$method).split('.')
+                        if (!rpcMehthod)
+                            throw Rpc.rpcError(-32601)
 
-            if (!modelName)
-                throw Rpc.rpcError(-32601)
-                
-            return app.dbPool((orm: FibApp.FibAppORM) => {
-                const model = orm.models[modelName]
-                if (!model)
-                    throw Rpc.rpcError(-32601)
+                        if (typeof model.$webx.rpc[rpcMehthod] === 'function')
+                            return model.$webx.rpc[rpcMehthod].call(null, rpcParams)
 
-                if (!rpcMehthod)
-                    throw Rpc.rpcError(-32601)
+                        // when rpc method didn't exist, fallback rpc call to functions[rpcMethod]
+                        if (typeof model.$webx.functions[rpcMehthod] === 'function') {
+                            const request = <FibApp.FibAppHttpRequest>(new http.Request())
+                            request.session = default_session_for_acl(rpcParams.$session)
 
-                if (typeof model.$webx.rpc[rpcMehthod] === 'function')
-                    return model.$webx.rpc[rpcMehthod].call(null, rpcParams)
+                            const req = makeFibAppReqInfo(
+                                request,
+                                app,
+                                {
+                                    classname: modelName,
+                                    handler: model.$webx.functions[rpcMehthod]
+                                }
+                            )
 
-                // when rpc method didn't exist, fallback rpc call to functions[rpcMethod]
-                if (typeof model.$webx.functions[rpcMehthod] === 'function') {
-                    const request = <FibApp.FibAppHttpRequest>(new http.Request())
-                    request.session = default_session_for_acl(input.$session)
+                            try {
+                                const where = normalizeQueryWhere(req);
+                                if (where) req.query.where = where
+                            } catch (error) {}
+                            req.query.where = req.query.where || {};
+                            
+                            const result = <FibApp.FibAppResponse>model.$webx.functions[rpcMehthod].apply(
+                                null, [req, util.omit(rpcParams, ['$session'])]
+                            )
 
-                    const req = makeFibAppReqInfo(
-                        request,
-                        app,
-                        {
-                            classname: modelName,
-                            handler: model.$webx.functions[rpcMehthod]
+                            if (result.error)
+                                throw Rpc.rpcError(
+                                    result.error.code || -32000,
+                                    result.error.message
+                                )
+
+                            return result.success
                         }
-                    )
-
-                    try {
-                        const where = normalizeQueryWhere(req);
-                        if (where) req.query.where = where
-                    } catch (error) {}
-                    req.query.where = req.query.where || {};
-                    
-                    const result = <FibApp.FibAppResponse>model.$webx.functions[rpcMehthod].apply(
-                        null, [req, util.omit(rpcParams, ['$session'])]
-                    )
-
-                    if (result.error)
-                        throw Rpc.rpcError(
-                            result.error.code || -32000,
-                            result.error.message
-                        )
-
-                    return result.success
+                        
+                        throw Rpc.rpcError(-32601)
+                    });
                 }
-                
-                throw Rpc.rpcError(-32601)
             }
-        );
-    }, { log_error_stack: shouldLogError });
+        }
+    );
     
     Object.defineProperty(app, 'rpcCall', {
         value: <FibApp.FibAppClass['rpcCall']>(function (reqObj, opts) {
@@ -168,7 +150,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                     data = reqObj.json();
 
                     rpcId = data.id || reqObj.firstHeader('x-rpc-id')
-                    $session = default_session_for_acl(reqObj.session)
+                    $session = default_session_for_acl({...reqObj.session})
                     _method = data.method
                     params = data.params || {};
                 } catch (e) {}
@@ -181,12 +163,8 @@ export function bind_rpc (app: FibApp.FibAppClass) {
 
             const response = Rpc.httpCall(httpcallee_handlers, {
                 id: rpcId,
-                method: '*',
-                params: util.extend({}, params, {
-                    __$rpc_id: rpcId,
-                    __$method: _method,
-                    $session: $session,
-                })
+                method: _method,
+                params: util.extend({$session}, params)
             });
 
             return response.json();
@@ -208,6 +186,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                     const input = msg.json()
 
                     const result = app.rpcCall(input, {
+                        // TODO: dynamic latest session object
                         session: request.session
                     })
 
