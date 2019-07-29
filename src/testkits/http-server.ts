@@ -20,12 +20,12 @@ export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRou
 
     Array.from(
         new Set([,
-            app.__opts.graphQLPathPrefix,
-            app.__opts.rpcPathPrefix,
-            app.__opts.apiPathPrefix,
-            app.__opts.viewPathPrefix,
+            // app.__opts.graphQLPathPrefix,
+            // app.__opts.rpcPathPrefix,
+            // app.__opts.apiPathPrefix,
+            // app.__opts.viewPathPrefix,
+            // app.__opts.websocketPathPrefix,
             app.__opts.batchPathPrefix,
-            app.__opts.websocketPathPrefix,
         ])
     )
     .filter(x => !!x)
