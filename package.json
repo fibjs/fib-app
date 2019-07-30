@@ -31,13 +31,13 @@
     "@fxjs/orm": "^1.11.2",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.3",
-    "fib-rpc": "^0.5.2",
+    "fib-rpc": "^0.5.3",
     "graphql-iso-date": "^3.4.0",
     "graphql-type-json": "^0.1.4",
     "viz.js": "1.8.0"
   },
   "devDependencies": {
-    "@fibjs/ci": "^2.2.0",
+    "@fibjs/ci": "^2.3.0",
     "@fibjs/detect-port": "^1.0.1",
     "cheerio": "^1.0.0-rc.3",
     "cross-env": "^5.2.0",
