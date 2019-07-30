@@ -401,7 +401,8 @@ declare namespace FibApp {
             <TS = any, TERR = any>(
                 req: FibRpcJsonRpcSpec.RequestPayload | FibApp.FibAppHttpRequest,
                 opts?: {
-                    session?: FibApp.FibAppSession
+                    sessionid?: FibApp.FibAppHttpRequest['sessionid'] 
+                    session?: FibApp.FibAppHttpRequest['session']// FibApp.FibAppSession
                 }
             ): TS | FibRpc.FibRpcError<TERR>
         }

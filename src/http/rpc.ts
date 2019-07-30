@@ -75,7 +75,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
 
                 const method = reqInfo.method
 
-                return (rpcParams: Fibjs.AnyObject & {$session: FibApp.FibAppSession}) => {
+                return (rpcParams: Fibjs.AnyObject & {$session: FibApp.FibAppSession, $sessionid: string}) => {
                     if (!method || typeof method !== 'string')
                         throw Rpc.rpcError(-32601)
                         
@@ -99,6 +99,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                         if (typeof model.$webx.functions[rpcMehthod] === 'function') {
                             const request = <FibApp.FibAppHttpRequest>(new http.Request())
                             request.session = default_session_for_acl(rpcParams.$session)
+                            request.sessionid = rpcParams.$sessionid
 
                             const req = makeFibAppReqInfo(
                                 request,
@@ -116,7 +117,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                             req.query.where = req.query.where || {};
                             
                             const result = <FibApp.FibAppResponse>model.$webx.functions[rpcMehthod].apply(
-                                null, [req, util.omit(rpcParams, ['$session'])]
+                                null, [req, util.omit(rpcParams, ['$session', '$sessionid'])]
                             )
 
                             if (result.error)
@@ -138,6 +139,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
     Object.defineProperty(app, 'rpcCall', {
         value: <FibApp.FibAppClass['rpcCall']>(function (reqObj, opts) {
             const { session: default_session = null } = opts || {};
+            let { sessionid: $sessionid = null } = opts || {};
             
             let data: Fibjs.AnyObject = {};
             let rpcId = null, _method = '';
@@ -151,6 +153,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
 
                     rpcId = data.id || reqObj.firstHeader('x-rpc-id')
                     $session = default_session_for_acl({...reqObj.session})
+                    $sessionid = reqObj.sessionid
                     _method = data.method
                     params = data.params || {};
                 } catch (e) {}
@@ -164,7 +167,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
             const response = Rpc.httpCall(httpcallee_handlers, {
                 id: rpcId,
                 method: _method,
-                params: util.extend({$session}, params)
+                params: util.extend({$session, $sessionid}, params)
             });
 
             return response.json();
@@ -186,7 +189,7 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                     const input = msg.json()
 
                     const result = app.rpcCall(input, {
-                        // TODO: dynamic latest session object
+                        sessionid: request.sessionid,
                         session: request.session
                     })
 
