@@ -1,7 +1,14 @@
 
-v1.13.39 / 2019-07-29
+v1.13.40 / 2019-07-30
 ==================
 
+  * feat: tuning, allow pass `session` to options of `app.rpcCall`.
+  * upgrade fib-rpc & @fibjs/ci
+
+v1.13.39 / 2019-07-29
+=====================
+
+  * Release v1.13.39
   * bugfix: little fix about testkits.http-server
 
 v1.13.38 / 2019-07-29
