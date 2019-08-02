@@ -1,3 +1,4 @@
-const { trigger, wait } = require('@fxjs/orm/lib/orm/entry/Hook.js')
+import { Helpers } from '@fxjs/orm'
 
-export { trigger, wait }
+export const wait = Helpers.hookWait
+export const trigger = Helpers.hookTrigger

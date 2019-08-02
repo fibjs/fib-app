@@ -330,6 +330,22 @@ declare namespace FibApp {
         hideErrorStack?: boolean
     }
 
+    interface WebSocketMessageHandlerContext<DT = any> {
+        app: FibApp.FibAppClass,
+        data: DT
+        /**
+         * @description 
+         */
+        websocket_msg: Class_WebSocketMessage,
+        /**
+         * @description websocket connection
+         */
+        websocket: Class_WebSocket
+        /**
+         * @description websocket's original request
+         */
+        request: FibApp.FibAppHttpRequest
+    }
     interface Hooks {
         beforeSetupRoute?: FxOrmHook.HookActionCallback
     }
@@ -406,6 +422,7 @@ declare namespace FibApp {
                 }
             ): TS | FibRpc.FibRpcError<TERR>
         }
+        readonly eventor: Class_EventEmitter
 
         addRpcMethod (name: string, fn: RpcMethod): number
         hasRpcMethod (name: string): boolean

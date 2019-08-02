@@ -9,6 +9,7 @@ import setupUtils = require('./utils')
 import diagram = require('./utils/diagram');
 import ORM = require('@fxjs/orm');
 import Session = require('fib-session');
+import { EventEmitter } from 'events';
 
 class App extends mq.Routing implements FibApp.FibAppClass {
     static ORM = ORM;
@@ -27,6 +28,7 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     utils: FibApp.FibAppClassUtils;
 
     readonly __opts: FibApp.FibAppOpts;
+    readonly eventor: FibApp.FibAppClass['eventor'];
 
     addRpcMethod: FibApp.FibAppClass['addRpcMethod'];
     hasRpcMethod: FibApp.FibAppClass['hasRpcMethod'];
@@ -46,11 +48,21 @@ class App extends mq.Routing implements FibApp.FibAppClass {
 
         Object.defineProperty(this, '__opts', {
             value: filterFibAppOptions(appOpts),
-            writable: false
-        })
+            writable: false,
+            configurable: false
+        });
 
-        // just for compatible
-        this.__opts.graphqlTypeMap = this.__opts.graphqlTypeMap || (dbSetupOpts as any).graphqlTypeMap || {}
+        Object.defineProperty(this, 'eventor', {
+            value: new EventEmitter(),
+            writable: false,
+            configurable: false
+        });
+
+        this.__opts.graphqlTypeMap = util.extend(
+            this.__opts.graphqlTypeMap,
+            (dbSetupOpts as any).graphqlTypeMap, // just for compatible
+        );
+
         this.ormPool = setupDb(this, connStr, dbSetupOpts);
 
         appOpts.hooks = appOpts.hooks || {};

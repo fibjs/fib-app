@@ -1,14 +1,17 @@
+import Rpc = require('fib-rpc')
 import http = require('http')
 import util = require('util')
 import ws = require('ws')
 
 import coroutine = require('coroutine')
-
-import Rpc = require('fib-rpc')
 import { makeFibAppReqInfo, normalizeQueryWhere } from '../utils/filter_request';
 import { default_session_for_acl } from '../utils/checkout_acl';
+import * as Hook from './hook';
+import { capabilities, ROOT_PATH } from './_ctx';
 
-export function bind_rpc (app: FibApp.FibAppClass) {
+function noOp () {}
+
+export function bind_rpc (app: FibApp.FibAppClass) {    
     const shouldLogError = !app.__opts.hideErrorStack
 
     const methodMap = new Map<string, FibApp.RpcMethod>()
@@ -69,11 +72,11 @@ export function bind_rpc (app: FibApp.FibAppClass) {
         rpcMethods,
         {
             log_error_stack: shouldLogError,
-            interceptor (reqInfo) {
-                if (!reqInfo.method)
+            interceptor (reqPayload: FibRpcJsonRpcSpec.RequestPayload) {
+                if (!reqPayload.method)
                     return undefined
 
-                const method = reqInfo.method
+                const method = reqPayload.method
 
                 return (rpcParams: Fibjs.AnyObject & {$session: FibApp.FibAppSession, $sessionid: string}) => {
                     if (!method || typeof method !== 'string')
@@ -180,20 +183,46 @@ export function bind_rpc (app: FibApp.FibAppClass) {
         req.response.json(result)
     });
 
+}
+
+export function bind_websocket_and_rpc (app: FibApp.FibAppClass) {
+    const rpcPathPrefix = app.__opts.rpcPathPrefix
     const websocketPathPrefix = app.__opts.websocketPathPrefix
 
-    if (websocketPathPrefix && websocketPathPrefix !== '/') {
+    const couldBind = {
+        rpc: rpcPathPrefix && rpcPathPrefix !== ROOT_PATH,
+        websocket: websocketPathPrefix && websocketPathPrefix !== ROOT_PATH
+    }
+    
+    if (couldBind.rpc) bind_rpc(app)
+
+    if (couldBind.websocket) {
         app.all(websocketPathPrefix, ws.upgrade(
             (ws_conn: Class_WebSocket, request: FibApp.FibAppHttpRequest) => {
                 ws_conn.onmessage = ((msg: FibRpcInvoke.FibRpcInvokeWsSocketMessage) => {
-                    const input = msg.json()
+                    let input = <any>{}
+                    try { input = msg.json() } catch (error) {}
+                    
+                    if (capabilities['fib-push'] && (
+                        input.act && typeof input.act === 'string' && !!input.timestamp
+                    )) {
+                        const ctx = {
+                            data: input,
+                            app,
+                            websocket_msg: msg,
+                            websocket: ws_conn,
+                            request
+                        }
 
-                    const result = app.rpcCall(input, {
-                        sessionid: request.sessionid,
-                        session: request.session
-                    })
+                        app.eventor.emit('onReceiveFibPushAct', ctx)
+                    } else if (couldBind.rpc) {
+                        const result = app.rpcCall(input, {
+                            sessionid: request.sessionid,
+                            session: request.session
+                        })
 
-                    ws_conn.send(JSON.stringify(result))
+                        ws_conn.send(JSON.stringify(result))
+                    }
                 })
             }
         ))

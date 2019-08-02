@@ -7,11 +7,11 @@ import _view = require('./view');
 
 import { parse_req_resource_and_hdlr_type, filterRequest } from '../utils/filter_request'
 import { run_graphql, is_graphql_request } from '../utils/graphql';
-import { bind_rpc } from './rpc';
+import { bind_websocket_and_rpc } from './websocket_rpc';
 import { run_batch } from '../utils/batch-request';
 import * as Hook from './hook';
+import { ROOT_PATH } from './_ctx';
 
-const ROOT_PATH = '/'
 export function bind (app: FibApp.FibAppClass) {
     // bind it firstly
     app.filterRequest = filterRequest
@@ -27,7 +27,6 @@ export function bind (app: FibApp.FibAppClass) {
     const apiPathPrefix = app.__opts.apiPathPrefix
     const viewPathPrefix = app.__opts.viewPathPrefix
     const graphQLPathPrefix = app.__opts.graphQLPathPrefix
-    const rpcPathPrefix = app.__opts.rpcPathPrefix
     const batchPathPrefix = app.__opts.batchPathPrefix
 
     const enableFilterApiCollection = apiPathPrefix === viewPathPrefix
@@ -74,11 +73,9 @@ export function bind (app: FibApp.FibAppClass) {
         if (err)
             throw err;
 
-        /* setup rpc :start */
-        if (rpcPathPrefix && rpcPathPrefix !== ROOT_PATH) {
-            bind_rpc(app)
-        }
-        /* setup rpc :end */
+        /* setup websocket :start */
+        bind_websocket_and_rpc(app)
+        /* setup websocket :end */
 
         /* setup graphql :start */
         const mergeRootAndGraphqlRoot = !graphQLPathPrefix || graphQLPathPrefix === ROOT_PATH
