@@ -1,7 +1,13 @@
 
-v1.13.40 / 2019-07-30
+v1.13.41 / 2019-08-03
 ==================
 
+  * feat: add FibAppClass['eventor'], support `onReceiveFibPushAct` event
+
+v1.13.40 / 2019-07-30
+=====================
+
+  * Release v1.13.40
   * feat: tuning, allow pass `session` to options of `app.rpcCall`.
   * upgrade fib-rpc & @fibjs/ci
 
