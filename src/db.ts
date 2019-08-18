@@ -66,6 +66,8 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
             opts = { reload: true };
         }
         
+        sync_info.finished = false;
+        
         const {
             reload = false
         } = opts || <typeof opts>{}
