@@ -1,7 +1,14 @@
 
-v1.13.41 / 2019-08-03
+v1.13.42 / 2019-08-19
 ==================
 
+  * feat: support re-sync after calling `app.use`.
+  * robust change, break change for plugin `timestamp`
+
+v1.13.41 / 2019-08-03
+=====================
+
+  * Release v1.13.41
   * feat: add FibAppClass['eventor'], support `onReceiveFibPushAct` event
 
 v1.13.40 / 2019-07-30
