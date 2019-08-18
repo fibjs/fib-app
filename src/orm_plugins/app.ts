@@ -13,12 +13,14 @@ function throw_invalid_definition (name: string, error_r_key: number) {
     if (error_reason)
         throw new Error(`error occured when finding pre-define orm model ${name}, reason: ${error_reason}`)
 }
+
 function int (bool: boolean) {
     return bool ? 1 : 0
 }
 
-
-const slice = Array.prototype.slice;
+/**
+ * @description first initial plugin before all other plugins
+ */
 export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptions) {
     ormInstance.app = opts.app;
 
@@ -28,10 +30,23 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
         opts: FibApp.FibAppOrmModelDefOptions
     }} = {};
 
+    const compatibleKeys = [
+        'ACL',
+        'OACL',
+        'functions',
+        'viewFunctions',
+        'viewServices',
+        'no_graphql',
+    ]
     function beforeDefine (name: string, properties: FxOrmNS.ModelPropertyDefinitionHash, opts: FxOrmNS.ModelOptions) {
         opts.timestamp = true
 
         orm_definition_hash[name] = { name, properties, opts }
+
+        opts.webx = <FibApp.FibAppOrmModelDefOptions['webx']>util.extend(
+            util.pick(opts, compatibleKeys),
+            opts.webx
+        );
     }
     
     let cls_id = 1;
@@ -50,14 +65,7 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
          *  allow webx config option from top-level definition,
          *  as those options from `opts.webx[xxx]` recommended
          */
-        const webx_config_opts = util.extend({
-            ACL: orm_define_opts.ACL,
-            OACL: orm_define_opts.OACL,
-            functions: orm_define_opts.functions,
-            viewFunctions: orm_define_opts.viewFunctions,
-            viewServices: orm_define_opts.viewServices,
-            no_graphql: orm_define_opts.no_graphql,
-        }, orm_define_opts.webx);
+        const webx_config_opts = orm_define_opts.webx;
 
         m.$webx = m.$webx || <typeof m.$webx>{
             ACL: webx_config_opts.ACL,
@@ -67,7 +75,7 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
             viewServices: webx_config_opts.viewServices || {},
             no_graphql: !(webx_config_opts.no_graphql === undefined || webx_config_opts.no_graphql === false),
             
-            rpc: {...webx_config_opts.rpc}
+            rpc: {...webx_config_opts.rpc},
         };
 
         m.$webx.cid = cls_id++;

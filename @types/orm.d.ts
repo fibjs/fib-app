@@ -73,6 +73,7 @@ declare namespace FibApp {
             viewFunctions?: FibAppOrmModelViewFunctionHash
             viewServices?: FibAppOrmModelViewServiceHash
             no_graphql?: boolean
+            rpc?: FibRpcInvoke.FibRpcFnHash
         }
     }
     interface ExtendModelWrapper {

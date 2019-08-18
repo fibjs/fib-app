@@ -23,6 +23,9 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
             const ormInstance = <FibApp.FibAppORM>orm.connectSync(connStr);
             orm_utils.set_orm_default_settings(ormInstance)
             
+            /**
+             * @notice must setup firstly
+             */
             ormInstance.use(orm_plugins.app, {app})
             
             ormInstance.use(orm_plugins.timestamp, {
