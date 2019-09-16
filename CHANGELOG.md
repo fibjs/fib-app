@@ -1,7 +1,13 @@
 
-v1.13.42 / 2019-08-19
+v1.13.43 / 2019-09-16
 ==================
 
+  * feat: remove hard dependency on 'fib-session'
+
+v1.13.42 / 2019-08-19
+=====================
+
+  * Release v1.13.42
   * feat: support re-sync after calling `app.use`.
   * robust change, break change for plugin `timestamp`
 
