@@ -8,12 +8,10 @@ import setupDb = require('./db');
 import setupUtils = require('./utils')
 import diagram = require('./utils/diagram');
 import ORM = require('@fxjs/orm');
-import Session = require('fib-session');
 import { EventEmitter } from 'events';
 
 class App extends mq.Routing implements FibApp.FibAppClass {
     static ORM = ORM;
-    static Session = Session;
 
     api: FibApp.FibAppInternalApis;
     viewApi: FibApp.FibAppInternalViewApis;
