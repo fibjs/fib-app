@@ -5,11 +5,24 @@
         "noImplicitAny": true,
         "noImplicitUseStrict": true,
         "inlineSourceMap": false,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "declaration": true,
+        "declarationDir": "typings",
         "types": [
             "@fibjs/types"
         ],
         "typeRoots": [
-            "@types/index.d.ts"
+            "typings/index.d.ts"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "typeAcquisition": {
+        "exclude": [
+            "fib-session",
+            "fib-vk"
         ]
     }
 }

@@ -9,6 +9,7 @@ import setupUtils = require('./utils')
 import diagram = require('./utils/diagram');
 import ORM = require('@fxjs/orm');
 import { EventEmitter } from 'events';
+import { FibApp } from './Typo/app';
 
 class App extends mq.Routing implements FibApp.FibAppClass {
     static ORM = ORM;

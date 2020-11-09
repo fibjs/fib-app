@@ -39,3 +39,13 @@ exports.cutOffSeconds = function (date) {
 
     return date.getTime() - date.getSeconds()
 }
+
+exports.runServer = (svr, cb) => {
+    // fibjs >= 0.28
+    if (typeof svr.start === 'function') {
+        svr.start();
+        cb();
+    } else {
+        svr.run(cb);
+    }
+}

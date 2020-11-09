@@ -1,13 +1,12 @@
 /// <reference lib="es2016" />
 
-/// <reference path="../../@types/index.d.ts" />
-
 import json = require('json');
 import util = require('util');
 
 import { fill_error, err_info, render_error, APPError } from "./err_info";
 import { ouputMap } from './mimes';
 import { default_session_for_acl } from './checkout_acl';
+import { FibApp } from '../Typo/app';
 
 const _slice = Array.prototype.slice;
 

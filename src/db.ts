@@ -8,6 +8,7 @@ import graphql = require('./http/graphql');
 
 import orm_utils = require('./utils/orm')
 import orm_plugins = require('./orm_plugins')
+import { FibApp } from './Typo/app';
 
 export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOpts): FibApp.AppORMPool<FibApp.FibAppORM> => {
     let defs: FibApp.FibAppOrmDefineFn[] = [];

@@ -2,6 +2,7 @@ import { err_info } from '../utils/err_info';
 
 import { _get } from '../utils/get';
 import { checkout_acl } from '../utils/checkout_acl';
+import { FibApp } from '../Typo/app';
 
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;

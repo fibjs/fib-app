@@ -1,3 +1,5 @@
+import { FibApp } from "../Typo/app";
+
 export function is_graphql_request (request: FibApp.FibAppHttpRequest) {
     return (request.firstHeader('Content-Type') || '').split(';')[0].includes('application/graphql')
 }

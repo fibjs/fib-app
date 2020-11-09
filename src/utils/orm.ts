@@ -1,3 +1,5 @@
+import { FxOrmNS } from "@fxjs/orm/typings/Typo/ORM";
+import { FibApp } from "../Typo/app";
 import { buildCleanInstance, getValidDataFieldsFromModel } from "./orm-assoc";
 
 export function default_settings (): FibApp.FibAppOrmSettings {

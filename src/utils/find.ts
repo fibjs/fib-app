@@ -1,4 +1,9 @@
+import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
+import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
+import { FxOrmQuery } from '@fxjs/orm/typings/Typo/query';
 import util = require('util')
+import { FibAppACL } from '../Typo/acl';
+import { FibApp } from '../Typo/app';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 import { filter, filter_ext } from './filter';
 
@@ -24,7 +29,7 @@ export = function<ReponseT = any> (
 ): FibApp.FibAppIneternalApiFindResult<FxOrmInstance.Instance> {
     const query = req.query;
 
-    let exists_args = [];
+    let exists_args: any[] = [];
     let init_conditions: FibApp.FibAppReqQuery['where'] = {};
 
     /**
@@ -49,9 +54,9 @@ export = function<ReponseT = any> (
 
                     const idHolders = findby_finder(findby_info.conditions)
                         .only(base_model.keys)
-                        .allSync()
+                        .allSync() as Record<string, any>
 
-                    findby_ids = findby_ids.concat( idHolders.map(x => x[base_model.keys + '']) )
+                    findby_ids = findby_ids.concat( idHolders.map((x: any) => x[base_model.keys + '']) )
                 }
             });
 

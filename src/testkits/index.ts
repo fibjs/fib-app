@@ -2,6 +2,8 @@ import getRestClient from './http-client'
 import assert = require('assert')
 import { mountAppToSessionServer } from "./http-server";
 
+import { FibApp } from '../Typo/app';
+
 export function bind (app: FibApp.FibAppClass) {
     app.test = {
         mountAppToSessionServer: mountAppToSessionServer,

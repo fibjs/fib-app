@@ -8,6 +8,7 @@ import { makeFibAppReqInfo, normalizeQueryWhere } from '../utils/filter_request'
 import { default_session_for_acl } from '../utils/checkout_acl';
 import * as Hook from './hook';
 import { capabilities, ROOT_PATH } from './_ctx';
+import { FibApp } from '../Typo/app'
 
 function noOp () {}
 

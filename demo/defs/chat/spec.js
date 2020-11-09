@@ -5,11 +5,11 @@ const http = require('http');
 const ws = require('ws');
 const coroutine = require('coroutine');
 
-const { check_result } = require('../../test/_utils');
+const { check_result, runServer } = require('../../test/_utils');
 
 const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
 const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
-tSrvInfo.server.run(() => void 0)
+runServer(tSrvInfo.server, () => void 0)
 
 const serverBase = tSrvInfo.serverBase
 const wsBase = serverBase.replace('http://', 'ws://')

@@ -1,7 +1,7 @@
 const test = require('test');
 test.setup();
 
-const { check_result } = require('../../test/_utils');
+const { check_result, runServer } = require('../../test/_utils');
 
 const http = require('http');
 const cheerio = require('cheerio');
@@ -28,7 +28,7 @@ const cheerio = require('cheerio');
 
     const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp(appOptions, {/* uuid: getProtocol() === 'sqlite' */});
     const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath});
-    tSrvInfo.server.run(() => void 0)
+    runServer(tSrvInfo.server, () => void 0)
 
     describe(`user, specified appOptions: \n${JSON.stringify(appOptions, null, '\t')}\n`, () => {
         before(() => {

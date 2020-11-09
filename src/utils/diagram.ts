@@ -1,3 +1,5 @@
+import { FibApp } from "../Typo/app";
+
 const NO_GRAPHQL_COLOR = 'lightgray'// '#ec8888'
 
 export = function () {

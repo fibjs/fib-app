@@ -1,11 +1,12 @@
-/// <reference path="../../@types/index.d.ts" />
-
 import util = require('util');
 import  ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
+import { FibApp } from '../Typo/app';
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FibAppACL } from '../Typo/acl';
 
 export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj: FibApp.FibAppInternalCommObj = {

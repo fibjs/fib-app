@@ -1,6 +1,7 @@
 import http = require('http')
 import util = require('util')
 import mq = require('mq')
+import { FibApp } from '../Typo/app'
 
 export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRoutingOptions) {
     const {

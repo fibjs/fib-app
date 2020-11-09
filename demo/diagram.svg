@@ -23,7 +23,7 @@
 <text text-anchor="start" x="47" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ salt : text</text>
 <text text-anchor="start" x="47" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="47" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="47" y="-293.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="47" y="-293.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -60,7 +60,7 @@
 <text text-anchor="start" x="216" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="216" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="216" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="216" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="216" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -75,7 +75,7 @@
 <text text-anchor="start" x="332" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="332" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="332" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="332" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="332" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -90,7 +90,7 @@
 <text text-anchor="start" x="448" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="448" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="448" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="448" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="448" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -106,7 +106,7 @@
 <text text-anchor="start" x="390" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sex : text</text>
 <text text-anchor="start" x="390" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="390" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="390" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="390" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -135,7 +135,7 @@
 <text text-anchor="start" x="564" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
 <text text-anchor="start" x="564" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="564" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="564" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="564" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -151,7 +151,7 @@
 <text text-anchor="start" x="564" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="564" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="564" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="564" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="564" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -243,7 +243,7 @@
 <text text-anchor="start" x="1179" y="-347.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_f : text</text>
 <text text-anchor="start" x="1179" y="-335.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1179" y="-323.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1179" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="1179" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -272,7 +272,7 @@
 <text text-anchor="start" x="1084" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sublevel_f : text</text>
 <text text-anchor="start" x="1084" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1084" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1084" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="1084" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -299,7 +299,7 @@
 <polyline fill="none" stroke="#000000" points="1277,-217.5 1374.992,-217.5 "/>
 <text text-anchor="start" x="1285" y="-204.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
 <text text-anchor="start" x="1285" y="-192.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ weight : integer</text>
-<text text-anchor="start" x="1285" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_id : serial</text>
+<text text-anchor="start" x="1285" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_id : text</text>
 <text text-anchor="start" x="1285" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1285" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
 <text text-anchor="start" x="1285" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
@@ -331,7 +331,7 @@
 <text text-anchor="start" x="1065.3875" y="-43.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ descendant_level_f : text</text>
 <text text-anchor="start" x="1065.3875" y="-31.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1065.3875" y="-19.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1065.3875" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : number</text>
+<text text-anchor="start" x="1065.3875" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>

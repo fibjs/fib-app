@@ -1,4 +1,3 @@
-/// <reference types="@fxjs/orm" />
 import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
@@ -12,6 +11,10 @@ import ormUtils = require('../utils/orm');
 import { is_count_required, found_result_selector } from '../utils/query';
 import { shouldSetSingle, execLinkers, getValidDataFieldsFromModel, getOneMergeIdFromAssocHasOne, buildCleanInstance } from '../utils/orm-assoc';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
+import { FibApp } from '../Typo/app';
+import { FibAppACL } from '../Typo/acl';
+import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;

@@ -11,6 +11,9 @@ import { bind_websocket_and_rpc } from './websocket_rpc';
 import { run_batch } from '../utils/batch-request';
 import * as Hook from './hook';
 import { ROOT_PATH } from './_ctx';
+import { FibApp } from '../Typo/app';
+import { FibAppACL } from '../Typo/acl';
+import { FxOrmError } from '@fxjs/orm/typings/Typo/Error';
 
 export function bind (app: FibApp.FibAppClass) {
     // bind it firstly
@@ -69,7 +72,7 @@ export function bind (app: FibApp.FibAppClass) {
         }
     }
 
-    Hook.wait(app, app.__opts.hooks.beforeSetupRoute, function (err: FxOrmError.ExtendedError) {
+    Hook.wait(app as any, app.__opts.hooks.beforeSetupRoute, function (err: FxOrmError.ExtendedError) {
         if (err)
             throw err;
 

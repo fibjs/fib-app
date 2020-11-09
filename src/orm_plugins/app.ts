@@ -1,4 +1,6 @@
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 import util = require('util')
+import { FibApp } from '../Typo/app';
 import { addReadonlyHiddenProperty } from "../utils/obj";
 
 const error_reasons = [

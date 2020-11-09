@@ -1,1 +1,3 @@
-export = require('./app')
+import App = require('./app')
+
+export = App;

@@ -1,5 +1,10 @@
-/// <reference types="@fxjs/orm" />
+import { FxOrmAssociation } from '@fxjs/orm/typings/Typo/assoc';
+import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
+import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+
 import util = require('util')
+import { FibApp } from '../Typo/app';
 import { addHiddenProperty } from './obj';
 
 export function check_hasmanyassoc_with_extraprops (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false {

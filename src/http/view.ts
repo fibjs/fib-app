@@ -1,4 +1,6 @@
 import util = require('util')
+import { FibAppACL } from '../Typo/acl';
+import { FibApp } from '../Typo/app';
 
 function mergeResponseHeaders (req: FibApp.FibAppReq, headers: any = null) {
     if (headers && typeof headers === 'object') {

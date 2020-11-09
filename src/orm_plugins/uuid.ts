@@ -1,5 +1,6 @@
 import uuid = require('uuid')
 import ORM = require('@fxjs/orm')
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 const Helpers = ORM.Helpers;
 const { prependHook } = Helpers;
 

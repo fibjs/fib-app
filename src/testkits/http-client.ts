@@ -1,8 +1,8 @@
-/// <reference path="../../@types/index.d.ts" />
-
 const assert = require('assert');
 const http = require('http');
 
+import { FibApp } from '../Typo/app';
+import { FibAppTest } from '../Typo/test';
 import { graphqlRequest } from './utils'
 
 export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.FibAppTestHttpClient => {
@@ -12,7 +12,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
     const modelName = options.modelName
 
     return {
-        create: (obj) => {
+        create: (obj: object) => {
             let rep = http.post(`${apiUrlBase}/${modelName}`, {
                 json: obj
             });
@@ -27,13 +27,13 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
                 return rep.json();
             }
         },
-        get: (id) => {
+        get: (id: FibApp.AppIdType) => {
             let rep = http.get(`${apiUrlBase}/${modelName}/${id}`);
             assert.equal(rep.statusCode, 200);
             assert.property(rep.json(), "id");
             return rep.json();
         },
-        getByGraphQL: (id, fields = []) => {
+        getByGraphQL: (id: FibApp.AppIdType, fields: string[] = []) => {
             if (Array.isArray(fields)) {
                 fields = transform_fieldslist_2_graphql_inner_string(fields)
             }
@@ -65,7 +65,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             assert.property(rep.json()[0], "id");
             return rep.json();
         },
-        findByGraphQL: (whereCondition = "{}", fields = [], queryObject = {}) => {
+        findByGraphQL: (whereCondition = "{}", fields: string[] = [], queryObject = {}) => {
             if (typeof whereCondition === 'object') {
                 whereCondition = whereConditionObject2GraphQLConditionString(whereCondition)
             }
@@ -90,7 +90,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             assert.equal(res.statusCode, 200);
             return res.json().data[`find_${modelName}`];
         },
-        update: (id, obj) => {
+        update: (id: FibApp.AppIdType, obj: object) => {
             let rep = http.put(`${apiUrlBase}/${modelName}/${id}`, {
                 json: obj
             });
@@ -98,13 +98,13 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             assert.property(rep.json(), "id");
             return rep.json();
         },
-        delete: (id) => {
+        delete: (id: FibApp.AppIdType) => {
             let rep = http.del(`${apiUrlBase}/${modelName}/${id}`);
             assert.equal(rep.statusCode, 200);
             assert.property(rep.json(), "id");
             return rep.json();
         },
-        link: (id, ext_name: string, ext_id) => {
+        link: (id: FibApp.AppIdType, ext_name: string, ext_id: FibApp.AppIdType) => {
             let rep = http.put(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
                 json: {
                     id: ext_id
@@ -116,7 +116,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             
             return rep.json();
         },
-        unlink: (id, ext_name: string, ext_id) => {
+        unlink: (id: FibApp.AppIdType, ext_name: string, ext_id: FibApp.AppIdType) => {
             let rep = http.del(`${apiUrlBase}/${modelName}/${id}/${ext_name}/${ext_id}`, {
                 json: {
                 }
@@ -127,7 +127,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             
             return rep.json();
         },
-        findExt: (id, ext_name: string, whereCondition) => {
+        findExt: (id: FibApp.AppIdType, ext_name: string, whereCondition: Record<string, any> | string) => {
             if (typeof whereCondition === 'object') {
                 whereCondition = JSON.stringify(whereCondition)
             }
@@ -147,7 +147,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             }
             return rep.json();
         },
-        createExt: (id, ext_name: string, edata: object) => {
+        createExt: (id: FibApp.AppIdType, ext_name: string, edata: object) => {
             let rep = http.post(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
                 json: edata
             });
@@ -162,7 +162,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             }
             return rep.json();
         },
-        updateExt: (id, ext_name: string, edata: any) => {
+        updateExt: (id: FibApp.AppIdType, ext_name: string, edata: any) => {
             let rep = http.put(`${apiUrlBase}/${modelName}/${id}/${ext_name}/${edata.id}`, {
                 json: {
                     id: edata.id
@@ -182,8 +182,8 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
     };
 }
 
-export function whereConditionObject2GraphQLConditionString (whereCondition) {
-    whereCondition = Object.keys(whereCondition).map(key => {
+export function whereConditionObject2GraphQLConditionString (whereCondition: Record<string, any>) {
+    return Object.keys(whereCondition).map(key => {
         let value = whereCondition[key]
         switch (typeof value) {
             case 'boolean':
@@ -195,12 +195,10 @@ export function whereConditionObject2GraphQLConditionString (whereCondition) {
         }
         return `${key}: ${value}`
     }).join('\n')
-
-    return whereCondition
 }
 
-export function queryObject2GraphQLConditionString (queryObject) {
-    queryObject = Object.keys(queryObject).map(key => {
+export function queryObject2GraphQLConditionString (queryObject: Record<string, any>) {
+    return Object.keys(queryObject).map(key => {
         let value = queryObject[key]
         switch (typeof value) {
             case 'boolean':
@@ -212,11 +210,9 @@ export function queryObject2GraphQLConditionString (queryObject) {
         }
         return `${key}: ${value}`
     }).join('\n')
-
-    return queryObject
 }
 
-export function transform_fieldslist_2_graphql_inner_string (arr: any[] = []) {
+export function transform_fieldslist_2_graphql_inner_string (arr: any[] = []): any {
     const result = arr.map(item => {
         if (typeof item === 'string') {
             return item

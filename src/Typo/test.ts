@@ -1,9 +1,11 @@
-declare namespace FibAppTest {
-    interface FibAppTestClientOptions {
+import type { FibApp } from "./app";
+
+export namespace FibAppTest {
+    export interface FibAppTestClientOptions {
         modelName: string
     }
     
-    interface FibAppTestHttpClientOptions extends FibAppTestClientOptions {
+    export interface FibAppTestHttpClientOptions extends FibAppTestClientOptions {
         // deprecated, use `appUrlBase` instead
         serverBase?: string
         appUrlBase?: string
@@ -11,7 +13,7 @@ declare namespace FibAppTest {
         graphQlUrlBase?: string
     }
     
-    interface FibAppTestHttpClient {
+    export interface FibAppTestHttpClient {
         create: (obj: object) => FibApp.AppIdType
         get: (id: FibApp.AppIdType) => object
         getByGraphQL: (id: FibApp.AppIdType, fields: string[] | string) => object
@@ -22,7 +24,7 @@ declare namespace FibAppTest {
     
         link: (id: FibApp.AppIdType, extName: string, ext_id: FibApp.AppIdType) => object
         unlink: (id: FibApp.AppIdType, extName: string, ext_id: FibApp.AppIdType) => object
-        findExt: (id: FibApp.AppIdType, extName, condition: object | string) => object
+        findExt: (id: FibApp.AppIdType, extName: string, condition: object | string) => object
         createExt: (id: FibApp.AppIdType, extName: string, data: object) => object
         updateExt: (id: FibApp.AppIdType, extName: string, edata: object) => object
     }

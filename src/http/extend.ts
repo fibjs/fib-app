@@ -15,6 +15,12 @@ import { is_count_required, found_result_selector } from '../utils/query';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 import { addHiddenProperty } from '../utils/obj';
 
+import type { FibApp } from '../Typo/app';
+import type { FibAppACL } from '../Typo/acl';
+import type { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
+import { FxOrmAssociation } from '@fxjs/orm/typings/Typo/assoc';
+
 export function setup(app: FibApp.FibAppClass) {
     const api = app.api;
 

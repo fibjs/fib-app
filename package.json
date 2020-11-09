@@ -2,11 +2,11 @@
   "name": "fib-app",
   "version": "1.13.43",
   "description": "",
-  "main": "./lib",
-  "types": "@types/index.d.ts",
+  "main": "lib",
+  "types": "typings/index.d.ts",
   "repository": "git://github.com/fibjs/fib-app.git",
   "scripts": {
-    "build": "fib-typify src -o lib",
+    "build": "ftsc ./src/* --outDir ./lib",
     "test:cov": "fibjs --cov ./demo/test/index.js",
     "test": "fibjs ./demo/test/index.js",
     "ci": "npm run build && npm run test",
@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@fibjs/types": "0.0.3",
-    "@fxjs/orm": "^1.11.3",
+    "@fxjs/orm": "^1.12.1",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.4",
     "fib-rpc": "^0.5.3",

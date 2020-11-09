@@ -4,6 +4,8 @@ import mq = require('mq')
 import { fill_error, err_info } from "./err_info";
 import { is_graphql_request } from './graphql';
 
+import { FibApp } from '../Typo/app';
+
 export function run_batch (app: FibApp.FibAppClass, req: FibApp.FibAppHttpRequest) {
     let querys = [];
     try {

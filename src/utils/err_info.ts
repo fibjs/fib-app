@@ -1,3 +1,5 @@
+import { FibApp } from "../Typo/app";
+
 const infos = {
     "4000001": "${method} request don't send any data.",
     "4000002": "The data uploaded in the request is not legal JSON data.",
@@ -14,6 +16,8 @@ const infos = {
     "5000002": "Function '${function}' in class '${classname}' throws error '${message}', please contact the administrator.",
     "5000003": "viewFunction in class '${classname}' return invalid reponse with success or error, please contact the administrator.",
 };
+
+type TInfos = typeof infos;
 
 export class APPError extends Error implements FibApp.FibAppFinalError {
     name: string = 'APPError';
@@ -41,14 +45,14 @@ export class APPError extends Error implements FibApp.FibAppFinalError {
 }
 
 export function err_info(
-    code: number,
+    code: keyof TInfos | number,
     data?: Fibjs.AnyObject,
     cls?: FibApp.FibModelCountTypeMACRO
 ): FibApp.FibAppErrorResponse {
     return {
         error: new APPError(
             code,
-            (infos[code] || '').replace(/\${(.+?)}/g, (_: any, s2: string) => data[s2]),
+            (infos[code as keyof TInfos] || '').replace(/\${(.+?)}/g, (_: any, s2: string) => data[s2]),
             cls
         )
     }
@@ -60,9 +64,9 @@ export function fill_error(
 ): void {
     var code = e.error.code;
 
-    req.response.statusCode = code / 10000;
+    req.response.statusCode = (code as number) / 10000;
     req.response.json({
-        code: e.error.cls ? code + e.error.cls * 100 : code,
+        code: e.error.cls ? (code as number) + e.error.cls * 100 : code,
         message: e.error.message
     });
 }
@@ -70,9 +74,9 @@ export function fill_error(
 export function render_error(req: FibApp.FibAppHttpRequest, e: FibApp.FibAppResponse, renderFunction?: any): void {
     var code = e.error.code;
 
-    req.response.statusCode = code / 10000;
+    req.response.statusCode = (code as number) / 10000;
     const errInfo = {
-        code: e.error.cls ? code + e.error.cls * 100 : code,
+        code: e.error.cls ? (code as number) + e.error.cls * 100 : code,
         message: e.error.message
     }
     if (typeof renderFunction !== 'function') {

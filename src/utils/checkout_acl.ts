@@ -1,9 +1,8 @@
-/// <reference types="@fxjs/orm" />
-/// <reference path="../../@types/acl.d.ts" />
-/// <reference path="../../@types/req.d.ts" />
-/// <reference path="../../@types/common.d.ts" />
-
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 import * as util from 'util';
+import { FibAppACL } from '../Typo/acl';
+
+import { FibApp } from '../Typo/app';
 
 export function default_session_for_acl (session_obj?: FibApp.FibAppSession | null): FibApp.FibAppSession {
     if (!session_obj || typeof session_obj !== 'object')
@@ -102,7 +101,7 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
                 }
             }
         */
-        aclAct = _acl_role[act];
+        aclAct = (_acl_role as any)[act];
         if (aclAct !== undefined)
             return _is_read ? aclAct : true;
 
@@ -176,7 +175,7 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
             '1234': {}
         }
     */
-    if (_checkout_acl_role(acl[session.id]))
+    if (_checkout_acl_role((acl as any)[session.id]))
         return aclAct;
 
     /*
@@ -202,7 +201,7 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
         '*': {}
     }
     */
-    if (_checkout_acl_role(acl['*']))
+    if (_checkout_acl_role((acl as any)['*']))
         return aclAct;
 
     return;

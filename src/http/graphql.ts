@@ -1,4 +1,7 @@
+import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
+import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 import util = require('util')
+import { FibApp } from '../Typo/app';
 
 import { debugFunctionWrapper } from '../utils/debug';
 import { check_hasmanyassoc_with_extraprops } from '../utils/orm-assoc';
@@ -389,7 +392,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
             var code = req.error.code;
             delete req.error;
 
-            req.response.statusCode = code / 10000;
+            req.response.statusCode = (code as number) / 10000;
             res.errors[0].code = code;
         }
 
