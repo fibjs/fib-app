@@ -1,7 +1,15 @@
 
-v1.13.43 / 2019-09-16
+v1.14.0 / 2020-11-10
 ==================
 
+  * chore: add fibjs version to be tested.
+  * feat: adjust fibjs 0.30.0, 0.31.0.
+  * chore: upgrade types.
+
+v1.13.43 / 2019-09-16
+=====================
+
+  * Release v1.13.43
   * feat: remove hard dependency on 'fib-session'
 
 v1.13.42 / 2019-08-19
