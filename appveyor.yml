@@ -9,6 +9,10 @@ environment:
     - VERSION: 0.26.0
     - VERSION: 0.26.1
     - VERSION: 0.27.0
+    - VERSION: 0.28.0
+    - VERSION: 0.29.0
+    - VERSION: 0.30.0
+    - VERSION: 0.31.0
 
 install:
   - ps: Install-Product node $env:nodejs_version
