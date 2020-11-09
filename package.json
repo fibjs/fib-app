@@ -26,6 +26,10 @@
   ],
   "homepage": "https://github.com/fibjs/fib-app",
   "license": "ISC",
+  "files": [
+    "lib",
+    "typings"
+  ],
   "dependencies": {
     "@fibjs/types": "0.0.3",
     "@fxjs/orm": "^1.12.1",
