@@ -195,7 +195,11 @@ export function makeFibAppReqInfo (
 ): FibApp.FibAppReq {
     const _req: FibApp.FibAppReq = {
         session: default_session_for_acl(orequest.session as FibApp.FibAppSession),
-        query: orequest.query.toJSON(),
+        query: (
+            // TODO: fixup confusing action of HttpCollection in fibjs 0.30.0, 0.31.0
+            typeof (orequest.query as any).keys === 'function' ? orequest.query.all(undefined) as any
+            : orequest.query.toJSON()
+        ),
         request: orequest,
 
         req_resource_type: parse_req_resource_and_hdlr_type(orequest).requestedResultType,
