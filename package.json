@@ -50,7 +50,7 @@
     "fib-pug": "0.0.2",
     "fib-push": "^1.4.2",
     "fib-session": "^0.4.1",
-    "fib-typify": "^0.6.0",
+    "fib-typify": "^0.8.5",
     "vuepress": "^1.0.3",
     "webpack": "^4.39.2"
   },
