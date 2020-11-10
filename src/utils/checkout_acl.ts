@@ -175,24 +175,26 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
             '1234': {}
         }
     */
-    if (_checkout_acl_role((acl as any)[session.id]))
-        return aclAct;
+    if (session !== undefined) {
+        if (_checkout_acl_role((acl as any)[session.id]))
+            return aclAct;
 
-    /*
-        {
-            'roles': {
-                'r1': {}
+        /*
+            {
+                'roles': {
+                    'r1': {}
+                }
             }
-        }
-    */
-    var roles: FibApp.UserRoleName[] | undefined = session.roles;
-    if (roles !== undefined) {
-        var role_acls = (acl as FibAppACL.ACLDefinition).roles;
+        */
+        var roles: FibApp.UserRoleName[] | undefined = session.roles;
+        if (roles !== undefined) {
+            var role_acls = (acl as FibAppACL.ACLDefinition).roles;
 
-        if (role_acls !== undefined) {
-            for (var i = roles.length - 1; i >= 0; i--)
-                if (_checkout_acl_role(role_acls[roles[i]]))
-                    return aclAct;
+            if (role_acls !== undefined) {
+                for (var i = roles.length - 1; i >= 0; i--)
+                    if (_checkout_acl_role(role_acls[roles[i]]))
+                        return aclAct;
+            }
         }
     }
 
