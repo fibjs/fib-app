@@ -1,7 +1,16 @@
 
-v1.14.0 / 2020-11-10
+v1.14.1 / 2020-11-10
 ==================
 
+  * chore: upgrade dependpencies.
+  * Merge pull request #46 from luoyhang003/master
+  * fix: graphql query error without session.
+  * chore: update npm config.
+
+v1.14.0 / 2020-11-10
+====================
+
+  * Release v1.14.0
   * chore: add fibjs version to be tested.
   * feat: adjust fibjs 0.30.0, 0.31.0.
   * chore: upgrade types.
