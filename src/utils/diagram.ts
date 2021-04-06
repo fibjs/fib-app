@@ -3,7 +3,7 @@ import { FibApp } from "../Typo/app";
 const NO_GRAPHQL_COLOR = 'lightgray'// '#ec8888'
 
 export = function () {
-    const Viz = require('viz.js');
+    var nomnoml = require('nomnoml');
 
     const models: string[] = [];
     const exts: string[] = [];
@@ -20,31 +20,24 @@ export = function () {
             }
 
             const is_nographql = m.no_graphql
-
-            models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
+            models.push(`[${is_nographql? "<nographql>" : ""}${m.model_name}|${ks.join(';')}]`);
             for (const e in m.associations) {
                 const assoc_info = m.associations[e];
                 const one = assoc_info.type === "hasOne" && !assoc_info.association.reversed;
-                const extendsTo = assoc_info.type === "extendsTo";
-                if (!extendsTo)
-                    exts.push(`${m.model_name} -> ${assoc_info.association.model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
-                else
-                    exts.push(`${m.model_name} -> ${assoc_info.association.model.model_name} [label=${e} ${one ? "arrowhead=empty" : "" }];`);
+                exts.push(`[${m.model_name}] ${assoc_info.association.name.replace(/_/g, '%5f')}${one ? "->" : "--:>" } [${assoc_info.association.model.model_name}]`);
             }
         }
     });
 
-    const dot = `
-digraph
-{
-rankdir=TB;
-node [fontname="Helvetica,sans-Serif", fontsize=10, shape="record", style="filled", fillcolor="white"];
-edge [fontname="Helvetica,sans-Serif", fontsize=10, style=dashed];
+    const dot = `#lineWidth: 1.5
+#font: Helvetica,sans-Serif
+#fontSize: 10
+#leading: 1.6
+#fill: white
+#.nographql: fill=${NO_GRAPHQL_COLOR}
+
 ${models.join('\n')}
 ${exts.join('\n')}
-}`;
-
-    return Viz(dot, {
-        "engine": "dot"
-    });
+`;
+    return nomnoml.renderSvg(dot).replace(/%5f/g, '_');
 }
