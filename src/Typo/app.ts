@@ -444,7 +444,7 @@ export namespace FibApp {
 
         [extraField: string]: any;
     }
-    export interface FibAppReqQueryObject extends FibAppReqQuery, Class__object { }
+    export interface FibAppReqQueryObject extends FibAppReqQuery, Class_object { }
 
     export interface FibAppReq {
         session: FibAppSession

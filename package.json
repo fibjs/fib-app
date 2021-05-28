@@ -31,7 +31,7 @@
     "typings"
   ],
   "dependencies": {
-    "@fibjs/types": "0.0.3",
+    "@fibjs/types": "^0.32.10",
     "@fxjs/orm": "^1.12.1",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.4",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@fibjs/ci": "^2.3.0",
     "@fibjs/detect-port": "^1.0.1",
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "1.0.0-rc.3",
     "cross-env": "^5.2.0",
     "ejs": "^2.6.2",
     "faker": "^4.1.0",

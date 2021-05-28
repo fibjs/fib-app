@@ -9,6 +9,16 @@ const push = require('fib-push');
 const App = require('../../../');
 const defs = require('../../defs');
 
+function runProcess (...args) {
+    if (process.run) {
+        return process.run(...args);
+    }
+
+    const child_process = require('child_process')
+
+    return child_process.run(...args)
+}
+
 const runtimeTime = Date.now();
 function generateRandomConn () {
     const dbName = getStaticTestDBName();
@@ -62,7 +72,7 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
 
     if (getProtocol() === 'mysql') {
         builder.create = function () {
-            process.run(
+            runProcess(
                 'mysql',
                 [
                     "-uroot",
@@ -71,7 +81,7 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
             );
         }
         builder.drop = function () {
-            process.run(
+            runProcess(
                 'mysql',
                 [
                     "-uroot",

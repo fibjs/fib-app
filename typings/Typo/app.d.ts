@@ -358,7 +358,7 @@ export declare namespace FibApp {
         count_required?: boolean;
         [extraField: string]: any;
     }
-    interface FibAppReqQueryObject extends FibAppReqQuery, Class__object {
+    interface FibAppReqQueryObject extends FibAppReqQuery, Class_object {
     }
     interface FibAppReq {
         session: FibAppSession;
