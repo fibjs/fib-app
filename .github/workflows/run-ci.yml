@@ -39,6 +39,10 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
       - name: Set Env Variables
         id: set-env-vars
         shell: bash
@@ -71,8 +75,12 @@ jobs:
       - name: Run CI
         shell: bash
         run: |
-          npm install;
-          npm run ci;
+          if [[ -f ".github/workflows/run-ci.sh" ]]; then
+            bash .github/workflows/run-ci.sh;
+          else
+            npm install;
+            npm run ci;
+          fi
         env:
           FIBJS_OS: ${{ steps.set-env-vars.outputs.FIBJS_OS }}
           GIT_BRANCH: ${{ steps.set-env-vars.outputs.GIT_BRANCH }}

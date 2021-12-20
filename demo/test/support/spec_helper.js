@@ -30,11 +30,14 @@ function generateRandomConn () {
             conn: `sqlite:${dbName}.db`
         }
     }
+
+    const mysqlUser = process.env.MYSQL_USER || 'root'
+    const mysqlPwd = process.env.MYSQL_PASSWORD || ''
         
     return {
         dbName,
         protocol: getProtocol(),
-        conn: `mysql://root:@127.0.0.1/${dbName}`
+        conn: `mysql://${mysqlUser}:${mysqlPwd}@127.0.0.1/${dbName}`
     }
 }
 
@@ -75,7 +78,8 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
             runProcess(
                 'mysql',
                 [
-                    "-uroot",
+                    `-u${process.env.MYSQL_USER || ''}`,
+                    `-p${process.env.MYSQL_PASSWORD || ''}`,
                     "-e CREATE DATABASE IF NOT EXISTS `" + dbName + "` CHARACTER SET utf8 COLLATE utf8_general_ci"
                 ]
             );
@@ -84,7 +88,8 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
             runProcess(
                 'mysql',
                 [
-                    "-uroot",
+                    `-u${process.env.MYSQL_USER || ''}`,
+                    `-p${process.env.MYSQL_PASSWORD || ''}`,
                     "-e DROP DATABASE IF EXISTS `" + dbName + "`"
                 ]
             );

@@ -47,6 +47,10 @@ describe('fib-app', function () {
 })
 
 if (require.main === module) {
-    test.run(console.DEBUG);
+    try {
+        test.run(console.DEBUG);
+    } catch (error) {
+        console.error(error)
+    }
     process.exit();
 }
