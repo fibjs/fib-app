@@ -31,8 +31,8 @@
     "typings"
   ],
   "dependencies": {
-    "@fibjs/types": "^0.32.10",
-    "@fxjs/orm": "^1.12.1",
+    "@fibjs/types": "^0.34.1",
+    "@fxjs/orm": "^1.13.1",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.4",
     "fib-rpc": "^0.5.3",
@@ -55,9 +55,7 @@
     "webpack": "^4.39.2"
   },
   "peerDependencies": {
-    "@fxjs/orm": ">= 1.11.2 < 2",
-    "fib-session": ">= 0.4.0 < 0.5",
-    "fib-rpc": ">= 0.5.2 < 1"
+    "fib-session": ">= 0.4.0 < 0.5"
   },
   "ci": {
     "type": "actions",
