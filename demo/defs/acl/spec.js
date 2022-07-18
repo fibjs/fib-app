@@ -200,7 +200,10 @@ describe("acl", () => {
             it("find", () => {
                 var rep = http.get(tSrvInfo.appUrlBase + `/test_acl`, {
                     query: {
-                        limit: 2
+                        limit: 2,
+                        ...tappInfo.dbType === 'postgres' && {
+                            order: 'id'
+                        }
                     }
                 });
                 assert.deepEqual(rep.json(), [{

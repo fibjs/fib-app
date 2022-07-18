@@ -26,7 +26,7 @@ const cheerio = require('cheerio');
 ].forEach((appOptions) => {
     const appPath = !appOptions.apiPathPrefix ? '/api' : ''
 
-    const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp(appOptions, {/* uuid: getProtocol() === 'sqlite' */});
+    const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp(appOptions, {/* uuid: getTestDbType() === 'sqlite' */});
     const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath});
     runServer(tSrvInfo.server, () => void 0)
 
