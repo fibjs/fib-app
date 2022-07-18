@@ -11,6 +11,8 @@ const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedA
 const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, {appPath: '/api'});
 runServer(tSrvInfo.server, () => void 0)
 
+const isPsql = tappInfo.dbType === 'postgres';
+
 const http = require('http');
 
 describe("classes - person", () => {
@@ -231,18 +233,17 @@ describe("classes - person", () => {
 
         describe('static response', () => {
             ;[
-                [404, 'undefined', 'staticUndefined'],
+                [isPsql ? 500 : 404, 'undefined', 'staticUndefined'],
                 [200, 'null', 'staticNull', null],
                 [200, 'NaN', 'staticNaN', null],
                 [200, 'number', 'staticNumber', 123],
                 [200, 'null', 'staticString', 'static person'],
                 [200, 'boolean', 'staticBoolean', true],
                 [200, 'object', 'staticObject', {a: 1}],
-                [404, 'Symbol', 'staticSymbol'],
+                [isPsql ? 500 : 404, 'Symbol', 'staticSymbol'],
             ].forEach(([status, value_type, method, response_value]) => {
                 if (status === 200) {
                     it(`can be ${value_type}`, () => {
-
                         var rep = http.get(tSrvInfo.appUrlBase + `/person/${method}`, {
                         });
                         assert.equal(rep.statusCode, 200);

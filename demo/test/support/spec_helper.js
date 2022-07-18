@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('db');
-const util = require('util');
+const { Driver } = require('@fxjs/db-driver')
 
 const ws = require('ws');
 const push = require('fib-push');
@@ -9,35 +9,38 @@ const push = require('fib-push');
 const App = require('../../../');
 const defs = require('../../defs');
 
-function runProcess (...args) {
-    if (process.run) {
-        return process.run(...args);
-    }
-
-    const child_process = require('child_process')
-
-    return child_process.run(...args)
-}
-
 const runtimeTime = Date.now();
 function generateRandomConn () {
     const dbName = getStaticTestDBName();
 
-    if (getProtocol() === 'sqlite') {
-        return {
-            dbName,
-            protocol: getProtocol(),
-            conn: `sqlite:${dbName}.db`
+    const dbType = getTestDbType();
+    switch (dbType) {
+        case 'sqlite':
+            return {
+                dbName,
+                dbType,
+                conn: `sqlite:${dbName}.db`
+            }
+        case 'mysql': {
+            const mysqlUser = process.env.MYSQL_USER || 'root'
+            const mysqlPwd = process.env.MYSQL_PASSWORD || ''
+                
+            return {
+                dbName,
+                dbType,
+                conn: `mysql://${mysqlUser}:${mysqlPwd}@127.0.0.1:3306/${dbName}`
+            }
         }
-    }
-
-    const mysqlUser = process.env.MYSQL_USER || 'root'
-    const mysqlPwd = process.env.MYSQL_PASSWORD || ''
-        
-    return {
-        dbName,
-        protocol: getProtocol(),
-        conn: `mysql://${mysqlUser}:${mysqlPwd}@127.0.0.1/${dbName}`
+        case 'postgres': {
+            const psqlUser = process.env.PSQL_USER || 'postgres'
+            const psqlPwd = process.env.PSQL_PASSWORD || ''
+                
+            return {
+                dbName,
+                dbType,
+                conn: `psql://${psqlUser}:${psqlPwd}@127.0.0.1:5432/${dbName}`
+            }
+        }
     }
 }
 
@@ -52,16 +55,28 @@ const dropSync = exports.dropSync = function (models) {
     });
 };
 
-const getProtocol = exports.getProtocol = function () {
-    return process.env.WEBX_TEST_SQLITE ? 'sqlite' : 'mysql';
+const getTestDbType = exports.getTestDbType = function () {
+    process.env.WEBX_TEST_DBTYPE = process.env.WEBX_TEST_DBTYPE || 'sqlite';
+
+    switch (process.env.WEBX_TEST_DBTYPE) {
+        case 'mysql':
+        case 'sqlite':
+        case 'postgres':
+            return process.env.WEBX_TEST_DBTYPE
+        default:
+            throw new Error(`[getTestDbType] Unknown db type: ${process.env.WEBX_TEST_DBTYPE}`)
+    }
 }
 
 const getUseUUID = exports.getUseUUID = function () {
-    return !!process.env.UUID || getProtocol() === 'sqlite';
+    return !!process.env.UUID || getTestDbType() === 'sqlite';
 }
 
 const getStaticTestDBName = exports.getStaticTestDBName = function () {
-    return `fibapp-test-${getProtocol()}-${runtimeTime}`;
+    if (getTestDbType() === 'postgres') {
+        return `fibapp_test_psql`;
+    }
+    return `fibapp-test-${getTestDbType()}-${runtimeTime}`;
 }
 
 const dbBuilder = exports.dbBuilder = function (dbName = '') {
@@ -73,44 +88,48 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
         drop () {}
     }
 
-    if (getProtocol() === 'mysql') {
-        builder.create = function () {
-            runProcess(
-                'mysql',
-                [
-                    `-u${process.env.MYSQL_USER || ''}`,
-                    `-p${process.env.MYSQL_PASSWORD || ''}`,
-                    "-e CREATE DATABASE IF NOT EXISTS `" + dbName + "` CHARACTER SET utf8 COLLATE utf8_general_ci"
-                ]
-            );
+    switch (getTestDbType()) {
+        case 'mysql': {
+            builder.create = function () {
+                var driver = Driver.create(`mysql://root:@127.0.0.1:3306`);
+                driver.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8 COLLATE utf8_general_ci`)
+            }
+            builder.drop = function () {
+                var driver = Driver.create(`mysql://root:@127.0.0.1:3306`);
+                driver.execute(`DROP DATABASE IF EXISTS  \`${dbName}\``);
+            }
+            break;
         }
-        builder.drop = function () {
-            runProcess(
-                'mysql',
-                [
-                    `-u${process.env.MYSQL_USER || ''}`,
-                    `-p${process.env.MYSQL_PASSWORD || ''}`,
-                    "-e DROP DATABASE IF EXISTS `" + dbName + "`"
-                ]
-            );
+        case 'postgres': {
+            builder.create = function () {
+                var driver = Driver.create(`psql://postgres@127.0.0.1:5432`);
+                driver.execute(`SELECT 'CREATE DATABASE ${dbName}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${dbName}');`)
+            }
+            builder.drop = function () {
+                var driver = Driver.create(`psql://postgres@127.0.0.1:5432`);
+                driver.execute(`SELECT 'DROP DATABASE ${dbName}' WHERE EXISTS (SELECT FROM pg_database WHERE datname = '${dbName}');`);
+            }
+            break;
         }
-    } else if (getProtocol() === 'sqlite') {
-        builder.drop = function () {
-            [
-                dbName,
-                `${dbName}-shm`,
-                `${dbName}-wal`,
-            ].forEach(filename => {
-                const dbFilepath = path.resolve(process.cwd(), filename)
-                try {
-                    if (fs.exists(dbFilepath)) {
-                        fs.unlink(dbFilepath)
-                        console.log(`unlink file ${dbFilepath} success.`)
+        case 'sqlite': {
+            builder.drop = function () {
+                [
+                    dbName,
+                    `${dbName}-shm`,
+                    `${dbName}-wal`,
+                ].forEach(filename => {
+                    const dbFilepath = path.resolve(process.cwd(), filename)
+                    try {
+                        if (fs.exists(dbFilepath)) {
+                            fs.unlink(dbFilepath)
+                            console.log(`unlink file ${dbFilepath} success.`)
+                        }
+                    } catch (e) {
+                        console.log(`unlink file ${dbFilepath} failed.`, e)
                     }
-                } catch (e) {
-                    console.log(`unlink file ${dbFilepath} failed.`, e)
-                }
-            })
+                })
+            }
+            break;
         }
     }
 
@@ -129,27 +148,30 @@ exports.getApp = function (conn = 'sqlite:test.db', ...args) {
 }
 
 exports.getRandomSqliteBasedApp = function (...args) {
-    let {conn: connName, dbName, protocol = ''} = generateRandomConn();
+    let {conn: connString, dbName, dbType = ''} = generateRandomConn();
 
-    if (process.env.WEBX_TEST_DB_DEBUG)
+    let connName = connString;
+    if (process.env.WEBX_TEST_DB_DEBUG) {
         connName += '?debug=true'
+        process.env.DEBUG_SQLDDLSYNC = true
+    }
 
     const app = exports.getApp(connName, ...args)
     const builder = dbBuilder(dbName)
     return {
         app,
         dbName,
-        protocol,
+        dbType,
         utils: {
             dropModelsSync () {
                 app.ormPool(orm =>  dropSync(Object.values(orm.models)))
             },
             cleanLocalDB () {
-                if (getProtocol() === 'sqlite')
+                if (getTestDbType() === 'sqlite')
                     builder.drop()
             },
             connectionToDB () {
-                return db.open(connName)
+                return db.open(connString)
             }
         }
     }

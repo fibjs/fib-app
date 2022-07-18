@@ -902,7 +902,7 @@ describe("graphql", () => {
 
         let r = rep.json();
         assert.equal(r.data.json.createdAt.toString().slice(-1), "Z");
-        if (tappInfo.protocol !== 'mysql')
+        if (tappInfo.protocol === 'sqlite')
             assert.notEqual(new Date(r.data.json.createdAt).getTime() % 1000, 0);
         delete r.data.json.createdAt;
         assert.deepEqual(r, {
@@ -969,7 +969,7 @@ describe("graphql", () => {
         assert.equal(createR.id, queryR.id)
 
         assert.equal(queryR.createdAt.toString().slice(-1), "Z");
-        if (tappInfo.protocol !== 'mysql')
+        if (tappInfo.protocol === 'sqlite')
             assert.notEqual(new Date(queryR.createdAt).getTime() % 1000, 0);
         delete queryR.createdAt;
 
