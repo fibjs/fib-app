@@ -129,10 +129,13 @@ exports.getApp = function (conn = 'sqlite:test.db', ...args) {
 }
 
 exports.getRandomSqliteBasedApp = function (...args) {
-    let {conn: connName, dbName, protocol = ''} = generateRandomConn();
+    let {conn: connString, dbName, protocol = ''} = generateRandomConn();
 
-    if (process.env.WEBX_TEST_DB_DEBUG)
+    let connName = connString;
+    if (process.env.WEBX_TEST_DB_DEBUG) {
         connName += '?debug=true'
+        process.env.DEBUG_SQLDDLSYNC = true
+    }
 
     const app = exports.getApp(connName, ...args)
     const builder = dbBuilder(dbName)
@@ -149,7 +152,7 @@ exports.getRandomSqliteBasedApp = function (...args) {
                     builder.drop()
             },
             connectionToDB () {
-                return db.open(connName)
+                return db.open(connString)
             }
         }
     }
