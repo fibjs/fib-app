@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('db');
-const util = require('util');
+const { Driver } = require('@fxjs/db-driver')
 
 const ws = require('ws');
 const push = require('fib-push');
@@ -9,15 +9,7 @@ const push = require('fib-push');
 const App = require('../../../');
 const defs = require('../../defs');
 
-function runProcess (...args) {
-    if (process.run) {
-        return process.run(...args);
-    }
-
-    const child_process = require('child_process')
-
-    return child_process.run(...args)
-}
+const PORT_SUFFIX = ':3306';
 
 const runtimeTime = Date.now();
 function generateRandomConn () {
@@ -37,7 +29,7 @@ function generateRandomConn () {
     return {
         dbName,
         protocol: getProtocol(),
-        conn: `mysql://${mysqlUser}:${mysqlPwd}@127.0.0.1/${dbName}`
+        conn: `mysql://${mysqlUser}:${mysqlPwd}@127.0.0.1${PORT_SUFFIX}/${dbName}`
     }
 }
 
@@ -75,24 +67,12 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
 
     if (getProtocol() === 'mysql') {
         builder.create = function () {
-            runProcess(
-                'mysql',
-                [
-                    `-u${process.env.MYSQL_USER || ''}`,
-                    `-p${process.env.MYSQL_PASSWORD || ''}`,
-                    "-e CREATE DATABASE IF NOT EXISTS `" + dbName + "` CHARACTER SET utf8 COLLATE utf8_general_ci"
-                ]
-            );
+            var driver = Driver.create(`mysql://root:@127.0.0.1${PORT_SUFFIX}`);
+            driver.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8 COLLATE utf8_general_ci`)
         }
         builder.drop = function () {
-            runProcess(
-                'mysql',
-                [
-                    `-u${process.env.MYSQL_USER || ''}`,
-                    `-p${process.env.MYSQL_PASSWORD || ''}`,
-                    "-e DROP DATABASE IF EXISTS `" + dbName + "`"
-                ]
-            );
+            var driver = Driver.create(`mysql://root:@127.0.0.1${PORT_SUFFIX}`);
+            driver.execute(`DROP DATABASE IF EXISTS  \`${dbName}\``);
         }
     } else if (getProtocol() === 'sqlite') {
         builder.drop = function () {
