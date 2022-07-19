@@ -233,14 +233,14 @@ describe("classes - person", () => {
 
         describe('static response', () => {
             ;[
-                [isPsql ? 500 : 404, 'undefined', 'staticUndefined'],
+                [404, 'undefined', 'staticUndefined'],
                 [200, 'null', 'staticNull', null],
                 [200, 'NaN', 'staticNaN', null],
                 [200, 'number', 'staticNumber', 123],
                 [200, 'null', 'staticString', 'static person'],
                 [200, 'boolean', 'staticBoolean', true],
                 [200, 'object', 'staticObject', {a: 1}],
-                [isPsql ? 500 : 404, 'Symbol', 'staticSymbol'],
+                [404, 'Symbol', 'staticSymbol'],
             ].forEach(([status, value_type, method, response_value]) => {
                 if (status === 200) {
                     it(`can be ${value_type}`, () => {

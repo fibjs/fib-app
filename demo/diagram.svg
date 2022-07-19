@@ -16,7 +16,7 @@
 	[level|+ name : text;+ level_f : text;+ createdAt : date;+ updatedAt : date;+ id : serial]
 	[sub_level|+ name : text;+ sublevel_f : text;+ createdAt : date;+ updatedAt : date;+ id : serial]
 	[descendant_level|+ name : text;+ descendant_level_f : text;+ createdAt : date;+ updatedAt : date;+ id : serial]
-	[level_lproperty|+ name : text;+ weight : integer;+ level_id : serial;+ createdAt : date;+ updatedAt : date;+ id : text]
+	[level_lproperty|+ name : text;+ weight : integer;+ level_id : integer;+ createdAt : date;+ updatedAt : date;+ id : text]
 	[pet|+ name : text;+ createdAt : date;+ updatedAt : date;+ id : text]
 	[chatroom|+ name : text;+ createdAt : date;+ updatedAt : date;+ id : text]
 	[chatmessage|+ msg : text;+ createdAt : date;+ updatedAt : date;+ id : text]
@@ -358,7 +358,7 @@
 							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="level_lproperty">
 								<text x="0.0" y="13.0" stroke="none" data-name="level_lproperty">+ name : text</text>
 								<text x="0.0" y="29.0" stroke="none" data-name="level_lproperty">+ weight : integer</text>
-								<text x="0.0" y="45.0" stroke="none" data-name="level_lproperty">+ level_id : serial</text>
+								<text x="0.0" y="45.0" stroke="none" data-name="level_lproperty">+ level_id : integer</text>
 								<text x="0.0" y="61.0" stroke="none" data-name="level_lproperty">+ createdAt : date</text>
 								<text x="0.0" y="77.0" stroke="none" data-name="level_lproperty">+ updatedAt : date</text>
 								<text x="0.0" y="93.0" stroke="none" data-name="level_lproperty">+ id : text</text>
