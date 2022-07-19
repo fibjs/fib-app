@@ -1,5 +1,5 @@
 import util = require('util');
-import  ORM = require('@fxjs/orm');
+import ORM = require('@fxjs/orm');
 const Helpers = ORM.Helpers;
 
 import { err_info } from '../utils/err_info';
@@ -8,12 +8,29 @@ import { FibApp } from '../Typo/app';
 import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 import { FibAppACL } from '../Typo/acl';
 
+function isValidNumber (v: string | number) {
+    v = parseInt(v as any);
+
+    return isNaN(v);
+}
+
 export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
-    var iobj: FibApp.FibAppInternalCommObj = {
-        inst: (cls as any).find().where({
-            id: id
-        }).firstSync()
-    };
+    var iobj = <FibApp.FibAppInternalCommObj>{ inst: null };
+
+    const intPrimaryProp = Object.values(Helpers.pickProperties(cls, (p) =>
+        (p.key || p.klass === 'primary') && (p.type === 'serial' || p.type === 'integer')
+    ))[0];
+
+    if (intPrimaryProp && isValidNumber(id)) {
+        return err_info(4040002, {
+            id: id,
+            classname: cls.model_name
+        }, cls.cid);
+    }
+
+    iobj.inst = cls.find().where({
+        id: id
+    }).firstSync()
 
     if (iobj.inst === null)
         return err_info(4040002, {
