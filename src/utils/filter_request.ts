@@ -3,10 +3,18 @@
 import json = require('json');
 import util = require('util');
 
-import { fill_error, err_info, render_error, APPError } from "./err_info";
+import {
+    fill_error,
+    err_info,
+    err_info_msg,
+    make_err_message,
+    render_error,
+    APPError
+} from "./err_info";
 import { ouputMap } from './mimes';
 import { default_session_for_acl } from './checkout_acl';
 import { FibApp } from '../Typo/app';
+import { Helpers } from '@fxjs/orm';
 
 const _slice = Array.prototype.slice;
 
@@ -82,11 +90,30 @@ export const filterRequest: FibApp.FibAppClass['filterRequest'] = function (
             })
 
         try {
-            const where = normalizeQueryWhere(_req);
-            if (where) _req.query.where = where
+            let where = normalizeQueryWhere(_req, cls);
+            if (where) {
+                _req.query.where = where
+            }
+
+            let findby = normalizeQueryFindBy(_req, cls);
+            if (findby) {
+                _req.query.findby = findby
+            }
         } catch (error) {
-            if (error instanceof APPError && error.code === 'INVALID_QUERY_WHERE')
-                return fill_error(app_httprequest, err_info(4000003));
+            if (error instanceof APPError) {
+                switch (error.code) {
+                    case 'INVALID_QUERY_WHERE':
+                        return fill_error(app_httprequest, err_info(4000003));
+                    case 'INVALID_QUERY_WHERE_KEY':
+                        return fill_error(app_httprequest, err_info_msg(4000006, error.message));
+                    case 'INVALID_QUERY_FINDBY':
+                        return fill_error(app_httprequest, err_info(4000007));
+                    case 'INVALID_QUERY_FINDBY_EXTEND':
+                        return fill_error(app_httprequest, err_info_msg(4000008, error.message));
+                    case 'INVALID_FINDBY_WHERE_KEY':
+                        return fill_error(app_httprequest, err_info_msg(4000009, error.message));
+                }
+            }
             
             throw error;
         }
@@ -161,7 +188,29 @@ export const filterRequest: FibApp.FibAppClass['filterRequest'] = function (
     });
 }
 
-export function normalizeQueryWhere (_req: FibApp.FibAppReq): FibApp.FibAppReq['query']['where'] {
+function checkFilterWhere (whereBlacklist: Set<string>, _where: FibApp.ReqWhere, options?: {
+    extend: string
+}) {
+    Object.keys(_where).forEach(key => {
+        switch (key) {
+            case 'or':
+                return (_where[key] as FibApp.ReqWhere[]).forEach?.(item => checkFilterWhere(whereBlacklist, item, options));
+            default:
+                if (whereBlacklist.has(key)) {
+                    if (!options?.extend) {
+                        throw (new APPError('INVALID_QUERY_WHERE_KEY', make_err_message('4000006', { key })));
+                    } else {
+                        throw (new APPError('INVALID_FINDBY_WHERE_KEY', make_err_message('4000009', { key, extend: options?.extend })));
+                    }
+                }
+        }
+    });
+}
+
+export function normalizeQueryWhere (
+    _req: FibApp.FibAppReq,
+    model: FibApp.FibAppORMModel
+): FibApp.ReqWhere {
     let _where;
     if (_req.query.where !== undefined)
         try {
@@ -169,8 +218,46 @@ export function normalizeQueryWhere (_req: FibApp.FibAppReq): FibApp.FibAppReq['
         } catch (error) {
             throw (new APPError('INVALID_QUERY_WHERE', error.message));
         }
+        
+    if (_where) {
+        checkFilterWhere(model.$webx.__whereBlackProperties, _where);
+    }
 
     return _where
+}
+
+function checkFilterFindByItem (model: FibApp.FibAppORMModel, _findby: FibApp.ReqFindByItem) {
+    const findByBlacklist = model.$webx.__findByExtendBlackProperties;
+
+    if (findByBlacklist.has(_findby.extend)) {
+        throw (new APPError('INVALID_QUERY_FINDBY_EXTEND', make_err_message('4000008', { extend: _findby.extend })));
+    }
+
+    const assoc = Helpers.tryGetAssociationItemFromModel(_findby.extend, model);
+    if (assoc) {
+        checkFilterWhere(assoc.model.$webx.__whereBlackProperties, _findby.where, { extend: _findby.extend });
+    }
+}
+
+export function normalizeQueryFindBy (
+    _req: FibApp.FibAppReq,
+    model: FibApp.FibAppORMModel
+): FibApp.ReqFindByItem {
+    let _findby;
+    if (_req.query.findby !== undefined)
+        try {
+            if (typeof _req.query.findby === 'string') {
+                _findby = json.decode(_req.query.findby as any as string);
+            }
+        } catch (error) {
+            throw (new APPError('INVALID_QUERY_FINDBY', error.message));
+        }
+        
+    if (_findby) {
+        checkFilterFindByItem(model, _findby);
+    }
+
+    return _findby
 }
 
 export function makeFibAppReqInfo (

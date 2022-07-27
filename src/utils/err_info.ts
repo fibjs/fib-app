@@ -6,6 +6,10 @@ const infos = {
     "4000003": "'where' in the query is not legal JSON data.",
     "4000004": "The data requested by 'batch' must be an array.",
     "4000005": "The Content-Type header in the request must include application/graphql.",
+    "4000006": "'${key}' is forbidden in the query.where",
+    "4000007": "'findby' in the query is not legal JSON data.",
+    "4000008": "'${extend}' is forbidden for query.findby.extend",
+    "4000009": "'${key}' is forbidden in the query[${extend}].where",
     "4030001": "The operation isn’t allowed to '${classname}' for clients due to class-level permissions.",
     "4030002": "The operation isn’t allowed to '${base_classname}.${ext_classname}' for clients due to class-level permissions.",
     "4040001": "Missing or invalid classname '${classname}'.",
@@ -52,7 +56,25 @@ export function err_info(
     return {
         error: new APPError(
             code,
-            (infos[code as keyof TInfos] || '').replace(/\${(.+?)}/g, (_: any, s2: string) => data[s2]),
+            make_err_message(code as any, data),
+            cls
+        )
+    }
+};
+
+export function make_err_message (code: keyof TInfos, data: Record<string, any>) {
+    return (infos[code as keyof TInfos] || '').replace(/\${(.+?)}/g, (_: any, s2: string) => data[s2]);
+}
+
+export function err_info_msg(
+    code: keyof TInfos | number,
+    msg?: string,
+    cls?: FibApp.FibModelCountTypeMACRO
+): FibApp.FibAppErrorResponse {
+    return {
+        error: new APPError(
+            code,
+            msg,
             cls
         )
     }

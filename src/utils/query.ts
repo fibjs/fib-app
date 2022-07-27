@@ -11,7 +11,6 @@ import type { FxOrmAssociation } from '@fxjs/orm/typings/Typo/assoc';
 import type { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
 import type { FxOrmQuery } from '@fxjs/orm/typings/Typo/query';
 import type { FxOrmNS, FxSqlQuerySubQuery } from '@fxjs/orm/typings/Typo/ORM';
-import { FxOrmProperty } from '@fxjs/orm/typings/Typo/property';
 import { FibApp } from '../Typo/app';
 
 export function query_filter_where (req: FibApp.FibAppReq) {
@@ -282,10 +281,4 @@ function filter_conditions (
     if (!Object.keys(conditions).length) return false;
 
     return conditions
-}
-
-function find_date_property_keys_from_property_hash (hash: FxOrmProperty.NormalizedPropertyHash) {
-    return Object.keys(hash).filter(pname => {
-        return hash[pname].type === 'date'
-    })
 }

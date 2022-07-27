@@ -9,6 +9,7 @@ import type { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
 import type { FibAppACL } from './acl';
 import { FxOrmHook } from '@fxjs/orm/typings/Typo/hook';
 import { FibAppTest } from './test';
+import { FxOrmProperty } from '@fxjs/orm/typings/Typo/property';
 export declare namespace FibApp {
     type AppIdType = number | string;
     type UidType = AppIdType;
@@ -114,13 +115,14 @@ export declare namespace FibApp {
     }
     interface FibAppOrmModelDefOptions extends FxOrmNS.ModelOptions {
         webx?: {
-            ACL?: FibAppACL.FibACLDef;
-            OACL?: FibAppACL.FibOACLDef;
-            functions?: FibAppOrmModelFunctionHash;
-            viewFunctions?: FibAppOrmModelViewFunctionHash;
-            viewServices?: FibAppOrmModelViewServiceHash;
-            no_graphql?: boolean;
-            rpc?: FibRpcInvoke.FibRpcFnHash;
+            ACL?: FibAppORMModel['$webx']['ACL'];
+            OACL?: FibAppORMModel['$webx']['OACL'];
+            functions?: FibAppORMModel['$webx']['functions'];
+            viewFunctions?: FibAppORMModel['$webx']['viewFunctions'];
+            viewServices?: FibAppORMModel['$webx']['viewServices'];
+            no_graphql?: FibAppORMModel['$webx']['no_graphql'];
+            rpc?: FibAppORMModel['$webx']['rpc'];
+            queryKeyWhiteList?: FibAppORMModel['$webx']['queryKeyWhiteList'];
         };
     }
     interface ExtendModelWrapper {
@@ -146,14 +148,22 @@ export declare namespace FibApp {
     type FibAppOrmModelExtendsInfo = FibAppOrmModelExtendsInfoHash;
     interface FibAppORMModel extends FxOrmNS.Model {
         $webx: {
-            cid: number;
-            model_name: string;
+            readonly cid: number;
+            readonly model_name: string;
+            /** @description non-association about properties */
+            readonly __selfPropertiesOnDefined: Record<string, FxOrmProperty.NormalizedProperty>;
+            readonly __whereBlackProperties: Set<string>;
+            readonly __findByExtendBlackProperties: Set<string>;
             ACL: FibAppACL.FibACLDef;
             OACL: FibAppACL.FibOACLDef;
             functions: FibAppOrmModelFunctionHash;
             viewFunctions: FibAppOrmModelViewFunctionHash;
             viewServices: FibAppOrmModelViewServiceHash;
             no_graphql: boolean;
+            queryKeyWhiteList: {
+                where?: string[];
+                findby?: string[];
+            };
             rpc: FibRpcInvoke.FibRpcFnHash;
         };
         readonly cid: FibAppORMModel['$webx']['cid'];
@@ -318,7 +328,7 @@ export declare namespace FibApp {
             [key: string]: FibAppORMModel;
         };
         graphql<T = any>(query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T;
-        define(name: string, properties: FxOrmModel.ModelPropertyDefinitionHash, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
+        define(name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
     }
     type FibAppDb = FibAppORM;
     type FibAppFunctionToBeFilter = (FibAppFilterableApiFunction__WithModel | FibAppFilterableApiFunction__NullModel | FibAppOrmModelFunction | FibAppInternalApiFunction);

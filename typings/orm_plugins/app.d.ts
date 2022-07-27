@@ -1,5 +1,5 @@
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
-import { FibApp } from '../Typo/app';
+import type { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import type { FibApp } from '../Typo/app';
 /**
  * @description first initial plugin before all other plugins
  */

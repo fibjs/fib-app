@@ -1,6 +1,7 @@
 module.exports = [
     require('./user'),
     require('./person'),
+    require('./person_query'),
     require('./acl'),
     require('./city'),
     require('./people'),

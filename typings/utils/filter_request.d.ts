@@ -2,7 +2,8 @@
 /// <reference lib="es2016" />
 import { FibApp } from '../Typo/app';
 export declare const filterRequest: FibApp.FibAppClass['filterRequest'];
-export declare function normalizeQueryWhere(_req: FibApp.FibAppReq): FibApp.FibAppReq['query']['where'];
+export declare function normalizeQueryWhere(_req: FibApp.FibAppReq, model: FibApp.FibAppORMModel): FibApp.ReqWhere;
+export declare function normalizeQueryFindBy(_req: FibApp.FibAppReq, model: FibApp.FibAppORMModel): FibApp.ReqFindByItem;
 export declare function makeFibAppReqInfo(orequest: FibApp.FibAppHttpRequest, app: FibApp.FibAppClass, { classname, handler, extend_args: earg }: {
     classname: string;
     handler?: FibApp.FibAppFunctionToBeFilter;

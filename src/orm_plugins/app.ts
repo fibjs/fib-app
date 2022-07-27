@@ -1,7 +1,11 @@
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import type { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import type { FibApp } from '../Typo/app';
+
 import util = require('util')
-import { FibApp } from '../Typo/app';
 import { addReadonlyHiddenProperty } from "../utils/obj";
+
+import ORM = require('@fxjs/orm');
+const Helpers = ORM.Helpers;
 
 const error_reasons = [
     '',
@@ -76,12 +80,34 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
             viewFunctions: webx_config_opts.viewFunctions || {},
             viewServices: webx_config_opts.viewServices || {},
             no_graphql: !(webx_config_opts.no_graphql === undefined || webx_config_opts.no_graphql === false),
+            queryKeyWhiteList: webx_config_opts.queryKeyWhiteList || {},
             
             rpc: {...webx_config_opts.rpc},
         };
 
-        m.$webx.cid = cls_id++;
-        m.$webx.model_name = name;
+        Object.defineProperty(m.$webx, 'cid', { value: cls_id++, writable: false});
+        Object.defineProperty(m.$webx, 'model_name', { value: name, writable: false});
+
+        const __selfPropertiesOnDefined = Helpers.pickProperties(m, (p, k) => {
+            return !m.associations[k];
+        })
+        Object.defineProperty(m.$webx, '__selfPropertiesOnDefined', { value: __selfPropertiesOnDefined, writable: false});
+        const whereWhiteList = Array.isArray(m.$webx.queryKeyWhiteList?.where) ? new Set(m.$webx.queryKeyWhiteList?.where) : null;
+        Object.defineProperty(m.$webx, '__whereBlackProperties', {
+            get () {
+                const whereBlacklist = !whereWhiteList ? [] : Object.keys(m.$webx.__selfPropertiesOnDefined).filter(k => !whereWhiteList.has(k));
+                return new Set(whereBlacklist);
+            }
+        });
+
+        const findByWhiteList = Array.isArray(m.$webx.queryKeyWhiteList?.findby) ? new Set(m.$webx.queryKeyWhiteList?.findby) : null;
+        
+        Object.defineProperty(m.$webx, '__findByExtendBlackProperties', {
+            get () {
+                const findByBlacklist = !findByWhiteList ? [] : Object.keys(m.associations).filter(k => !findByWhiteList.has(k));
+                return new Set(findByBlacklist);
+            }
+        });
 
         if (m.$webx.ACL === undefined)
             m.$webx.ACL = {

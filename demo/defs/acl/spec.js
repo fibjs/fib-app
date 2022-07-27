@@ -343,7 +343,7 @@ describe("acl", () => {
                 }
             });
             check_result(rep.json(), {
-                "code": 4030301,
+                "code": 4030501,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
@@ -385,7 +385,7 @@ describe("acl", () => {
 
             var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}`);
             check_result(rep.json(), {
-                "code": 4030501,
+                "code": 4030701,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
@@ -440,7 +440,7 @@ describe("acl", () => {
                 }
             });
             check_result(rep.json(), {
-                "code": 4030501,
+                "code": 4030701,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
@@ -484,7 +484,7 @@ describe("acl", () => {
 
             var rep = http.get(tSrvInfo.appUrlBase + `/test_acl/${id}/ext`);
             check_result(rep.json(), {
-                "code": 4030301,
+                "code": 4030501,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 
@@ -533,7 +533,7 @@ describe("acl", () => {
 
             var rep = http.del(tSrvInfo.appUrlBase + `/test_acl/${id}/ext/${rid1}`);
             check_result(rep.json(), {
-                "code": 4030301,
+                "code": 4030501,
                 "message": "The operation isn’t allowed to 'test_acl' for clients due to class-level permissions."
             });
 

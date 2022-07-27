@@ -31,6 +31,7 @@ describe('fib-app', function () {
         require('./acl');
         require('./graphql');
         require('./nographql');
+        require('./query-filter');
         
         require('./chat');
         

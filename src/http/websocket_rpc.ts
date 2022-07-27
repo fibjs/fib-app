@@ -4,7 +4,7 @@ import util = require('util')
 import ws = require('ws')
 
 import coroutine = require('coroutine')
-import { makeFibAppReqInfo, normalizeQueryWhere } from '../utils/filter_request';
+import { makeFibAppReqInfo, normalizeQueryFindBy, normalizeQueryWhere } from '../utils/filter_request';
 import { default_session_for_acl } from '../utils/checkout_acl';
 import * as Hook from './hook';
 import { capabilities, ROOT_PATH } from './_ctx';
@@ -115,10 +115,15 @@ export function bind_rpc (app: FibApp.FibAppClass) {
                             )
 
                             try {
-                                const where = normalizeQueryWhere(req);
+                                const where = normalizeQueryWhere(req, model);
                                 if (where) req.query.where = where
                             } catch (error) {}
                             req.query.where = req.query.where || {};
+
+                            try {
+                                const findby = normalizeQueryFindBy(req, model);
+                                if (findby) req.query.findby = findby
+                            } catch (error) {}
                             
                             const result = <FibApp.FibAppResponse>model.$webx.functions[rpcMehthod].apply(
                                 null, [req, util.omit(rpcParams, ['$session', '$sessionid'])]
