@@ -377,7 +377,7 @@ export namespace FibApp {
         /* override :end */
 
         graphql<T = any> (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T
-        define(name: string, properties: FxOrmModel.ModelPropertyDefinitionHash, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
+        define(name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts?: FibAppOrmModelDefOptions): FibAppORMModel;
     }
     // compatible
     export type FibAppDb = FibAppORM
