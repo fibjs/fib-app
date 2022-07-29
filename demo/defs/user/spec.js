@@ -238,6 +238,21 @@ const cheerio = require('cheerio');
                 assert.equal(rep.statusCode, 200);
                 assert.equal(rep.firstHeader('Content-Type'), 'application/javascript; charset=gbk');
             })
+
+            ;(appOptions.apiPathPrefix !== appOptions.viewPathPrefix || appOptions.viewPathPrefix !== '') && it('custom: json1', () => {
+                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/json1`, {
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                });
+
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.firstHeader('Content-Type'), 'application/json; charset=utf8');
+
+                assert.deepEqual(rep.json(), {
+                    foo: 'bar'
+                })
+            })
         })
     });
 })

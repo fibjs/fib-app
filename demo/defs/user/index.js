@@ -109,6 +109,18 @@ module.exports = db => {
                         success: 'function foo() { return "bar2"; }'
                     }
                 }
+            },
+
+            json1: {
+                static: true,
+                response_headers: {
+                    'Content-Type': 'application/json; charset=utf8'
+                },
+                handler (_) {
+                    return {
+                        success: { foo: 'bar' }
+                    }
+                }
             }
         }
     });
