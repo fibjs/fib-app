@@ -37,6 +37,7 @@
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.4",
     "fib-rpc": "^0.5.3",
+    "graphql": "^0.11.7",
     "graphql-iso-date": "^3.4.0",
     "graphql-type-json": "^0.1.4",
     "nomnoml": "^1.3.1"
