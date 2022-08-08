@@ -1,7 +1,25 @@
 
-v1.14.1 / 2020-11-10
+v1.15.0 / 2022-08-08
 ==================
 
+  * deps: declare graphql's version to avoid version mismatch.
+  * test: add test case about return json in viewFunctions
+  * feat: support define options `queryKeyWhiteList.where` and `queryKeyWhiteList.findBy`
+  * chore: update .gitignore
+  * fix: add package-lock.json
+  * fix: typo fix.
+  * feat: robust change about `app.api.get`, stop query if no valid id provided for serial-type key property (#49)
+  * feat: upgrade to orm 1.13 to support postgresql. (#48)
+  * ci: fix ci in github actions.
+  * chore: repo clean.
+  * chore: upgrade dependencies.
+  * chore: upgrade dependencies and adjust.
+  * use nomnoml to render er graph.
+
+v1.14.1 / 2020-11-10
+====================
+
+  * Release v1.14.1
   * chore: upgrade dependpencies.
   * Merge pull request #46 from luoyhang003/master
   * fix: graphql query error without session.
