@@ -12,7 +12,7 @@ export default function (
 ): FxOrmNS.Plugin {
     let { enable: use_uuid = false } = plugin_opts || {};
     
-	function beforeDefine (name: string, properties: FxOrmNS.ModelPropertyDefinitionHash, opts: FxOrmNS.ModelOptions) {
+	function beforeDefine (name: string, properties: Record<string, FxOrmNS.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
         use_uuid = use_uuid || opts.__webx_use_uuid
         
         if (!use_uuid)
