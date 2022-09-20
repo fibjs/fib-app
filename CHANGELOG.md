@@ -1,7 +1,15 @@
 
-v1.15.0 / 2022-08-08
+v1.15.1 / 2022-09-20
 ==================
 
+  * feat: upgrade orm version to enable comment on property.
+  * typo: remove usage for `FxOrmNS.ModelPropertyDefinitionHash`
+  * chore: update lockfile
+
+v1.15.0 / 2022-08-08
+====================
+
+  * Release v1.15.0
   * deps: declare graphql's version to avoid version mismatch.
   * test: add test case about return json in viewFunctions
   * feat: support define options `queryKeyWhiteList.where` and `queryKeyWhiteList.findBy`
