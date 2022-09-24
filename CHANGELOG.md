@@ -1,7 +1,14 @@
 
-v1.15.1 / 2022-09-20
+v1.15.2 / 2022-09-24
 ==================
 
+  * feat: update internal plugin timestamp, add default field comment.
+  * feat: update lock.
+
+v1.15.1 / 2022-09-20
+====================
+
+  * Release v1.15.1
   * feat: upgrade orm version to enable comment on property.
   * typo: remove usage for `FxOrmNS.ModelPropertyDefinitionHash`
   * chore: update lockfile
