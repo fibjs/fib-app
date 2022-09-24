@@ -30,8 +30,8 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
             ormInstance.use(orm_plugins.app, {app})
             
             ormInstance.use(orm_plugins.timestamp, {
-                createdProperty: orm_utils.get_field_createdat(ormInstance.settings),
-                updatedProperty: orm_utils.get_field_updatedat(ormInstance.settings),
+                createdPropertyName: orm_utils.get_field_createdat(ormInstance.settings),
+                updatedPropertyName: orm_utils.get_field_updatedat(ormInstance.settings),
             })
 
             ormInstance.use(orm_plugins.association)

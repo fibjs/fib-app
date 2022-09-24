@@ -152,7 +152,7 @@ exports.getRandomSqliteBasedApp = function (...args) {
 
     let connName = connString;
     if (process.env.WEBX_TEST_DB_DEBUG) {
-        connName += '?debug=true'
+        connName += '?debug_sql=true'
         process.env.DEBUG_SQLDDLSYNC = true
     }
 

@@ -1,12 +1,12 @@
 import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
 import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 interface PluginOptions__Timestamp {
-    createdProperty?: string | false;
-    createdPropertyType?: FxOrmNS.OrigDetailedModelProperty;
-    updatedProperty?: string | false;
-    updatedPropertyType?: FxOrmNS.OrigDetailedModelProperty;
-    expiredProperty?: string | false;
-    expiredPropertyType?: FxOrmNS.OrigDetailedModelProperty;
+    createdPropertyName?: string | false;
+    createdProperty?: FxOrmNS.OrigDetailedModelProperty;
+    updatedPropertyName?: string | false;
+    updatedProperty?: FxOrmNS.OrigDetailedModelProperty;
+    expiredPropertyName?: string | false;
+    expiredProperty?: FxOrmNS.OrigDetailedModelProperty;
     type?: FxOrmNS.OrigDetailedModelProperty;
     now?: {
         (): Date;

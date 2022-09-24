@@ -6,21 +6,21 @@ const Helpers = ORM.Helpers;
 const { prependHook } = Helpers;
 
 interface PluginOptions__Timestamp {
-	createdProperty?: string | false
-	createdPropertyType?: FxOrmNS.OrigDetailedModelProperty,
-	updatedProperty?: string | false
-	updatedPropertyType?: FxOrmNS.OrigDetailedModelProperty,
-	expiredProperty?: string | false
-	expiredPropertyType?: FxOrmNS.OrigDetailedModelProperty,
+	createdPropertyName?: string | false
+	createdProperty?: FxOrmNS.OrigDetailedModelProperty,
+	updatedPropertyName?: string | false
+	updatedProperty?: FxOrmNS.OrigDetailedModelProperty,
+	expiredPropertyName?: string | false
+	expiredProperty?: FxOrmNS.OrigDetailedModelProperty,
 	type?: FxOrmNS.OrigDetailedModelProperty
 	now?: { (): Date }
 	expire?: { (): Date }
 }
 
 const defaults_opts: PluginOptions__Timestamp = {
-	createdProperty: 'created_at',
-	updatedProperty: 'updated_at',
-	expiredProperty: false,
+	createdPropertyName: 'created_at',
+	updatedPropertyName: 'updated_at',
+	expiredPropertyName: false,
 	type: { type: 'date', time: true },
 	now: function () { return new Date(); },
 	expire: function () { var d = new Date(); d.setMinutes(d.getMinutes() + 60); return d; },
@@ -35,12 +35,12 @@ export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp
 		if (typeof opts.timestamp == 'object')
 			plugin_opts = util.extend(plugin_opts, opts.timestamp);
 
-		if (plugin_opts.createdProperty)
-			properties[plugin_opts.createdProperty] = util.extend({}, plugin_opts.type, plugin_opts.createdPropertyType);
-		if (plugin_opts.updatedProperty)
-			properties[plugin_opts.updatedProperty] = util.extend({}, plugin_opts.type, plugin_opts.updatedPropertyType);
-		if (plugin_opts.expiredProperty)
-			properties[plugin_opts.expiredProperty] = util.extend({}, plugin_opts.type, plugin_opts.expiredPropertyType);
+		if (plugin_opts.createdPropertyName)
+			properties[plugin_opts.createdPropertyName] = util.extend({}, plugin_opts.type, plugin_opts.createdProperty);
+		if (plugin_opts.updatedPropertyName)
+			properties[plugin_opts.updatedPropertyName] = util.extend({}, plugin_opts.type, plugin_opts.updatedProperty);
+		if (plugin_opts.expiredPropertyName)
+			properties[plugin_opts.expiredPropertyName] = util.extend({}, plugin_opts.type, plugin_opts.expiredProperty);
 
 		opts.hooks = opts.hooks || {};
 	}
@@ -49,34 +49,34 @@ export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp
 		beforeDefine: beforeDefine,
 		define (model: FxOrmModel.Model) {
 			const {
-				createdProperty = false,
-				updatedProperty = false,
-				expiredProperty = false,
+				createdPropertyName = false,
+				updatedPropertyName = false,
+				expiredPropertyName = false,
 				now = false,
 				expire = false
 			} = plugin_opts || {}
 
-			if (now && createdProperty)	
+			if (now && createdPropertyName)	
 				model.beforeCreate(function () {
-					this[createdProperty] = now();
+					this[createdPropertyName] = now();
 
-					if (updatedProperty)
-						this[updatedProperty] = this[createdProperty];
+					if (updatedPropertyName)
+						this[updatedPropertyName] = this[createdPropertyName];
 				}, { oldhook: 'prepend' })
 
-			if (now && updatedProperty)	
+			if (now && updatedPropertyName)	
 				model.beforeSave(function () {
 					if (this.__opts.changes.length > 0) {
-						this[updatedProperty] = now();
+						this[updatedPropertyName] = now();
 						
-						if (createdProperty)
-							delete this[createdProperty];
+						if (createdPropertyName)
+							delete this[createdPropertyName];
 					}
 				}, { oldhook: 'prepend' })
 
-			if (expire && expiredProperty)	
+			if (expire && expiredPropertyName)	
 				model.beforeSave(function () {
-					this[expiredProperty] = expire();
+					this[expiredPropertyName] = expire();
 				}, { oldhook: 'prepend' })
 		}
 	}
