@@ -103,11 +103,15 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
         case 'postgres': {
             builder.create = function () {
                 var driver = Driver.create(`psql://postgres@127.0.0.1:5432`);
-                driver.execute(`SELECT 'CREATE DATABASE ${dbName}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${dbName}');`)
+
+                var exists = driver.execute(`SELECT * FROM pg_database WHERE datname = '${dbName}'`);
+                if (!exists.length) {
+                    driver.execute(`CREATE DATABASE ${dbName} WITH ENCODING = 'UTF8'`);
+                }
             }
             builder.drop = function () {
                 var driver = Driver.create(`psql://postgres@127.0.0.1:5432`);
-                driver.execute(`SELECT 'DROP DATABASE ${dbName}' WHERE EXISTS (SELECT FROM pg_database WHERE datname = '${dbName}');`);
+                driver.execute(`SELECT 'DROP DATABASE ${dbName}' WHERE EXISTS (SELECT * FROM pg_database WHERE datname = '${dbName}');`);
             }
             break;
         }
