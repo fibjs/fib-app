@@ -8,7 +8,7 @@ import { FibApp } from '../Typo/app';
 import { addHiddenProperty } from './obj';
 
 export function check_hasmanyassoc_with_extraprops (instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false {
-    var has_many_association = instance.__opts.many_associations.find(a => a.name === extend_name);
+    var has_many_association = instance.__instRtd.many_associations.find(a => a.name === extend_name);
     var has_extra_fields = has_many_association && has_many_association.props && util.isObject(has_many_association.props) && Object.keys(has_many_association.props).length
 
     return has_extra_fields ? has_many_association : false

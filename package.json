@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "@fibjs/types": "^0.34.1",
-    "@fxjs/orm": "^1.13.12",
+    "@fxjs/orm": "^1.14.2",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.5.4",
     "fib-rpc": "^0.5.3",
