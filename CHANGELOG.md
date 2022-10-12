@@ -1,7 +1,15 @@
 
-v1.15.2 / 2022-09-24
+v1.15.3 / 2022-10-13
 ==================
 
+  * chore: some pointless changes.
+  * feat: adapt to latest orm version.
+  * feat: upgrade fib-typify, lock typescript to 4.5.x
+
+v1.15.2 / 2022-09-24
+====================
+
+  * Release v1.15.2
   * feat: update internal plugin timestamp, add default field comment.
   * feat: update lock.
 
