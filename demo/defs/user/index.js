@@ -7,10 +7,16 @@ const fpug = require('fib-pug')
 
 module.exports = db => {
     var User = db.define('user', {
-        name: String,
+        name: {
+            type: 'text',
+            comment: '用户名'
+        },
         sex: ["male", "female"],
         age: Number,
-        password: String,
+        password: {
+            type: 'text',
+            comment: '密码'
+        },
         salt: String
     }, {
         hooks: {

@@ -3,7 +3,9 @@ import { FibApp } from "../Typo/app";
 const NO_GRAPHQL_COLOR = 'lightgray'// '#ec8888'
 
 export = function () {
-    var nomnoml = require('nomnoml');
+    const util = require('util');
+    const Viz = require('viz.js');
+    const { Module, render } = require('viz.js/lite.render.js');
 
     const models: string[] = [];
     const exts: string[] = [];
@@ -16,28 +18,49 @@ export = function () {
             m = db.models[name];
             ks = [];
             for (const k in m.properties) {
-                ks.push(`+ ${k} : ${m.properties[k].type}`);
+                var ps;
+
+                if (m.properties[k].comment)
+                    ps = `+ ${m.properties[k].comment}(${k}) : ${m.properties[k].type}`;
+                else
+                    ps = `+ ${k} : ${m.properties[k].type}`;
+                ks.push(ps);
             }
 
             const is_nographql = m.no_graphql
-            models.push(`[${is_nographql? "<nographql>" : ""}${m.model_name}|${ks.join(';')}]`);
+
+            if(m.comment)
+                models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.comment}(${m.model_name})|${ks.join('\\l')}\\l}"];`);
+            else
+                models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
+        
             for (const e in m.associations) {
                 const assoc_info = m.associations[e];
                 const one = assoc_info.type === "hasOne" && !assoc_info.association.reversed;
-                exts.push(`[${m.model_name}] ${assoc_info.association.name.replace(/_/g, '%5f')}${one ? "->" : "--:>" } [${assoc_info.association.model.model_name}]`);
+                const extendsTo = assoc_info.type === "extendsTo";
+
+                var es = `${m.model_name} -> ${assoc_info.association.model.model_name} [label=${e}, arrowhead=`;
+                es += extendsTo ? "diamond" : one ? "empty" : "oinv";
+                es += "];";
+
+                exts.push(es);
             }
         }
     });
 
-    const dot = `#lineWidth: 1.5
-#font: Helvetica,sans-Serif
-#fontSize: 10
-#leading: 1.6
-#fill: white
-#.nographql: fill=${NO_GRAPHQL_COLOR}
+
+    const dot = `
+digraph
+{
+node [fontname="Helvetica,sans-Serif", fontsize=10, shape="record", style="filled", fillcolor="white"];
+edge [fontname="Helvetica,sans-Serif", fontsize=10, dir=both, arrowsize=0.8, arrowtail=odot];
 
 ${models.join('\n')}
 ${exts.join('\n')}
-`;
-    return nomnoml.renderSvg(dot).replace(/%5f/g, '_');
+}`;
+
+    let viz = new Viz({ Module, render });
+    viz.renderStringSync = util.sync(viz.renderString, true);
+
+    return viz.renderStringSync(dot);
 }
