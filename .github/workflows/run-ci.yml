@@ -24,11 +24,11 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2016, macos-10.15]
+        os: [ubuntu-18.04, windows-2019, macos-10.15]
         version: [0.33.0, 0.34.0]
         arch: [amd64, i386]
         exclude:
-          - os: windows-2016
+          - os: windows-2019
             arch: i386
           - os: macos-10.15
             arch: i386
