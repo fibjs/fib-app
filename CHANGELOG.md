@@ -1,7 +1,19 @@
 
-v1.15.3 / 2022-10-13
+v1.15.5 / 2022-11-20
 ==================
 
+  * chore: update fib-session version to fix type conflicts with fib-pool
+  * fix: func name
+
+v1.15.4 / 2022-11-05
+====================
+
+  * update diagram.
+
+v1.15.3 / 2022-10-13
+====================
+
+  * Release v1.15.3
   * chore: some pointless changes.
   * feat: adapt to latest orm version.
   * feat: upgrade fib-typify, lock typescript to 4.5.x
