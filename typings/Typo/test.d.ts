@@ -1,7 +1,9 @@
+/// <reference types="@fibjs/types" />
 import type { FibApp } from "./app";
 export declare namespace FibAppTest {
     interface FibAppTestClientOptions {
         modelName: string;
+        httpClient?: Class_HttpClient;
     }
     interface FibAppTestHttpClientOptions extends FibAppTestClientOptions {
         serverBase?: string;
@@ -22,5 +24,6 @@ export declare namespace FibAppTest {
         findExt: (id: FibApp.AppIdType, extName: string, condition: object | string) => object;
         createExt: (id: FibApp.AppIdType, extName: string, data: object) => object;
         updateExt: (id: FibApp.AppIdType, extName: string, edata: object) => object;
+        postFunction: (funcName: string, data: object) => object;
     }
 }

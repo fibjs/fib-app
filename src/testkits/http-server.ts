@@ -47,7 +47,10 @@ function ensureSlashStart (str: string = '') {
     return str
 }
 
-export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibApp.GetTestServerOptions): FibApp.SessionTestServerInfo {
+export function mountAppToSessionServer (
+    app: FibApp.FibAppClass,
+    options: FibApp.GetTestServerOptions
+): FibApp.SessionTestServerInfo {
     const Session = require('fib-session')
     const detectPort = require('@fibjs/detect-port')
 
@@ -68,8 +71,10 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
         routing
     ] as any)
 
+    const httpClient = options?.httpClient || new http.Client();
+
     function sessionAs (sessionInfo: Fibjs.AnyObject) {
-        http.post(httpHost + '/set_session', {
+        httpClient.post(httpHost + '/set_session', {
             json: sessionInfo
         });
     }
@@ -83,6 +88,7 @@ export function mountAppToSessionServer (app: FibApp.FibAppClass, options: FibAp
         websocketHost,
         appUrlBase,
         routing,
+        httpClient,
         utils: {
             sessionAs
         }

@@ -3,6 +3,7 @@ import type { FibApp } from "./app";
 export namespace FibAppTest {
     export interface FibAppTestClientOptions {
         modelName: string
+        httpClient?: Class_HttpClient
     }
     
     export interface FibAppTestHttpClientOptions extends FibAppTestClientOptions {
@@ -27,6 +28,8 @@ export namespace FibAppTest {
         findExt: (id: FibApp.AppIdType, extName: string, condition: object | string) => object
         createExt: (id: FibApp.AppIdType, extName: string, data: object) => object
         updateExt: (id: FibApp.AppIdType, extName: string, edata: object) => object
+
+        postFunction: (funcName: string, data: object) => object
     }
 }
 

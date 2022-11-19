@@ -173,6 +173,8 @@ describe('app apis', () => {
         assert.isFunction(restClient.update)
         assert.isFunction(restClient.delete)
 
+        assert.isFunction(restClient.postFunction)
+
         assert.isFunction(restClient.link)
         assert.isFunction(restClient.unlink)
     })

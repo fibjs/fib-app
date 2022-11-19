@@ -11,9 +11,15 @@ runServer(tSrvInfo.server, () => void 0)
 const faker = require('../../faker')
 
 const restClients = {
-    test_acl: tappInfo.app.test.getRestClient({appUrlBase: tSrvInfo.appUrlBase, modelName: 'test_acl'}),
-    ext_acl: tappInfo.app.test.getRestClient({appUrlBase: tSrvInfo.appUrlBase, modelName: 'ext_acl'}),
-    ext_acl1: tappInfo.app.test.getRestClient({appUrlBase: tSrvInfo.appUrlBase, modelName: 'ext_acl1'}),
+    test_acl: tappInfo.app.test.getRestClient({
+        httpClient: tSrvInfo.httpClient, appUrlBase: tSrvInfo.appUrlBase, modelName: 'test_acl'
+    }),
+    ext_acl: tappInfo.app.test.getRestClient({
+        httpClient: tSrvInfo.httpClient, appUrlBase: tSrvInfo.appUrlBase, modelName: 'ext_acl'
+    }),
+    ext_acl1: tappInfo.app.test.getRestClient({
+        httpClient: tSrvInfo.httpClient, appUrlBase: tSrvInfo.appUrlBase, modelName: 'ext_acl1'
+    }),
 }
 
 const sessionAs = tSrvInfo.utils.sessionAs

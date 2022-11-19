@@ -1,7 +1,7 @@
 import http = require('http')
 
-export function graphqlRequest(url: string, body: string) {
-    return http.post(url, 
+export function graphqlRequest(url: string, body: string, httpClient?: Class_HttpClient) {
+    return (httpClient || http).post(url, 
         {
             headers: {
                 'Content-Type': 'application/graphql'

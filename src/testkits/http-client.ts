@@ -1,5 +1,5 @@
-const assert = require('assert');
-const http = require('http');
+import assert = require('assert');
+import http = require('http');
 
 import { FibApp } from '../Typo/app';
 import { FibAppTest } from '../Typo/test';
@@ -10,10 +10,11 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
     const apiUrlBase = options.apiUrlBase || appUrlBase
     const graphQlUrlBase = options.graphQlUrlBase || appUrlBase
     const modelName = options.modelName
+    const httpClient = options.httpClient || new http.Client();
 
     return {
         create: (obj: object) => {
-            let rep = http.post(`${apiUrlBase}/${modelName}`, {
+            let rep = httpClient.post(`${apiUrlBase}/${modelName}`, {
                 json: obj
             });
             assert.equal(rep.statusCode, 201);
@@ -28,7 +29,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             }
         },
         get: (id: FibApp.AppIdType) => {
-            let rep = http.get(`${apiUrlBase}/${modelName}/${id}`);
+            let rep = httpClient.get(`${apiUrlBase}/${modelName}/${id}`);
             assert.equal(rep.statusCode, 200);
             assert.property(rep.json(), "id");
             return rep.json();
@@ -45,7 +46,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
                         id
                         ${fields}
                     }
-                }`
+                }`, httpClient
             );
             assert.equal(rep.statusCode, 200);
             return rep.json().data[modelName];
@@ -55,7 +56,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
                 whereCondition = JSON.stringify(whereCondition)
             }
             
-            let rep = http.get(`${apiUrlBase}/${modelName}`, {
+            let rep = httpClient.get(`${apiUrlBase}/${modelName}`, {
                 query: {
                     where: whereCondition,
                     ...queryObject
@@ -84,14 +85,15 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
                         id
                         ${fields}
                     }
-                }`
+                }`,
+                httpClient
             );
     
             assert.equal(res.statusCode, 200);
             return res.json().data[`find_${modelName}`];
         },
         update: (id: FibApp.AppIdType, obj: object) => {
-            let rep = http.put(`${apiUrlBase}/${modelName}/${id}`, {
+            let rep = httpClient.put(`${apiUrlBase}/${modelName}/${id}`, {
                 json: obj
             });
             assert.equal(rep.statusCode, 200);
@@ -99,13 +101,13 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             return rep.json();
         },
         delete: (id: FibApp.AppIdType) => {
-            let rep = http.del(`${apiUrlBase}/${modelName}/${id}`);
+            let rep = httpClient.del(`${apiUrlBase}/${modelName}/${id}`);
             assert.equal(rep.statusCode, 200);
             assert.property(rep.json(), "id");
             return rep.json();
         },
         link: (id: FibApp.AppIdType, ext_name: string, ext_id: FibApp.AppIdType) => {
-            let rep = http.put(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
+            let rep = httpClient.put(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
                 json: {
                     id: ext_id
                 }
@@ -117,7 +119,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             return rep.json();
         },
         unlink: (id: FibApp.AppIdType, ext_name: string, ext_id: FibApp.AppIdType) => {
-            let rep = http.del(`${apiUrlBase}/${modelName}/${id}/${ext_name}/${ext_id}`, {
+            let rep = httpClient.del(`${apiUrlBase}/${modelName}/${id}/${ext_name}/${ext_id}`, {
                 json: {
                 }
             });
@@ -132,7 +134,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
                 whereCondition = JSON.stringify(whereCondition)
             }
 
-            let rep = http.get(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
+            let rep = httpClient.get(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
                 query: {
                     ...whereCondition && { where: whereCondition }
                 }
@@ -148,7 +150,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             return rep.json();
         },
         createExt: (id: FibApp.AppIdType, ext_name: string, edata: object) => {
-            let rep = http.post(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
+            let rep = httpClient.post(`${apiUrlBase}/${modelName}/${id}/${ext_name}`, {
                 json: edata
             });
 
@@ -163,7 +165,7 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             return rep.json();
         },
         updateExt: (id: FibApp.AppIdType, ext_name: string, edata: any) => {
-            let rep = http.put(`${apiUrlBase}/${modelName}/${id}/${ext_name}/${edata.id}`, {
+            let rep = httpClient.put(`${apiUrlBase}/${modelName}/${id}/${ext_name}/${edata.id}`, {
                 json: {
                     id: edata.id
                 }
@@ -177,6 +179,13 @@ export default (options: FibAppTest.FibAppTestHttpClientOptions): FibAppTest.Fib
             } else {
                 assert.property(res, "id");
             }
+            return rep.json();
+        },
+        postFunction: <T = any>(funcName: string, params: T) => {
+            let rep = httpClient.post(`${apiUrlBase}/${modelName}/${funcName}`, {
+                json: params
+            });
+        
             return rep.json();
         }
     };

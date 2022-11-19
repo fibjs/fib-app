@@ -458,6 +458,7 @@ export declare namespace FibApp {
     }
     interface GetTestServerOptions extends GetTestRoutingOptions {
         port?: number;
+        httpClient?: Class_HttpClient;
     }
     interface SessionTestServerInfo {
         app: FibAppClass;
@@ -471,6 +472,7 @@ export declare namespace FibApp {
          */
         serverBase: string;
         appUrlBase: string;
+        httpClient: Class_HttpClient;
         utils: {
             sessionAs: {
                 (sessionInfo: FibAppSession): void;
