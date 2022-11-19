@@ -8,7 +8,7 @@ import { FibApp } from '../Typo/app';
 import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 import { FibAppACL } from '../Typo/acl';
 
-function isValidNumber (v: string | number) {
+function isInvalidNumber (v: string | number) {
     v = parseInt(v as any);
 
     return isNaN(v);
@@ -21,7 +21,7 @@ export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session:
         (p.key || p.klass === 'primary') && (p.type === 'serial' || p.type === 'integer')
     ))[0];
 
-    if (intPrimaryProp && isValidNumber(id)) {
+    if (intPrimaryProp && isInvalidNumber(id)) {
         return err_info(4040002, {
             id: id,
             classname: cls.model_name
