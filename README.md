@@ -1,8 +1,10 @@
 # fib-app
 
 [![NPM version](https://img.shields.io/npm/v/fib-app.svg)](https://www.npmjs.org/package/fib-app)
-[![Build Status](https://travis-ci.org/fibjs/fib-app.svg)](https://travis-ci.org/fibjs/fib-app)
-[![Build status](https://ci.appveyor.com/api/projects/status/0ugsg3ttk1tuca25?svg=true)](https://ci.appveyor.com/project/richardo2016/fib-app)
+[![Build Status][actions-image]][actions-url]
+
+[actions-image]: https://github.com/fibjs/fib-app/actions/workflows/run-ci.yml/badge.svg
+[actions-url]: https://github.com/fibjs/fib-app/actions/workflows/run-ci.yml
 
 fibjs-based application resources(RESTful API, SSR, Other resources) management framework
 
