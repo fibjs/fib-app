@@ -1,7 +1,14 @@
 
-v1.15.6 / 2022-11-20
+v1.15.7 / 2022-11-22
 ==================
 
+  * chore: update deps.
+  * feat: allow cusotmize rest api's pre routes.
+
+v1.15.6 / 2022-11-20
+====================
+
+  * Release v1.15.6
   * feat: enhance testkits
 
 v1.15.5 / 2022-11-20
