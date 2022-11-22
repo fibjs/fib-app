@@ -1,7 +1,14 @@
 
-v1.15.7 / 2022-11-22
+v0.15.8 / 2022-11-22
 ==================
 
+  * chore: update README, replace ci badge.
+  * feat: use default export, export namespace `FibApp`
+
+v1.15.7 / 2022-11-22
+====================
+
+  * Release v1.15.7
   * chore: update deps.
   * feat: allow cusotmize rest api's pre routes.
 
