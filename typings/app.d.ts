@@ -24,4 +24,4 @@ declare class App extends mq.Routing implements FibApp.FibAppClass {
     constructor(connStr: string, opts: FibApp.FibAppDbSetupOpts);
     [extraMember: string]: any;
 }
-export = App;
+export default App;

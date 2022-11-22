@@ -77,7 +77,7 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     [extraMember: string]: any;
 }
 
-export = App;
+export default App;
 
 function filterFibAppOptions (__opts: FibApp.FibAppOpts) {
     __opts.apiPathPrefix = __opts.apiPathPrefix || ''

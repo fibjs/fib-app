@@ -16,6 +16,9 @@
             "typings/index.d.ts"
         ]
     },
+    "include": [
+        "src/**/*"
+    ],
     "exclude": [
         "node_modules"
     ],

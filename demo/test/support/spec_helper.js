@@ -8,7 +8,8 @@ const { Driver } = require('@fxjs/db-driver')
 const ws = require('ws');
 const push = require('fib-push');
 
-const App = require('../../../');
+const App = require('../../../').default;
+
 const defs = require('../../defs');
 
 const runtimeTime = Date.now();
