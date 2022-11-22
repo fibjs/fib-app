@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('db');
+const http = require('http');
+
 const { Driver } = require('@fxjs/db-driver')
 
 const ws = require('ws');
@@ -151,7 +153,16 @@ exports.getApp = function (conn = 'sqlite:test.db', ...args) {
     return app
 }
 
-exports.getRandomSqliteBasedApp = function (...args) {
+/**
+ * @param {[
+ *  import('../../../typings/Typo/app').FibApp.FibAppOpts,
+ *  import('../../../typings/Typo/app').FibApp.FibAppDbSetupOpts
+ * ] | [
+ *  import('../../../typings/Typo/app').FibApp.FibAppDbSetupOpts
+ * ]} args
+ * @param {import('../../../typings/Typo/app').FibApp.GetTestServerOptions} options
+ */
+const getRandomSqliteBasedApp = exports.getRandomSqliteBasedApp = function (...args) {
     let {conn: connString, dbName, dbType = ''} = generateRandomConn();
 
     let connName = connString;
@@ -181,7 +192,11 @@ exports.getRandomSqliteBasedApp = function (...args) {
     }
 }
 
-exports.mountAppToSrv = function (app, options = {}) {
+/**
+ * @param {import('../../../typings/Typo/app').FibApp.FibAppClass} app
+ * @param {import('../../../typings/Typo/app').FibApp.GetTestServerOptions} options
+ */
+const mountAppToSrv = exports.mountAppToSrv = function (app, options = {}) {
     const mountedInfo = app.test.mountAppToSessionServer(app, {
         ...options,
         initRouting (routing) {
@@ -202,4 +217,68 @@ exports.mountAppToSrv = function (app, options = {}) {
     })
 
     return mountedInfo
+}
+
+const { runServer } = require('../_utils');
+
+/**
+ * 
+ * @param {{
+ *  createAppArgs?: Parameters<typeof getRandomSqliteBasedApp>
+ * }} options 
+ * @returns 
+ */
+exports.useTestServer = function (options) {
+    const { createAppArgs = [] } = options;
+    
+    const tappInfo = getRandomSqliteBasedApp(...createAppArgs);
+    const tSrvInfo = mountAppToSrv(tappInfo.app, {appPath: '/api'});
+    runServer(tSrvInfo.server, () => void 0)
+
+    after(() => tappInfo.utils.cleanLocalDB())
+
+    before(() => {
+        tappInfo.utils.dropModelsSync();
+    });
+
+    const httpClient = new http.Client();
+
+    const clients = {
+        person: { ...tSrvInfo.app.test.getRestClient({ modelName: 'person', appUrlBase: tSrvInfo.appUrlBase }) },
+        people: { ...tSrvInfo.app.test.getRestClient({ modelName: 'people', appUrlBase: tSrvInfo.appUrlBase }) },
+        city: { ...tSrvInfo.app.test.getRestClient({ modelName: 'city', appUrlBase: tSrvInfo.appUrlBase }) },
+    }
+
+    const adminUser = {
+        id: Date.now(),
+        roles: ['admin']
+    };
+
+    function switchUser (user_id, roles = ['user']) {
+        switch (user_id) {
+            case 'admin':
+                user_id = adminUser.id;
+                roles = Array.from(new Set(adminUser.roles.concat('admin')));
+                break;
+            default:
+                break;
+        }
+
+        return httpClient.post(`${tSrvInfo.httpHost}/set_session`, {
+            json: {
+                id: user_id,
+                roles,
+            }
+        });
+    }
+
+    return {
+        tappInfo,
+        tSrvInfo,
+
+        clients,
+        clientCtx: {
+            switchUser
+        }
+    }
 }

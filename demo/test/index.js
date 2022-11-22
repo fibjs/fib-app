@@ -21,6 +21,7 @@ describe('fib-app', function () {
     });
 
     require('./app-apis');
+    require('./customize-api-route');
 
     if (!process.env.FIBAPP_NO_APP_SPEC) {
         require('./classes');

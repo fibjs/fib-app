@@ -506,6 +506,8 @@ export namespace FibApp {
         /* for fib-pool :end */
     }
 
+    type ItOrArray<T> = T | T[]
+
     export interface FibAppOpts {
         graphqlTypeMap?: FibAppGraphQLTypeMap
 
@@ -540,6 +542,45 @@ export namespace FibApp {
         hooks?: Hooks
 
         hideErrorStack?: boolean
+
+        customizeApiRoute?: {
+            (context: {
+            } & ({
+                routeType: 'http-rest-post'
+                handler: (origReq: FibAppHttpRequest, classname: string) => void;
+            } | { routeType: 'http-rest-get'
+                handler: (origReq: FibAppHttpRequest, classname: string, id: AppIdType) => void;
+            } | {
+                routeType: 'http-rest-put'
+                handler: (origReq: FibAppHttpRequest, classname: string, id: AppIdType) => void;
+            } | {
+                routeType: 'http-rest-delete'
+                handler: (origReq: FibAppHttpRequest, classname: string, id: AppIdType, extend: string) => void;
+            } | {
+                routeType: 'http-rest-find'
+                handler: (origReq: FibAppHttpRequest, classname: string) => void;
+            } | {
+                routeType: 'http-rest-epost'
+                handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: string) => void;
+            } | {
+                routeType: 'http-rest-eput'
+                withExtendId?: boolean
+                handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: string, rid?: FibApp.AppIdType) => void;
+            } | {
+                routeType: 'http-rest-efind'
+                handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: string) => void;
+            } | {
+                routeType: 'http-rest-eget'
+                withExtendId?: boolean
+                handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: string, rid?: FibApp.AppIdType) => void;
+            } | {
+                routeType: 'http-rest-edel'
+                handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: string, rid: FibApp.AppIdType) => void;
+            } | {
+                routeType: 'http-postfunc'
+                handler: (origReq: FibAppHttpRequest, classname: string, func_name: string) => void;
+            })): ItOrArray<typeof context['handler']>
+        }
     }
 
     export interface WebSocketMessageHandlerContext<DT = any> {
