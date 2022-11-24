@@ -1,7 +1,13 @@
 
-v1.15.11 / 2022-11-25
-==================
+v1.15.12 / 2022-11-25
+=====================
 
+  * feat: enhance `customizeApiRoute`
+
+v1.15.11 / 2022-11-25
+=====================
+
+  * Release v1.15.11
   * fix: allow user set short status code on fill_error.
 
 v1.15.10 / 2022-11-24
