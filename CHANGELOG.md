@@ -1,7 +1,13 @@
 
-v1.15.9 / 2022-11-24
+v1.15.10 / 2022-11-24
 ==================
 
+  * chore: upgrade orm version.
+
+v1.15.9 / 2022-11-24
+====================
+
+  * Release v1.15.9
   * fix: typo cleanup.
   * feat: enhance types of test kits http-client
 
