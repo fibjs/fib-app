@@ -528,6 +528,7 @@ export namespace FibApp {
 
         customizeApiRoute?: {
             (context: {
+                app: FibApp.FibAppClass
             } & ({
                 routeType: 'http-rest-post'
                 handler: (origReq: FibAppHttpRequest, classname: string) => void;

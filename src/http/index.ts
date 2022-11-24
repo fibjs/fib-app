@@ -60,65 +60,65 @@ export function bind (app: FibApp.FibAppClass) {
     function setupApiRoute () {
         /* api base :start */
         app.post(`${apiPathPrefix}/:classname`, customizeApiRoute({
-            routeType: 'http-rest-post',
+            app,  routeType: 'http-rest-post',
             handler: (req: FibApp.FibAppHttpRequest, classname: string) => app.filterRequest(req, classname, api.post),
         }));
 
         app.get(`${apiPathPrefix}/:classname/:id`, customizeApiRoute({
-            routeType: 'http-rest-get',
+            app,  routeType: 'http-rest-get',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType) => app.filterRequest(req, classname, id, filterApiCollection(req, app).get),
         }));
 
         app.put(`${apiPathPrefix}/:classname/:id`, customizeApiRoute({
-            routeType: 'http-rest-put',
+            app,  routeType: 'http-rest-put',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType) => app.filterRequest(req, classname, id, api.put),
         }));
 
         app.del(`${apiPathPrefix}/:classname/:id`, customizeApiRoute({
-            routeType: 'http-rest-delete',
+            app,  routeType: 'http-rest-delete',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType) => app.filterRequest(req, classname, id, api.del),
         }));
 
         app.get(`${apiPathPrefix}/:classname`, customizeApiRoute({
-            routeType: 'http-rest-find',
+            app,  routeType: 'http-rest-find',
             handler: (req: FibApp.FibAppHttpRequest, classname: string) => app.filterRequest(req, classname, filterApiCollection(req, app).find),
         }));
         /* api base :end */
 
         /* api extend :start */
         app.put(`${apiPathPrefix}/:classname/:id/:extend`, customizeApiRoute({
-            routeType: 'http-rest-eput', withExtendId: false,
+            app,  routeType: 'http-rest-eput', withExtendId: false,
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType) => app.filterRequest(req, classname, id, extend, api.elink),
         }));
 
         app.put(`${apiPathPrefix}/:classname/:id/:extend/:rid`, customizeApiRoute({
-            routeType: 'http-rest-eput', withExtendId: true,
+            app,  routeType: 'http-rest-eput', withExtendId: true,
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType) => app.filterRequest(req, classname, id, extend, rid, api.eput),
         }));
 
         app.post(`${apiPathPrefix}/:classname/:id/:extend`, customizeApiRoute({
-            routeType: 'http-rest-epost',
+            app,  routeType: 'http-rest-epost',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType) => app.filterRequest(req, classname, id, extend, api.epost),
         }));
 
         app.get(`${apiPathPrefix}/:classname/:id/:extend`, customizeApiRoute({
-            routeType: 'http-rest-efind',
+            app,  routeType: 'http-rest-efind',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType) => app.filterRequest(req, classname, id, extend, filterApiCollection(req, app).efind),
         }));
 
         app.get(`${apiPathPrefix}/:classname/:id/:extend/:rid`, customizeApiRoute({
-            routeType: 'http-rest-eget',
+            app,  routeType: 'http-rest-eget',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType) => app.filterRequest(req, classname, id, extend, rid, filterApiCollection(req, app).eget),
         }));
 
         app.del(`${apiPathPrefix}/:classname/:id/:extend/:rid`, customizeApiRoute({
-            routeType: 'http-rest-edel',
+            app,  routeType: 'http-rest-edel',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType) => app.filterRequest(req, classname, id, extend, rid, api.edel),
         }));
         /* api extend :end */
 
         app.post(`${apiPathPrefix}/:classname/:func`, customizeApiRoute({
-            routeType: 'http-postfunc',
+            app,  routeType: 'http-postfunc',
             handler: (req: FibApp.FibAppHttpRequest, classname: string, func: string) => {
                 app.filterRequest(req, classname, api.functionHandler(classname, func));
             },

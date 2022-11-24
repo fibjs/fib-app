@@ -415,7 +415,9 @@ export declare namespace FibApp {
         hooks?: Hooks;
         hideErrorStack?: boolean;
         customizeApiRoute?: {
-            (context: {} & ({
+            (context: {
+                app: FibApp.FibAppClass;
+            } & ({
                 routeType: 'http-rest-post';
                 handler: (origReq: FibAppHttpRequest, classname: string) => void;
             } | {
