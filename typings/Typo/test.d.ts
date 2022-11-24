@@ -6,6 +6,9 @@ export declare namespace FibAppTest {
         httpClient?: Class_HttpClient;
     }
     interface FibAppTestHttpClientOptions extends FibAppTestClientOptions {
+        /**
+         * @deprecated use `appUrlBase` instead
+         */
         serverBase?: string;
         appUrlBase?: string;
         apiUrlBase?: string;
@@ -13,17 +16,17 @@ export declare namespace FibAppTest {
     }
     interface FibAppTestHttpClient {
         create: (obj: object) => FibApp.AppIdType;
-        get: (id: FibApp.AppIdType) => object;
-        getByGraphQL: (id: FibApp.AppIdType, fields: string[] | string) => object;
-        find: (condition: object | string) => object;
-        findByGraphQL: (condition: object | string) => object;
-        update: (id: FibApp.AppIdType, obj: object) => object;
-        delete: (id: FibApp.AppIdType) => object;
-        link: (id: FibApp.AppIdType, extName: string, ext_id: FibApp.AppIdType) => object;
-        unlink: (id: FibApp.AppIdType, extName: string, ext_id: FibApp.AppIdType) => object;
-        findExt: (id: FibApp.AppIdType, extName: string, condition: object | string) => object;
-        createExt: (id: FibApp.AppIdType, extName: string, data: object) => object;
-        updateExt: (id: FibApp.AppIdType, extName: string, edata: object) => object;
-        postFunction: (funcName: string, data: object) => object;
+        get: <T extends any = object>(id: FibApp.AppIdType) => T;
+        getByGraphQL: <T extends any = object>(id: FibApp.AppIdType, fields: string[] | string) => T;
+        find: <T extends any = object>(condition: object | string) => T;
+        findByGraphQL: <T extends any = object>(condition: object | string) => T;
+        update: <T extends any = object>(id: FibApp.AppIdType, obj: object) => T;
+        delete: <T extends any = object>(id: FibApp.AppIdType) => T;
+        link: <T extends any = object>(id: FibApp.AppIdType, extName: string, ext_id: FibApp.AppIdType) => T;
+        unlink: <T extends any = object>(id: FibApp.AppIdType, extName: string, ext_id: FibApp.AppIdType) => T;
+        findExt: <T extends any = object>(id: FibApp.AppIdType, extName: string, condition: object | string) => T;
+        createExt: <T extends any = object>(id: FibApp.AppIdType, extName: string, data: object) => T;
+        updateExt: <T extends any = object>(id: FibApp.AppIdType, extName: string, edata: object) => T;
+        postFunction: <T extends any = object>(funcName: string, data: object) => T;
     }
 }
