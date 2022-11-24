@@ -1,7 +1,13 @@
 
-v1.15.10 / 2022-11-24
+v1.15.11 / 2022-11-25
 ==================
 
+  * fix: allow user set short status code on fill_error.
+
+v1.15.10 / 2022-11-24
+=====================
+
+  * Release v1.15.10
   * chore: upgrade orm version.
 
 v1.15.9 / 2022-11-24
