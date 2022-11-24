@@ -1,7 +1,14 @@
 
-v0.15.8 / 2022-11-22
+v1.15.9 / 2022-11-24
 ==================
 
+  * fix: typo cleanup.
+  * feat: enhance types of test kits http-client
+
+v1.15.8 / 2022-11-22
+====================
+
+  * Release v1.15.8
   * chore: update README, replace ci badge.
   * feat: use default export, export namespace `FibApp`
 
