@@ -80,13 +80,20 @@ export function err_info_msg(
     }
 };
 
+export function payload_code_to_status_code(
+    code: number | string
+) {
+    const codeStr = code.toString().padEnd(3, '0');
+    return parseInt(codeStr.slice(0, 3));
+}
+
 export function fill_error(
     req: FibApp.FibAppHttpRequest,
     e: FibApp.FibAppResponse
 ): void {
     var code = e.error.code;
 
-    req.response.statusCode = (code as number) / 10000;
+    req.response.statusCode = payload_code_to_status_code(code as number);
     req.response.json({
         code: e.error.cls ? (code as number) + e.error.cls * 100 : code,
         message: e.error.message
@@ -96,7 +103,7 @@ export function fill_error(
 export function render_error(req: FibApp.FibAppHttpRequest, e: FibApp.FibAppResponse, renderFunction?: any): void {
     var code = e.error.code;
 
-    req.response.statusCode = (code as number) / 10000;
+    req.response.statusCode = payload_code_to_status_code(code as number);
     const errInfo = {
         code: e.error.cls ? (code as number) + e.error.cls * 100 : code,
         message: e.error.message

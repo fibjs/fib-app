@@ -32,6 +32,7 @@ export declare class APPError extends Error implements FibApp.FibAppFinalError {
 export declare function err_info(code: keyof TInfos | number, data?: Fibjs.AnyObject, cls?: FibApp.FibModelCountTypeMACRO): FibApp.FibAppErrorResponse;
 export declare function make_err_message(code: keyof TInfos, data: Record<string, any>): string;
 export declare function err_info_msg(code: keyof TInfos | number, msg?: string, cls?: FibApp.FibModelCountTypeMACRO): FibApp.FibAppErrorResponse;
+export declare function payload_code_to_status_code(code: number | string): number;
 export declare function fill_error(req: FibApp.FibAppHttpRequest, e: FibApp.FibAppResponse): void;
 export declare function render_error(req: FibApp.FibAppHttpRequest, e: FibApp.FibAppResponse, renderFunction?: any): void;
 export {};

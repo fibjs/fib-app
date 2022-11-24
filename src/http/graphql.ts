@@ -4,6 +4,7 @@ import util = require('util')
 import { FibApp } from '../Typo/app';
 
 import { debugFunctionWrapper } from '../utils/debug';
+import { payload_code_to_status_code } from '../utils/err_info';
 import { check_hasmanyassoc_with_extraprops } from '../utils/orm-assoc';
 
 const graphql = require('fib-graphql');
@@ -392,7 +393,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
             var code = req.error.code;
             delete req.error;
 
-            req.response.statusCode = (code as number) / 10000;
+            req.response.statusCode = payload_code_to_status_code(code as number);
             res.errors[0].code = code;
         }
 
