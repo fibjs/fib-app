@@ -104,14 +104,6 @@ export namespace FibApp {
         response_headers?: object
     }
     export type FibAppOrmModelViewFunctionDefinition = FibAppOrmModelViewFunction | FibAppOrmModelViewFunctionDefOptions
-    export interface FibAppOrmModelViewFunctionHash {
-        get?: FibAppOrmModelViewFunctionDefinition
-        find?: FibAppOrmModelViewFunctionDefinition
-        eget?: FibAppOrmModelViewFunctionDefinition
-        efind?: FibAppOrmModelViewFunctionDefinition
-
-        [fnName: string]: FibAppOrmModelViewFunctionDefinition
-    }
     /* model view function :end */
 
     /* model view service :start */
@@ -133,11 +125,6 @@ export namespace FibApp {
         type: 'date'
         time?: true
     }
-    export interface OrigORMDefProperties {
-        createdAt?: AppSpecialDateProperty
-        updatedAt?: AppSpecialDateProperty
-        [key: string]: FxOrmNS.OrigModelPropertyDefinition
-    }
 
     export interface FibAppOrmModelDefOptions extends FxOrmNS.ModelOptions {
         webx?: {
@@ -152,28 +139,18 @@ export namespace FibApp {
             queryKeyWhiteList?: FibAppORMModel['$webx']['queryKeyWhiteList']
         }
     }
-    export interface ExtendModelWrapper {
-        type: 'hasOne' | 'hasMany' | 'extendsTo';
-        reversed?: boolean;
-        model: FibApp.FibAppORMModel;
-        assoc_model: FibApp.FibAppORMModel;
-    }
-    /**
-     * @deprecated
-     */
-    export interface FibAppFixedOrmExtendModelWrapper extends ExtendModelWrapper {
-        model_associated_models: {
-            [modelName: string]: FibAppORMModel
+    // just for compability
+    export type FibAppOrmModelExtendsInfo = {
+        [ext_name: string]: {
+            type: 'hasOne' | 'hasMany' | 'extendsTo';
+            reversed?: boolean;
+            model: FibApp.FibAppORMModel;
+            assoc_model: FibApp.FibAppORMModel;
+            model_associated_models: {
+                [modelName: string]: FibAppORMModel
+            }
         }
     }
-    /**
-     * @deprecated
-     */
-    export interface FibAppOrmModelExtendsInfoHash {
-        [ext_name: string]: FibAppFixedOrmExtendModelWrapper
-    }
-    // just for compability
-    export type FibAppOrmModelExtendsInfo = FibAppOrmModelExtendsInfoHash
     
     export interface FibAppORMModel extends FxOrmNS.Model {
 
@@ -190,7 +167,13 @@ export namespace FibApp {
             ACL: FibAppACL.FibACLDef
             OACL: FibAppACL.FibOACLDef
             functions: FibAppOrmModelFunctionHash
-            viewFunctions: FibAppOrmModelViewFunctionHash
+            viewFunctions: {
+                get?: FibAppOrmModelViewFunctionDefinition;
+                find?: FibAppOrmModelViewFunctionDefinition;
+                eget?: FibAppOrmModelViewFunctionDefinition;
+                efind?: FibAppOrmModelViewFunctionDefinition;
+                [fnName: string]: FibAppOrmModelViewFunctionDefinition | undefined;
+            }
             viewServices: FibAppOrmModelViewServiceHash
             no_graphql: boolean
 
@@ -637,7 +620,7 @@ export namespace FibApp {
             (app: FibAppClass, opts: GetTestServerOptions): SessionTestServerInfo
         }
 
-        getRestClient: (opts: FibAppTest.FibAppTestClientOptions) => FibAppTest.FibAppTestHttpClient
+        getRestClient: (opts: FibAppTest.FibAppTestHttpClientOptions) => FibAppTest.FibAppTestHttpClient
 
         internalApiResultAssert: {
             ok: (result: FibAppApiFunctionResponse) => void
