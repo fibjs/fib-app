@@ -125,17 +125,19 @@ export namespace FibApp {
         time?: true
     }
 
-    export interface FibAppOrmModelDefOptions extends FxOrmNS.ModelOptions {
+    export interface FibAppOrmModelDefOptions<
+        TProperties extends Record<string, FxOrmInstance.FieldRuntimeType> = Record<string, FxOrmInstance.FieldRuntimeType>
+    > extends FxOrmModel.ModelDefineOptions<TProperties> {
         webx?: {
-            ACL?: FibAppORMModel['$webx']['ACL']
-            OACL?: FibAppORMModel['$webx']['OACL']
-            functions?: FibAppORMModel['$webx']['functions']
-            viewFunctions?: FibAppORMModel['$webx']['viewFunctions']
-            viewServices?: FibAppORMModel['$webx']['viewServices']
-            no_graphql?: FibAppORMModel['$webx']['no_graphql']
-            rpc?: FibAppORMModel['$webx']['rpc']
+            ACL?: FibAppORMModel<TProperties>['$webx']['ACL']
+            OACL?: FibAppORMModel<TProperties>['$webx']['OACL']
+            functions?: FibAppORMModel<TProperties>['$webx']['functions']
+            viewFunctions?: FibAppORMModel<TProperties>['$webx']['viewFunctions']
+            viewServices?: FibAppORMModel<TProperties>['$webx']['viewServices']
+            no_graphql?: FibAppORMModel<TProperties>['$webx']['no_graphql']
+            rpc?: FibAppORMModel<TProperties>['$webx']['rpc']
 
-            queryKeyWhiteList?: FibAppORMModel['$webx']['queryKeyWhiteList']
+            queryKeyWhiteList?: FibAppORMModel<TProperties>['$webx']['queryKeyWhiteList']
         }
     }
     // just for compability
@@ -209,8 +211,8 @@ export namespace FibApp {
 
     export type FibAppModelExtendORMFuncName = string;
 
-    export interface FibAppOrmDefineFn {
-        (db: FibAppORM): void | FibAppORMModel | any
+    export interface FibAppOrmDefineFn<T = any> {
+        (orm: FibAppORM): T
     }
     export interface AppORMPool<T1> extends FibPoolNS.FibPool<T1> {
         app: FibAppClass
@@ -367,17 +369,22 @@ export namespace FibApp {
     export type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj
 
     export type GraphQLQueryString = string
+
+    export interface GlobalAppModels {
+        [key: string]: FibAppORMModel
+    }
+
     export interface FibAppORM extends FxOrmNS.ORM {
         app: FibAppClass
         /* override :start */
-        models: { [key: string]: FibAppORMModel };
+        models: GlobalAppModels;
         /* override :end */
 
         graphql<T = any> (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T
         
         define: <
             T extends Record<string, FxOrmModel.ComplexModelPropertyDefinition>,
-            U extends FxOrmModel.ModelDefineOptions<FxOrmModel.GetPropertiesType<T>>
+            U extends FibAppOrmModelDefOptions<FxOrmModel.GetPropertiesType<T>>
         >(
             name: string,
             properties: T,

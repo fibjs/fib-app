@@ -27,8 +27,8 @@ function int (bool: boolean) {
 /**
  * @description first initial plugin before all other plugins
  */
-export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptions) {
-    ormInstance.app = opts.app;
+export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.ModelDefineOptions) {
+    ormInstance.app = plugin_opts.app;
 
     const orm_definition_hash: {[model_name: string]: {
         name: string
@@ -44,7 +44,11 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
         'viewServices',
         'no_graphql',
     ]
-    function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
+    function beforeDefine (
+        name: string,
+        properties: Record<string, FxOrmModel.ComplexModelPropertyDefinition>,
+        opts: FxOrmModel.ModelDefineOptions
+    ) {
         opts.timestamp = true
 
         orm_definition_hash[name] = { name, properties, opts }

@@ -94,16 +94,16 @@ export declare namespace FibApp {
         type: 'date';
         time?: true;
     }
-    interface FibAppOrmModelDefOptions extends FxOrmNS.ModelOptions {
+    interface FibAppOrmModelDefOptions<TProperties extends Record<string, FxOrmInstance.FieldRuntimeType> = Record<string, FxOrmInstance.FieldRuntimeType>> extends FxOrmModel.ModelDefineOptions<TProperties> {
         webx?: {
-            ACL?: FibAppORMModel['$webx']['ACL'];
-            OACL?: FibAppORMModel['$webx']['OACL'];
-            functions?: FibAppORMModel['$webx']['functions'];
-            viewFunctions?: FibAppORMModel['$webx']['viewFunctions'];
-            viewServices?: FibAppORMModel['$webx']['viewServices'];
-            no_graphql?: FibAppORMModel['$webx']['no_graphql'];
-            rpc?: FibAppORMModel['$webx']['rpc'];
-            queryKeyWhiteList?: FibAppORMModel['$webx']['queryKeyWhiteList'];
+            ACL?: FibAppORMModel<TProperties>['$webx']['ACL'];
+            OACL?: FibAppORMModel<TProperties>['$webx']['OACL'];
+            functions?: FibAppORMModel<TProperties>['$webx']['functions'];
+            viewFunctions?: FibAppORMModel<TProperties>['$webx']['viewFunctions'];
+            viewServices?: FibAppORMModel<TProperties>['$webx']['viewServices'];
+            no_graphql?: FibAppORMModel<TProperties>['$webx']['no_graphql'];
+            rpc?: FibAppORMModel<TProperties>['$webx']['rpc'];
+            queryKeyWhiteList?: FibAppORMModel<TProperties>['$webx']['queryKeyWhiteList'];
         };
     }
     type FibAppOrmModelExtendsInfo = {
@@ -162,8 +162,8 @@ export declare namespace FibApp {
 export declare namespace FibApp {
     export type FibModelCountTypeMACRO = number;
     export type FibAppModelExtendORMFuncName = string;
-    export interface FibAppOrmDefineFn {
-        (db: FibAppORM): void | FibAppORMModel | any;
+    export interface FibAppOrmDefineFn<T = any> {
+        (orm: FibAppORM): T;
     }
     export interface AppORMPool<T1> extends FibPoolNS.FibPool<T1> {
         app: FibAppClass;
@@ -299,13 +299,14 @@ export declare namespace FibApp {
     }
     export type FibAppInternalCommExtendObj = AppInternalCommunicationExtendObj;
     export type GraphQLQueryString = string;
+    export interface GlobalAppModels {
+        [key: string]: FibAppORMModel;
+    }
     export interface FibAppORM extends FxOrmNS.ORM {
         app: FibAppClass;
-        models: {
-            [key: string]: FibAppORMModel;
-        };
+        models: GlobalAppModels;
         graphql<T = any>(query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T;
-        define: <T extends Record<string, FxOrmModel.ComplexModelPropertyDefinition>, U extends FxOrmModel.ModelDefineOptions<FxOrmModel.GetPropertiesType<T>>>(name: string, properties: T, opts?: U) => FibAppORMModel<FxOrmModel.GetPropertiesType<T>, Exclude<U['methods'], void>>;
+        define: <T extends Record<string, FxOrmModel.ComplexModelPropertyDefinition>, U extends FibAppOrmModelDefOptions<FxOrmModel.GetPropertiesType<T>>>(name: string, properties: T, opts?: U) => FibAppORMModel<FxOrmModel.GetPropertiesType<T>, Exclude<U['methods'], void>>;
     }
     export type FibAppDb = FibAppORM;
     export type FibAppFunctionToBeFilter = (FibAppFilterableApiFunction__WithModel | FibAppFilterableApiFunction__NullModel | FibAppOrmModelFunction | FibAppInternalApiFunction);

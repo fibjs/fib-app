@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "fib-app": ["../../src"],
+            "@src": ["../../src"]
+        }
+    },
+    "include": [
+        "./src/**/*",
+        "../../src"
+    ]
+}

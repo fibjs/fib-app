@@ -8,3 +8,7 @@ export default App;
 import type { FibApp } from './Typo/app';
 
 export { FibApp };
+
+export function defineAppModel<T = any>(definition: FibApp.FibAppOrmDefineFn<T>) {
+    return definition;
+};

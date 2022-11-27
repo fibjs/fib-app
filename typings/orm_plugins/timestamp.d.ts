@@ -15,7 +15,7 @@ interface PluginOptions__Timestamp {
     };
 }
 export default function (orm: FxOrmNS.ORM, plugin_opts?: PluginOptions__Timestamp): {
-    beforeDefine: (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) => void;
+    beforeDefine: (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmModel.ModelDefineOptions) => void;
     define(model: FxOrmModel.Model): void;
 };
 export {};

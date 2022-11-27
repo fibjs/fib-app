@@ -5,7 +5,11 @@ export default function (
     plugin_opts: {
     }
 ): FxOrmNS.Plugin {
-	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
+	function beforeDefine (
+        name: string,
+        properties: Record<string, FxOrmModel.ModelPropertyDefinition>,
+        opts: FxOrmModel.ModelDefineOptions
+    ) {
         if ((opts.extension || opts.__for_extension) && !properties.id) {
             opts.__webx_use_uuid = true;
         }

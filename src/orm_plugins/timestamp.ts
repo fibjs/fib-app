@@ -27,7 +27,7 @@ const defaults_opts: PluginOptions__Timestamp = {
 export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp = {}) {
 	plugin_opts = util.extend({}, defaults_opts, plugin_opts)
 
-	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
+	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmModel.ModelDefineOptions) {
 		if (!opts.timestamp) return;
 		
 		if (typeof opts.timestamp == 'object')
