@@ -121,7 +121,7 @@ export function setup(app: FibApp.FibAppClass) {
         };
     };
 
-    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, data_or_id: FibApp.IdPayloadVar | FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
+    api.epost = (req: FibApp.FibAppReq, orm: FibApp.FibAppORM, cls: FibApp.FibAppORMModel, id: FibApp.IdPayloadVar | FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType, data_or_id: FibApp.IdPayloadVar | FibApp.FibDataPayload): FibApp.FibAppApiFunctionResponse => {
         const rel_assoc_info = cls.associations[extend];
         if (rel_assoc_info === undefined)
             return err_info(4040001, {
@@ -132,7 +132,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         if (util.isObject(id)) {
             obj = {
-                inst: id as FxOrmNS.Instance
+                inst: id as FxOrmInstance.Instance
             } as any;
             id = (id as FibApp.ObjectWithIdField).id;
         } else {
@@ -308,7 +308,7 @@ export function setup(app: FibApp.FibAppClass) {
 
         if (util.isObject(id)) {
             obj = {
-                inst: id as FxOrmNS.Instance
+                inst: id as FxOrmInstance.Instance
             };
         } else {
             obj = _get(cls, id as FibApp.AppIdType, req.session);

@@ -21,7 +21,7 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
 
     const pool = <FibApp.AppORMPool<FibApp.FibAppORM>>Pool({
         create: function (): FibApp.FibAppORM {
-            const ormInstance = <FibApp.FibAppORM>orm.connectSync(connStr);
+            const ormInstance = orm.connectSync(connStr) as any as FibApp.FibAppORM;
             orm_utils.set_orm_default_settings(ormInstance)
             
             /**

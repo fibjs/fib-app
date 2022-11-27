@@ -1,6 +1,6 @@
 import util = require('util');
 import ORM = require('@fxjs/orm');
-import { FxOrmNS } from '@fxjs/orm';
+import { FxOrmModel, FxOrmInstance } from '@fxjs/orm';
 
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
@@ -15,7 +15,7 @@ function isInvalidNumber (v: string | number) {
     return isNaN(v);
 }
 
-export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
+export const _get = function (cls: FxOrmModel.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString): FibApp.FibAppInternalCommObj {
     var iobj = <FibApp.FibAppInternalCommObj>{ inst: null };
 
     const intPrimaryProp = Object.values(Helpers.pickProperties(cls, (p) =>
@@ -49,7 +49,7 @@ export const _get = function (cls: FxOrmNS.Model, id: FibApp.AppIdType, session:
     return iobj;
 };
 
-export const _eget = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
+export const _eget = function (cls: FxOrmModel.Model, id: FibApp.IdPayloadVar | FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): FibApp.FibAppInternalCommExtendObj {
     return _egetx(cls, id, extend, rid, session, act).riobj
 }
 
@@ -60,7 +60,7 @@ function wrap_error (err: FibApp.FibAppResponse) {
     }
 }
 
-export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
+export const _egetx = function (cls: FxOrmModel.Model, id: FibApp.IdPayloadVar | FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
     riobj: FibApp.FibAppInternalCommExtendObj,
     iobj: FibApp.FibAppInternalCommExtendObj
 } {
@@ -76,7 +76,7 @@ export const _egetx = function (cls: FxOrmNS.Model, id: FibApp.IdPayloadVar | Fx
 
     if (util.isObject(id)) {
         iobj = {
-            inst: id as FxOrmNS.Instance
+            inst: id as FxOrmInstance.Instance
         };
         id = (id as any).id;
     } else {

@@ -1,4 +1,4 @@
-import { FxOrmNS } from "@fxjs/orm";
+import { FxOrmNS, FxOrmModel, FxOrmInstance } from "@fxjs/orm";
 import { FibApp } from "../Typo/app";
 import { buildCleanInstance, getValidDataFieldsFromModel } from "./orm-assoc";
 
@@ -40,7 +40,7 @@ interface InternalApiInfoSettingOptions {
     
     keys_to_left?: string[],
 }
-export function create_instance_for_internal_api (cls: FxOrmNS.Model, options: InternalApiInfoSettingOptions): FxOrmNS.Instance {
+export function create_instance_for_internal_api (cls: FxOrmModel.Model, options: InternalApiInfoSettingOptions): FxOrmInstance.Instance {
     /**
      * always use shallow copy in every level
      */
@@ -56,7 +56,7 @@ export function create_instance_for_internal_api (cls: FxOrmNS.Model, options: I
     return o
 }
 
-export function attach_internal_api_requestinfo_to_instance (inst: FxOrmNS.Instance, options: InternalApiInfoSettingOptions): void {
+export function attach_internal_api_requestinfo_to_instance (inst: FxOrmInstance.Instance, options: InternalApiInfoSettingOptions): void {
     // avoid repeative define
     if (inst.$in_filtered_rest)
         return

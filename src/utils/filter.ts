@@ -49,10 +49,10 @@ export function filter <T = FxOrmInstance.Instance | FibApp.FibDataPayload> (
     return obj as T;
 };
 
-export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmNS.Instance) {
+export function filter_ext (session: FibApp.FibAppSession, obj: FxOrmInstance.Instance) {
     var cls = obj.model();
 
-    function _do_ext(robj: FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType) {
+    function _do_ext(robj: FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType) {
         var acl = checkout_robj_acl(session, 'read', obj, robj, extend) as FibAppACL.AclPermissionType__Read;
         if (!acl) {
             return undefined;

@@ -1,4 +1,4 @@
-import { FxOrmNS } from '@fxjs/orm';
+import { FxOrmInstance, FxOrmModel } from '@fxjs/orm';
 import * as util from 'util';
 import { FibAppACL } from '../Typo/acl';
 
@@ -17,7 +17,7 @@ export function default_session_for_acl (session_obj?: FibApp.FibAppSession | nu
     return session_obj;
 }
 
-function compute_acl_def (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmNS.Instance): FibAppACL.ACLDefinition | FibAppACL.OACLDefinition {
+function compute_acl_def (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmInstance.Instance): FibAppACL.ACLDefinition | FibAppACL.OACLDefinition {
     if (!util.isFunction(def))
         return def as any
 
@@ -32,12 +32,12 @@ function compute_acl_def (def: FibAppACL.FibACLDef, session: FibApp.FibAppSessio
     return acl
 }
 
-function compute_oacl_def (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmNS.Instance): FibAppACL.OACLDefinition {
+function compute_oacl_def (def: FibAppACL.FibACLDef, session: FibApp.FibAppSession, inst?: FxOrmInstance.Instance): FibAppACL.OACLDefinition {
     mount_associated_instance_hash(inst)
     return compute_acl_def(def, session, inst)
 }
 
-function mount_associated_instance_hash (robj: FxOrmNS.Instance) {
+function mount_associated_instance_hash (robj: FxOrmInstance.Instance) {
     // TODO: validate if extend in one association type between obj and robj in DEBUG mode.
     if (!robj.hasOwnProperty('$associated_instances')) {
         Object.defineProperty(robj, '$associated_instances', {
@@ -48,7 +48,7 @@ function mount_associated_instance_hash (robj: FxOrmNS.Instance) {
     }
 }
 
-function set_associated_instance (obj: FxOrmNS.Instance, robj: FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType) {
+function set_associated_instance (obj: FxOrmInstance.Instance, robj: FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType) {
     if (!extend || !obj)
         return
     
@@ -209,8 +209,8 @@ export const checkout_acl = function (session: FibApp.FibAppSession, act: FibApp
     return;
 }
 
-export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, obj: FxOrmNS.Instance, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
-    var cls: FxOrmNS.Model = obj.model();
+export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, obj: FxOrmInstance.Instance, extend?: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
+    var cls: FxOrmModel.Model = obj.model();
 
     var acl: FibAppACL.RoleActDescriptor;
 
@@ -228,8 +228,8 @@ export const checkout_obj_acl = function (session: FibApp.FibAppSession, act: Fi
     return acl;
 }
 
-export const checkout_robj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, obj: FxOrmNS.Instance, robj: FxOrmNS.Instance, extend: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
-    var rcls: FxOrmNS.Model = robj.model();
+export const checkout_robj_acl = function (session: FibApp.FibAppSession, act: FibAppACL.ACLAct, obj: FxOrmInstance.Instance, robj: FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType): FibAppACL.RoleActDescriptor {
+    var rcls: FxOrmModel.Model = robj.model();
 
     var acl: FibAppACL.RoleActDescriptor;
 
