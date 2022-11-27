@@ -1,7 +1,4 @@
-import { FxOrmAssociation } from '@fxjs/orm/typings/Typo/assoc';
-import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
-import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FxOrmInstance, FxOrmModel, FxOrmNS, FxOrmAssociation } from '@fxjs/orm';
 import { FibApp } from '../Typo/app';
 export declare function check_hasmanyassoc_with_extraprops(instance: FxOrmNS.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false;
 export declare function extra_save(instance: FxOrmNS.Instance, rinstance: FxOrmNS.Instance, _many_assoc: FxOrmNS.InstanceAssociationItem_HasMany, extra: any, just_set?: boolean): void;

@@ -1,4 +1,4 @@
-import { FxOrmNS } from "@fxjs/orm/typings/Typo/ORM";
+import { FxOrmNS } from "@fxjs/orm";
 import { FibApp } from "../Typo/app";
 export declare function default_settings(): FibApp.FibAppOrmSettings;
 export declare function set_orm_default_settings(orm: FibApp.FibAppORM): void;

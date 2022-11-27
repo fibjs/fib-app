@@ -1,5 +1,5 @@
-import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import type { FxOrmNS, FxOrmModel } from '@fxjs/orm';
+
 import util = require('util')
 import { FibApp } from '../Typo/app';
 

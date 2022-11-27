@@ -6,9 +6,8 @@ import {
 } from './checkout_acl';
 
 import type { FibApp } from '../Typo/app';
-import type { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance'
+import type { FxOrmNS, FxOrmInstance } from '@fxjs/orm'
 import type { FibAppACL } from '../Typo/acl';
-import type { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 
 export function filter <T = FxOrmInstance.Instance | FibApp.FibDataPayload> (
     obj: FxOrmInstance.Instance | FibApp.FibDataPayload,

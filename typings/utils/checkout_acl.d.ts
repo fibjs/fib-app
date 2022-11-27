@@ -1,4 +1,4 @@
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FxOrmNS } from '@fxjs/orm';
 import { FibAppACL } from '../Typo/acl';
 import { FibApp } from '../Typo/app';
 export declare function default_session_for_acl(session_obj?: FibApp.FibAppSession | null): FibApp.FibAppSession;

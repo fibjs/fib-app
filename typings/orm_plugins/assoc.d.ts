@@ -1,2 +1,2 @@
-import { FxOrmNS } from "@fxjs/orm/typings/Typo/ORM";
+import { FxOrmNS } from "@fxjs/orm";
 export default function (orm: FxOrmNS.ORM, plugin_opts: {}): FxOrmNS.Plugin;

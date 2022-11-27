@@ -1,4 +1,6 @@
 import ORM = require('@fxjs/orm');
+import { FxOrmInstance } from '@fxjs/orm';
+
 const Helpers = ORM.Helpers;
 
 import { err_info } from '../utils/err_info';
@@ -13,8 +15,6 @@ import { shouldSetSingle, execLinkers, getValidDataFieldsFromModel, getOneMergeI
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 import { FibApp } from '../Typo/app';
 import { FibAppACL } from '../Typo/acl';
-import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 
 export function setup (app: FibApp.FibAppClass) {
     const api = app.api;
@@ -35,7 +35,7 @@ export function setup (app: FibApp.FibAppClass) {
         function _create(d: FxOrmInstance.InstanceDataPayload) {
             d = filter(d, acl);
 
-            let o: FxOrmNS.Instance = ormUtils.create_instance_for_internal_api(cls, {
+            let o: FxOrmInstance.Instance = ormUtils.create_instance_for_internal_api(cls, {
                 data: d,
                 req_info: req,
                 keys_to_left: KEYS_TO_LEFT

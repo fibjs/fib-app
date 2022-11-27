@@ -7,10 +7,9 @@ const Helpers = ORM.Helpers;
 import { checkout_acl } from './checkout_acl';
 import { ucfirst } from './str';
 
-import type { FxOrmAssociation } from '@fxjs/orm/typings/Typo/assoc';
-import type { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import type { FxOrmQuery } from '@fxjs/orm/typings/Typo/query';
-import type { FxOrmNS, FxSqlQuerySubQuery } from '@fxjs/orm/typings/Typo/ORM';
+import type { FxOrmAssociation, FxOrmModel, FxOrmQuery, FxOrmNS } from '@fxjs/orm';
+import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
+
 import { FibApp } from '../Typo/app';
 
 export function query_filter_where (req: FibApp.FibAppReq) {

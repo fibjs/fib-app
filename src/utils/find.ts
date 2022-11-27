@@ -1,6 +1,4 @@
-import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance';
-import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import { FxOrmQuery } from '@fxjs/orm/typings/Typo/query';
+import { FxOrmInstance, FxOrmModel, FxOrmQuery } from '@fxjs/orm';
 import util = require('util')
 import { FibAppACL } from '../Typo/acl';
 import { FibApp } from '../Typo/app';
@@ -18,7 +16,7 @@ import {
     query_filter_order
 } from './query';
 
-export = function<ReponseT = any> (
+export = function (
     req: FibApp.FibAppReq,
     finder: FxOrmQuery.IChainFind['find'],
     base_model: FxOrmModel.Model,

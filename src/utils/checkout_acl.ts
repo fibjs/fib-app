@@ -1,4 +1,4 @@
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FxOrmNS } from '@fxjs/orm';
 import * as util from 'util';
 import { FibAppACL } from '../Typo/acl';
 

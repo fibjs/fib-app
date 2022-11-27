@@ -1,4 +1,4 @@
-import { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance'
+import { FxOrmInstance } from '@fxjs/orm'
 import util = require('util')
 
 export function filterInstanceAsItsOwnShape<T = any, T2 = T> (

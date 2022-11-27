@@ -3,15 +3,14 @@
 /// <reference types="fib-pool" />
 /// <reference types="fib-rpc" />
 
-import type { FxOrmModel } from '@fxjs/orm/typings/Typo/model'
-import type { FxOrmNS, FxSqlQuerySubQuery } from '@fxjs/orm/typings/Typo/ORM'
-import type { FxOrmQuery } from '@fxjs/orm/typings/Typo/query'
-import type { FxOrmInstance } from '@fxjs/orm/typings/Typo/instance'
+import type { FxOrmNS, FxOrmModel, FxOrmHook, FxOrmProperty } from '@fxjs/orm'
+import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
+
+import type { FxOrmQuery } from '@fxjs/orm'
+import type { FxOrmInstance } from '@fxjs/orm'
 
 import type { FibAppACL } from './acl';
-import { FxOrmHook } from '@fxjs/orm/typings/Typo/hook';
 import { FibAppTest } from './test';
-import { FxOrmProperty } from '@fxjs/orm/typings/Typo/property';
 
 export namespace FibApp {
     export type AppIdType = number | string

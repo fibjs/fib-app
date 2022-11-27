@@ -1,12 +1,13 @@
 import util = require('util');
 import ORM = require('@fxjs/orm');
-const Helpers = ORM.Helpers;
+import { FxOrmNS } from '@fxjs/orm';
 
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';
 import { FibApp } from '../Typo/app';
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
 import { FibAppACL } from '../Typo/acl';
+
+const Helpers = ORM.Helpers;
 
 function isInvalidNumber (v: string | number) {
     v = parseInt(v as any);

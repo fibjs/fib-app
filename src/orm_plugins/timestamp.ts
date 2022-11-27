@@ -1,9 +1,7 @@
 import util = require('util')
 import ORM = require('@fxjs/orm')
-import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FxOrmNS, FxOrmModel } from '@fxjs/orm';
 const Helpers = ORM.Helpers;
-const { prependHook } = Helpers;
 
 interface PluginOptions__Timestamp {
 	createdPropertyName?: string | false

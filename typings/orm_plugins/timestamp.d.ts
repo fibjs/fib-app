@@ -1,5 +1,4 @@
-import { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import { FxOrmNS } from '@fxjs/orm/typings/Typo/ORM';
+import { FxOrmNS, FxOrmModel } from '@fxjs/orm';
 interface PluginOptions__Timestamp {
     createdPropertyName?: string | false;
     createdProperty?: FxOrmNS.OrigDetailedModelProperty;

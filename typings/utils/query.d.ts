@@ -1,6 +1,5 @@
 /// <reference lib="es2017" />
-import type { FxOrmModel } from '@fxjs/orm/typings/Typo/model';
-import type { FxOrmQuery } from '@fxjs/orm/typings/Typo/query';
+import type { FxOrmModel, FxOrmQuery } from '@fxjs/orm';
 import { FibApp } from '../Typo/app';
 export declare function query_filter_where(req: FibApp.FibAppReq): unknown;
 export declare function query_filter_join_where(req: FibApp.FibAppReq): unknown;
