@@ -1,6 +1,6 @@
 import uuid = require('uuid')
 import ORM = require('@fxjs/orm')
-import { FxOrmNS } from '@fxjs/orm';
+import { FxOrmNS, FxOrmModel } from '@fxjs/orm';
 const Helpers = ORM.Helpers;
 const { prependHook } = Helpers;
 
@@ -12,7 +12,7 @@ export default function (
 ): FxOrmNS.Plugin {
     let { enable: use_uuid = false } = plugin_opts || {};
     
-	function beforeDefine (name: string, properties: Record<string, FxOrmNS.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
+	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
         use_uuid = use_uuid || opts.__webx_use_uuid
         
         if (!use_uuid)

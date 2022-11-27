@@ -1,12 +1,12 @@
-import { FxOrmNS, FxOrmModel } from '@fxjs/orm';
+import { FxOrmNS, FxOrmModel, FxOrmProperty } from '@fxjs/orm';
 interface PluginOptions__Timestamp {
     createdPropertyName?: string | false;
-    createdProperty?: FxOrmNS.OrigDetailedModelProperty;
+    createdProperty?: FxOrmProperty.NormalizedProperty;
     updatedPropertyName?: string | false;
-    updatedProperty?: FxOrmNS.OrigDetailedModelProperty;
+    updatedProperty?: FxOrmProperty.NormalizedProperty;
     expiredPropertyName?: string | false;
-    expiredProperty?: FxOrmNS.OrigDetailedModelProperty;
-    type?: FxOrmNS.OrigDetailedModelProperty;
+    expiredProperty?: FxOrmProperty.NormalizedProperty;
+    type?: FxOrmProperty.NormalizedProperty;
     now?: {
         (): Date;
     };
@@ -15,7 +15,7 @@ interface PluginOptions__Timestamp {
     };
 }
 export default function (orm: FxOrmNS.ORM, plugin_opts?: PluginOptions__Timestamp): {
-    beforeDefine: (name: string, properties: Record<string, FxOrmNS.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) => void;
+    beforeDefine: (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) => void;
     define(model: FxOrmModel.Model): void;
 };
 export {};

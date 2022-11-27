@@ -1,4 +1,4 @@
-import type { FxOrmNS } from '@fxjs/orm';
+import type { FxOrmNS, FxOrmModel } from '@fxjs/orm';
 import type { FibApp } from '../Typo/app';
 
 import util = require('util')
@@ -32,7 +32,7 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
 
     const orm_definition_hash: {[model_name: string]: {
         name: string
-        properties: Record<string, FxOrmNS.ModelPropertyDefinition>
+        properties: Record<string, FxOrmModel.ModelPropertyDefinition>
         opts: FibApp.FibAppOrmModelDefOptions
     }} = {};
 
@@ -44,7 +44,7 @@ export default function (ormInstance: FibApp.FibAppORM, opts: FxOrmNS.ModelOptio
         'viewServices',
         'no_graphql',
     ]
-    function beforeDefine (name: string, properties: Record<string, FxOrmNS.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
+    function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
         opts.timestamp = true
 
         orm_definition_hash[name] = { name, properties, opts }

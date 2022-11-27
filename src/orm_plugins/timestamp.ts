@@ -1,16 +1,16 @@
 import util = require('util')
 import ORM = require('@fxjs/orm')
-import { FxOrmNS, FxOrmModel } from '@fxjs/orm';
+import { FxOrmNS, FxOrmModel, FxOrmProperty } from '@fxjs/orm';
 const Helpers = ORM.Helpers;
 
 interface PluginOptions__Timestamp {
 	createdPropertyName?: string | false
-	createdProperty?: FxOrmNS.OrigDetailedModelProperty,
+	createdProperty?: FxOrmProperty.NormalizedProperty,
 	updatedPropertyName?: string | false
-	updatedProperty?: FxOrmNS.OrigDetailedModelProperty,
+	updatedProperty?: FxOrmProperty.NormalizedProperty,
 	expiredPropertyName?: string | false
-	expiredProperty?: FxOrmNS.OrigDetailedModelProperty,
-	type?: FxOrmNS.OrigDetailedModelProperty
+	expiredProperty?: FxOrmProperty.NormalizedProperty,
+	type?: FxOrmProperty.NormalizedProperty
 	now?: { (): Date }
 	expire?: { (): Date }
 }
@@ -27,7 +27,7 @@ const defaults_opts: PluginOptions__Timestamp = {
 export default function (orm: FxOrmNS.ORM, plugin_opts: PluginOptions__Timestamp = {}) {
 	plugin_opts = util.extend({}, defaults_opts, plugin_opts)
 
-	function beforeDefine (name: string, properties: Record<string, FxOrmNS.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
+	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmNS.ModelOptions) {
 		if (!opts.timestamp) return;
 		
 		if (typeof opts.timestamp == 'object')

@@ -120,7 +120,7 @@ export namespace FibApp {
     }
 
     // keep compatible with definition in '@fxjs/orm'
-    export interface AppSpecialDateProperty extends FxOrmNS.ModelPropertyDefinition {
+    export interface AppSpecialDateProperty extends FxOrmModel.ModelPropertyDefinition {
         type: 'date'
         time?: true
     }

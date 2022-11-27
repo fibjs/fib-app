@@ -95,7 +95,7 @@ export declare namespace FibApp {
         acl: FibAppACL.ACLDefinition;
         oacl: FibAppACL.OACLDefinition;
     }
-    interface AppSpecialDateProperty extends FxOrmNS.ModelPropertyDefinition {
+    interface AppSpecialDateProperty extends FxOrmModel.ModelPropertyDefinition {
         type: 'date';
         time?: true;
     }
