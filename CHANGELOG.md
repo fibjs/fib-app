@@ -1,7 +1,13 @@
 
+v1.15.13 / 2022-11-27
+==================
+
+  * chore: typo cleanup.
+
 v1.15.12 / 2022-11-25
 =====================
 
+  * Release v1.15.12
   * feat: enhance `customizeApiRoute`
 
 v1.15.11 / 2022-11-25
