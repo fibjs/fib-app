@@ -1,7 +1,13 @@
 
-v1.16.0 / 2022-11-29
+v1.16.1 / 2022-11-29
 ==================
 
+  * fix: upgrade orm version.
+
+v1.16.0 / 2022-11-29
+====================
+
+  * Release v1.16.0
   * feat: use graduated orm.
   * v1.16.0-alpha.1
   * feat: typo fix.
