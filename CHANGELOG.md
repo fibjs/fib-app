@@ -1,7 +1,17 @@
 
-v1.15.14 / 2022-11-27
+v1.16.0 / 2022-11-29
 ==================
 
+  * feat: use graduated orm.
+  * v1.16.0-alpha.1
+  * feat: typo fix.
+  * v1.16.0-alpha.0
+  * feat: upgrade orm to 1.16, adapt to it.
+
+v1.15.14 / 2022-11-27
+=====================
+
+  * Release v1.15.14
   * feat: normalize type usage of `@fxjs/orm`.
 
 v1.15.13 / 2022-11-27
