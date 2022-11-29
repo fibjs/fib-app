@@ -32,7 +32,7 @@ export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.
 
     const orm_definition_hash: {[model_name: string]: {
         name: string
-        properties: Record<string, FxOrmModel.ModelPropertyDefinition>
+        properties: Record<string, FxOrmModel.ComplexModelPropertyDefinition>
         opts: FibApp.FibAppOrmModelDefOptions
     }} = {};
 
