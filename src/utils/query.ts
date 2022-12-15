@@ -12,20 +12,21 @@ import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
 
 import { FibApp } from '../Typo/app';
 
-export function query_filter_where (req: FibApp.FibAppReq) {
+export function query_filter_where <T extends FibApp.FibAppReqQuery['where'] = any> (req: FibApp.FibAppReq) {
     var where = parse_json_queryarg(req, 'where');
 
     where = where || {};
 
-    return where
+    return where as T
 }
 
 export function query_filter_join_where (req: FibApp.FibAppReq) {
-    var join_where = parse_json_queryarg(req, 'join_where');
+    const extra_where = {
+        ...parse_json_queryarg(req, 'extra_where'),
+        ...parse_json_queryarg(req, 'join_where' as 'extra_where')
+    };
 
-    join_where = join_where || {};
-
-    return join_where
+    return extra_where
 }
 
 function assert_valid_findby (
@@ -207,9 +208,9 @@ function convert_exists (
     })
 };
 
-export function parse_json_queryarg <T> (
+export function parse_json_queryarg <T extends object> (
     req: FibApp.FibAppReq,
-    k: 'findby' | 'join_where' | 'where'
+    k: 'findby' | 'extra_where' | 'where'
 ): T | null {
     var parsed: any = (req.query[k] || null)
     if (typeof parsed === 'string') {

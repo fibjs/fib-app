@@ -24,24 +24,14 @@ const TypeMap = {
 };
 
 const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
-    where: {
-        type: GraphQLJSON
-    },
-    join_where: {
-        type: GraphQLJSON
-    },
-    findby: {
-        type: GraphQLJSON
-    },
-    skip: {
-        type: graphql.GraphQLInt
-    },
-    limit: {
-        type: graphql.GraphQLInt
-    },
-    order: {
-        type: graphql.GraphQLString
-    }
+    where: { type: GraphQLJSON },
+    /** @deprecated will removed or changed in fib-app >= 1.17, use `extra_where` instead */
+    join_where: { type: GraphQLJSON },
+    extra_where: { type: GraphQLJSON },
+    findby: { type: GraphQLJSON },
+    skip: { type: graphql.GraphQLInt },
+    limit: { type: graphql.GraphQLInt },
+    order: { type: graphql.GraphQLString },
 };
 
 interface FieldsResolveType {

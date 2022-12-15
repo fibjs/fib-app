@@ -3,11 +3,8 @@ test.setup();
 
 const http = require('http');
 
-const { check_result, runServer } = require('../../test/_utils');
-
-const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
-const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, { appPath: '/api' });
-runServer(tSrvInfo.server, () => void 0)
+const { check_result } = require('../../test/_utils');
+const { useTestServer } = require('../../test/support/spec_helper');
 
 let counter = 1000;
 function getCounterId () {
@@ -19,11 +16,9 @@ describe("extend multiple level", () => {
     var l1a_id;
     var TESTDATA = require('./__test__/mock-data.json');
 
-    after(() => tappInfo.utils.cleanLocalDB())
+    const { tSrvInfo, clientCtx, clients } = useTestServer({})
 
     before(() => {
-        tappInfo.utils.dropModelsSync();
-
         var rep = http.post(tSrvInfo.appUrlBase + '/level', {
             json: TESTDATA
         });
@@ -181,7 +176,7 @@ describe("extend multiple level", () => {
                         on: { many_sublevels_id: "${staticId}" }
                     `,
                     extra_cond: ``,
-                    debug_only: true
+                    // debug_only: true
                 },
                 [
                     undefined
@@ -367,6 +362,7 @@ describe("extend multiple level", () => {
                             }
                         }
                     }`,
+                    // debug_only: true
                 },
                 [
                     { name: `l1:name` },
@@ -497,7 +493,7 @@ describe("extend multiple level", () => {
                         }
                     `,
                     extra_cond: `
-                        join_where: {
+                        where: {
                             since: {
                                 ne: "${l1a_many_sublevels[2].extra.since}"
                                 modifiers: {
@@ -530,7 +526,7 @@ describe("extend multiple level", () => {
                         }
                     `,
                     extra_cond: `
-                        join_where: {
+                        where: {
                             since: {
                                 eq: "${l1a_many_sublevels[2].extra.since}"
                                 modifiers: {
@@ -559,21 +555,17 @@ describe("extend multiple level", () => {
                             name: {
                                 like: "%${l1a_many_sublevels[1].name}%"
                             }
-                        }
-                        findby: {
-                            extend: "subl_one_descendant_level"
-                            where: {
-                                name: "${l1a_many_sublevels[1].subl_one_descendant_level.name}"
-                            }
-                        }
-                    `,
-                    extra_cond: `
-                        join_where: {
                             since: {
                                 eq: "${l1a_many_sublevels[1].extra.since}"
                                 modifiers: {
                                     is_date: true
                                 }
+                            }
+                        }
+                        findby: {
+                            extend: "subl_one_descendant_level"
+                            where: {
+                                name: "${l1a_many_sublevels[1].subl_one_descendant_level.name}"
                             }
                         }
                     `,
@@ -597,7 +589,7 @@ describe("extend multiple level", () => {
                     `,
                     l1_findby_kv: `
                     `,
-                    extra_cond: `join_where: {
+                    extra_cond: `where: {
                         since: {
                             ne: "${l1_many_sublevels[1].extra.since}"
                             modifiers: {
@@ -695,6 +687,83 @@ describe("extend multiple level", () => {
             })
         });
     });
+    
+    describe('[join_where/extra_where] findby in l1 association, join_where for l2 extra fields', () => {
+        ['join_where', 'extra_where'].forEach((compat_op) => {
+            
+        it(`compat_op: ${compat_op}`, () => {
+            const l1_many_sublevels = TESTDATA[0].many_sublevels;
+
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: {
+                                since: {
+                                    eq: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            ${compat_op}: {
+                                since: {
+                                    eq: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            // assert.equal(
+            //     rep.json().data.find_level[0],
+            //     undefined
+            // )
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [l1_many_sublevels[0]]
+            );
+        })
+        
+        })
+    })
 
     function assert_found_level_with_one_l2 (rep, fetcher) {
         check_result(

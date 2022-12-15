@@ -234,7 +234,9 @@ export namespace FibApp {
     // constant type
     export interface FibAppApiCommnPayload_hasManyArgs extends GraphQLResolverArgs {
         where: { type: Function }
+        /** @deprecated will removed or changed in fib-app >= 1.17, use `extra_where` instead */
         join_where: { type: Function }
+        extra_where: { type: Function }
         findby: { type: Function }
         skip: { type: Function }
         limit: { type: Function }
@@ -431,7 +433,9 @@ export namespace FibApp {
 
     export interface FibAppReqQuery {
         where?: string | FibApp.ReqWhere
+        /** @deprecated will removed or changed in fib-app >= 1.17, use `extra_where` instead */
         join_where?: FibApp.ReqWhere
+        extra_where?: FibApp.ReqWhere
         findby?: FibApp.ReqFindByItem
         keys?: string | string[]
         skip?: number

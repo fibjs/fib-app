@@ -1,4 +1,4 @@
-import { FxOrmInstance, FxOrmModel, FxOrmQuery } from '@fxjs/orm';
+import { FxOrmAssociation, FxOrmInstance, FxOrmModel, FxOrmQuery } from '@fxjs/orm';
 import util = require('util')
 import { FibAppACL } from '../Typo/acl';
 import { FibApp } from '../Typo/app';
@@ -28,19 +28,19 @@ export = function (
     const query = req.query;
 
     let exists_args: any[] = [];
-    let init_conditions: FibApp.FibAppReqQuery['where'] = {};
+    let init_conditions: FibApp.FibAppReqQuery['where'] & object = {};
 
     /**
      * NOTICE: temp solution to resolve no select extra data in
      * HASMANY_association.getAccessor method
      */
     let findby_get_nil: boolean = false;
+    const { extend_in_rest = undefined } = ext_info || {}
 
     ;(() => {
         if (!base_model)
             return ;
         
-        const { extend_in_rest = undefined } = ext_info || {}
         var findby = parse_json_queryarg<FibApp.FibAppReqQuery['findby']>(req, 'findby');
         var { exists: findby_exists, findby_infos } = query_filter_findby(findby, base_model, { req, extend_in_rest });
         
@@ -49,7 +49,7 @@ export = function (
             findby_infos.forEach(findby_info => {
                 if (findby_info.accessor_payload && findby_info.accessor && findby_info.conditions) {
                     const findby_finder = findby_info.accessor_payload[findby_info.accessor]
-
+                    
                     const idHolders = findby_finder(findby_info.conditions)
                         .only(base_model.keys)
                         .allSync() as Record<string, any>
@@ -69,8 +69,20 @@ export = function (
             exists_args = exists_args.concat(findby_exists)
     })();
     
-    const join_where = query_filter_join_where(req);
-    let exec = finder(init_conditions, { join_where });
+    const where = query_filter_where(req);
+    // filter out hasMany's extra properties from where, it should in `init_conditions` rather than `where`
+    if (extend_in_rest && base_model.associations[extend_in_rest]?.type === 'hasMany') {
+        const many_assoc = base_model.associations[extend_in_rest].association as FxOrmAssociation.InstanceAssociationItem_HasMany
+        Object.keys(many_assoc.props).forEach(k => {
+            if (where[k]) {
+                init_conditions[k] = where[k];
+                delete where[k];
+            }
+        });
+    }
+    
+    const extra_where = query_filter_join_where(req);
+    let exec = finder(init_conditions, { join_where: extra_where });
 
     if (exists_args.length && exec.whereExists)
         exec = exec.whereExists(exists_args)
@@ -78,9 +90,8 @@ export = function (
     var keys = query.keys;
     if (keys !== undefined)
         exec = exec.only(keys);
-    
-    var where = query_filter_where(req);
-    exec = exec.where(where, { join_where });
+
+    exec = exec.where(where, { join_where: extra_where });
     
     var skip = query_filter_skip(query);
     exec = exec.offset(skip)
