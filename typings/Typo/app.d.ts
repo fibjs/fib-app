@@ -56,9 +56,8 @@ export declare namespace FibApp {
         options?: FxOrmModel.ModelOptions__Findby;
     }
     interface FilteredFindByInfo<T = any> {
-        accessor: string;
+        association_name: string;
         conditions: FxSqlQuerySubQuery.SubQueryConditions;
-        accessor_payload: FxOrmQuery.IChainFind | FxOrmModel.Model;
     }
 }
 export declare namespace FibApp {

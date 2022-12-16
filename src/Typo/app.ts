@@ -9,7 +9,8 @@ import type {
     FxOrmInstance,
     FxOrmHook,
     FxOrmProperty,
-    FxOrmQuery
+    FxOrmQuery,
+    FxOrmAssociation
 } from '@fxjs/orm'
 import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
 
@@ -76,9 +77,8 @@ export namespace FibApp {
     }
 
     export interface FilteredFindByInfo<T = any> {
-        accessor: string,
+        association_name: string
         conditions: FxSqlQuerySubQuery.SubQueryConditions
-        accessor_payload: FxOrmQuery.IChainFind | FxOrmModel.Model
     }
 }
 

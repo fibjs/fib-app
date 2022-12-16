@@ -5,6 +5,7 @@ export declare function query_filter_where<T extends FibApp.FibAppReqQuery['wher
 export declare function query_filter_join_where(req: FibApp.FibAppReq): {};
 interface QueryFilterFindbyResult {
     exists: FxOrmQuery.ChainWhereExistsInfo[] | null;
+    base_assoc_holder: FxOrmModel.Model['associations'][any] | null;
     findby_infos: FibApp.FilteredFindByInfo[];
 }
 export declare function query_filter_findby(findby: FibApp.FibAppReqQuery['findby'], base_model: FxOrmModel.Model, opts: {

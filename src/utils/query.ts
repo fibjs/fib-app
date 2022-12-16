@@ -9,6 +9,7 @@ import { ucfirst } from './str';
 
 import type { FxOrmAssociation, FxOrmModel, FxOrmQuery, FxOrmNS } from '@fxjs/orm';
 import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
+// import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
 
 import { FibApp } from '../Typo/app';
 
@@ -43,6 +44,7 @@ function assert_valid_findby (
 
 interface QueryFilterFindbyResult {
     exists: FxOrmQuery.ChainWhereExistsInfo[] | null
+    base_assoc_holder: FxOrmModel.Model['associations'][any] | null
     findby_infos: FibApp.FilteredFindByInfo[]
 }
 export function query_filter_findby (
@@ -55,7 +57,11 @@ export function query_filter_findby (
 ): QueryFilterFindbyResult {
     const { req, extend_in_rest = '' } = opts
 
-    const __wrapper: QueryFilterFindbyResult = { exists: null, findby_infos: [] }
+    const __wrapper: QueryFilterFindbyResult = {
+        exists: null,
+        base_assoc_holder: null,
+        findby_infos: []
+    }
 
     if (!findby) return __wrapper;
 
@@ -63,7 +69,13 @@ export function query_filter_findby (
 
     let found_assoc: FxOrmAssociation.InstanceAssociationItem;
     
-    const exec_model = extend_in_rest && base_model.associations[extend_in_rest] ? base_model.associations[extend_in_rest].association.model : base_model;
+    let exec_model: FxOrmModel.Model = undefined;
+    if (extend_in_rest && base_model.associations[extend_in_rest]) {
+        __wrapper.base_assoc_holder = base_model.associations[extend_in_rest];
+        exec_model = base_model.associations[extend_in_rest].association.model;
+    } else {
+        exec_model = base_model;
+    }
     const exec_instance = new exec_model()
 
     ;(() => {
@@ -116,8 +128,7 @@ export function query_filter_findby (
             if (!checkout_acl(req.session, 'find', exec_model.ACL, findby.extend)) return ;
 
             let accessor_fn = null ,
-                accessor_name: string = null,
-                accessor_payload = null;
+                accessor_name: string = null;
                 
             const findby_accessor_name = found_assoc.modelFindByAccessor || `findBy${ucfirst(findby.extend)}`;
 
@@ -127,14 +138,12 @@ export function query_filter_findby (
                 
                 accessor_fn = test_payload[findby_accessor_name]
                 if (typeof accessor_fn === 'function') {
-                    accessor_payload = test_payload
                     accessor_name = findby_accessor_name
                 }
             });
             
             __wrapper.findby_infos.push({
-                accessor: accessor_name,
-                accessor_payload: accessor_payload,
+                association_name: findby.extend,
                 conditions: findby_conditions
             })
         }
