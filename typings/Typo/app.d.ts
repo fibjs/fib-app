@@ -56,9 +56,8 @@ export declare namespace FibApp {
         options?: FxOrmModel.ModelOptions__Findby;
     }
     interface FilteredFindByInfo<T = any> {
-        accessor: string;
+        association_name: string;
         conditions: FxSqlQuerySubQuery.SubQueryConditions;
-        accessor_payload: FxOrmQuery.IChainFind | FxOrmModel.Model;
     }
 }
 export declare namespace FibApp {
@@ -181,7 +180,11 @@ export declare namespace FibApp {
         where: {
             type: Function;
         };
+        /** @deprecated will removed or changed in fib-app >= 1.17, use `extra_where` instead */
         join_where: {
+            type: Function;
+        };
+        extra_where: {
             type: Function;
         };
         findby: {
@@ -323,7 +326,9 @@ export declare namespace FibApp {
     }
     export interface FibAppReqQuery {
         where?: string | FibApp.ReqWhere;
+        /** @deprecated will removed or changed in fib-app >= 1.17, use `extra_where` instead */
         join_where?: FibApp.ReqWhere;
+        extra_where?: FibApp.ReqWhere;
         findby?: FibApp.ReqFindByItem;
         keys?: string | string[];
         skip?: number;

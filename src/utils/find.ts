@@ -1,4 +1,4 @@
-import { FxOrmInstance, FxOrmModel, FxOrmQuery } from '@fxjs/orm';
+import { FxOrmAssociation, FxOrmInstance, FxOrmModel, FxOrmQuery } from '@fxjs/orm';
 import util = require('util')
 import { FibAppACL } from '../Typo/acl';
 import { FibApp } from '../Typo/app';
@@ -19,7 +19,7 @@ import {
 export = function (
     req: FibApp.FibAppReq,
     finder: FxOrmQuery.IChainFind['find'],
-    base_model: FxOrmModel.Model,
+    finder_model: FxOrmModel.Model,
     ext_info?: {
         base_instance: FxOrmInstance.Instance,
         extend_in_rest: FibAppACL.ACLExtendModelNameType
@@ -28,49 +28,86 @@ export = function (
     const query = req.query;
 
     let exists_args: any[] = [];
-    let init_conditions: FibApp.FibAppReqQuery['where'] = {};
+    let accessor_conditions: FibApp.FibAppReqQuery['where'] & object = {};
 
     /**
      * NOTICE: temp solution to resolve no select extra data in
      * HASMANY_association.getAccessor method
      */
-    let findby_get_nil: boolean = false;
+    let base_findby_find_nil: boolean = false;
+
+    const { extend_in_rest = undefined } = ext_info || {}
+    const where = query_filter_where(req);
+    
+    // filter out hasMany's extra properties from where, it should in `accessor_conditions` rather than `where`
+    if (extend_in_rest && finder_model.associations[extend_in_rest]?.type === 'hasMany') {
+        const many_assoc = finder_model.associations[extend_in_rest].association as FxOrmAssociation.InstanceAssociationItem_HasMany
+        Object.keys(many_assoc.props).forEach(k => {
+            if (where[k]) {
+                accessor_conditions[k] = where[k];
+                delete where[k];
+            }
+        });
+    }
+    const extra_where = query_filter_join_where(req);
+
+    let parent_findby: FxOrmQuery.IChainFind;
 
     ;(() => {
-        if (!base_model)
+        if (!finder_model)
             return ;
         
-        const { extend_in_rest = undefined } = ext_info || {}
-        var findby = parse_json_queryarg<FibApp.FibAppReqQuery['findby']>(req, 'findby');
-        var { exists: findby_exists, findby_infos } = query_filter_findby(findby, base_model, { req, extend_in_rest });
+        const findby = parse_json_queryarg<FibApp.FibAppReqQuery['findby']>(req, 'findby');
+        const { base_assoc_holder, exists: findby_exists, findby_infos } = query_filter_findby(findby, finder_model, {
+            req,
+            extend_in_rest,
+        });
+
+        if (findby_infos?.length) {
+            if (extend_in_rest) {
+                // now finder is `base_instance.getAccessor<extend_in_rest>()`
+                const asssocInstances: FxOrmInstance.Instance[] = finder?.(accessor_conditions).allSync() || [];
         
-        if (findby_infos && findby_infos.length) {
-            let findby_ids: string[] = [];
-            findby_infos.forEach(findby_info => {
-                if (findby_info.accessor_payload && findby_info.accessor && findby_info.conditions) {
-                    const findby_finder = findby_info.accessor_payload[findby_info.accessor]
-
-                    const idHolders = findby_finder(findby_info.conditions)
-                        .only(base_model.keys)
-                        .allSync() as Record<string, any>
-
-                    findby_ids = findby_ids.concat( idHolders.map((x: any) => x[base_model.keys + '']) )
-                }
-            });
-
-            if (!init_conditions.id) { // pointless here but I still leave it.
-                init_conditions.id = { in: findby_ids };
+                parent_findby = base_assoc_holder.association.model.findBy(
+                    findby_infos.map(item => ({
+                        association_name: item.association_name,
+                        conditions: item.conditions,
+                    })),
+                    {
+                        [finder_model.keys + '']: asssocInstances.map(item => item[finder_model.keys + ''] as any),
+                        ...where
+                    } as FxOrmModel.ModelQueryConditions__Find,
+                )
+            } else if (!extend_in_rest) {
+                parent_findby = finder_model.findBy(
+                    findby_infos.map(item => ({
+                        association_name: item.association_name,
+                        conditions: item.conditions,
+                    })),
+                    {
+                        ...where,
+                        ...accessor_conditions
+                    } as FxOrmModel.ModelQueryConditions__Find,
+                )
             }
+        }
 
-            findby_get_nil = !findby_ids.length
+        if (extend_in_rest && parent_findby && !accessor_conditions.id) {
+            const pRows = parent_findby.allSync();
+            const ids = pRows.map(row => row[finder_model.keys + '']);
+
+            accessor_conditions.id = { in: ids };
+
+            base_findby_find_nil = !ids.length;
         }
 
         if (Array.isArray(findby_exists))
             exists_args = exists_args.concat(findby_exists)
     })();
     
-    const join_where = query_filter_join_where(req);
-    let exec = finder(init_conditions, { join_where });
+    const orig_chainfind = finder(accessor_conditions, { join_where: extra_where });
+    let exec = !extend_in_rest && parent_findby ? parent_findby : orig_chainfind;
+    
 
     if (exists_args.length && exec.whereExists)
         exec = exec.whereExists(exists_args)
@@ -78,9 +115,7 @@ export = function (
     var keys = query.keys;
     if (keys !== undefined)
         exec = exec.only(keys);
-    
-    var where = query_filter_where(req);
-    exec = exec.where(where, { join_where });
+    exec = exec.where(where, { join_where: extra_where });
     
     var skip = query_filter_skip(query);
     exec = exec.offset(skip)
@@ -93,7 +128,8 @@ export = function (
     
     // avoid unnecessary find action such as `exec.allSync()`
     var objs: FxOrmInstance.Instance[] = [];
-    if (limit > 0 && !findby_get_nil) {
+    if (limit > 0 && !base_findby_find_nil) {
+        // add one count field if count is required
         objs = exec.allSync();
     }
     
@@ -109,10 +145,11 @@ export = function (
         return filter(filter_ext(req.session, obj), keys, a);
     });
 
+    // TODO: ask orm to support query-level custom select?
     if (is_count_required(query))
         return {
             results: objs,
-            count: findby_get_nil ? 0 : exec.countSync()
+            count: base_findby_find_nil ? 0 : exec.countSync()
         };
 
     return {

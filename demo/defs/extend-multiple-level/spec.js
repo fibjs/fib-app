@@ -3,11 +3,8 @@ test.setup();
 
 const http = require('http');
 
-const { check_result, runServer } = require('../../test/_utils');
-
-const tappInfo = require('../../test/support/spec_helper').getRandomSqliteBasedApp();
-const tSrvInfo = require('../../test/support/spec_helper').mountAppToSrv(tappInfo.app, { appPath: '/api' });
-runServer(tSrvInfo.server, () => void 0)
+const { check_result } = require('../../test/_utils');
+const { useTestServer } = require('../../test/support/spec_helper');
 
 let counter = 1000;
 function getCounterId () {
@@ -19,11 +16,9 @@ describe("extend multiple level", () => {
     var l1a_id;
     var TESTDATA = require('./__test__/mock-data.json');
 
-    after(() => tappInfo.utils.cleanLocalDB())
+    const { tSrvInfo, clientCtx, clients } = useTestServer({})
 
     before(() => {
-        tappInfo.utils.dropModelsSync();
-
         var rep = http.post(tSrvInfo.appUrlBase + '/level', {
             json: TESTDATA
         });
@@ -149,552 +144,1234 @@ describe("extend multiple level", () => {
         )
     });
 
-    describe('find where/whereExists/join_where sublevel with has-many assoc', () => {
+    describe('find where/whereExists, extra where sublevel with has-many assoc', () => {
         const t = Date.now();
         const staticId = getCounterId();
         const l1_many_sublevels = TESTDATA[0].many_sublevels;
         const l1a_many_sublevels = TESTDATA[1].many_sublevels;
+
+        it('only findby in association, use `ne`', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: { ne: ${staticId} } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        })
         
-        ;[
-            [
-                'only findby in association, use `ne`',
-                {
-                    l1args: '',
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: { ne: ${staticId} } }
-                    `,
-                    extra_cond: ``,
-                    // debug_only: true
+        it('only findby in association, use `eq`', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'only findby in association, use `eq`',
-                {
-                    l1args: '',
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: "${staticId}" }
-                    `,
-                    extra_cond: ``,
-                    debug_only: true
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: "${staticId}" }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                undefined,
+            )
+        })
+        
+        it('only findby in association, invalid Date arg', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    undefined
-                ]
-            ],
-            [
-                'only findby in association, invalid Date arg',
-                {
-                    l1args: '',
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { since: { eq: "${t}" } }
-                    `,
-                    extra_cond: ``
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { since: { eq: "${t}" } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                undefined,
+            )
+        })
+
+        it('only findby in association, valid Date arg', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    undefined
-                ]
-            ],
-            [
-                'only findby in association, valid Date arg',
-                {
-                    l1args: '',
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: {
-                            since: {
-                                lte: "${l1_many_sublevels[0].extra.since}"
-                                modifiers: {
-                                    is_date: true
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: {
+                                since: {
+                                    lte: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
                                 }
                             }
                         }
-                    `,
-                    extra_cond: ``,
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        })
+
+        it('l1 where, findby in association - 1', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'l1 where, findby in association - 1',
-                {
-                    l1args: `where: { id: { eq: ${staticId} } }`,
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: { ne: ${staticId} } }
-                    `,
-                    extra_cond: ``,
+                body: `{
+                    find_level(
+                        where: { id: { eq: ${staticId} } }
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: { ne: ${staticId} } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                undefined
+            )
+        });
+
+        it('l1 where, findby in association - 2', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    undefined,
-                ]
-            ],
-            [
-                'l1 where, findby in association - 2',
-                {
-                    l1args: `where: { level_f: { eq: "non-exist-level_f-value" } }`,
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: { ne: ${staticId} } }
-                    `,
-                    extra_cond: ``
+                body: `{
+                    find_level(
+                        where: { level_f: { eq: "non-exist-level_f-value" } }
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: { ne: ${staticId} } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                undefined
+            )
+        });
+
+        it('l1 where, findby in association - 3', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    undefined,
-                ]
-            ],
-            [
-                'l1 where, findby in association - 3',
-                {
-                    l1args: `where: { level_f: "l1:level_f" }`,
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: { ne: ${staticId} } }
-                    `,
-                    extra_cond: ``
+                body: `{
+                    find_level(
+                        where: { level_f: "l1:level_f" }
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: { ne: ${staticId} } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        });
+
+        it('l1 where, findby in association - 4', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'l1 where, findby in association - 4',
-                {
-                    l1args: `where: { level_f: "l1:level_f" }`,
-                    l1_findby_kv: `
-                        extend: "one_l2"
-                        where: { name: { eq: "l1-l2:name" } }
-                    `,
-                    extra_cond: ``,
-                    // debug_only: true,
+                body: `{
+                    find_level(
+                        where: { level_f: "l1:level_f" }
+                        findby: {
+                            extend: "one_l2"
+                            where: { name: { eq: "l1-l2:name" } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        });
+
+        it('l1 where, findby in association - 5', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'l1 where, findby in association - 5',
-                {
-                    l1args: `where: { level_f: "l1:level_f" }`,
-                    l1_findby_kv: `
-                        extend: "one_l2"
-                        where: { name: { eq: "non-exist--one_l2-value" } }
-                    `,
-                    extra_cond: ``,
-                    // debug_only: true,
+                body: `{
+                    find_level(
+                        where: { level_f: "l1:level_f" }
+                        findby: {
+                            extend: "one_l2"
+                            where: { name: { eq: "non-exist--one_l2-value" } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+
+            check_result(
+                rep.json().data.find_level[0],
+                undefined
+            );
+        });
+
+        it('l1 where, findby in l1 association, l2 where', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    undefined,
-                ]
-            ],
-            [
-                'l1 where, findby in l1 association, l2 where',
-                {
-                    l1args: `where: { level_f: "l1:level_f" }`,
-                    l1_findby_kv: `
-                        extend: "one_l2"
-                        where: { name: { eq: "l1-l2:name" } }
-                    `,
-                    l2args: `where: { name: { ne: "${l1_many_sublevels[1].name}" } }`,
-                    extra_cond: ``,
-                    // debug_only: true,
+                // TODO: improve query stages here, use one query rather than two queries
+                body: `{
+                    find_level(
+                        where: { level_f: "l1:level_f" }
+                        findby: {
+                            extend: "one_l2"
+                            where: { name: { eq: "l1-l2:name" } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            where: { name: { ne: "${l1_many_sublevels[1].name}" } }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels.filter( x => x !== l1_many_sublevels[1])
+            );
+        });
+
+        it('l1 where with multiple conditions, findby in association', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels.filter( x => x !== l1_many_sublevels[1])
-                ]
-            ],
-            [
-                'l1 where with multiple conditions, findby in association',
-                {
-                    l1args: `where: { id: { ne: ${staticId} }, name: "l1:name" }`,
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: { ne: ${staticId} } }
-                    `,
-                    extra_cond: ``,
+                body: `{
+                    find_level(
+                        where: { id: { ne: ${staticId} }, name: "l1:name" }
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: { ne: ${staticId} } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        });
+
+        it('l1 where with multiple conditions using `like`, findby in association', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'l1 where with multiple conditions using `like`, findby in association',
-                {
-                    l1args: `where: { name: { like: "%:name%" } }`,
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: { many_sublevels_id: { ne: ${staticId} } }
-                    `,
-                    extra_cond: ``,
+                body: `{
+                    find_level(
+                        where: { name: { like: "%:name%" } }
+                        findby: {
+                            extend: "many_sublevels"
+                            on: { many_sublevels_id: { ne: ${staticId} } }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        });
+
+        it('findby in l1 association, where for l2 extra fields', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'findby in l1 association, join_where for l2 extra fields',
-                {
-                    l1args: '',
-                    l1_findby_kv: `
-                        extend: "many_sublevels"
-                        on: {
-                            since: {
-                                eq: "${l1_many_sublevels[0].extra.since}"
-                                modifiers: {
-                                    is_date: true
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: {
+                                since: {
+                                    eq: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
                                 }
                             }
                         }
-                    `,
-                    extra_cond: `join_where: {
-                        since: {
-                            eq: "${l1_many_sublevels[0].extra.since}"
-                            modifiers: {
-                                is_date: true
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            where: {
+                                since: {
+                                    eq: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
                             }
                         }
-                    }`,
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [l1_many_sublevels[0]]
+            );
+        });
+
+        it('get l2 by l1 --- [1]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1:name` },
-                    [l1_many_sublevels[0]]
-                ]
-            ],
-            [
-                'get l2 by l1 --- [1]',
-                {
-                    l1args: `
+                body: `{
+                    find_level(
                         where: {
                             name: "l1:name"
                         }
-                    `,
-                    l2args: ``,
-                    extra_cond: ``,
-                },
-                [
-                    { name: `l1:name` },
-                    l1_many_sublevels
-                ]
-            ],
-            [
-                'get l2 by l1 --- [2]',
-                {
-                    l1args: `
-                        where: {
-                            name: "l1a:name"
-                        }
-                    `,
-                    l2args: ``,
-                    extra_cond: ``,
-                    // debug_only: true
-                },
-                [
-                    { name: `l1a:name` },
-                    l1a_many_sublevels
-                ]
-            ],
-            [
-                'get l2 by l1, findby l3 in l2 --- [1]',
-                {
-                    l1args: `
-                        where: {
-                            name: "l1a:name"
-                        }
-                    `,
-                    l2args: `
-                        findby: {
-                            extend: "subl_one_descendant_level"
-                            where: {
-                                name: "${l1_many_sublevels[2].subl_one_descendant_level.name}"
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
                             }
                         }
-                    `,
-                    extra_cond: ``,
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1_many_sublevels
+            );
+        });
+
+        it('get l2 by l1 --- [2]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1a:name` },
-                    []
-                ]
-            ],
-            [
-                'get l2 by l1, findby l3 in l2 --- [2]',
-                {
-                    l1args: `
+                body: `{
+                    find_level(
                         where: {
                             name: "l1a:name"
                         }
-                    `,
-                    l2args: `
-                        findby: {
-                            extend: "subl_one_descendant_level"
-                            where: {
-                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
                             }
                         }
-                    `,
-                    extra_cond: ``,
-                    // debug_only: true
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                l1a_many_sublevels
+            );
+        });
+
+        it('get l2 by l1, findby l3 in l2 --- [1]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1a:name` },
-                    [ l1a_many_sublevels[2] ]
-                ]
-            ],
-            [
-                'get l2 by l1, findby l3 in l2, where in l2 --- [3]',
-                {
-                    l1args: `
+                body: `{
+                    find_level(
                         where: {
                             name: "l1a:name"
                         }
-                    `,
-                    l2args: `
-                        where: {
-                            name: "${l1a_many_sublevels[2].name}"
-                        }
-                        findby: {
-                            extend: "subl_one_descendant_level"
-                            where: {
-                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
-                            }
-                        }
-                    `,
-                    extra_cond: ``,
-                    // debug_only: true
-                },
-                [
-                    { name: `l1a:name` },
-                    [ l1a_many_sublevels[2] ]
-                ]
-            ],
-            [
-                'get l2 by l1, findby l3 in l2, join_where in l2 --- [4]',
-                {
-                    l1args: `
-                        where: {
-                            name: "l1a:name"
-                        }
-                    `,
-                    l2args: `
-                        findby: {
-                            extend: "subl_one_descendant_level"
-                            where: {
-                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
-                            }
-                        }
-                    `,
-                    extra_cond: `
-                        join_where: {
-                            since: {
-                                ne: "${l1a_many_sublevels[2].extra.since}"
-                                modifiers: {
-                                    is_date: true
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            findby: {
+                                extend: "subl_one_descendant_level"
+                                where: {
+                                    name: "${l1_many_sublevels[2].subl_one_descendant_level.name}"
                                 }
                             }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
                         }
-                    `,
-                    // debug_only: true
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                []
+            );
+        });
+
+        it('get l2 by l1, findby l3 in l2 --- [2]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1a:name` },
-                    []
-                ]
-            ],
-            [
-                'get l2 by l1, findby l3 in l2, join_where in l2 ---  [5]',
-                {
-                    l1args: `
+                body: `{
+                    find_level(
                         where: {
                             name: "l1a:name"
                         }
-                    `,
-                    l2args: `
-                        findby: {
-                            extend: "subl_one_descendant_level"
-                            where: {
-                                name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
-                            }
-                        }
-                    `,
-                    extra_cond: `
-                        join_where: {
-                            since: {
-                                eq: "${l1a_many_sublevels[2].extra.since}"
-                                modifiers: {
-                                    is_date: true
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            findby: {
+                                extend: "subl_one_descendant_level"
+                                where: {
+                                    name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
                                 }
                             }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
                         }
-                    `,
-                    // debug_only: true
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [ l1a_many_sublevels[2] ]
+            );
+        });
+
+        it('get l2 by l1, findby l3 in l2, extra where in l2 --- [3]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1a:name` },
-                    [ l1a_many_sublevels[2] ]
-                ]
-            ],
-            [
-                'get l2 by l1, findby l3 in l2, where & join_where in l2 --- [6]',
-                {
-                    l1args: `
+                body: `{
+                    find_level(
                         where: {
                             name: "l1a:name"
                         }
-                    `,
-                    l2args: `
-                        where: {
-                            name: {
-                                like: "%${l1a_many_sublevels[1].name}%"
-                            }
-                        }
-                        findby: {
-                            extend: "subl_one_descendant_level"
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
                             where: {
-                                name: "${l1a_many_sublevels[1].subl_one_descendant_level.name}"
+                                name: "${l1a_many_sublevels[2].name}"
                             }
-                        }
-                    `,
-                    extra_cond: `
-                        join_where: {
-                            since: {
-                                eq: "${l1a_many_sublevels[1].extra.since}"
-                                modifiers: {
-                                    is_date: true
+                            findby: {
+                                extend: "subl_one_descendant_level"
+                                where: {
+                                    name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
                                 }
                             }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
                         }
-                    `,
-                    // debug_only: true
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [ l1a_many_sublevels[2] ]
+            );
+        });
+
+        it('get l2 by l1, findby l3 in l2, extra where in l2 --- [4]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
                 },
-                [
-                    { name: `l1a:name` },
-                    [ l1a_many_sublevels[1] ]
-                ]
-            ],
-            [
-                'only join_where for extra fields',
-                {
-                    l1args: `
+                body: `{
+                    find_level(
+                        where: {
+                            name: "l1a:name"
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            findby: {
+                                extend: "subl_one_descendant_level"
+                                where: {
+                                    name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                                }
+                            }
+                            where: {
+                                since: {
+                                    ne: "${l1a_many_sublevels[2].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                []
+            );
+        });
+
+        it('get l2 by l1, findby l3 in l2, extra where in l2 ---  [5]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        where: {
+                            name: "l1a:name"
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            findby: {
+                                extend: "subl_one_descendant_level"
+                                where: {
+                                    name: "${l1a_many_sublevels[2].subl_one_descendant_level.name}"
+                                }
+                            }
+                            where: {
+                                since: {
+                                    eq: "${l1a_many_sublevels[2].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [ l1a_many_sublevels[2] ]
+            );
+        });
+
+        it('get l2 by l1, findby l3 in l2, where & extra_where in l2 --- [6]', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        where: {
+                            name: "l1a:name"
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            where: {
+                                name: {
+                                    like: "%${l1a_many_sublevels[1].name}%"
+                                }
+                                since: {
+                                    eq: "${l1a_many_sublevels[1].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                            findby: {
+                                extend: "subl_one_descendant_level"
+                                where: {
+                                    name: "${l1a_many_sublevels[1].subl_one_descendant_level.name}"
+                                }
+                            }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1a:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [ l1a_many_sublevels[1] ]
+            );
+        });
+
+        it('only extra_where for extra fields', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
                         order: "-name"
                         where: {
                             name: {
                                 ne: "l1a:name"
                             } 
                         }
-                    `,
-                    l1_findby_kv: `
-                    `,
-                    extra_cond: `join_where: {
-                        since: {
-                            ne: "${l1_many_sublevels[1].extra.since}"
-                            modifiers: {
-                                is_date: true
-                            }
-                        }
-                    }`,
-                    // debug_only: true,
-                },
-                [
-                    { name: `l1:name` },
-                    [l1_many_sublevels[0], l1_many_sublevels[2]]
-                ]
-            ],
-        ].forEach(([
-            desc,
-            w,
-            [l1_result, extra_results]
-        ], idx, arr) => {
-            const with_only = arr.some(x => 'debug_only' in x[1])
-            if (with_only && !w.debug_only || w.debug_skip)
-                return 
-
-            it(desc, () => {
-                const l1args = w.l1args || ''
-                const l1_findby_kv = w.l1_findby_kv || ''
-                const l2args = w.l2args || ''
-                const extra_cond = w.extra_cond || ''
-
-                var rep = http.post(tSrvInfo.appUrlBase + `/`, {
-                    headers: {
-                        'Content-Type': 'application/graphql'
-                    },
-                    body: `{
-                        find_level(
-                            ${l1args}
-                            findby: {
-                                ${l1_findby_kv}
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            where: {
+                                since: {
+                                    ne: "${l1_many_sublevels[1].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
                             }
                         ){
                             id,
                             name,
-                            many_sublevels(
-                                order: "name"
-                                ${l2args}
-                                ${extra_cond ? extra_cond : ''}
-                            ){
-                                id,
-                                name,
-                                extra{
-                                    since
-                                }
-                                subl_one_descendant_level{
-                                    name
-                                    descendant_level_f
-                                }
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
                             }
                         }
-                    }`
-                });
+                    }
+                }`
+            });
 
-                assert.equal(rep.statusCode, 200);
-                
-                if (!l1_result) {
-                    assert.equal(
-                        rep.json().data.find_level[0],
-                        l1_result
-                    )
-                    return ;
-                }
-
-                check_result(
-                    rep.json().data.find_level[0],
-                    l1_result,
-                    [
-                        'createdAt',
-                        'updatedAt',
-                        'id',
-                        'many_sublevels'
-                    ]
-                )
-
-                const mapper = x => ({
+            assert.equal(rep.statusCode, 200);
+            
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
                     name: x.name,
                     extra: x.extra,
                     subl_one_descendant_level: x.subl_one_descendant_level
-                })
-                
-                check_result(
-                    rep.json().data.find_level[0].many_sublevels
-                        .map(mapper),
-                    // extra_results is order by 'name'
-                    extra_results
-                );
-            })
+                })),
+                // extra_results is order by 'name'
+                [l1_many_sublevels[0], l1_many_sublevels[2]]
+            );
         });
     });
+    
+    describe('[join_where/extra_where] findby in l1 association, join_where for l2 extra fields', () => {
+        ['join_where', 'extra_where'].forEach((compat_op) => {
+            
+        it(`compat_op: ${compat_op}`, () => {
+            const l1_many_sublevels = TESTDATA[0].many_sublevels;
+
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        findby: {
+                            extend: "many_sublevels"
+                            on: {
+                                since: {
+                                    eq: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        }
+                    ){
+                        id,
+                        name,
+                        many_sublevels(
+                            order: "name"
+                            ${compat_op}: {
+                                since: {
+                                    eq: "${l1_many_sublevels[0].extra.since}"
+                                    modifiers: {
+                                        is_date: true
+                                    }
+                                }
+                            }
+                        ){
+                            id,
+                            name,
+                            extra{
+                                since
+                            }
+                            subl_one_descendant_level{
+                                name
+                                descendant_level_f
+                            }
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            
+            // assert.equal(
+            //     rep.json().data.find_level[0],
+            //     undefined
+            // )
+            check_result(
+                rep.json().data.find_level[0],
+                { name: `l1:name` },
+                [ 'createdAt', 'updatedAt', 'id', 'many_sublevels' ]
+            )
+            
+            check_result(
+                rep.json().data.find_level[0].many_sublevels.map(x => ({
+                    name: x.name,
+                    extra: x.extra,
+                    subl_one_descendant_level: x.subl_one_descendant_level
+                })),
+                // extra_results is order by 'name'
+                [l1_many_sublevels[0]]
+            );
+        })
+        
+        })
+    })
 
     function assert_found_level_with_one_l2 (rep, fetcher) {
         check_result(
@@ -720,73 +1397,13 @@ describe("extend multiple level", () => {
     }
     
     describe('find by level with has-one self assoc', () => {
-        ;[
-            [
-                'only findby',
-                {
-                    where: '',
-                    results_callback: rep => rep.json().data.find_level
-                }
-            ],
-            [
-                'l1 where, findby',
-                {
-                    where: `where: { name: "l1a:name" }`,
-                    undefined
-                }
-            ]
-        ].forEach(([
-            desc,
-            w,
-        ]) => {
-            it(desc, () => {
-                const where = w.where || ''
-                const results_callback = w.results_callback
-
-                var rep = http.post(tSrvInfo.appUrlBase + `/`, {
-                    headers: {
-                        'Content-Type': 'application/graphql'
-                    },
-                    body: `{
-                        find_level(
-                            ${where}
-                            findby: {
-                                extend: "one_l2",
-                                where: {
-                                    name: "l1-l2:name"
-                                }
-                            }
-                        ){
-                            id,
-                            name,
-                            one_l2{
-                                name
-                            }
-                        }
-                    }`
-                });
-
-                assert.equal(rep.statusCode, 200);
-
-                if (!results_callback) {
-                    assert.deepEqual(rep.json().data.find_level, []);
-                    return ;
-                }
-                assert_found_level_with_one_l2(rep, results_callback);
-            });
-        });
-    });
-
-    it('paging find by level with has-one self assoc', () => {
-        ;[
-            null
-        ].forEach(key => {
+        it('only findby', () => {
             var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                 headers: {
                     'Content-Type': 'application/graphql'
                 },
                 body: `{
-                    paging_level(
+                    find_level(
                         findby: {
                             extend: "one_l2",
                             where: {
@@ -794,23 +1411,78 @@ describe("extend multiple level", () => {
                             }
                         }
                     ){
-                        results{
-                            id,
-                            name,
-                            one_l2{
-                                name
-                            }
+                        id,
+                        name,
+                        one_l2{
+                            name
                         }
-                        count
                     }
                 }`
             });
 
             assert.equal(rep.statusCode, 200);
-
-            assert_found_level_with_one_l2(rep, rep => rep.json().data.paging_level.results);
-            assert.equal(rep.json().data.paging_level.count, 1);
+            assert_found_level_with_one_l2(rep, rep => rep.json().data.find_level);
         });
+        
+        it('l1 where, findby', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    find_level(
+                        where: { name: "l1a:name" }
+                        findby: {
+                            extend: "one_l2",
+                            where: {
+                                name: "l1-l2:name"
+                            }
+                        }
+                    ){
+                        id,
+                        name,
+                        one_l2{
+                            name
+                        }
+                    }
+                }`
+            });
+
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json().data.find_level, []);
+        });
+    });
+
+    it('paging find by level with has-one self assoc', () => {
+        var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                paging_level(
+                    findby: {
+                        extend: "one_l2",
+                        where: {
+                            name: "l1-l2:name"
+                        }
+                    }
+                ){
+                    results{
+                        id,
+                        name,
+                        one_l2{
+                            name
+                        }
+                    }
+                    count
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+
+        assert_found_level_with_one_l2(rep, rep => rep.json().data.paging_level.results);
+        assert.equal(rep.json().data.paging_level.count, 1);
     });
 
     function assert_found_level_with_sublevel (rep, fetcher) {
@@ -837,69 +1509,61 @@ describe("extend multiple level", () => {
     }
 
     it('find by sublevel with has-one assoc', () => {
-        ;[
-            null
-        ].forEach(key => {
-            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
-                headers: {
-                    'Content-Type': 'application/graphql'
-                },
-                body: `{
-                    find_level(
-                        findby: {
-                            extend: "one_sl",
-                            where: {
-                                name: "l1-sl:name"
-                            }
+        var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                find_level(
+                    findby: {
+                        extend: "one_sl",
+                        where: {
+                            name: "l1-sl:name"
                         }
-                    ){
+                    }
+                ){
+                    id,
+                    name,
+                    one_sl{
+                        name
+                    }
+                }
+            }`
+        });
+
+        assert.equal(rep.statusCode, 200);
+        assert_found_level_with_sublevel(rep, rep => rep.json().data.find_level);
+    });
+
+    it('paging find by sublevel with has-one assoc', () => {
+        var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+            headers: {
+                'Content-Type': 'application/graphql'
+            },
+            body: `{
+                paging_level(
+                    findby: {
+                        extend: "one_sl",
+                        where: {
+                            name: "l1-sl:name"
+                        }
+                    }
+                ){
+                    results{
                         id,
                         name,
                         one_sl{
                             name
                         }
                     }
-                }`
-            });
-
-            assert.equal(rep.statusCode, 200);
-            assert_found_level_with_sublevel(rep, rep => rep.json().data.find_level);
+                    count
+                }
+            }`
         });
-    });
 
-    it('paging find by sublevel with has-one assoc', () => {
-        ;[
-            null
-        ].forEach(key => {
-            var rep = http.post(tSrvInfo.appUrlBase + `/`, {
-                headers: {
-                    'Content-Type': 'application/graphql'
-                },
-                body: `{
-                    paging_level(
-                        findby: {
-                            extend: "one_sl",
-                            where: {
-                                name: "l1-sl:name"
-                            }
-                        }
-                    ){
-                        results{
-                            id,
-                            name,
-                            one_sl{
-                                name
-                            }
-                        }
-                        count
-                    }
-                }`
-            });
-
-            assert.equal(rep.statusCode, 200);
-            assert_found_level_with_sublevel(rep, rep => rep.json().data.paging_level.results);
-            assert.equal(rep.json().data.paging_level.count, 1);
-        });
+        assert.equal(rep.statusCode, 200);
+        assert_found_level_with_sublevel(rep, rep => rep.json().data.paging_level.results);
+        assert.equal(rep.json().data.paging_level.count, 1);
     });
 
     it('find sublevel', () => {
@@ -1052,38 +1716,58 @@ describe("extend multiple level", () => {
             }
         });
 
-        it('Host findby extend field', () => {
-            ;[
-                [
-                    {
-                        extend: "lproperty",
-                        where: {
-                            weight: {
-                                eq: cur_weight()
+        describe('base findby extend field', () => {
+            it('find by query: where lproperty.weight=...', () => {
+                var rep = http.get(tSrvInfo.appUrlBase + `/level`, {
+                    query: {
+                        findby: JSON.stringify(
+                            {
+                                extend: "lproperty",
+                                where: {
+                                    weight: {
+                                        eq: cur_weight()
+                                    }
+                                }
                             }
-                        }
-                    },
-                    1
-                ],
-                [
-                    {
-                        extend: "lproperty",
-                        where: {
-                            weight: {
-                                ne: cur_weight()
+                        )
+                    }
+                });
+
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.json().length, 1);
+            });
+
+            /**
+             * there are more than 1 'level' items, but ONLY 1 has its `lproperty`,
+             * when I `findby` by lproperty with SQL, the pre-requisite contains that
+             * `level must has its own lproperty`. So there is 0
+             */
+            it('find by query: where lproperty.weight != ...', () => {
+                var rep = http.get(tSrvInfo.appUrlBase + `/level`, {
+                    query: {
+                        findby: JSON.stringify(
+                            {
+                                extend: "lproperty",
+                                where: {
+                                    weight: {
+                                        ne: cur_weight()
+                                    }
+                                }
                             }
-                        }
+                        )
+                    }
+                });
+
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.json().length, 0);
+            });
+
+            it('find by graphql: where lproperty.weight =. ..', () => {
+                var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                    headers: {
+                        'Content-Type': 'application/graphql'
                     },
-                    /**
-                     * there are more than 1 'level' items, but ONLY 1 has its `lproperty`,
-                     * when I `findby` by lproperty with SQL, the pre-requisite contains that
-                     * `level must has its own lproperty`. So there is 0
-                     */
-                    0
-                ],
-                [
-                    `
-                    {
+                    body: `{
                         find_level(
                             findby: {
                                 extend: "lproperty",
@@ -1100,14 +1784,48 @@ describe("extend multiple level", () => {
                                 weight
                             }
                         }
-                    }
-                    `,
-                    1,
-                    rep => rep.json().data.find_level
-                ],
-                [
-                    `
-                    {
+                    }`
+                });
+
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.json().data.find_level.length, 1);
+            });
+
+            it('find by graphql: where lproperty.weight != ...', () => {
+                var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                    headers: {
+                        'Content-Type': 'application/graphql'
+                    },
+                    body: `{
+                        find_level(
+                            findby: {
+                                extend: "lproperty",
+                                where: {
+                                    weight: {
+                                        ne: ${cur_weight()}
+                                    }
+                                }
+                            }
+                        ){
+                            id
+                            lproperty{
+                                name
+                                weight
+                            }
+                        }
+                    }`
+                });
+
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.json().data.find_level.length, 0);
+            });
+
+            it('paging by graphql: where lproperty.weight =. .. ', () => {
+                var rep = http.post(tSrvInfo.appUrlBase + `/`, {
+                    headers: {
+                        'Content-Type': 'application/graphql'
+                    },
+                    body: `{
                         paging_level(
                             findby: {
                                 extend: "lproperty",
@@ -1127,35 +1845,47 @@ describe("extend multiple level", () => {
                             }
                             count
                         }
-                    }
-                    `,
-                    1,
-                    rep => ({length: rep.json().data.paging_level.count})
-                ]
-            ].forEach(([cond, item_count, data_fetcher]) => {
-                if (typeof cond === 'object') {
-                    var rep = http.get(tSrvInfo.appUrlBase + `/level`, {
-                        query: {
-                            findby: JSON.stringify(cond)
-                        }
-                    });
+                    }`
+                });
 
-                    assert.equal(rep.statusCode, 200);
-                    assert.equal(rep.json().length, item_count);
-                    return ;
-                }
-                
+                assert.equal(rep.statusCode, 200);
+                assert.equal(rep.json().data.paging_level.count, 1);
+                assert.equal(rep.json().data.paging_level.results.length, 1);
+            });
+
+            it('paging by graphql: where lproperty.weight != ... ', () => {
                 var rep = http.post(tSrvInfo.appUrlBase + `/`, {
                     headers: {
                         'Content-Type': 'application/graphql'
                     },
-                    body: cond
+                    body: `{
+                        paging_level(
+                            findby: {
+                                extend: "lproperty",
+                                where: {
+                                    weight: {
+                                        ne: ${cur_weight()}
+                                    }
+                                }
+                            }
+                        ){
+                            results {
+                                id
+                                lproperty{
+                                    name
+                                    weight
+                                }
+                            }
+                            count
+                        }
+                    }`
                 });
 
                 assert.equal(rep.statusCode, 200);
-                assert.equal(data_fetcher(rep).length, item_count);
+                assert.equal(rep.json().data.paging_level.count, 0);
+                assert.equal(rep.json().data.paging_level.results.length, 0);
             });
-        })
+        });
     })
 });
 
