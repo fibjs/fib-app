@@ -1,0 +1,15 @@
+{
+  "name": "simple-person",
+  "version": "1.0.0",
+  "description": "",
+  "repository": "",
+  "keywords": "",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "rm -rf test.db* && fibjs ./index.js"
+  },
+  "dependencies": {
+    "fib-app": "file:../.."
+  }
+}

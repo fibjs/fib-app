@@ -2,40 +2,53 @@
 
 ## 建立基础脚本
 
-```JavaScript
+```js
+// index.js
 const http = require('http');
 const util = require('util')
 const Session = require('fib-session')
-const App = require('../');
+const App = require('fib-app');
 
-var app = new App('sqlite:test.db', {
+const app = new App('sqlite:test.db', {
   uuid: true
 });
 app.db.use(require('./defs/person'));
 
-var session = new Session(new util.LruCache(20000), {
+const session = new Session(new util.LruCache(20000), {
   timeout: 60 * 1000
 });
 
-var svr = new http.Server(8080, [
+const svr = new http.Server(8080, [
   session.cookie_filter,
   {
     '/1.0': app
   }
 ]);
-svr.run();
+
+svr.start();
 ```
+
 其中 `person` 是 Model 定义模块, 内容如下：
-```JavaScript
-module.exports = db => {
+
+```js
+// person.js
+const { defineAppModel } = require('fib-app')
+
+// defineAppModel is not requried, you can return the define function directly
+module.exports = defineAppModel(db => {
   db.define('person', {
     name: String,
     sex: ["male", "female"],
     age: Number
   });
-};
+});
 ```
+
 这是一个标准的 orm 定义, 同样可以使用 orm 的其它功能, 比如类型检查, 事件等。
+
+**注意**: 定义一个 orm model 时, `defineAppModel` 不是必需的, 你可以直接返回这个函数作为 orm 定义, 但是, 使用 `defineAppModel` 方法, 可以在开发中获得更好的类型提示:
+
+![image](https://user-images.githubusercontent.com/6339390/208242575-8a398ed1-d015-45fd-a430-0dd1b3802bc9.png)
 
 ## API 数据格式
 
@@ -49,8 +62,8 @@ curl -X PUT \
 ```
 对于所有的请求, 响应格式都是一个 JSON 对象。
 
-一个请求是否成功是由 HTTP 状态码标明的。一个 2XX 的状态码表示成功, 而一个 4XX 表示请求失败。当一个请求失败时响应的主体仍然是一个 JSON 对象, 但是总是会包含 code 和 message 这两个字段, 你可以用它们来进行调试。举个例子, 如果一个请求权限认证失败, 会返回以下信息：
-```JavaScript
+一个请求是否成功是由 HTTP 状态码标明的。一个 `2XX` 的状态码表示成功, 而一个 `4XX` 表示请求失败。当一个请求失败时响应的主体仍然是一个 JSON 对象, 但是总是会包含 code 和 message 这两个字段, 你可以用它们来进行调试。举个例子, 如果一个请求权限认证失败, 会返回以下信息：
+```js
 {
   "code": 4030501,
   "message": "The operation isn’t allowed for clients due to class-level permissions."
@@ -59,7 +72,7 @@ curl -X PUT \
 code 编码分为三个部分, 前三位 403 表示错误类型, 05 表示数据表编号, 01 表示详细错误编码。
 
 对于 GET 请求, 通常会返回对象数据, 根据 GET 请求的地址不同, 可能会返回一个对象, 也可能会返回一个数组。比如：
-```JavaScript
+```js
 {
   "name": "tom",
   "sex": "male",
@@ -67,7 +80,7 @@ code 编码分为三个部分, 前三位 403 表示错误类型, 05 表示数据
 }
 ```
 或者：
-```JavaScript
+```js
 [
   {
     "name": "tom",
@@ -82,6 +95,7 @@ code 编码分为三个部分, 前三位 403 表示错误类型, 05 表示数据
 ]
 ```
 ## 特殊字段
+
 对象数据中, 有四个特殊含义的字段, 是不允许通过 API 更改的。分别是 `id`, `updatedAt`, `createdAt`, `createdBy`.
 
 其中 `id`, `updatedAt`, `createdAt` 单个字段会自动创建和修改。`createdBy` 则需要自行指定类型。
@@ -106,7 +120,7 @@ curl -X POST \
   http://localhost/1.0/person
 ```
 当创建成功时, HTTP 的返回是 201 Created, 响应的主体是一个 JSON 对象, 包含新的对象的 objectId 和 createdAt 时间戳：
-```JavaScript
+```js
 {
   "createdAt": "2017-11-25T01:39:35.931Z",
   "id": "57fbbdb0a2400000"
@@ -118,7 +132,7 @@ curl -X POST \
 curl -X GET http://localhost/1.0/person/57fbbdb0a2400000
 ```
 返回的主体是一个 JSON 对象包含所有用户提供的 field 加上 `createdAt`、`updatedAt` 和 `id` 字段：
-```JavaScript
+```js
 {
   "name": "tom",
   "sex": "male",
@@ -133,7 +147,7 @@ curl -X GET http://localhost/1.0/person/57fbbdb0a2400000
 curl -X GET http://localhost/1.0/person/57fbbdb0a2400000?keys=name%2Csex
 ```
 将返回：
-```JavaScript
+```js
 {
   "name": "tom",
   "sex": "male"
@@ -148,7 +162,7 @@ curl -X PUT \
   http://localhost/1.0/person/57fbbdb0a2400000
 ```
 返回的 JSON 对象会包含 `updatedAt` 和 `id` 字段, 表明更新发生的时间：
-```JavaScript
+```js
 {
   "updatedAt": "2017-11-25T01:39:35.931Z",
   "id": "57fbbdb0a2400000"
@@ -165,7 +179,7 @@ curl -X DELETE http://localhost/1.0/person/57fbbdb0a2400000
 curl -X GET http://localhost/1.0/person
 ```
 返回的值就是一个 JSON 对象包含了 results 字段, 它的值就是对象的列表：
-```JavaScript
+```js
 [
   {
     "name": "tom",
@@ -207,19 +221,19 @@ curl -X GET http://localhost/1.0/person?where=%7B%22name%22%3A%22tom%22%7D
 
 | key          | operation | sample                |
 |--------------|-----------|-----------------------|
-| eq           | 等于       | {"name":{"eq":"tom"}} 或者 {"name":"tom"} |
-| ne           | 不等于     | {"name":{"ne":"tom"}}   |
-| gt           | 大于       | {"age":{"gt":"24"}}    |
-| gte          | 大于等于    | {"age":{"gte":"24"}}    |
-| lt           | 小于       | {"age":{"lt":"24"}}    |
-| lte          | 小于等于    | {"age":{"lte":"24"}}    |
-| like         | 模糊查询    | {"name":{"like":"%m"}}   |
-| not\_like    | 模糊查询    | {"name":{"not_like":"%m"}}   |
-| between      | 区间比较    | {"age":{"between":[22,25]}}   |
-| not\_between | 区间比较    | {"age":{"not_between":[22,25]}}   |
-| in           | 枚举       | {"name":{"in":["tom","lily"]}}   |
-| not\_in      | 枚举       | {"name":{"not_in":["tom","lily"]}}   |
-| or           | 或运算     | {"or":[{"name":"tom"},{"age":24}]}   |
+| eq           | 等于       | `{"name":{"eq":"tom"}}` 或者 `{"name":"tom"}` |
+| ne           | 不等于     | `{"name":{"ne":"tom"}}`   |
+| gt           | 大于       | `{"age":{"gt":"24"}}`    |
+| gte          | 大于等于    | `{"age":{"gte":"24"}}`    |
+| lt           | 小于       | `{"age":{"lt":"24"}}`    |
+| lte          | 小于等于    | `{"age":{"lte":"24"}}`    |
+| like         | 模糊查询    | `{"name":{"like":"%m"}}`   |
+| not\_like    | 模糊查询    | `{"name":{"not_like":"%m"}}`   |
+| between      | 区间比较    | `{"age":{"between":[22,25]}}`   |
+| not\_between | 区间比较    | `{"age":{"not_between":[22,25]}}`   |
+| in           | 枚举       | `{"name":{"in":["tom","lily"]}}`   |
+| not\_in      | 枚举       | `{"name":{"not_in":["tom","lily"]}}`   |
+| or           | 或运算     | `{"or":[{"name":"tom"},{"age":24}]}`   |
 
 #### skip 跳过记录
 通过 `skip` 选项, 可以跳过指定的记录数, 达到翻页的效果。
@@ -242,7 +256,7 @@ curl -X GET http://localhost/1.0/person?order=-id
 curl -X GET http://localhost/1.0/person?count=1&limit=1
 ```
 此时返回结果将包含 `count` 和 `results` 两个字段, 分别包含总数和结果：
-```JavaScript
+```js
 {
   "count": 2,
   "results": [
@@ -260,7 +274,7 @@ curl -X GET http://localhost/1.0/person?count=1&limit=1
 ## 建立扩展对象
 通过 orm 定义 hasOne 和 hasMany, 可以定义对象之间的关联关系, 并在 API 上体现出来, 例如：
 
-```JavaScript
+```js
 module.exports = db => {
   var Person = db.models.person;
 
@@ -342,16 +356,13 @@ Person.hasMany('pets', Pet, {}, {reverse: 'owners'});
 curl -X GET http://localhost/1.0/pet/57fbbdb0a2400007/owners
 ```
 
-#### findby 过滤条件
-
-**Started From 1.13.20, >= 1.13.25 Recommended**
+#### findby 过滤条件 <Badge text=">= 1.13.25" type="warning"/>
 
 通过 `findby` 参数的形式可以对查询对象做出约束。和 `where` 一样, `findby` 参数的值应该是被 JSON 编码又经过 url 编码的的。
 
 参数包含的选项含义如下
 - `findby.extend` 是由 orm 定义时的 `hasOne`, `hasMany`, `extendsTo` 关联关系. 如 extend 描述的**关联关系**对该**基础对象**而言不存在, 则该 `findby` 条件实际上不会生效.
-- `findby.where`: <del>只适用于 `hasOne` 关系</del> 适用于所有的扩展关系. 与[基础的 where](#where-选项) 含义一致. 
-- `findby.on`: 只适用于 `hasMany` 关系. 与[基础的 where](#where-选项) 含义一致, 但其 key 只能是关联关系中的字段, 而不能是被关联中的对象中的字段. 推荐使用功能更为完备的 `findby.where`
+- `findby.where`: 与[基础的 where](#where-选项) 含义一致. 
 
 例如, 存在以下关系
 
@@ -370,26 +381,27 @@ curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22father%22%2C
 ```sh
 curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%2257fbbdb0a2400007%22%7D%7D
 ```
-`findby` 的内容为：`{"extend":"pets","on":{"pets_id":"57fbbdb0a2400007"}}`
+`findby` 的内容为：`{"extend":"pets","where":{"pets_id":"57fbbdb0a2400007"}}`
 
 这看起来似乎等价于 [查询具有reverse关系的扩展对象列表](#查询具有reverse关系的扩展对象列表), 事实上, 当以**完全匹配id**作为查询条件的时候的确如此. 但 findby 比 [查询具有reverse关系的扩展对象列表](#查询具有reverse关系的扩展对象列表) 的优势在于, 可以使用复杂的 where 条件. 例如, 如果我们想搜索宠物 id **不为某些值**的的用户, 就可以这样写:
 
 ```sh
 curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%7B%22not_in%22%3A%5B%2257fbbdb0a2400007%22%5D%7D%7D%7D
 ```
-`findby` 的内容为：`{"extend":"pets","on":{"pets_id":{"not_in":["57fbbdb0a2400007"]}}}`
+`findby` 的内容为：`{"extend":"pets","where":{"pets_id":{"not_in":["57fbbdb0a2400007"]}}}`
 
 
-#### join_where 过滤条件
-
-**Started From 1.13.25**
-
-通过 `join_where` 参数的形式可以在对具有 hasMany 关系的扩展对象查询时, 对关联表中的字段进行筛选做出约束。和 `where` 一样, `join_where` 参数的值应该是被 JSON 编码又经过 url 编码的的。
+#### 将 hasMany 扩展对象中的 extra 属性作为查询条件
 
 例如, 存在以下关系
 
-- person hasMany pets, 且含有扩展字段:
-  - nickname: { type: "text", size: 256 }
+```js
+person.hasMany('pets', pets, {
+  nickname: { type: "text", size: 256 }
+}, {
+  // ...options
+})
+```
 
 现在我们希望查询级联的用户、宠物信息, 要求**按照"拥有年龄不低于 1 岁的的宠物" 对 person 进行 findby 查找**
 
@@ -437,7 +449,7 @@ curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%2
     id
     name
     pets(
-      join_where: {
+      where: {
         nickname: { like: "%a%" }
       }
     ){
@@ -470,11 +482,6 @@ curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%2
     pets(
       where: {
         age: {gte: 1}
-      }
-      # where 和 join_where 可以一起使用, 二者含义不同
-      # where 的筛选对象是 pet 本身的字段;
-      # join_where 的筛选对象是 person-pet 关系中的扩展字段;
-      join_where: {
         nickname: { like: "%a%" }
       }
     ){
@@ -490,7 +497,7 @@ curl -X GET http://localhost/1.0/person?findby=%7B%22extend%22%3A%22pets%22%2C%2
 
 ## ACL
 可以通过定义 Model 的 ACL 控制数据权限。比如:
-```JavaScript
+```js
 const orm = require('@fxjs/orm');
 
 module.exports = db => {
@@ -518,7 +525,7 @@ module.exports = db => {
 };
 ```
 如果定义 Model 时未指定 ACL, 则等同于设定了缺省权限：
-```JavaScript
+```js
 {
   "*": {
     "*": true
@@ -554,7 +561,7 @@ ACL 根据 API 行为将权限分类五种：
 
 比如以上例子, 如果需要设定 `user` 只允许读取 `title` 和 `detail`, 其他人可以读取  `title`, 则可以这样设定：
 
-```JavaScript
+```js
 {
   "*": {
     "*": false,
@@ -575,7 +582,7 @@ ACL 根据 API 行为将权限分类五种：
 
 在 Model 上设定的是整个类的权限, 如果需要对具体的对象设定权限, 可以通过设置 OACL 来实现：
 
-```JavaScript
+```js
 module.exports = db => {
   db.define('person', {
     name: String,
@@ -610,7 +617,7 @@ module.exports = db => {
 
 ### 扩展对象权限
 扩展对象的访问权限控制和基础对象权限相似, 唯一不同的是在 ACL 需要单独指定：
-```JavaScript
+```js
 module.exports = db => {
   var Person = db.define('person', {
     name: String,
@@ -669,7 +676,7 @@ curl -X GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
 
 ## 类型
 
-如果要使用 fib-app 的高级特性, 你需要了解至少以下类型. 更多的类型可参见 [@types/app.d.ts]
+如果要使用 fib-app 的高级特性, 你需要了解至少以下类型. 更多的类型可参见 [typings/app.d.ts]
 
 ```typescript
 interface FibAppORMModelFunction {
@@ -754,4 +761,4 @@ doSomething(orm)
 - [ORM 扩展选项](./app-model-extends.md)
 
 [fib-pool]:https://github.com/fibjs/fib-pool
-[@types/app.d.ts]:https://github.com/fibjs/fib-app/blob/master/%40types/app.d.ts
+[typings/app.d.ts]:https://github.com/fibjs/fib-app/blob/master/typings/app.d.ts

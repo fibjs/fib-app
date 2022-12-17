@@ -27,6 +27,7 @@ module.exports = {
         ],
         sidebar: [
             // ['/', '首页'],
+            ['/zh/getting-started', '快速开始'],
             ['/zh/guide', '指南'],
             '/zh/app-acl',
             ['/zh/app-model-extends', 'ORM 扩展选项'],

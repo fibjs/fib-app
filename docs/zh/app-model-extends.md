@@ -4,7 +4,7 @@
 
 你可以在 Model Function 中调用 app.api 上的 rest 风格函数, 来定制属于你的函数, 比如
 
-```JavaScript
+```js
 module.exports = db => {
   var Person = db.define('person', {
     name: String,
@@ -202,9 +202,12 @@ viewFunctions: {
 #### 共同点
 `viewFunction` 与 `function` 很相似
 
-1. 都要返回符合 [`FibAppResponse` 格式](./@types/app.d.ts) 的对象
+1. 都要返回符合 [`FibAppResponse` 格式] 的对象
 1. 都是 ORM Model 的定义选项
 
 #### 区别
 1. `function` 处理 fib-app 中的 `POST /:classname/:func` 请求; `viewFunctions` 处理 fib-app 中的 `GET /:classname/:func` 且 `Accept` 头包含 `text/html` 的请求
 1. `function` 函数的返回值, fib-app 会尝试以 json 的方式写入 `HttpResponse`; `viewFunction` 函数的返回值, fib-app 会尝试以文本的方式写入 `HttpResponse`
+
+[typings/app.d.ts]:https://github.com/fibjs/fib-app/blob/master/typings/app.d.ts
+[`FibAppResponse` 格式]:typings/app.d.ts

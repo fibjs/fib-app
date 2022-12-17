@@ -1,6 +1,6 @@
 ## `app.api.*`
 
-通过内部方法, 直接进行 rest 风格的操作, 详情可参考 [@types/app.d.ts] 中的 FibAppInternalApis.
+通过内部方法, 直接进行 rest 风格的操作, 详情可参考 [typings/app.d.ts] 中的 FibAppInternalApis.
 
 - app.api.post: FibAppIneternalApiFunction__Post
 - app.api.get: FibAppIneternalApiFunction__Get
@@ -20,7 +20,7 @@ FibAppInternalApis 中的所有所有 rest 操作函数, 内部都经过了 `app
 
 * `app.filterRequest: FibAppSetupChainFn`
 
-注意该函数无返回值, 而是以最后一个参数作为回调函数. 更多详情可参考 [@types/app.d.ts](@types/app.d.ts) 
+注意该函数无返回值, 而是以最后一个参数作为回调函数. 更多详情可参考 [typings/app.d.ts] 
 
 使用 `app.filterRequest` 为 app 定制个性化的路由
 ------------
@@ -74,11 +74,13 @@ app.get('/__null_cls', (request) => {
 实际上, [Model Function](./app-model-function.md) 正是通过 `app.filterRequest` 实现的, 详情可参考 [src/classes/index.ts] 中关于 `app.post(':classname/:func', ...)` 的实现.
 
 [mq.Routing]:http://fibjs.org/docs/manual/object/ifs/routing.md.html
-[src/classes]:src/classes
-[src/classes/index.ts]:src/classes/index.ts
-[src/classes/base.ts]:src/classes/base.ts
-[src/classes/extend.ts]:src/classes/extend.ts
+
+[src/http/index.ts]:https://github.com/fibjs/fib-app/blob/master/src/http/index.ts
+[src/http/base.ts]:https://github.com/fibjs/fib-app/blob/master/src/http/base.ts
+[src/http/extend.ts]:https://github.com/fibjs/fib-app/blob/master/src/http/extend.ts
 
 ### hasMany-extra read/epost/eput(beta)
 
 ...
+
+[typings/app.d.ts]:https://github.com/fibjs/fib-app/blob/master/typings/app.d.ts
