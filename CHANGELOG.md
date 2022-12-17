@@ -1,7 +1,15 @@
 
-v1.16.2 / 2022-11-29
+v1.16.3 / 2022-12-17
 ==================
 
+  * chore: cleanup code.
+  * fix: test error on psql/mysql.
+  * feat: allow put extra conditions in associations' `where`. (#53)
+
+v1.16.2 / 2022-11-29
+====================
+
+  * Release v1.16.2
   * fix: upgrade orm version.
 
 v1.16.1 / 2022-11-29
