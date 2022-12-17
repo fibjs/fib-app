@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>指南 | fib-app</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    
+    <meta name="description" content="fibjs-based application resources(RESTful API, SSR, Other resources) management framework">
+    
+    <link rel="preload" href="/fib-app/assets/css/0.styles.b423d51d.css" as="style"><link rel="preload" href="/fib-app/assets/js/app.d2310b5d.js" as="script"><link rel="preload" href="/fib-app/assets/js/2.5d075586.js" as="script"><link rel="preload" href="/fib-app/assets/js/6.e7cfb7fa.js" as="script"><link rel="preload" href="/fib-app/assets/js/3.b61d035d.js" as="script"><link rel="prefetch" href="/fib-app/assets/js/10.5a0089cb.js"><link rel="prefetch" href="/fib-app/assets/js/11.8ede1dd7.js"><link rel="prefetch" href="/fib-app/assets/js/12.e63a8fc4.js"><link rel="prefetch" href="/fib-app/assets/js/4.8e7892cc.js"><link rel="prefetch" href="/fib-app/assets/js/5.a81d1c6a.js"><link rel="prefetch" href="/fib-app/assets/js/7.bcbe6134.js"><link rel="prefetch" href="/fib-app/assets/js/8.3f7668b0.js"><link rel="prefetch" href="/fib-app/assets/js/9.c9ab58f0.js">
+    <link rel="stylesheet" href="/fib-app/assets/css/0.styles.b423d51d.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/fib-app/" class="home-link router-link-active"><!----> <span class="site-name">fib-app</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/fib-app/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/fib-app/zh/guide.html" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  指南
+</a></div><div class="nav-item"><a href="http://github.com/fibjs/fib-app" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GITHUB
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="http://fibjs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  FIBJS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/fib-app/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/fib-app/zh/guide.html" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  指南
+</a></div><div class="nav-item"><a href="http://github.com/fibjs/fib-app" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GITHUB
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="http://fibjs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  FIBJS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/fib-app/zh/getting-started.html" class="sidebar-link">快速开始</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#create" class="sidebar-link">create</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#get" class="sidebar-link">get</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#find" class="sidebar-link">find</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#update" class="sidebar-link">update</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#remove" class="sidebar-link">remove</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#下一步呢" class="sidebar-link">下一步呢?</a></li></ul></li><li><a href="/fib-app/zh/guide.html" aria-current="page" class="active sidebar-link">指南</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#建立基础脚本" class="sidebar-link">建立基础脚本</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#api-数据格式" class="sidebar-link">API 数据格式</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#特殊字段" class="sidebar-link">特殊字段</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#基础对象访问-api" class="sidebar-link">基础对象访问 API</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#建立扩展对象" class="sidebar-link">建立扩展对象</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#扩展对象访问-api" class="sidebar-link">扩展对象访问 API</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#acl" class="sidebar-link">ACL</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#类型" class="sidebar-link">类型</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#utils" class="sidebar-link">Utils</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#高级特性" class="sidebar-link">高级特性</a></li></ul></li><li><a href="/fib-app/zh/app-acl.html" class="sidebar-link">ACL</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#关键词" class="sidebar-link">关键词</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#实例对象" class="sidebar-link">实例对象</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#身份-主体-role" class="sidebar-link">身份(主体) / Role</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性" class="sidebar-link">操作访问性</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性表-act-descriptor" class="sidebar-link">操作访问性表 / Act Descriptor</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#级联的身份选择-cascaded-selection-for-acl-role" class="sidebar-link">级联的身份选择 / Cascaded Selection for ACL Role</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#acl-oacl" class="sidebar-link">ACL/OACL</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性表中的-extends-extends-in-acl-hash" class="sidebar-link">操作访问性表中的 extends / extends in ACL hash</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#身份冲突" class="sidebar-link">身份冲突</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#许可查找过程" class="sidebar-link">许可查找过程</a></li></ul></li><li><a href="/fib-app/zh/app-model-extends.html" class="sidebar-link">ORM 扩展选项</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-model-extends.html#model-function" class="sidebar-link">Model Function</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-model-extends.html#view-function" class="sidebar-link">View Function</a></li></ul></li><li><a href="/fib-app/zh/app-internal-api.html" class="sidebar-link">内部 API</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-internal-api.html#app-api" class="sidebar-link">app.api.*</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-internal-api.html#使用-app-filterrequest-为-app-定制个性化的路由" class="sidebar-link">使用 app.filterRequest 为 app 定制个性化的路由</a></li></ul></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="指南"><a href="#指南" class="header-anchor">#</a> 指南</h1> <h2 id="建立基础脚本"><a href="#建立基础脚本" class="header-anchor">#</a> 建立基础脚本</h2> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// index.js</span>
+<span class="token keyword">const</span> http <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'http'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> util <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'util'</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> Session <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'fib-session'</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> App <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'fib-app'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">App</span><span class="token punctuation">(</span><span class="token string">'sqlite:test.db'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">uuid</span><span class="token operator">:</span> <span class="token boolean">true</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span>db<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./defs/person'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> session <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Session</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">util<span class="token punctuation">.</span>LruCache</span><span class="token punctuation">(</span><span class="token number">20000</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">timeout</span><span class="token operator">:</span> <span class="token number">60</span> <span class="token operator">*</span> <span class="token number">1000</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> svr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">http<span class="token punctuation">.</span>Server</span><span class="token punctuation">(</span><span class="token number">8080</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>
+  session<span class="token punctuation">.</span>cookie_filter<span class="token punctuation">,</span>
+  <span class="token punctuation">{</span>
+    <span class="token string-property property">'/1.0'</span><span class="token operator">:</span> app
+  <span class="token punctuation">}</span>
+<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+svr<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>其中 <code>person</code> 是 Model 定义模块, 内容如下：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// person.js</span>
+<span class="token keyword">const</span> <span class="token punctuation">{</span> defineAppModel <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'fib-app'</span><span class="token punctuation">)</span>
+
+<span class="token comment">// defineAppModel is not requried, you can return the define function directly</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token function">defineAppModel</span><span class="token punctuation">(</span><span class="token parameter">db</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'person'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">sex</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">age</span><span class="token operator">:</span> Number
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>这是一个标准的 orm 定义, 同样可以使用 orm 的其它功能, 比如类型检查, 事件等。</p> <p><strong>注意</strong>: 定义一个 orm model 时, <code>defineAppModel</code> 不是必需的, 你可以直接返回这个函数作为 orm 定义, 但是, 使用 <code>defineAppModel</code> 方法, 可以在开发中获得更好的类型提示:</p> <p><img src="https://user-images.githubusercontent.com/6339390/208242575-8a398ed1-d015-45fd-a430-0dd1b3802bc9.png" alt="image"></p> <h2 id="api-数据格式"><a href="#api-数据格式" class="header-anchor">#</a> API 数据格式</h2> <p>对于 POST 和 PUT 请求, 请求的主体必须是 JSON 格式, 而且 HTTP header 的 Content-Type 需要设置为 application/json。</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> PUT <span class="token punctuation">\</span>
+  <span class="token parameter variable">-H</span> <span class="token string">&quot;Content-Type: application/json&quot;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'{&quot;name&quot;: &quot;tom&quot;,&quot;sex&quot;:&quot;male&quot;,&quot;age&quot;:23}'</span> <span class="token punctuation">\</span>
+  http://localhost/1.0/person/57fbbdb0a2400000
+</code></pre></div><p>对于所有的请求, 响应格式都是一个 JSON 对象。</p> <p>一个请求是否成功是由 HTTP 状态码标明的。一个 <code>2XX</code> 的状态码表示成功, 而一个 <code>4XX</code> 表示请求失败。当一个请求失败时响应的主体仍然是一个 JSON 对象, 但是总是会包含 code 和 message 这两个字段, 你可以用它们来进行调试。举个例子, 如果一个请求权限认证失败, 会返回以下信息：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;code&quot;</span><span class="token operator">:</span> <span class="token number">4030501</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;message&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The operation isn’t allowed for clients due to class-level permissions.&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>code 编码分为三个部分, 前三位 403 表示错误类型, 05 表示数据表编号, 01 表示详细错误编码。</p> <p>对于 GET 请求, 通常会返回对象数据, 根据 GET 请求的地址不同, 可能会返回一个对象, 也可能会返回一个数组。比如：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;tom&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">23</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>或者：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">[</span>
+  <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;tom&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">23</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;lily&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">22</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">]</span>
+</code></pre></div><h2 id="特殊字段"><a href="#特殊字段" class="header-anchor">#</a> 特殊字段</h2> <p>对象数据中, 有四个特殊含义的字段, 是不允许通过 API 更改的。分别是 <code>id</code>, <code>updatedAt</code>, <code>createdAt</code>, <code>createdBy</code>.</p> <p>其中 <code>id</code>, <code>updatedAt</code>, <code>createdAt</code> 单个字段会自动创建和修改。<code>createdBy</code> 则需要自行指定类型。</p> <h2 id="基础对象访问-api"><a href="#基础对象访问-api" class="header-anchor">#</a> 基础对象访问 API</h2> <p>完成这样的数据定义, 便直接拥有了一整套符合 REST api 规范的接口调用：</p> <table><thead><tr><th>url</th> <th>method</th> <th>action</th></tr></thead> <tbody><tr><td>/1.0/:className</td> <td>POST</td> <td>创建新对象</td></tr> <tr><td>/1.0/:className/:id</td> <td>GET</td> <td>读取对象</td></tr> <tr><td>/1.0/:className/:id</td> <td>PUT</td> <td>修改对象</td></tr> <tr><td>/1.0/:className/:id</td> <td>DELETE</td> <td>删除对象</td></tr> <tr><td>/1.0/:className</td> <td>GET</td> <td>查询对象列表</td></tr></tbody></table> <h3 id="创建新对象"><a href="#创建新对象" class="header-anchor">#</a> 创建新对象</h3> <p>为了创建一个新的对象, 应该向 class 的 URL 发送一个 POST 请求, 其中应该包含对象本身。例如, 要创建如上所说的对象：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> POST <span class="token punctuation">\</span>
+  <span class="token parameter variable">-H</span> <span class="token string">&quot;Content-Type: application/json&quot;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'{&quot;name&quot;: &quot;tom&quot;,&quot;sex&quot;:&quot;male&quot;,&quot;age&quot;:23}'</span> <span class="token punctuation">\</span>
+  http://localhost/1.0/person
+</code></pre></div><p>当创建成功时, HTTP 的返回是 201 Created, 响应的主体是一个 JSON 对象, 包含新的对象的 objectId 和 createdAt 时间戳：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;createdAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;57fbbdb0a2400000&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="读取对象"><a href="#读取对象" class="header-anchor">#</a> 读取对象</h3> <p>当你创建了一个对象时, 你可以通过发送一个 GET 请求到返回的 header 的 Location 以获取它的内容。例如, 为了得到我们上面创建的对象：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person/57fbbdb0a2400000
+</code></pre></div><p>返回的主体是一个 JSON 对象包含所有用户提供的 field 加上 <code>createdAt</code>、<code>updatedAt</code> 和 <code>id</code> 字段：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;tom&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">23</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;createdAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;updatedAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;57fbbdb0a2400000&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>通过设置返回字段 <code>keys</code>, 可以定制返回的内容, <code>keys</code> 的内容是一个以 <code>,</code> 分割的字段名称字符串, ：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person/57fbbdb0a2400000?keys<span class="token operator">=</span>name%2Csex
+</code></pre></div><p>将返回：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;tom&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;male&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="修改对象"><a href="#修改对象" class="header-anchor">#</a> 修改对象</h3> <p>为了更改一个对象已经有的数据, 你可以发送一个 PUT 请求到对象相应的 URL 上, 任何你未指定的 key 都不会更改, 所以你可以只更新对象数据的一个子集。例如, 我们来更改我们对象的一个 age 字段：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> PUT <span class="token punctuation">\</span>
+  <span class="token parameter variable">-H</span> <span class="token string">&quot;Content-Type: application/json&quot;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'{&quot;age&quot;: 25}'</span> <span class="token punctuation">\</span>
+  http://localhost/1.0/person/57fbbdb0a2400000
+</code></pre></div><p>返回的 JSON 对象会包含 <code>updatedAt</code> 和 <code>id</code> 字段, 表明更新发生的时间：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;updatedAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;57fbbdb0a2400000&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="删除对象"><a href="#删除对象" class="header-anchor">#</a> 删除对象</h3> <p>为了删除一个对象, 可以发送一个 DELETE 请求到指定的对象的 URL, 比如：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> DELETE http://localhost/1.0/person/57fbbdb0a2400000
+</code></pre></div><h3 id="查询对象列表"><a href="#查询对象列表" class="header-anchor">#</a> 查询对象列表</h3> <p>通过发送一个 GET 请求到类的 URL 上, 不需要任何 URL 参数, 你就可以一次获取多个对象。下面就是简单地获取所有用户：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person
+</code></pre></div><p>返回的值就是一个 JSON 对象包含了 results 字段, 它的值就是对象的列表：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">[</span>
+  <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;tom&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">23</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;createdAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;updatedAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;57fbbdb0a2400000&quot;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;lily&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">22</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;createdAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;updatedAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;57fbbdb0a2400001&quot;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">]</span>
+</code></pre></div><h4 id="keys-字段定制"><a href="#keys-字段定制" class="header-anchor">#</a> keys 字段定制</h4> <p>与对象查询一样, 查询列表时可以通过设定 <code>keys</code> 来定制返回结果所包含的字段。<code>keys</code> 的内容是一个以 <code>,</code> 分割的字段名称字符串, 例如：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?keys<span class="token operator">=</span>name%2Cage
+</code></pre></div><p>将指定只返回 <code>name</code> 和 <code>age</code> 两个字段。</p> <h4 id="where-过滤条件"><a href="#where-过滤条件" class="header-anchor">#</a> where 过滤条件</h4> <p>通过 <code>where</code> 参数的形式可以对查询对象做出约束。</p> <p><code>where</code> 参数的值应该是 JSON 编码过的。就是说, 如果你查看真正被发出的 URL 请求, 它应该是先被 JSON 编码过, 然后又被 URL 编码过。最简单的使用 <code>where</code> 参数的方式就是包含应有的 key 和 value。例如, 如果我们想要搜索名字为 tom 的用户, 我们应该这样构造查询:</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?where<span class="token operator">=</span>%7B%22name%22%3A%22tom%22%7D
+</code></pre></div><p><code>where</code> 的值为一个 urlencode 后的 JSON 字符串, 内容为：<code>{&quot;name&quot;:&quot;tom&quot;}</code></p> <p>除了完全匹配一个给定的值以外, <code>where</code> 也支持比较的方式, 比如包含。<code>where</code> 参数支持如下选项：</p> <h5 id="where-选项"><a href="#where-选项" class="header-anchor">#</a> where 选项</h5> <table><thead><tr><th>key</th> <th>operation</th> <th>sample</th></tr></thead> <tbody><tr><td>eq</td> <td>等于</td> <td><code>{&quot;name&quot;:{&quot;eq&quot;:&quot;tom&quot;}}</code> 或者 <code>{&quot;name&quot;:&quot;tom&quot;}</code></td></tr> <tr><td>ne</td> <td>不等于</td> <td><code>{&quot;name&quot;:{&quot;ne&quot;:&quot;tom&quot;}}</code></td></tr> <tr><td>gt</td> <td>大于</td> <td><code>{&quot;age&quot;:{&quot;gt&quot;:&quot;24&quot;}}</code></td></tr> <tr><td>gte</td> <td>大于等于</td> <td><code>{&quot;age&quot;:{&quot;gte&quot;:&quot;24&quot;}}</code></td></tr> <tr><td>lt</td> <td>小于</td> <td><code>{&quot;age&quot;:{&quot;lt&quot;:&quot;24&quot;}}</code></td></tr> <tr><td>lte</td> <td>小于等于</td> <td><code>{&quot;age&quot;:{&quot;lte&quot;:&quot;24&quot;}}</code></td></tr> <tr><td>like</td> <td>模糊查询</td> <td><code>{&quot;name&quot;:{&quot;like&quot;:&quot;%m&quot;}}</code></td></tr> <tr><td>not_like</td> <td>模糊查询</td> <td><code>{&quot;name&quot;:{&quot;not_like&quot;:&quot;%m&quot;}}</code></td></tr> <tr><td>between</td> <td>区间比较</td> <td><code>{&quot;age&quot;:{&quot;between&quot;:[22,25]}}</code></td></tr> <tr><td>not_between</td> <td>区间比较</td> <td><code>{&quot;age&quot;:{&quot;not_between&quot;:[22,25]}}</code></td></tr> <tr><td>in</td> <td>枚举</td> <td><code>{&quot;name&quot;:{&quot;in&quot;:[&quot;tom&quot;,&quot;lily&quot;]}}</code></td></tr> <tr><td>not_in</td> <td>枚举</td> <td><code>{&quot;name&quot;:{&quot;not_in&quot;:[&quot;tom&quot;,&quot;lily&quot;]}}</code></td></tr> <tr><td>or</td> <td>或运算</td> <td><code>{&quot;or&quot;:[{&quot;name&quot;:&quot;tom&quot;},{&quot;age&quot;:24}]}</code></td></tr></tbody></table> <h4 id="skip-跳过记录"><a href="#skip-跳过记录" class="header-anchor">#</a> skip 跳过记录</h4> <p>通过 <code>skip</code> 选项, 可以跳过指定的记录数, 达到翻页的效果。</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?skip<span class="token operator">=</span><span class="token number">100</span>
+</code></pre></div><h4 id="limit-返回记录限制"><a href="#limit-返回记录限制" class="header-anchor">#</a> limit 返回记录限制</h4> <p>通过 <code>limit</code> 选项, 可以限制返回记录数, <code>limit</code> 的有效数字为 1-1000, 缺省为 100。</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?limit<span class="token operator">=</span><span class="token number">100</span>
+</code></pre></div><h4 id="order-指定排序方式"><a href="#order-指定排序方式" class="header-anchor">#</a> order 指定排序方式</h4> <p>通过 <code>order</code> 选项, 设定返回结果集的排序方式, 字段名前包含 <code>-</code> 时为倒序。</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?order<span class="token operator">=</span>-id
+</code></pre></div><h4 id="count-返回结果总数"><a href="#count-返回结果总数" class="header-anchor">#</a> count 返回结果总数</h4> <p>在请求时增加 <code>count</code> 可以在返回指定内容的同时返回结果集的总数。</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?count<span class="token operator">=</span><span class="token number">1</span><span class="token operator">&amp;</span><span class="token assign-left variable">limit</span><span class="token operator">=</span><span class="token number">1</span>
+</code></pre></div><p>此时返回结果将包含 <code>count</code> 和 <code>results</code> 两个字段, 分别包含总数和结果：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;count&quot;</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;results&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token string-property property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;tom&quot;</span><span class="token punctuation">,</span>
+      <span class="token string-property property">&quot;sex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span>
+      <span class="token string-property property">&quot;age&quot;</span><span class="token operator">:</span> <span class="token number">23</span><span class="token punctuation">,</span>
+      <span class="token string-property property">&quot;createdAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+      <span class="token string-property property">&quot;updatedAt&quot;</span><span class="token operator">:</span> <span class="token string">&quot;2017-11-25T01:39:35.931Z&quot;</span><span class="token punctuation">,</span>
+      <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;57fbbdb0a2400000&quot;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="建立扩展对象"><a href="#建立扩展对象" class="header-anchor">#</a> 建立扩展对象</h2> <p>通过 orm 定义 hasOne 和 hasMany, 可以定义对象之间的关联关系, 并在 API 上体现出来, 例如：</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token parameter">db</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> Person <span class="token operator">=</span> db<span class="token punctuation">.</span>models<span class="token punctuation">.</span>person<span class="token punctuation">;</span>
+
+  <span class="token keyword">var</span> Pet <span class="token operator">=</span> db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'pet'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  Person<span class="token punctuation">.</span><span class="token function">hasMany</span><span class="token punctuation">(</span><span class="token string">'pets'</span><span class="token punctuation">,</span> Pet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><h2 id="扩展对象访问-api"><a href="#扩展对象访问-api" class="header-anchor">#</a> 扩展对象访问 API</h2> <p>下面是扩展对象的 API 定义：</p> <table><thead><tr><th>url</th> <th>method</th> <th>action</th></tr></thead> <tbody><tr><td>/1.0/:className/:id/:extendName</td> <td>PUT</td> <td>设置扩展对象</td></tr> <tr><td>/1.0/:className/:id/:extendName</td> <td>POST</td> <td>创建扩展对象</td></tr> <tr><td>/1.0/:className/:id/:extendName/:rid</td> <td>GET</td> <td>读取扩展对象</td></tr> <tr><td>/1.0/:className/:id/:extendName/:rid</td> <td>PUT</td> <td>修改扩展对象</td></tr> <tr><td>/1.0/:className/:id/:extendName/:rid</td> <td>DELETE</td> <td>删除扩展对象</td></tr> <tr><td>/1.0/:className/:id/:extendName</td> <td>GET</td> <td>查询扩展对象列表</td></tr></tbody></table> <h3 id="设置扩展对象"><a href="#设置扩展对象" class="header-anchor">#</a> 设置扩展对象</h3> <p>设置扩展对象是将两个独立的对象建立联系。比如 tom 领养了一只叫 cat 的宠物, 可以用下面的操作实现：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> PUT <span class="token punctuation">\</span>
+  <span class="token parameter variable">-H</span> <span class="token string">&quot;Content-Type: application/json&quot;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'{&quot;id&quot;: &quot;57fbbdb0a2400007&quot;}'</span> <span class="token punctuation">\</span>
+  http://localhost/1.0/person/57fbbdb0a2400000/pets
+</code></pre></div><p>在调用里需要在 body 内指定 cat 的 id。</p> <h3 id="创建扩展对象"><a href="#创建扩展对象" class="header-anchor">#</a> 创建扩展对象</h3> <p>直接创建扩展对象, 可以在创建对象的同时, 建立对象之间的联系。比如：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> POST <span class="token punctuation">\</span>
+  <span class="token parameter variable">-H</span> <span class="token string">&quot;Content-Type: application/json&quot;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'{&quot;name&quot;: &quot;cat&quot;}'</span> <span class="token punctuation">\</span>
+  http://localhost/1.0/person/57fbbdb0a2400000/pets
+</code></pre></div><p>将创建一只名叫 cat 的宠物, 并建立与 tom 的关联关系。</p> <h3 id="读取扩展对象"><a href="#读取扩展对象" class="header-anchor">#</a> 读取扩展对象</h3> <p>读取扩展对象与读取基础对象很相似, 也同样支持 keys 选项：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+</code></pre></div><h3 id="修改扩展对象"><a href="#修改扩展对象" class="header-anchor">#</a> 修改扩展对象</h3> <p>读取扩展对象与读取基础对象很相似：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> PUT <span class="token punctuation">\</span>
+  <span class="token parameter variable">-H</span> <span class="token string">&quot;Content-Type: application/json&quot;</span> <span class="token punctuation">\</span>
+  <span class="token parameter variable">-d</span> <span class="token string">'{&quot;name&quot;: &quot;cat 1&quot;}'</span> <span class="token punctuation">\</span>
+  http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+</code></pre></div><h3 id="删除扩展对象"><a href="#删除扩展对象" class="header-anchor">#</a> 删除扩展对象</h3> <p>删除扩展对象不会删除对象本身, 只会解除对象之间的关系：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> DETELE http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+</code></pre></div><p><strong>注意</strong> 在设定了 <code>reverse</code> 名的 <code>hasOne</code> 关系中, revesed 的一方无法对发起方做删除操作, <code>@fxjs/orm</code> 底层认为该操作不合理. 尽管 <code>fib-app</code> 的 ACL/OACL 机制在此场景下可以正确计算出用户预期的 ACL 值, 但限于 <code>@fxjs/orm</code> 的支持不足, 我们无法进行这样的操作.</p> <h3 id="查询扩展对象列表"><a href="#查询扩展对象列表" class="header-anchor">#</a> 查询扩展对象列表</h3> <p>查询扩展对象列表与查询基础对象列表很相似, 也同样支持 keys 以及条件过滤等选项：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person/57fbbdb0a2400000/pets
+</code></pre></div><h4 id="查询具有reverse关系的扩展对象列表"><a href="#查询具有reverse关系的扩展对象列表" class="header-anchor">#</a> 查询具有reverse关系的扩展对象列表</h4> <p>如果 orm 中定义了 person hasMany pets 时声明了 <code>reverse</code> 选项, 就像这样:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>Person<span class="token punctuation">.</span><span class="token function">hasMany</span><span class="token punctuation">(</span><span class="token string">'pets'</span><span class="token punctuation">,</span> Pet<span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token literal-property property">reverse</span><span class="token operator">:</span> <span class="token string">'owners'</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>也可以通过 pets 去筛选所有的拥有某只宠物的的 owners(person), 如下:</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/pet/57fbbdb0a2400007/owners
+</code></pre></div><h4 id="findby-过滤条件"><a href="#findby-过滤条件" class="header-anchor">#</a> findby 过滤条件 <span class="badge warning" style="vertical-align:top;" data-v-15b7b770>&gt;= 1.13.25</span></h4> <p>通过 <code>findby</code> 参数的形式可以对查询对象做出约束。和 <code>where</code> 一样, <code>findby</code> 参数的值应该是被 JSON 编码又经过 url 编码的的。</p> <p>参数包含的选项含义如下</p> <ul><li><code>findby.extend</code> 是由 orm 定义时的 <code>hasOne</code>, <code>hasMany</code>, <code>extendsTo</code> 关联关系. 如 extend 描述的<strong>关联关系</strong>对该<strong>基础对象</strong>而言不存在, 则该 <code>findby</code> 条件实际上不会生效.</li> <li><code>findby.where</code>: 与<a href="#where-%E9%80%89%E9%A1%B9">基础的 where</a> 含义一致.</li></ul> <p>例如, 存在以下关系</p> <ul><li>person hasOne father</li> <li>person hasMany pets</li></ul> <p>如果我们想要搜索父亲名字为 <code>anleb</code> 的用户, 我们可以这样构造查询:</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?findby<span class="token operator">=</span>%7B%22extend%22%3A%22father%22%2C%22where%22%3A%7B%22name%22%3A%22anleb%22%7D%7D
+</code></pre></div><p><code>findby</code> 的内容为：<code>{&quot;extend&quot;:&quot;father&quot;,&quot;where&quot;:{&quot;name&quot;:&quot;anleb&quot;}}</code></p> <p>如果我们想要搜索拥有名为 <code>doggy</code> 的一只宠物的用户, 是无法直接通过宠物的 name 去筛选的, 我们必须先得到名为 <code>doggy</code> 的宠物的 id, 然后再筛选. 我们应该这样构造查询:</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?findby<span class="token operator">=</span>%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%2257fbbdb0a2400007%22%7D%7D
+</code></pre></div><p><code>findby</code> 的内容为：<code>{&quot;extend&quot;:&quot;pets&quot;,&quot;where&quot;:{&quot;pets_id&quot;:&quot;57fbbdb0a2400007&quot;}}</code></p> <p>这看起来似乎等价于 <a href="#%E6%9F%A5%E8%AF%A2%E5%85%B7%E6%9C%89reverse%E5%85%B3%E7%B3%BB%E7%9A%84%E6%89%A9%E5%B1%95%E5%AF%B9%E8%B1%A1%E5%88%97%E8%A1%A8">查询具有reverse关系的扩展对象列表</a>, 事实上, 当以<strong>完全匹配id</strong>作为查询条件的时候的确如此. 但 findby 比 <a href="#%E6%9F%A5%E8%AF%A2%E5%85%B7%E6%9C%89reverse%E5%85%B3%E7%B3%BB%E7%9A%84%E6%89%A9%E5%B1%95%E5%AF%B9%E8%B1%A1%E5%88%97%E8%A1%A8">查询具有reverse关系的扩展对象列表</a> 的优势在于, 可以使用复杂的 where 条件. 例如, 如果我们想搜索宠物 id <strong>不为某些值</strong>的的用户, 就可以这样写:</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person?findby<span class="token operator">=</span>%7B%22extend%22%3A%22pets%22%2C%22on%22%3A%7B%22pets_id%22%3A%7B%22not_in%22%3A%5B%2257fbbdb0a2400007%22%5D%7D%7D%7D
+</code></pre></div><p><code>findby</code> 的内容为：<code>{&quot;extend&quot;:&quot;pets&quot;,&quot;where&quot;:{&quot;pets_id&quot;:{&quot;not_in&quot;:[&quot;57fbbdb0a2400007&quot;]}}}</code></p> <h4 id="将-hasmany-扩展对象中的-extra-属性作为查询条件"><a href="#将-hasmany-扩展对象中的-extra-属性作为查询条件" class="header-anchor">#</a> 将 hasMany 扩展对象中的 extra 属性作为查询条件</h4> <p>例如, 存在以下关系</p> <div class="language-js extra-class"><pre class="language-js"><code>person<span class="token punctuation">.</span><span class="token function">hasMany</span><span class="token punctuation">(</span><span class="token string">'pets'</span><span class="token punctuation">,</span> pets<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">nickname</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token literal-property property">type</span><span class="token operator">:</span> <span class="token string">&quot;text&quot;</span><span class="token punctuation">,</span> <span class="token literal-property property">size</span><span class="token operator">:</span> <span class="token number">256</span> <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  <span class="token comment">// ...options</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>现在我们希望查询级联的用户、宠物信息, 要求<strong>按照&quot;拥有年龄不低于 1 岁的的宠物&quot; 对 person 进行 findby 查找</strong></p> <p>一般可以使用 graphql 进行查询, 如下:</p> <div class="language-graphql extra-class"><pre class="language-graphql"><code><span class="token comment"># curl -X POST http://localhost/graphql -H 'content-type: application/graphql'</span>
+<span class="token punctuation">{</span>
+  <span class="token property-query">find_persons</span><span class="token punctuation">(</span>
+    <span class="token attr-name">findby</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      <span class="token comment"># 按拥有&quot;年龄不低于 1 岁的宠物&quot;为条件找到用户</span>
+      <span class="token attr-name">extend</span><span class="token punctuation">:</span> <span class="token description string">&quot;<span class="token language-markdown">pets</span>&quot;</span>
+      <span class="token attr-name">where</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token attr-name">age</span><span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token attr-name">gt</span><span class="token punctuation">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token property">id</span>
+    <span class="token property">name</span>
+    <span class="token object">pets</span><span class="token punctuation">{</span>
+      <span class="token property">id</span>
+      <span class="token property">name</span>
+      <span class="token object">extra</span><span class="token punctuation">{</span>
+        <span class="token property">nickname</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>如果我们希望在做 pets 查询时, 过滤出其宠物 nickname 含有 <code>a</code> 字母的宠物, 则可以这样写:</p> <div class="language-graphql extra-class"><pre class="language-graphql"><code><span class="token comment"># curl -X POST http://localhost/graphql -H 'content-type: application/graphql'</span>
+<span class="token punctuation">{</span>
+  <span class="token property-query">find_persons</span><span class="token punctuation">(</span>
+    <span class="token attr-name">findby</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      <span class="token comment"># 按拥有&quot;年龄不低于 1 岁的宠物&quot;为条件找到用户</span>
+      <span class="token attr-name">extend</span><span class="token punctuation">:</span> <span class="token description string">&quot;<span class="token language-markdown">pets</span>&quot;</span>
+      <span class="token attr-name">where</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token attr-name">age</span><span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token attr-name">gte</span><span class="token punctuation">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token property">id</span>
+    <span class="token property">name</span>
+    <span class="token property-query">pets</span><span class="token punctuation">(</span>
+      <span class="token attr-name">where</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token attr-name">nickname</span><span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token attr-name">like</span><span class="token punctuation">:</span> <span class="token string">&quot;%a%&quot;</span> <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token property">id</span>
+      <span class="token property">name</span>
+      <span class="token object">extra</span><span class="token punctuation">{</span>
+        <span class="token property">nickname</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p><strong>注意</strong> 由于 M:N 类型的数据标关系固有特点, 由 <code>findby</code> 筛选出的用户<strong>必然</strong>拥有一岁以上的宠物, 但并<strong>不一定只</strong>拥有一岁以上的宠物. 如果你希望读取 pets 时只筛选出年龄不低于 1 岁的宠物, 记得使用 where 对 pets 也进行过滤, 如下:</p> <div class="language-graphql extra-class"><pre class="language-graphql"><code><span class="token comment"># curl -X POST http://localhost/graphql -H 'content-type: application/graphql'</span>
+<span class="token punctuation">{</span>
+  <span class="token property-query">find_persons</span><span class="token punctuation">(</span>
+    <span class="token attr-name">findby</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      <span class="token comment"># 按拥有&quot;年龄不低于 1 岁的宠物&quot;为条件找到用户</span>
+      <span class="token attr-name">extend</span><span class="token punctuation">:</span> <span class="token description string">&quot;<span class="token language-markdown">pets</span>&quot;</span>
+      <span class="token attr-name">where</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token attr-name">age</span><span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token attr-name">gte</span><span class="token punctuation">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token property">id</span>
+    <span class="token property">name</span>
+    <span class="token property-query">pets</span><span class="token punctuation">(</span>
+      <span class="token attr-name">where</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token attr-name">age</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token attr-name">gte</span><span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">}</span>
+        <span class="token attr-name">nickname</span><span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token attr-name">like</span><span class="token punctuation">:</span> <span class="token string">&quot;%a%&quot;</span> <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">)</span><span class="token punctuation">{</span>
+      <span class="token property">id</span>
+      <span class="token property">name</span>
+      <span class="token object">extra</span><span class="token punctuation">{</span>
+        <span class="token property">nickname</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="acl"><a href="#acl" class="header-anchor">#</a> ACL</h2> <p>可以通过定义 Model 的 ACL 控制数据权限。比如:</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> orm <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'@fxjs/orm'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token parameter">db</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'blog'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">title</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">detail</span><span class="token operator">:</span> String<span class="token punctuation">,</span> 
+    <span class="token literal-property property">note</span><span class="token operator">:</span> String
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token function-variable function">ACL</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;57fbbdb0a2400000&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;roles&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;user&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;read&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><p>如果定义 Model 时未指定 ACL, 则等同于设定了缺省权限：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="主体"><a href="#主体" class="header-anchor">#</a> 主体</h3> <p>ACL 主体描述有三种, 用户 <code>id</code>, 用户 <code>role</code> 和 <code>*</code>, <code>id</code> 表示一个具体的用户, <code>role</code> 表示具有某个角色的用户, <code>*</code> 表示所有用户：</p> <table><thead><tr><th>主体</th> <th>描述</th> <th>优先级</th></tr></thead> <tbody><tr><td>id</td> <td>具体用户的 id</td> <td>1</td></tr> <tr><td>role</td> <td>用户组名</td> <td>2</td></tr> <tr><td>*</td> <td>全体</td> <td>3</td></tr></tbody></table> <p>在检查权限时, 首先会匹配 <code>id</code> 对应的权限, 如果未指定, 则匹配用户 <code>role</code> 对应的权限, 如果仍为指定, 则查看是否指定了 <code>*</code> 的权限, 如果 <code>*</code> 也未指定, 则没有权限。</p> <p>比如上面的权限配置, 指定了 <code>user</code> 用户组可以阅读, 用户 <code>57fbbdb0a2400000</code> 拥有全部权限, 而其它用户没有任何权限。</p> <h3 id="权限"><a href="#权限" class="header-anchor">#</a> 权限</h3> <p>ACL 根据 API 行为将权限分类五种：</p> <table><thead><tr><th>权限</th> <th>描述</th> <th>允许类型</th></tr></thead> <tbody><tr><td>create</td> <td>创建对象</td> <td>true / false / array</td></tr> <tr><td>read</td> <td>读取对象</td> <td>true / false / array</td></tr> <tr><td>write</td> <td>修改对象</td> <td>true / false / array</td></tr> <tr><td>delete</td> <td>删除对象</td> <td>true / false</td></tr> <tr><td>find</td> <td>查询对象列表</td> <td>true / false</td></tr> <tr><td>*</td> <td>匹配所有权限</td> <td>true / false / array</td></tr></tbody></table> <p>权限制定 <code>true</code> 为允许访问, 为 <code>false</code> 为禁止访问, 为 <code>array</code> 为只允许指定的字段的访问。<code>delete</code> 和 <code>find</code> 不接受 <code>array</code>, 如果设置了 <code>array</code> 则视同为 <code>true</code>。如果指定的权限不存在, 则匹配同主体下的 <code>*</code> 权限。若都不存在, 再一次查询下一优先级的主体。</p> <p>比如以上例子, 如果需要设定 <code>user</code> 只允许读取 <code>title</code> 和 <code>detail</code>, 其他人可以读取  <code>title</code>, 则可以这样设定：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">{</span>
+  <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;read&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'title'</span><span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;57fbbdb0a2400000&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token string-property property">&quot;roles&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;user&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token string-property property">&quot;read&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'title'</span><span class="token punctuation">,</span> <span class="token string">'detail'</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="对象权限"><a href="#对象权限" class="header-anchor">#</a> 对象权限</h3> <p>在 Model 上设定的是整个类的权限, 如果需要对具体的对象设定权限, 可以通过设置 OACL 来实现：</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token parameter">db</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'person'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">sex</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">age</span><span class="token operator">:</span> Number
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token function-variable function">ACL</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">OACL</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">var</span> _acl <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>id <span class="token operator">===</span> session<span class="token punctuation">.</span>id<span class="token punctuation">)</span>
+        _acl<span class="token punctuation">[</span>session<span class="token punctuation">.</span>id<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">return</span> _acl<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><p>在这个例子中, 当访问者是对象本人时, 将被允许全部操作, 否则禁止一切访问。会按照以下步骤检查权限：</p> <ul><li><code>person[57fbbdb0a2400000]</code> =&gt; <code>OACL</code></li> <li><code>person</code> =&gt; <code>ACL</code></li></ul> <p><strong>注意</strong> 在 OACL 中, <code>this</code> 指向查询到的对象的 <code>@fxjs/orm</code> 的 Model 实例(类型为 <code>FibApp.FibAppOrmInstance</code>).</p> <h3 id="扩展对象权限"><a href="#扩展对象权限" class="header-anchor">#</a> 扩展对象权限</h3> <p>扩展对象的访问权限控制和基础对象权限相似, 唯一不同的是在 ACL 需要单独指定：</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token parameter">db</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> Person <span class="token operator">=</span> db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'person'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">sex</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">age</span><span class="token operator">:</span> Number
+  <span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">{</span>
+    <span class="token function-variable function">ACL</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;read&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">,</span> <span class="token string">'sex'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+          <span class="token string-property property">&quot;extends&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;pets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token string-property property">&quot;read&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+              <span class="token string-property property">&quot;find&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">OACL</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">var</span> _acl <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>id <span class="token operator">===</span> session<span class="token punctuation">.</span>id<span class="token punctuation">)</span>
+        _acl<span class="token punctuation">[</span>session<span class="token punctuation">.</span>id<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+          <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+          <span class="token string-property property">&quot;extends&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;pets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">return</span> _acl<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">var</span> Pet <span class="token operator">=</span> db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'pet'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  Person<span class="token punctuation">.</span><span class="token function">hasMany</span><span class="token punctuation">(</span><span class="token string">'pets'</span><span class="token punctuation">,</span> Pet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><p>这个定义中, 任何人都可以查阅个人信息的 <code>name</code> 和 <code>sex</code>, 并自由查阅和搜索他的 <code>pets</code>, 用户本人可以操作自己的所有数据, 以及拥有自己宠物信息的全部权限。</p> <p>在检查扩展对象的访问权限时, 会分别检查对象权限和扩展对象权限。比如以下请求：</p> <div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span> <span class="token parameter variable">-X</span> GET http://localhost/1.0/person/57fbbdb0a2400000/pets/57fbbdb0a2400007
+</code></pre></div><p>会按照以下步骤检查权限：</p> <ul><li><code>pets[57fbbdb0a2400007]</code> =&gt; <code>OACL</code></li> <li><code>person[57fbbdb0a2400000]</code> =&gt; <code>OACL</code> =&gt; <code>extends</code> =&gt; <code>pets</code></li> <li><code>person</code> =&gt; <code>ACL</code> =&gt; <code>extends</code> =&gt; <code>pets</code></li> <li><code>pets</code> =&gt; <code>ACL</code></li></ul> <p>如果你想了解更多细节，请参考<a href="/fib-app/zh/app-acl.html">ACL/OACL</a></p> <h2 id="类型"><a href="#类型" class="header-anchor">#</a> 类型</h2> <p>如果要使用 fib-app 的高级特性, 你需要了解至少以下类型. 更多的类型可参见 <a href="https://github.com/fibjs/fib-app/blob/master/typings/app.d.ts" target="_blank" rel="noopener noreferrer">typings/app.d.ts<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <div class="language-typescript extra-class"><pre class="language-typescript"><code><span class="token keyword">interface</span> <span class="token class-name">FibAppORMModelFunction</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">(</span>req<span class="token operator">:</span> FibAppReq<span class="token punctuation">,</span> data<span class="token operator">:</span> FibAppReqData<span class="token punctuation">)</span><span class="token operator">:</span> FibAppModelFunctionResponse
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span> <span class="token class-name">FibAppSetupChainFn</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">(</span>origReq<span class="token operator">:</span> FibAppHttpRequest<span class="token punctuation">,</span> classname<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">,</span> func<span class="token operator">:</span> FibAppORMModelFunction<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span> <span class="token class-name">FibAppReq</span> <span class="token punctuation">{</span>
+    session<span class="token operator">:</span> FibAppSession
+    query<span class="token operator">:</span> FibAppReqQuery
+    request<span class="token operator">?</span><span class="token operator">:</span> FibAppHttpRequest
+    error<span class="token operator">?</span><span class="token operator">:</span> APPError
+<span class="token punctuation">}</span>
+
+<span class="token keyword">interface</span> <span class="token class-name">FibAppReqData</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">[</span>key<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="utils"><a href="#utils" class="header-anchor">#</a> Utils</h2> <h3 id="app-diagram-string"><a href="#app-diagram-string" class="header-anchor">#</a> <code>app.diagram(): string</code></h3> <p>在完成数据定义以后, 可以使用 <code>app.diagram()</code> 绘制数据模型的 <code>svg</code> 格式类图.</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>fs<span class="token punctuation">.</span><span class="token function">writeTextFile</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span><span class="token function">join</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">,</span> <span class="token string">'diagram.svg'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> app<span class="token punctuation">.</span><span class="token function">diagram</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>保存至文件会得到类似下面的图像：</p> <p><img src="/fib-app/assets/img/diagram.11ef5ff3.svg" alt="diagram"></p> <h3 id="app-dbpool"><a href="#app-dbpool" class="header-anchor">#</a> <code>app.dbPool</code></h3> <p><code>app.db</code> 是 <code>app.dbPool</code> 的别名, 它本质上是一个产生 <code>@fxjs/orm</code> 实例的 <a href="https://github.com/fibjs/fib-pool" target="_blank" rel="noopener noreferrer">fib-pool<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a> 对象. 其基本使用方法为:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>app<span class="token punctuation">.</span><span class="token function">dbPool</span><span class="token punctuation">(</span><span class="token parameter">orm</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token comment">// do anything you want with orm in this pool's callback</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>切记, 对于 app.dbPool 产生的 orm 对象, 一切操作必须在 pool 的回调中完成. 这是因为, 在 pool 回调函数调用完后, orm 将会在<strong>不可预期的短时间内</strong>被释放, 断开与数据库的连接, 此时的 orm 已经无效.</p> <p>基于同样的理由, 你<strong>不</strong>应该在 pool 的回调中开启新的异步回调或协程并在其中尝试使用 orm, 因为 orm 的有效性依然是<strong>不可预期</strong>的.</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>app<span class="token punctuation">.</span><span class="token function">dbPool</span><span class="token punctuation">(</span><span class="token parameter">orm</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token comment">// right</span>
+  <span class="token function">doSomethingSync</span><span class="token punctuation">(</span>orm<span class="token punctuation">)</span>
+
+  <span class="token comment">// false!</span>
+  coroutine<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token function">doSomething</span><span class="token punctuation">(</span>orm<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+  <span class="token comment">// false!</span>
+  <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token function">doSomething</span><span class="token punctuation">(</span>orm<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+  <span class="token comment">// right</span>
+  <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    app<span class="token punctuation">.</span><span class="token function">dbPool</span><span class="token punctuation">(</span><span class="token parameter">new_orm</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      <span class="token function">doSomethingSync</span><span class="token punctuation">(</span>orm<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token comment">// false!</span>
+<span class="token keyword">const</span> orm <span class="token operator">=</span> app<span class="token punctuation">.</span><span class="token function">dbPool</span><span class="token punctuation">(</span><span class="token parameter">orm</span> <span class="token operator">=&gt;</span> orm<span class="token punctuation">)</span>
+<span class="token function">doSomething</span><span class="token punctuation">(</span>orm<span class="token punctuation">)</span>
+</code></pre></div><h2 id="高级特性"><a href="#高级特性" class="header-anchor">#</a> 高级特性</h2> <ul><li><a href="/fib-app/zh/app-internal-api.html">内部方法: app.api.*</a></li> <li><a href="/fib-app/zh/app-model-extends.html">ORM 扩展选项</a></li></ul></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/fib-app/zh/getting-started.html" class="prev">
+        快速开始
+      </a></span> <span class="next"><a href="/fib-app/zh/app-acl.html">
+        ACL
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/fib-app/assets/js/app.d2310b5d.js" defer></script><script src="/fib-app/assets/js/2.5d075586.js" defer></script><script src="/fib-app/assets/js/6.e7cfb7fa.js" defer></script><script src="/fib-app/assets/js/3.b61d035d.js" defer></script>
+  </body>
+</html>

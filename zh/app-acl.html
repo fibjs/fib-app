@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ACL | fib-app</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    
+    <meta name="description" content="fibjs-based application resources(RESTful API, SSR, Other resources) management framework">
+    
+    <link rel="preload" href="/fib-app/assets/css/0.styles.b423d51d.css" as="style"><link rel="preload" href="/fib-app/assets/js/app.d2310b5d.js" as="script"><link rel="preload" href="/fib-app/assets/js/2.5d075586.js" as="script"><link rel="preload" href="/fib-app/assets/js/9.c9ab58f0.js" as="script"><link rel="prefetch" href="/fib-app/assets/js/10.5a0089cb.js"><link rel="prefetch" href="/fib-app/assets/js/11.8ede1dd7.js"><link rel="prefetch" href="/fib-app/assets/js/12.e63a8fc4.js"><link rel="prefetch" href="/fib-app/assets/js/3.b61d035d.js"><link rel="prefetch" href="/fib-app/assets/js/4.8e7892cc.js"><link rel="prefetch" href="/fib-app/assets/js/5.a81d1c6a.js"><link rel="prefetch" href="/fib-app/assets/js/6.e7cfb7fa.js"><link rel="prefetch" href="/fib-app/assets/js/7.bcbe6134.js"><link rel="prefetch" href="/fib-app/assets/js/8.3f7668b0.js">
+    <link rel="stylesheet" href="/fib-app/assets/css/0.styles.b423d51d.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/fib-app/" class="home-link router-link-active"><!----> <span class="site-name">fib-app</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/fib-app/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/fib-app/zh/guide.html" class="nav-link">
+  指南
+</a></div><div class="nav-item"><a href="http://github.com/fibjs/fib-app" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GITHUB
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="http://fibjs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  FIBJS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/fib-app/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/fib-app/zh/guide.html" class="nav-link">
+  指南
+</a></div><div class="nav-item"><a href="http://github.com/fibjs/fib-app" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GITHUB
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="http://fibjs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  FIBJS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/fib-app/zh/getting-started.html" class="sidebar-link">快速开始</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#create" class="sidebar-link">create</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#get" class="sidebar-link">get</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#find" class="sidebar-link">find</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#update" class="sidebar-link">update</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#remove" class="sidebar-link">remove</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#下一步呢" class="sidebar-link">下一步呢?</a></li></ul></li><li><a href="/fib-app/zh/guide.html" class="sidebar-link">指南</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#建立基础脚本" class="sidebar-link">建立基础脚本</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#api-数据格式" class="sidebar-link">API 数据格式</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#特殊字段" class="sidebar-link">特殊字段</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#基础对象访问-api" class="sidebar-link">基础对象访问 API</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#建立扩展对象" class="sidebar-link">建立扩展对象</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#扩展对象访问-api" class="sidebar-link">扩展对象访问 API</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#acl" class="sidebar-link">ACL</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#类型" class="sidebar-link">类型</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#utils" class="sidebar-link">Utils</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#高级特性" class="sidebar-link">高级特性</a></li></ul></li><li><a href="/fib-app/zh/app-acl.html" aria-current="page" class="active sidebar-link">ACL</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#关键词" class="sidebar-link">关键词</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#实例对象" class="sidebar-link">实例对象</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#身份-主体-role" class="sidebar-link">身份(主体) / Role</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性" class="sidebar-link">操作访问性</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性表-act-descriptor" class="sidebar-link">操作访问性表 / Act Descriptor</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#级联的身份选择-cascaded-selection-for-acl-role" class="sidebar-link">级联的身份选择 / Cascaded Selection for ACL Role</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#acl-oacl" class="sidebar-link">ACL/OACL</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性表中的-extends-extends-in-acl-hash" class="sidebar-link">操作访问性表中的 extends / extends in ACL hash</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#身份冲突" class="sidebar-link">身份冲突</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#许可查找过程" class="sidebar-link">许可查找过程</a></li></ul></li><li><a href="/fib-app/zh/app-model-extends.html" class="sidebar-link">ORM 扩展选项</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-model-extends.html#model-function" class="sidebar-link">Model Function</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-model-extends.html#view-function" class="sidebar-link">View Function</a></li></ul></li><li><a href="/fib-app/zh/app-internal-api.html" class="sidebar-link">内部 API</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-internal-api.html#app-api" class="sidebar-link">app.api.*</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-internal-api.html#使用-app-filterrequest-为-app-定制个性化的路由" class="sidebar-link">使用 app.filterRequest 为 app 定制个性化的路由</a></li></ul></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="acl"><a href="#acl" class="header-anchor">#</a> ACL</h1> <p><code>fib-app</code> 内置了一套简明的 ACL 规则, 定义了系统中不同身份, 不同 id 的用户对每个类和对象的<strong>可访问性</strong>. 基于内置的 <a href="https://github.com/fibjs/fib-session" target="_blank" rel="noopener noreferrer">fib-session<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a> 服务, <code>fib-app</code> 对来自客户端的 http 请求(包括 rest 和 graphql)信息标记了访问者的<strong>身份</strong>.</p> <p>在<a href="/fib-app/zh/guide.html#权限">权限</a>和<a href="/fib-app/zh/guide.html#扩展对象权限">扩展对象权限</a>中, 已说明了通过 http API 对一个 orm 类进行 CURD 操作时, 权限判定的简明过程. 阅读本文, 你可以更深入其中的与原理.</p> <h2 id="关键词"><a href="#关键词" class="header-anchor">#</a> 关键词</h2> <ul><li>实例对象</li> <li>身份与<a href="/fib-app/zh/guide.html#主体">主体</a>(ACL role/subject)</li> <li>操作(act)
+<ul><li>操作描述符(<code>create</code>/<code>read</code>/<code>find</code>/<code>write</code>/<code>delete</code>)</li> <li>操作描述值(<code>undefined</code>/<code>true</code>/<code>false</code>)</li></ul></li> <li>操作访问性表</li> <li>级联选择</li> <li>尽可能寻找许可操作</li></ul> <h2 id="实例对象"><a href="#实例对象" class="header-anchor">#</a> 实例对象</h2> <p>首先明确, ACL 描述是对实例对象的操作, 在 fib-app 中, 实例对象就是 orm 读取的类的实例, 它是一个对象, 具有键值对, 如</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// 描述了 Kate 的家庭作业的一个对象</span>
+<span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;id&quot;</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;general&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Kate's homework&quot;</span>
+    <span class="token string-property property">&quot;content&quot;</span><span class="token operator">:</span> <span class="token string">&quot;...&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="身份-主体-role"><a href="#身份-主体-role" class="header-anchor">#</a> 身份(主体) / Role</h2> <p><code>fib-app</code> 的 ACL 基于身份(主体) , 以下都是身份:</p> <ul><li>游客(匿名访问者)</li> <li>已登录的普通用户</li> <li>已登录的系统管理员</li></ul> <p>反映这些<strong>身份</strong>的 session 很简单</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// request.session</span>
+<span class="token punctuation">{</span>
+    <span class="token literal-property property">id</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">roles</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'normal'</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="可访问性-accessibility"><a href="#可访问性-accessibility" class="header-anchor">#</a> 可访问性 / Accessibility</h3> <p>对于每个身份, fib-app 会有一套级联的规则集合来描述, 比如, 描述 <code>@fxjs/orm</code> 中一个对象的规则可能是这样的:</p> <p>这是 fib-app 对接入其服务的 <code>@fxjs/orm</code> 的 Model 的默认 ACL 描述:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>orm<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'public_resource'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 这也是 orm 类的默认规则</span>
+    <span class="token constant">ACL</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+            <span class="token string-property property">&quot;extends&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>上述规则, 表明了, 对于 <code>public_resource</code> 这个类, <strong>任何人</strong>可以对其进行<strong>任意</strong>操作.</p> <h2 id="操作访问性"><a href="#操作访问性" class="header-anchor">#</a> 操作访问性</h2> <h3 id="_6-种操作符-6-kinds-of-acts"><a href="#_6-种操作符-6-kinds-of-acts" class="header-anchor">#</a> 6 种操作符 / 6 Kinds of Acts</h3> <p>操作访问性表的键名往往是以下 6 种:</p> <ul><li><code>*</code>: 通用操作描述</li> <li><code>create</code>: 创建</li> <li><code>read</code>: 读取</li> <li><code>find</code>: (批量)查询</li> <li><code>write</code>: 修改</li> <li><code>delete</code>: 删除</li></ul> <p>act 的值和其对应含义如下:</p> <ul><li><code>undefined</code>: 未指定</li> <li><code>true</code>: 明确允许</li> <li><code>false</code>: 明确禁止</li> <li>string[]: 仅当 act 为 'read' 时有意义, 表示允许读取, 但会过滤掉不在 <code>string[]</code> 中的字段</li></ul> <p><strong>注意</strong> 注意, 未指定不意味着禁止, 只有当一个操作在所有的操作访问性表都未指定时, 才等价于<strong>禁止</strong>.</p> <p>比如, 当在一个<strong>操作访问性表</strong>中,</p> <ul><li>通用操作和明确操作同时存在且其中一个的值是 <code>undefined</code> 时, 会以另一个明确指定为准;</li> <li>关于某种操作 ACT 的描述在不同的身份的操作描述符中值不同, 以最终<strong>被选择</strong>的身份中关于 ACT 的描述为准</li></ul> <p>上文提到的对 <a href="#orm-%E7%B1%BB%E7%9A%84%E9%BB%98%E8%AE%A4%E8%A7%84%E5%88%99-/-Default-ACL-in-ORM-Model">orm 类的默认规则</a>等价于下列完整规则</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// 一个ACL 对象</span>
+<span class="token constant">ACL</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">create</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">find</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">read</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">write</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+        <span class="token keyword">delete</span><span class="token operator">:</span> <span class="token keyword">undefined</span>
+        <span class="token string-property property">&quot;extends&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">create</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">find</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">read</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">write</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+                <span class="token keyword">delete</span><span class="token operator">:</span> <span class="token keyword">undefined</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>可以看到, 与简写操作描述相比, 完整版的描述明确地表达了: 对于这个类别的对象的 <strong>5</strong> 种<strong>明确操作(act)</strong>, 都是 <strong>&quot;未指定&quot;(undefined)</strong>(注意不是&quot;允许&quot;).</p> <h2 id="操作访问性表-act-descriptor"><a href="#操作访问性表-act-descriptor" class="header-anchor">#</a> 操作访问性表 / Act Descriptor</h2> <p>上例中的 <code>ACL['*']</code> 就是一个操作访问性表</p> <h3 id="保留字-reserved-keyword"><a href="#保留字-reserved-keyword" class="header-anchor">#</a> 保留字 / Reserved Keyword</h3> <p>保留字在操作访问性表中具有独特的意义</p> <ul><li><code>&quot;extends&quot;</code>: 用于定义具有关联关系(associations)的对象的间接操作访问性表</li></ul> <h3 id="操作-acts"><a href="#操作-acts" class="header-anchor">#</a> 操作 / Acts</h3> <ul><li>通用操作
+<ul><li><code>*</code>: 定义对实例对象的所有操作的优先级, 优先级低于<strong>明确操作</strong></li></ul></li> <li>REST明确操作
+<ul><li><code>create</code>: 创建该类别的实例对象</li> <li><code>read</code>: 读取该类别的实例对象</li> <li><code>find</code>: (批量)查询该类别的实例对象</li> <li><code>write</code>: 修改该类别的实例对象</li> <li><code>delete</code>: 删除该类别的实例对象</li></ul></li> <li>自定义明确操作:
+<ul><li><code>[ANY_VALID_STRING]</code>: 任何不是上述 6 种操作符的字符串</li></ul></li></ul> <p>你可能已经注意到, 每个<strong>REST 明确操作</strong>都对应了一种 rest 操作:</p> <ul><li><code>find</code>: <code>GET /item</code></li> <li><code>read</code>: <code>GET /item/:id</code></li> <li><code>create</code>: <code>POST /item</code></li> <li><code>write</code>: <code>PUT /item/:id</code></li> <li><code>delete</code>: <code>DELETE /item/:id</code></li></ul> <p>find 和 read 的区别, 在于描述的对象分别是&quot;所有的实例对象&quot;和&quot;单个实例对象&quot;.</p> <p>在上面提到的 orm 默认 ACL 对象中, <code>ACL['*']['*']</code> 中的第二个 <code>'*'</code> 就是操作描述符的键名, 它是<strong>通用操作</strong>.</p> <p>我们再来看一个例子:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>orm<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'protected_resource'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 在 orm 的定义中, ACL 可以是对象, 也可以是返回对象的函数</span>
+    <span class="token constant">ACL</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 此处的 '*' 作为键表示身份(role), 其值是一个完成的 aclAct 描述符</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token comment">// 允许创建该类别的实例对象</span>
+                <span class="token literal-property property">create</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                <span class="token comment">// 未指定是否可批量查找该实例对象</span>
+                <span class="token literal-property property">find</span><span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+                <span class="token comment">// 允许读取该类别的实例对象</span>
+                <span class="token literal-property property">read</span><span class="token operator">:</span> <span class="token boolean">true</span>
+                <span class="token comment">// 允许修改该类别的实例对象</span>
+                <span class="token literal-property property">write</span><span class="token operator">:</span> <span class="token boolean">true</span>
+                <span class="token comment">// 禁止删除该类别的实例对象</span>
+                <span class="token keyword">delete</span><span class="token operator">:</span> <span class="token boolean">false</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>如上, 对于<strong>所有的用户</strong>, 都可以对<code>protected_resource</code> 这个类别的实例对象进行<strong>创建</strong>, <strong>单个读取</strong>, <strong>修改</strong>, <strong>删除</strong> 的操作, 但无法进行<strong>批量查询</strong>, 因为没有明确对 <code>find</code> 进行定义, 也没有其它的身份来标记别的用户可以对 <code>protected_resource</code> 这个资源可以进行 <strong>批量查询</strong> 操作.</p> <h2 id="级联的身份选择-cascaded-selection-for-acl-role"><a href="#级联的身份选择-cascaded-selection-for-acl-role" class="header-anchor">#</a> 级联的身份选择 / Cascaded Selection for ACL Role</h2> <p>在 <code>fib-app</code> 的 ACL 中, 存在 3 种<strong>身份描述键:</strong></p> <ul><li><strong>通用身份描述</strong> <ul><li><code>'*'</code>: 所有用户</li></ul></li> <li><strong>明确身份描述</strong> <ul><li><code>ID</code>: session.id 为 ID 的用户</li> <li><code>roles</code>: 角色为 roles 表中某个键的用户</li></ul></li></ul> <p>这三种描述键的优先级是 ID &gt; ROLE &gt; <code>'*'</code>.</p> <p>在级联的身份选择中, <strong>对于某个特定操作</strong>:</p> <ul><li>优先选择以其 ID 为键的操作访问性表</li> <li>(降级)如果该操作不被明确(是 <code>undefined</code>), 则会尝试去 ROLE 为键的操作访问性表寻找</li> <li>(降级)如果该操作不被明确(是 <code>undefined</code>), 则会尝试去, <code>'*'</code> 为键的操作访问性表</li></ul> <p>可以看到, 这体现了 fib-app 会为访问者<strong>尽可能</strong>寻找对某个操作的许可, 并且<strong>一旦寻找到明确操作, 便不会继续寻找, 无论该明确操作是 允许(true) 还是 禁止(false)</strong>.</p> <h3 id="题外话-assimilate"><a href="#题外话-assimilate" class="header-anchor">#</a> 题外话 / Assimilate</h3> <p>如果你看过名侦探柯南 M9 《水平线上的阴谋》, 可以想象 <code>fib-app</code> 就是其中的毛利小五郎: 对于剧中那个长得很像小五郎妻子的人物(<strong>操作</strong>), 他不希望这个人物是凶手(不是凶手 = <strong>允许操作</strong>), 会尽可能需寻找那个人物不是凶手的证据(尽可能寻找<strong>许可</strong>), 但一旦确认了这个人物是凶手(寻找到了<strong>明确操作</strong>), 则不管她是不是凶手, 都会中止希望, 逮捕这个人(中止寻找).</p> <h3 id="实战-practice"><a href="#实战-practice" class="header-anchor">#</a> 实战 / Practice</h3> <p>让我们来看一个例子, 这是一个 orm 中 Model 类的 ACL 对象(或者是由 ACL 函数得到的返回对象):</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token constant">ACL</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 对于所有用户, 可对 Model 的对象进行 create 操作</span>
+    <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token string-property property">'create'</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token string-property property">'read'</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'id'</span><span class="token punctuation">,</span> <span class="token string">'name'</span><span class="token punctuation">,</span> <span class="token string">'alias'</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">roles</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'admin'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'write'</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">'normal'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'read'</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token number">1</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>在这个 ACL 对象中写明了 4 种身份(而不是 3 种):</p> <ul><li><code>'*'</code>: 能进行 create 操作</li> <li><code>'role.admin'</code>: 能进行 write 操作</li> <li><code>'role.normal'</code>: 能进行 read 操作</li> <li><code>具有 id=1 的用户</code>: 能对该对象进行任何操作.</li></ul> <p>对于以下不同的用户, 他们的最终操作结果如下:</p> <table><thead><tr><th>操作</th> <th>结果</th> <th>用户描述</th> <th>级联选择过程</th> <th>备注</th></tr></thead> <tbody><tr><td>--</td> <td>--</td> <td>--</td> <td>--</td> <td>以下: 恰好命中了 <code>id=1</code> 的用户</td></tr> <tr><td>create</td> <td>true</td> <td>id: 1; roles: ['normal']</td> <td><code>acl[1]['create'] = undefined</code> <br>-&gt; <code>acl[1]['*'] = true</code></td> <td>✔️</td></tr> <tr><td>read</td> <td>true</td> <td>id: 1; roles: ['normal']</td> <td><code>acl[1]['read'] = undefined</code> <br>-&gt; <code>acl[1]['*'] = true</code></td> <td>✔️</td></tr> <tr><td>find</td> <td>true</td> <td>id: 1; roles: ['normal']</td> <td><code>acl[1]['find'] = undefined</code> <br>-&gt; <code>acl[1]['*'] = true</code></td> <td>✔️</td></tr> <tr><td>write</td> <td>true</td> <td>id: 1; roles: ['normal']</td> <td><code>acl[1]['write'] = undefined</code> <br>-&gt; <code>acl[1]['*'] = true</code></td> <td>✔️</td></tr> <tr><td>delete</td> <td>true</td> <td>id: 1; roles: ['normal']</td> <td><code>acl[1]['delete'] = undefined</code> <br>-&gt; <code>acl[1]['*'] = true</code></td> <td>✔️</td></tr> <tr><td>--</td> <td>--</td> <td>--</td> <td>--</td> <td>以下: 匿名用户</td></tr> <tr><td>create</td> <td>true</td> <td>id: undefined; roles: []</td> <td><code>acl['*']['create'] = true</code></td> <td>✔️</td></tr> <tr><td>read</td> <td>['id', 'name', 'alias']</td> <td>id: undefined; roles: []</td> <td><code>acl['*']['read'] = ['id', 'name', 'alias']</code></td> <td>✔️</td></tr> <tr><td>find</td> <td>false</td> <td>id: undefined; roles: []</td> <td><code>acl['*']['find'] = undefined</code> <br>-&gt; <code>acl['*']['find'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = false</code></td> <td>✔️</td></tr> <tr><td>write</td> <td>false</td> <td>id: undefined; roles: []</td> <td><code>acl['*']['write'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = false</code></td> <td>✔️</td></tr> <tr><td>delete</td> <td>false</td> <td>id: undefined; roles: []</td> <td><code>acl['*']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = false</code></td> <td>✔️</td></tr> <tr><td>other_func</td> <td>true</td> <td>id: 99; roles: ['normal']</td> <td><code>acl[1]['other_func'] = undefined</code> <br>-&gt; <code>acl[1]['*'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = undefined</code> <br>-&gt; <code>false</code></td> <td>非 REST 的明确操作</td></tr> <tr><td>--</td> <td>--</td> <td>--</td> <td>--</td> <td>以下: 仅具有 normal 用户</td></tr> <tr><td>create</td> <td>true</td> <td>id: 99; roles: ['normal']</td> <td><code>acl.roles['normal']['create'] = undefined</code> <br>-&gt; <code>acl['*']['create'] = true</code></td> <td>✔️</td></tr> <tr><td>read</td> <td>['id', 'name', 'alias']</td> <td>id: 99; roles: ['normal']</td> <td><code>acl.roles['normal']['read'] = true</code></td> <td>✔️ 注意这里由于在 ROLE 这一级找到了&quot;明确操作&quot;, 不会继续往下寻找</td></tr> <tr><td>find</td> <td>false</td> <td>id: 99; roles: ['normal']</td> <td><code>acl.roles['normal']['find'] = undefined</code> <br>-&gt; <code>acl['*']['find'] = undefined</code> <br>-&gt; <code>false</code></td> <td>✔️</td></tr> <tr><td>write</td> <td>false</td> <td>id: 99; roles: ['normal']</td> <td><code>acl.roles['normal']['write'] = undefined</code> <br>-&gt; <code>acl['*']['write'] = undefined</code> <br>-&gt; <code>false</code></td> <td>✔️</td></tr> <tr><td>delete</td> <td>false</td> <td>id: 99; roles: ['normal']</td> <td><code>acl.roles['normal']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['delete'] = undefined</code> <br>-&gt;<code>false</code></td> <td>✔️</td></tr> <tr><td>--</td> <td>--</td> <td>--</td> <td>--</td> <td>以下: 仅具有 admin 的用户</td></tr> <tr><td>create</td> <td>true</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['create'] = undefined</code> <br>-&gt; <code>acl['*']['create'] = true</code></td> <td>✔️</td></tr> <tr><td>read</td> <td>['id', 'name', 'alias']</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['read'] = undefined</code> <br>-&gt; <code>acl.roles['*']['read'] = ['id', 'name', 'alias']</code></td> <td>✔️</td></tr> <tr><td>find</td> <td>false</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['find'] = undefined</code> <br>-&gt; <code>acl['*']['find'] = undefined</code> <br>-&gt;<code>acl['*']['*'] = false</code></td> <td>✔️</td></tr> <tr><td>write</td> <td>true</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['write'] = true</code></td> <td>✔️</td></tr> <tr><td>delete</td> <td>false</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = false</code></td> <td>✔️</td></tr> <tr><td>--</td> <td>--</td> <td>--</td> <td>--</td> <td>以下: 同时具有 admin/normal 的用户</td></tr> <tr><td>create</td> <td>true</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['create'] = undefined</code> <br>-&gt; <code>acl['*']['create'] = true</code></td> <td>✔️</td></tr> <tr><td>read</td> <td>['id', 'name', 'alias']</td> <td>id: 99; roles: ['normal']</td> <td><code>acl.roles['normal']['read'] = true</code></td> <td>✔️ 注意这里由于在 ROLE 这一级找到了&quot;明确操作&quot;, 不会继续往下寻找</td></tr> <tr><td>find</td> <td>false</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['find'] = undefined</code> <br>-&gt; <code>acl['*']['find'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = false</code></td> <td>✔️</td></tr> <tr><td>write</td> <td>true</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['write'] = true</code></td> <td>✔️</td></tr> <tr><td>delete</td> <td>false</td> <td>id: 99; roles: ['admin']</td> <td><code>acl.roles['admin']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['delete'] = undefined</code> <br>-&gt; <code>acl['*']['*'] = false</code></td> <td>✔️</td></tr></tbody></table> <h3 id="自定义操作符"><a href="#自定义操作符" class="header-anchor">#</a> 自定义操作符</h3> <p>你可能会好奇, 上表的 <code>other_func</code> 是什么情况, Act 难道不是只可能是限定的 <a href="#6-%E7%A7%8D%E6%93%8D%E4%BD%9C%E7%AC%A6">6 种操作符</a> 中的一种么?</p> <p>并非如此, Act 可以是任何合法的 Javascript 非空字符串, 甚至可能是 <code>'undefined'</code>, <code>'null'</code>, <code>'NaN'</code> 这种看起来很奇怪的东西.</p> <p>只要有需要对某种名为 <code>'other_func'</code> 的 act 进行判定的需求, 在操作符描述表中 <code>'other_func'</code> 就会发挥作用, 只是一般这个工作由降级的 <code>'*'</code> 属性描述符来担任. 在仅通过 <code>'*'</code> 不好描述的场景, 自定义的操作符能明确指定某个操作是否可以被完成. 比如, 如果你希望定义在 <a href="/fib-app/zh/app-model-extends.html#model-function">Model Function</a> 上定义&quot;基于 cookie 的用户登录&quot;这个操作, 这个操作应该对所有用户开放, 此时你可能会想将 Model 定义写成下面这样:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>orm<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'user'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ...</span>
+    <span class="token comment">// define user properties</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token constant">ACL</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">true</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">functions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token function">login</span> <span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// do login, accessible for everyone</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token function">get_profile</span> <span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// do get_profile, accessible only for logined-user</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token function">logout</span> <span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// do logout, accessible only for logined-user</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>此时的问题是, 匿名用户其实不能访问 get_profile/logout 这两个操作, 它是无意义的. 尽管在 <a href="/fib-app/zh/app-model-extends.html#model-function">Model Function</a> 的每个 handler 中, 第一个参数 req 中具有访问用户的所有 session 信息(id, roles), 你可以在 profile/logout 中判定该用户是否为匿名用户, 然后判断是否应该给该访问者(如果访问者是匿名用户, 则拒绝该操作) 返回 403 响应...对于这样的判定, 可能还会出现在别的所有的仅对已登录用户的有效的 handler 中, 你当然可以写一个方法来判定并放在所有的这些函数中(在别的语言或者支持 decorator 的 js 超集如 typescript 中, 这样工作往往交给装饰器来完成), 但这样显得有点繁琐.</p> <p>我们可以把问题简化一点, 像下面这样定义:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>orm<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'user'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ...</span>
+    <span class="token comment">// define user properties</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token constant">ACL</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token comment">// all non-builtin operation denied...</span>
+                <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span>
+                <span class="token comment">// but 'login'!</span>
+                <span class="token string-property property">'login'</span><span class="token operator">:</span> <span class="token boolean">true</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">functions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token function">login</span> <span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// do login</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token function">profile</span> <span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// do login</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token function">logout</span> <span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// do logout</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>仅需修改一下 <code>'*'</code> 身份下的操作访问性表, 你就可以轻松描述对 user 这个类的 login 和 non-login 操作的权限.</p> <h2 id="acl-oacl"><a href="#acl-oacl" class="header-anchor">#</a> ACL/OACL</h2> <h3 id="acl-2"><a href="#acl-2" class="header-anchor">#</a> ACL</h3> <p>ACL 所有特性均如上文所述.</p> <h3 id="oacl"><a href="#oacl" class="header-anchor">#</a> OACL</h3> <p>OACL 是<strong>与某个具体实例对象</strong>相关的操作的 ACL 判定依据, 它的内部运行机制与 ACL 完全一致.</p> <p>关于 OACL 的示例可参考<a href="/fib-app/zh/guide.html">指南</a>中关于<a href="/fib-app/zh/guide.html#扩展对象权限">扩展对象权限</a>一节.</p> <p>OACL 具有以下特性:</p> <ul><li>OACL 的判定优先级比 ACL 更高</li> <li>当 OACL 判定的结果为 <code>false</code>, 会继续尝试到 ACL 中去寻找 <code>true</code>.</li> <li>当 Model 的 OACL 是一个函数时, 它的 <code>this</code> 指向其要判定的实例对象.</li></ul> <h3 id="使用函数来定义-acl-oacl"><a href="#使用函数来定义-acl-oacl" class="header-anchor">#</a> 使用函数来定义 ACL/OACL</h3> <p>你会注意到, 在上文的大多数示例中, Model 上的 ACL 选项都不是一个对象(尽管它可以是), 而是一个返回 ACL 对象的函数. 在运行时, 函数计算显然是会花费一些时间的, 但你能在其中写入更多的逻辑, 比如</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token constant">OACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span>
+            <span class="token string-property property">'read'</span><span class="token operator">:</span> <span class="token operator">!</span><span class="token operator">!</span>session<span class="token punctuation">.</span>id <span class="token operator">||</span> <span class="token keyword">undefined</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>该 ACL 定义的含义是: 对于任意用户, 如果具有 session.id, 则可以读取实例对象; 反之, 不明确 read 操作, 交给下一级判定.</p> <p>或者是:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>orm<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'something'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token constant">OACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> act <span class="token operator">=</span> <span class="token punctuation">{</span>
+            <span class="token punctuation">{</span>
+                <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span>
+                    <span class="token string-property property">'read'</span><span class="token operator">:</span> <span class="token operator">!</span><span class="token operator">!</span>session<span class="token punctuation">.</span>id <span class="token operator">||</span> <span class="token keyword">undefined</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>session<span class="token punctuation">.</span>id <span class="token operator">===</span> <span class="token keyword">this</span><span class="token punctuation">.</span>createdby_id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// the creator of something can do anything with it.</span>
+            act<span class="token punctuation">[</span><span class="token string">'*'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token keyword">return</span> act<span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+orm<span class="token punctuation">.</span>models<span class="token punctuation">.</span>something<span class="token punctuation">.</span><span class="token function">hasOne</span><span class="token punctuation">(</span><span class="token string">'createdBy'</span><span class="token punctuation">,</span> orm<span class="token punctuation">.</span>models<span class="token punctuation">.</span>user<span class="token punctuation">)</span>
+</code></pre></div><p>该 ACL 定义的含义是:</p> <ul><li>任意有会话的用户, 可以对任意一个 something 进行读取操作</li> <li>对于 something 对象的创造者, 可以对其创造的 something 对象为所欲为</li></ul> <h2 id="操作访问性表中的-extends-extends-in-acl-hash"><a href="#操作访问性表中的-extends-extends-in-acl-hash" class="header-anchor">#</a> 操作访问性表中的 extends / extends in ACL hash</h2> <p>上文提到过, <code>extends</code> 是身份主体描述的一个保留字, 它和其它操作描述符在操作访问性表处于同级, 但它不表达操作, 而是表示某个当访问者通过实例对象去访问其扩展对象时候的访问权限.</p> <p>已经由 <code>extends</code> 定义的操作访问性表, 其下的 <code>extends</code> 无意义(即 <code>extends</code> 只能存在于 ACL 主体的第一层级)</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// Model A</span>
+<span class="token constant">ACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+            <span class="token comment">// useful, would be treated as associated model's ACL declartion.</span>
+            <span class="token string-property property">'extends'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">'extend_1'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// all extend_1 of Model A can be operated anyway via Model A</span>
+                    <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                    <span class="token comment">// useless! it would be ignored</span>
+                    <span class="token keyword">extends</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token operator">...</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// Model A</span>
+<span class="token constant">ACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+            <span class="token comment">// that means act 'extends', as it's not recommended.</span>
+            <span class="token string-property property">'extends'</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p><code>extends</code> 的中对某个 Model 的 ACL/OACL 判定的优先级低于该 Model 自身定义的 ACL/OACL. 关于这一点, 在<a href="/fib-app/zh/guide.html">指南</a>的<a href="/fib-app/zh/guide.html#扩展对象权限">扩展对象权限</a>一节有生动的说明. 我们再进一步分析, 对于具有 <code>Person.hasMany('pets', Pet)</code> 关系的 <code>Person</code> 和 <code>Pet</code> 两种对象, 对操作 read 的判定顺序为</p> <ul><li><code>pets.OACL[PET_ID -&gt; ROLE -&gt; *]#read</code>, 若为 false 则继续往下</li> <li><code>person.OACL[PERSON_ID -&gt; ROLE -&gt; *]#read</code> =&gt; <code>extends:pets[PET_ID -&gt; ROLE -&gt; *]#read</code>, 若为 false 则继续往下</li> <li><code>person.ACL[PERSON_ID -&gt; ROLE -&gt; *]</code> =&gt; <code>extends:pets[PET_ID -&gt; ROLE -&gt; *]#read</code></li> <li><code>pets.ACL[PERSON_ID -&gt; ROLE -&gt; *]</code></li></ul> <p>其中, <code>-&gt;</code> 表示对操作访问性表内部的逐步降级; <code>=&gt;</code> 表示在 OACL/ACL 之间的<strong>许可寻找过程</strong>.</p> <h2 id="身份冲突"><a href="#身份冲突" class="header-anchor">#</a> 身份冲突</h2> <p>有一种情况, 当一个访问者同时具有 rX, rY 两个身份(role), 现在他们要访问 Model A, Model A 关于 ACL 的定义如下(有且仅有一个 ACL 定义):</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// 对于 create 操作, rX, rY 都给出了**明确操作**, 但两者是冲突的. 到底是听从 rX 还是听从 rY?</span>
+<span class="token constant">ACL</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> rYActs <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;create&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> rXActs <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;create&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;roles&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;rX&quot;</span><span class="token operator">:</span> rXActs<span class="token punctuation">,</span>
+            <span class="token string-property property">&quot;rY&quot;</span><span class="token operator">:</span> rYActs
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p><code>fib-app</code> 内部在对 <code>session.roles</code> 的遍历中, 会用访问者的身份逐个去匹配 <code>ACL['roles']</code> 中的 roleKey(这个匹配是基于 <code>for...in</code>的); 在上述例子中, 选取 create 操作的权限, 到底是听从 rX 还是 rY 是<strong>不可预期</strong>的. 原因有两个:</p> <ul><li>访问者所携带的 <code>session.roles</code> 中的 rX/rY 的顺序是不可预期的</li> <li>由于 javascript 固有的 <code>for...in</code> 字典遍历键名无序性, rX/rY 被访问到的顺序也是不可预期的.</li></ul> <p>当然, 你可以提前 sort <code>session.roles</code>, 并要求 <code>fib-app</code> 以有序的方式遍历 <code>ACL['roles']</code>(比如不使用 <code>for...in</code> 遍历而采取 <code>Object.keys(ACL['roles']).sort()</code> 来进行 key 遍历). 但无论如何, 当两个 role 共同在 <code>ACL['roles']</code>存在的时候, 你很难直观地看出到底那个 role 会被先访问到. 在这种情况(已知访问者的 roles)下, 应该尝试让 ACL 进行<strong>主动降级</strong>. 我们改进一下上述例子:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// 这里我们假设我们希望 rY 优先于 rX</span>
+<span class="token constant">ACL</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> rYActs <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;create&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> rXActs <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;*&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;create&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+            <span class="token operator">...</span><span class="token punctuation">(</span>session<span class="token punctuation">.</span>roles<span class="token punctuation">.</span><span class="token function">includes</span><span class="token punctuation">(</span><span class="token string">'rY'</span><span class="token punctuation">)</span> <span class="token operator">?</span> rYActs <span class="token operator">:</span> rXActs<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>或者这样:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// 这里我们假设我们希望 rY 优先于 rX</span>
+<span class="token constant">ACL</span><span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> rYActs <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;create&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> rXActs <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;create&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token comment">// session.id 的匹配级别高于 session.roles, 但若其返回 undefined, 接下来会主动降级到 ACL['roles']. </span>
+        <span class="token keyword">get</span> <span class="token punctuation">[</span>session<span class="token punctuation">.</span>id<span class="token punctuation">]</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> session<span class="token punctuation">.</span>roles<span class="token punctuation">.</span><span class="token function">includes</span><span class="token punctuation">(</span><span class="token string">'rY'</span><span class="token punctuation">)</span> <span class="token operator">?</span> rYActs <span class="token operator">:</span> <span class="token keyword">undefined</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">'roles'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token literal-property property">rX</span><span class="token operator">:</span> rXActs
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>主动降级可以解决身份冲突的问题, 在 ACL 中, 你可以设法在某些特殊情况下, 让返回的 ACL 主体不再是固定的模式, 而是有选择地给出你期望的 ACL 主体.</p> <h2 id="许可查找过程"><a href="#许可查找过程" class="header-anchor">#</a> 许可查找过程</h2> <p>我们以对具有 <code>A.hasOne('B', B)</code> 关系的两个 Model A 和 Model B 进行分析, 当你要对 B 的某个具有 BID 的实例进行访问的时候, 你有两个途径:</p> <ul><li><code>B/:ID</code> 直接访问 B</li> <li><code>A/:AID/B/:BID</code> 通过 A 间接访问 B</li></ul> <p>当你通过第二种途径访问的时候, 在最差的情况下, 对 B 的许可查找过程如下</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// 1 =&gt; 2 =&gt; 3 =&gt; 4</span>
+
+<span class="token comment">// Model A</span>
+<span class="token punctuation">{</span>
+    <span class="token constant">ACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span>
+                <span class="token string-property property">'extends'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// priority: 3</span>
+                    <span class="token constant">B</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string">'create'</span> <span class="token boolean">false</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token constant">OACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token boolean">false</span>
+                <span class="token string-property property">'extends'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// priority: 2</span>
+                    <span class="token constant">B</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string">'create'</span> <span class="token boolean">false</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// Model B</span>
+<span class="token punctuation">{</span>
+    <span class="token constant">ACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token comment">// priority: 4</span>
+                <span class="token string">'create'</span> <span class="token boolean">false</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token constant">OACL</span> <span class="token punctuation">(</span><span class="token parameter">session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">'*'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token comment">// priority: 1</span>
+                <span class="token string">'create'</span> <span class="token keyword">undefined</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>可以看到, 基于 <code>fib-app</code> 的 ACL 系统, 你已经可以基于 <code>session.id</code> 和 <code>session.roles</code> 来控制对 <code>fib-app</code> 中一个实体的访问, 如果有更高的要求(比如引入基于 RBAC 的权限控制系统), 你还可以在 Model 的 ACL/OACL 函数中做进一步定义.</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/fib-app/zh/guide.html" class="prev">
+        指南
+      </a></span> <span class="next"><a href="/fib-app/zh/app-model-extends.html">
+        ORM 扩展选项
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/fib-app/assets/js/app.d2310b5d.js" defer></script><script src="/fib-app/assets/js/2.5d075586.js" defer></script><script src="/fib-app/assets/js/9.c9ab58f0.js" defer></script>
+  </body>
+</html>

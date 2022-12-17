@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ORM 扩展选项 | fib-app</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    
+    <meta name="description" content="fibjs-based application resources(RESTful API, SSR, Other resources) management framework">
+    
+    <link rel="preload" href="/fib-app/assets/css/0.styles.b423d51d.css" as="style"><link rel="preload" href="/fib-app/assets/js/app.d2310b5d.js" as="script"><link rel="preload" href="/fib-app/assets/js/2.5d075586.js" as="script"><link rel="preload" href="/fib-app/assets/js/11.8ede1dd7.js" as="script"><link rel="prefetch" href="/fib-app/assets/js/10.5a0089cb.js"><link rel="prefetch" href="/fib-app/assets/js/12.e63a8fc4.js"><link rel="prefetch" href="/fib-app/assets/js/3.b61d035d.js"><link rel="prefetch" href="/fib-app/assets/js/4.8e7892cc.js"><link rel="prefetch" href="/fib-app/assets/js/5.a81d1c6a.js"><link rel="prefetch" href="/fib-app/assets/js/6.e7cfb7fa.js"><link rel="prefetch" href="/fib-app/assets/js/7.bcbe6134.js"><link rel="prefetch" href="/fib-app/assets/js/8.3f7668b0.js"><link rel="prefetch" href="/fib-app/assets/js/9.c9ab58f0.js">
+    <link rel="stylesheet" href="/fib-app/assets/css/0.styles.b423d51d.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/fib-app/" class="home-link router-link-active"><!----> <span class="site-name">fib-app</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/fib-app/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/fib-app/zh/guide.html" class="nav-link">
+  指南
+</a></div><div class="nav-item"><a href="http://github.com/fibjs/fib-app" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GITHUB
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="http://fibjs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  FIBJS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/fib-app/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/fib-app/zh/guide.html" class="nav-link">
+  指南
+</a></div><div class="nav-item"><a href="http://github.com/fibjs/fib-app" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GITHUB
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="http://fibjs.org" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  FIBJS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/fib-app/zh/getting-started.html" class="sidebar-link">快速开始</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#create" class="sidebar-link">create</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#get" class="sidebar-link">get</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#find" class="sidebar-link">find</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#update" class="sidebar-link">update</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#remove" class="sidebar-link">remove</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/getting-started.html#下一步呢" class="sidebar-link">下一步呢?</a></li></ul></li><li><a href="/fib-app/zh/guide.html" class="sidebar-link">指南</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#建立基础脚本" class="sidebar-link">建立基础脚本</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#api-数据格式" class="sidebar-link">API 数据格式</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#特殊字段" class="sidebar-link">特殊字段</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#基础对象访问-api" class="sidebar-link">基础对象访问 API</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#建立扩展对象" class="sidebar-link">建立扩展对象</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#扩展对象访问-api" class="sidebar-link">扩展对象访问 API</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#acl" class="sidebar-link">ACL</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#类型" class="sidebar-link">类型</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#utils" class="sidebar-link">Utils</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/guide.html#高级特性" class="sidebar-link">高级特性</a></li></ul></li><li><a href="/fib-app/zh/app-acl.html" class="sidebar-link">ACL</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#关键词" class="sidebar-link">关键词</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#实例对象" class="sidebar-link">实例对象</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#身份-主体-role" class="sidebar-link">身份(主体) / Role</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性" class="sidebar-link">操作访问性</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性表-act-descriptor" class="sidebar-link">操作访问性表 / Act Descriptor</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#级联的身份选择-cascaded-selection-for-acl-role" class="sidebar-link">级联的身份选择 / Cascaded Selection for ACL Role</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#acl-oacl" class="sidebar-link">ACL/OACL</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#操作访问性表中的-extends-extends-in-acl-hash" class="sidebar-link">操作访问性表中的 extends / extends in ACL hash</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#身份冲突" class="sidebar-link">身份冲突</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-acl.html#许可查找过程" class="sidebar-link">许可查找过程</a></li></ul></li><li><a href="/fib-app/zh/app-model-extends.html" aria-current="page" class="active sidebar-link">ORM 扩展选项</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-model-extends.html#model-function" class="sidebar-link">Model Function</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-model-extends.html#view-function" class="sidebar-link">View Function</a></li></ul></li><li><a href="/fib-app/zh/app-internal-api.html" class="sidebar-link">内部 API</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/fib-app/zh/app-internal-api.html#app-api" class="sidebar-link">app.api.*</a></li><li class="sidebar-sub-header"><a href="/fib-app/zh/app-internal-api.html#使用-app-filterrequest-为-app-定制个性化的路由" class="sidebar-link">使用 app.filterRequest 为 app 定制个性化的路由</a></li></ul></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="orm-扩展选项"><a href="#orm-扩展选项" class="header-anchor">#</a> ORM 扩展选项</h1> <h2 id="model-function"><a href="#model-function" class="header-anchor">#</a> Model Function</h2> <p>你可以在 Model Function 中调用 app.api 上的 rest 风格函数, 来定制属于你的函数, 比如</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token parameter">db</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> Person <span class="token operator">=</span> db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'person'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">sex</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">age</span><span class="token operator">:</span> Number
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">functions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token comment">/**
+       * getUserByNicknames 为 FibAppORMModelFunction 类型
+       * 
+       * @param fibAppReq
+       *    fibAppReq 包含了
+       *    - session
+       *    - query object
+       *    - 原生的 request 信息
+       *        - 如果 request 在传给 fib-app 之前经过过滤被挂载了别的属性, 这些属性也有效, 比如 fib-session 对 request 添加的字段
+       *          - request.session, 与上一层的 session 为同一对象
+       *          - request.sessionid
+       * 
+       * @param fibAppReqData
+       *    来自 POST 请求, `request.json()`, 默认为 {}
+       */</span>
+      <span class="token function">getUserByNicknames</span> <span class="token punctuation">(</span><span class="token parameter">fibAppReq<span class="token punctuation">,</span> fibAppReqData</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// rest get 操作</span>
+        <span class="token keyword">var</span> data <span class="token operator">=</span> app<span class="token punctuation">.</span>api<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>fibAppReq<span class="token punctuation">,</span> db<span class="token punctuation">,</span> Person<span class="token punctuation">,</span> fibAppReqData<span class="token punctuation">.</span>id<span class="token punctuation">)</span>
+        <span class="token comment">// rest post 操作</span>
+        <span class="token keyword">var</span> postRes <span class="token operator">=</span> app<span class="token punctuation">.</span>api<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>fibAppReq<span class="token punctuation">,</span> db<span class="token punctuation">,</span> Person<span class="token punctuation">,</span> fibAppReqData<span class="token punctuation">.</span>id<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+          <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'test'</span><span class="token punctuation">,</span>
+          <span class="token literal-property property">sex</span><span class="token operator">:</span> <span class="token string">'male'</span><span class="token punctuation">,</span>
+          <span class="token literal-property property">age</span><span class="token operator">:</span> <span class="token number">18</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>postRes<span class="token punctuation">.</span>error<span class="token punctuation">)</span>
+          <span class="token keyword">throw</span> postRes<span class="token punctuation">.</span>error
+
+        <span class="token comment">// 方法的返回值必须为 FibAppModelFunctionResponse 类型</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span>
+          <span class="token literal-property property">success</span><span class="token operator">:</span> postRes<span class="token punctuation">.</span>success
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><p>绝大多数权限可以通过 ACL 控制完成，不需要通过 Function 来完成基于对象的权限. 对于复杂数据操作, 你通过自定义 Model Function 来完成, 如:</p> <ul><li>基于数据的权限, 比如根据审批状态，赋予不同用户组权限</li> <li>多项修改, 比如需要修改多条数据库记录</li> <li>基础 Rest 操作的组合</li> <li>其它任何你认为需要的操作</li></ul> <p><strong>NOTICE</strong> Model Function 都是 <code>FibAppORMModelFunction</code> 类型, 需通过 POST <code>/:classname/:func</code> 的方式进行调用, 在调用到 func 之前, request 已通过 <code>app.filterRequest</code> 进行过滤.</p> <h2 id="view-function"><a href="#view-function" class="header-anchor">#</a> View Function</h2> <p>通过在 orm 的 opts 中添加 <code>viewFunctions</code> , 可以定义该模型相关的视图处理函数; 基于此, 你可以使得 fib-app 具有直接输出 html 的能力: 当来自客户端的 http 请求头是 <code>Accept: text/html</code> 时, fib-app 会尝试使用 <code>viewFunctions</code> 定义的函数处理视图. 参考下例:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">const</span> fpug <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'fib-pug'</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> ejs <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'ejs'</span><span class="token punctuation">)</span>
+
+db<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'user'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">name</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">sex</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">&quot;male&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;female&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">age</span><span class="token operator">:</span> Number<span class="token punctuation">,</span>
+    <span class="token literal-property property">password</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+    <span class="token literal-property property">salt</span><span class="token operator">:</span> String
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token literal-property property">viewFunctions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token comment">/**
+         * @ctx `Accept: text/html`
+         * 
+         * 当客户端发起  GET /user/1 时, 会调用此函数;
+         * 
+         * 如果 id=1 的 user 存在, 则 result = {sucess: ...}; 否则 result = {error: ...}
+         */</span>
+        <span class="token function">get</span> <span class="token punctuation">(</span>apiResult<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">let</span> tpl <span class="token operator">=</span> fpug<span class="token punctuation">.</span><span class="token function">compile</span><span class="token punctuation">(</span>
+                    fs<span class="token punctuation">.</span><span class="token function">readTextFile</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span><span class="token function">resolve</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">,</span> <span class="token string">'./tpl.get.pug'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                <span class="token punctuation">)</span>
+            <span class="token keyword">return</span> <span class="token punctuation">{</span>
+                <span class="token literal-property property">success</span><span class="token operator">:</span> <span class="token function">tpl</span><span class="token punctuation">(</span>apiResult <span class="token operator">&amp;&amp;</span> <span class="token punctuation">{</span><span class="token literal-property property">user</span><span class="token operator">:</span> apiResult<span class="token punctuation">.</span>success<span class="token punctuation">}</span> <span class="token operator">||</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token comment">/**
+         * @ctx `Accept: text/html`
+         * 
+         * 当客户端发起  GET /user 时, 会调用此函数
+         * 
+         * apiResult = {sucess: ...};
+         */</span>
+        <span class="token function">find</span> <span class="token punctuation">(</span><span class="token parameter">apiResult</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">let</span> tpl <span class="token operator">=</span> ejs<span class="token punctuation">.</span><span class="token function">compile</span><span class="token punctuation">(</span>
+                    fs<span class="token punctuation">.</span><span class="token function">readTextFile</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span><span class="token function">resolve</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">,</span> <span class="token string">'./tpl.find.ejs'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                <span class="token punctuation">)</span>
+            <span class="token keyword">return</span> <span class="token punctuation">{</span>
+                <span class="token literal-property property">success</span><span class="token operator">:</span> <span class="token function">tpl</span><span class="token punctuation">(</span>apiResult <span class="token operator">&amp;&amp;</span> <span class="token punctuation">{</span><span class="token literal-property property">users</span><span class="token operator">:</span> apiResult<span class="token punctuation">.</span>success<span class="token punctuation">}</span> <span class="token operator">||</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token comment">/**
+         * @ctx `Accept: text/html`
+         * 
+         * 当客户端发起  GET /user/profile 时, 会调用此函数.
+         * 
+         * 由于 static: true, 此时 handler 的第一个参数 _ 恒为 null
+         * 
+         * @note 注意该路由与 /user/1 同属于 /:classname/:id 格式, 但 fib-app
+         * 会优先尝试调用该方法.
+         * 
+         */</span>
+        <span class="token literal-property property">profile</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token keyword">static</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+            <span class="token comment">/** _ is null */</span>
+            <span class="token function">handler</span> <span class="token punctuation">(</span><span class="token parameter">_</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">let</span> tpl <span class="token operator">=</span> ejs<span class="token punctuation">.</span><span class="token function">compile</span><span class="token punctuation">(</span>
+                        fs<span class="token punctuation">.</span><span class="token function">readTextFile</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span><span class="token function">resolve</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">,</span> <span class="token string">'./tpl.profile.ejs'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">)</span>
+                <span class="token keyword">return</span> <span class="token punctuation">{</span>
+                    <span class="token literal-property property">success</span><span class="token operator">:</span> <span class="token function">tpl</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><h4 id="调用优先级"><a href="#调用优先级" class="header-anchor">#</a> 调用优先级</h4> <p>当客户端发起 <code>Accept: text/html</code> 的 http 请求时, viewFunctions 的调用优先级是这样的:</p> <ul><li><code>/:classname/:idOrFunc</code> ==&gt; <code>viewFunctions.idOrFunc</code> &gt; <code>viewFunctions.get</code></li> <li><code>/:classname</code> ==&gt; <code>viewFunctions.function</code></li></ul> <h4 id="定义选项"><a href="#定义选项" class="header-anchor">#</a> 定义选项</h4> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token literal-property property">viewFunctions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">get</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// {boolean}, default false</span>
+    <span class="token keyword">static</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token comment">// static === true, apiResult 为 null; 否则, apiResult 为 {success: ...} 或 {error: ...}</span>
+    <span class="token function">handler</span> <span class="token punctuation">(</span><span class="token parameter">apiResult</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token literal-property property">success</span><span class="token operator">:</span> <span class="token operator">...</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token comment">/**
+   * 此时 等价于 
+   * {
+   *    static: true,
+   *    handler: func2
+   * }
+   */</span>
+  <span class="token function">func2</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">success</span><span class="token operator">:</span> <span class="token operator">...</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><ol><li>如果 <code>viewFunction</code> 的 <code>static</code> 为 true, <code>viewFunction</code> 函数的第一个参数为 null;</li> <li>如果 <code>viewFunctions</code> 没有 <code>viewFunction.get</code>, <code>viewFunction.find</code>, <code>viewFunction.eget</code>, <code>viewFunction.efind</code> 定义时, 所有该导向这些<code>viweFunction</code>的请求都等价于直接请求对应的 <strong>fib-app 内部 API 方法</strong>.</li> <li>如果 <code>viewFunction</code> 的 <code>static</code> 不为 true, 如果存在对应的 <strong>fib-app 内部 API 方法</strong> , 则 <code>viewFunction</code> 函数的第一个参数是该对应方法的返回值;</li></ol> <p>关于第 2 点, 比如 Model user 有如下定义</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token literal-property property">viewFunctions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>此时发起 {<code>Accept: text/html</code>, <code>GET /user/1</code>} 请求, 不会通过 viewFunctions 处理, 该请求等价于 {<code>Accept: applicaton/json</code>, <code>GET /user/1</code>} 请求的结果. 同理, 此时发起 {<code>Accept: text/html</code>, <code>GET /user</code>} 请求等价于发起 {<code>Accept: applicaton/json</code>, <code>GET /user</code>} 请求.</p> <p>关于第 3 点, 比如 Model user 有如下定义</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token literal-property property">viewFunctions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">func1</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token keyword">static</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token function">handler</span> <span class="token punctuation">(</span><span class="token parameter">apiResult</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>此时发起 {<code>Accept: text/html</code>, <code>GET /user/func1</code>} 请求, 由于它可以被认为是请求 id=fun1 的 user 的信息, 因此, 如果 id=func1 的 user 真的存在且可以被请求道, 则此时 handler 的第一个参数 apiResult 就是 <code>{ success: [userInfo] }</code>; 若 id=fun1 的 user 不存在或者因ACL 权限无法被用户访问到, 则 apiResult 为 <code>{ error: ... }</code></p> <p>这个特性意味着你可以对某些 Model 的特定对象做特殊处理, 比如, 对 id=888 的 User 设定为 Lucky Dog, 返回特别的 html 给客户端 😃</p> <h3 id="viewfunction-对比-function"><a href="#viewfunction-对比-function" class="header-anchor">#</a> viewFunction 对比 function</h3> <h4 id="共同点"><a href="#共同点" class="header-anchor">#</a> 共同点</h4> <p><code>viewFunction</code> 与 <code>function</code> 很相似</p> <ol><li>都要返回符合 <a href="typings/app.d.ts"><code>FibAppResponse</code> 格式</a> 的对象</li> <li>都是 ORM Model 的定义选项</li></ol> <h4 id="区别"><a href="#区别" class="header-anchor">#</a> 区别</h4> <ol><li><code>function</code> 处理 fib-app 中的 <code>POST /:classname/:func</code> 请求; <code>viewFunctions</code> 处理 fib-app 中的 <code>GET /:classname/:func</code> 且 <code>Accept</code> 头包含 <code>text/html</code> 的请求</li> <li><code>function</code> 函数的返回值, fib-app 会尝试以 json 的方式写入 <code>HttpResponse</code>; <code>viewFunction</code> 函数的返回值, fib-app 会尝试以文本的方式写入 <code>HttpResponse</code></li></ol></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/fib-app/zh/app-acl.html" class="prev">
+        ACL
+      </a></span> <span class="next"><a href="/fib-app/zh/app-internal-api.html">
+        内部 API
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/fib-app/assets/js/app.d2310b5d.js" defer></script><script src="/fib-app/assets/js/2.5d075586.js" defer></script><script src="/fib-app/assets/js/11.8ede1dd7.js" defer></script>
+  </body>
+</html>
