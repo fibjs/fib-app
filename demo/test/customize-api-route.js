@@ -54,7 +54,7 @@ const INIT = {
 
 describe('customize api route', () => {
     const testedRouteTypes = { ...INIT }
-    
+
     const { tappInfo, tSrvInfo, clientCtx, clients } = useTestServer({
         createAppArgs: [
             {
@@ -198,7 +198,7 @@ describe('customize api route', () => {
             assert.equal(testedRouteTypes['http-rest-put'], false);
             assert.equal(testedRouteTypes['http-rest-delete'], false);
         });
-    
+
         it('init extend', () => {
             assert.equal(testedRouteTypes['http-rest-eput'], false);
             assert.equal(testedRouteTypes['http-rest-epost'], false);
@@ -211,66 +211,83 @@ describe('customize api route', () => {
         });
     });
 
-    it('http-rest-get', () => {
-        clients.people.get(Tom.id);
-        
-        assert.equal(testedRouteTypes['http-rest-get'], true);
-    });
-    
-    it('http-rest-find', () => {
-        assert.equal(testedRouteTypes['http-rest-find'], false);
-
-        clients.people.find();
-        
-        assert.equal(testedRouteTypes['http-rest-find'], true);
-    });
-
-    it('http-rest-put', () => {
-        assert.equal(testedRouteTypes['http-rest-put'], false);
-
-        var _Tom = clients.people.get(Tom.id);
-        clients.people.update(Tom.id, {
-            age: _Tom.age
+    describe('http operations for base', () => {
+        before(() => {
+            tappInfo.utils.dropModelsSync();
+            clientCtx.switchUser('admin');
+            init_base();
         });
-        
-        assert.equal(testedRouteTypes['http-rest-put'], true);
-    });
 
-    it('http-rest-delete', () => {
-        assert.equal(testedRouteTypes['http-rest-delete'], false);
+        it('http-rest-get', () => {
+            clients.people.get(Tom.id);
 
-        var _Tom = clients.people.get(Tom.id);
-        clients.people.delete(_Tom.id);
-        
-        assert.equal(testedRouteTypes['http-rest-delete'], true);
-
-        // add it back
-        var id = clients.people.create(util.omit(_Tom, 'id'));
-        clients.people.update(id, { id: Tom.id });
-    });
-
-    it('http-rest-edel / http-rest-eput', () => {
-        // divorce
-        assert.equal(testedRouteTypes['http-rest-edel'], false);
-        clients.people.unlink(Tom.id, 'wife', Alice.id);
-        assert.equal(testedRouteTypes['http-rest-edel'], true);
-
-        // then remarried
-        assert.equal(testedRouteTypes['http-rest-eput'], true);
-        clients.people.link(Tom.id, 'wife', Alice.id);
-        assert.equal(testedRouteTypes['http-rest-eput'], true);
-    });
-
-    it('http-rest-epost', () => {
-        // they has new child
-        assert.equal(testedRouteTypes['http-rest-epost'], false);
-        const TomsonId = clients.people.createExt(Tom.id, 'childs', {
-            ...mockData.newBaby,
-            city_id: StoneCityId
+            assert.equal(testedRouteTypes['http-rest-get'], true);
         });
-        assert.equal(testedRouteTypes['http-rest-epost'], true);
 
-        assert.exist(TomsonId);
+        it('http-rest-find', () => {
+            assert.equal(testedRouteTypes['http-rest-find'], false);
+
+            clients.people.find();
+
+            assert.equal(testedRouteTypes['http-rest-find'], true);
+        });
+
+        it('http-rest-put', () => {
+            assert.equal(testedRouteTypes['http-rest-put'], false);
+
+            var _Tom = clients.people.get(Tom.id);
+            clients.people.update(Tom.id, { age: _Tom.age });
+
+            assert.equal(testedRouteTypes['http-rest-put'], true);
+        });
+
+        it('http-rest-delete', () => {
+            assert.equal(testedRouteTypes['http-rest-delete'], false);
+
+            var _Tom = clients.people.get(Tom.id);
+            clients.people.delete(_Tom.id);
+
+            assert.equal(testedRouteTypes['http-rest-delete'], true);
+
+            // NOTICE: update id of row is only valid when id is not serial type
+            var id = clients.people.create(util.omit(_Tom, 'id'));
+            clients.people.update(id, { id: Tom.id });
+        })
+    });
+
+    describe('http operations for extend', () => {
+        before(() => {
+            tappInfo.utils.dropModelsSync();
+            clientCtx.switchUser('admin');
+            init_base();
+            init_extend();
+        });
+
+        it('http-rest-epost', () => {
+            // they has new child
+            assert.equal(testedRouteTypes['http-rest-epost'], false);
+            const TomsonId = clients.people.createExt(Tom.id, 'childs', {
+                ...mockData.newBaby,
+                city_id: StoneCityId
+            });
+            assert.equal(testedRouteTypes['http-rest-epost'], true);
+
+            assert.exist(TomsonId);
+        });
+
+        it('http-rest-edel', () => {
+            // divorce
+            assert.equal(testedRouteTypes['http-rest-edel'], false);
+            clients.people.unlink(Tom.id, 'wife', Alice.id);
+            assert.equal(testedRouteTypes['http-rest-edel'], true);
+        });
+
+        it('http-rest-eput', () => {
+            // then remarried
+            assert.equal(testedRouteTypes['http-rest-eput'], true);
+            clients.people.link(Tom.id, 'wife', Alice.id);
+            assert.equal(testedRouteTypes['http-rest-eput'], true);
+        });
     });
 })
 
