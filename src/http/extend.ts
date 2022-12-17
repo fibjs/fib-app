@@ -10,7 +10,19 @@ import { checkout_obj_acl } from '../utils/checkout_acl';
 import { filter, filter_ext } from '../utils/filter';
 import { _get, _eget, _egetx } from '../utils/get';
 
-import { check_hasmanyassoc_with_extraprops, extra_save, shouldSetSingle, getOneMergeIdFromAssocHasOne, getAccessorForPost, execLinkers, addHiddenLazyLinker__AfterSave, getValidDataFieldsFromModel, safeUpdateHasManyAssociatedInstanceWithExtra, buildCleanInstance, addHiddenLazyLinker__BeforeSave } from '../utils/orm-assoc';
+import {
+    check_hasmanyassoc_with_extraprops,
+    extra_save,
+    shouldSetSingle,
+    getOneMergeIdFromAssocHasOne,
+    getSyncAccessorForPost,
+    execLinkers,
+    addHiddenLazyLinker__AfterSave,
+    getValidDataFieldsFromModel,
+    safeUpdateHasManyAssociatedInstanceWithExtra,
+    buildCleanInstance,
+    addHiddenLazyLinker__BeforeSave
+} from '../utils/orm-assoc';
 import { is_count_required, found_result_selector } from '../utils/query';
 import { filterInstanceAsItsOwnShape, map_to_result } from '../utils/common';
 import { addHiddenProperty } from '../utils/obj';
@@ -93,25 +105,25 @@ export function setup(app: FibApp.FibAppClass) {
             
         ormUtils.attach_internal_api_requestinfo_to_instance(robj.inst, { data: null, req_info: req })
 
-        let _opt;
+        let _syncAccessor;
         switch (rel_assoc_info.type) {
             case 'hasOne':
-                _opt = Helpers.getOneAssociationItemFromInstanceByExtname(obj.inst, extend).setAccessor;
+                _syncAccessor = Helpers.getOneAssociationItemFromInstanceByExtname(obj.inst, extend).setSyncAccessor;
                 break
             case 'hasMany':
-                _opt = Helpers.getManyAssociationItemFromInstanceByExtname(obj.inst, extend).addAccessor;
+                _syncAccessor = Helpers.getManyAssociationItemFromInstanceByExtname(obj.inst, extend).addSyncAccessor;
                 break
             default:
                 break
         }
 
-        if (!_opt)
+        if (!_syncAccessor)
             return err_info(4040003, {
                 extend: extend,
                 classname: cls.model_name,
             }, rel_assoc_info.association.model.cid);
 
-        obj.inst[_opt + 'Sync'].call(obj.inst, robj.inst);
+        obj.inst[_syncAccessor].call(obj.inst, robj.inst);
 
         return {
             success: {
@@ -218,7 +230,7 @@ export function setup(app: FibApp.FibAppClass) {
                     }
                 } else {
                     linkers_after_host_save.push(() => {
-                        ro[assoc_info.association.setAccessor + 'Sync'].call(ro, dkdata)
+                        ro[assoc_info.association.setSyncAccessor].call(ro, dkdata)
                     })
                 }
             }
@@ -265,9 +277,8 @@ export function setup(app: FibApp.FibAppClass) {
                 const isMany = rel_assoc_info.type === 'hasMany'
 
                 const askorOptions = {
-                    has_associated_instance_in_many: isMany && host[rel_assoc_info.association.hasAccessor + 'Sync'](ro)
+                    has_associated_instance_in_many: isMany && host[rel_assoc_info.association.hasSyncAccessor](ro)
                 }
-                const linkAccessor = getAccessorForPost(rel_assoc_info, host, askorOptions)
 
                 if (isMany && ro.$extra) {
                     const assoc = rel_assoc_info.association as FxOrmAssociation.InstanceAssociationItem_HasMany;
@@ -275,7 +286,8 @@ export function setup(app: FibApp.FibAppClass) {
                         assoc, host, ro, askorOptions.has_associated_instance_in_many
                     )
                 } else {
-                    host[linkAccessor + 'Sync'](ro)
+                    const linkSyncAccessor = getSyncAccessorForPost(rel_assoc_info, host, askorOptions)
+                    host[linkSyncAccessor](ro)
                 }
             }
         }
@@ -370,7 +382,7 @@ export function setup(app: FibApp.FibAppClass) {
             default:
                 throw new Error(`invalid rel_assoc_info.type ${rel_type}`)
             case 'extendsTo': 
-                robj.base[Helpers.getExtendsToAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
+                robj.base[Helpers.getExtendsToAssociationItemFromInstanceByExtname(robj.base, extend).delSyncAccessor].call(robj.base);
                 break
             case 'hasOne':
                 if (rel_assoc_info.association.reversed)
@@ -379,10 +391,10 @@ export function setup(app: FibApp.FibAppClass) {
                         classname: rel_assoc_info.association.model.model_name
                     }, rel_assoc_info.association.model.cid);
 
-                robj.base[Helpers.getOneAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base);
+                robj.base[Helpers.getOneAssociationItemFromInstanceByExtname(robj.base, extend).delSyncAccessor].call(robj.base);
                 break
             case 'hasMany': 
-                robj.base[Helpers.getManyAssociationItemFromInstanceByExtname(robj.base, extend).delAccessor + 'Sync'].call(robj.base, robj.inst);
+                robj.base[Helpers.getManyAssociationItemFromInstanceByExtname(robj.base, extend).delSyncAccessor].call(robj.base, robj.inst);
                 break
         }
 

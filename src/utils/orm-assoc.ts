@@ -1,12 +1,12 @@
-import { FxOrmInstance, FxOrmModel, FxOrmNS, FxOrmAssociation } from '@fxjs/orm';
+import { Helpers, FxOrmInstance, FxOrmModel, FxOrmNS, FxOrmAssociation } from '@fxjs/orm';
 
 import util = require('util')
 import { FibApp } from '../Typo/app';
 import { addHiddenProperty } from './obj';
 
 export function check_hasmanyassoc_with_extraprops (instance: FxOrmInstance.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false {
-    var has_many_association = instance.__instRtd.many_associations.find(a => a.name === extend_name);
-    var has_extra_fields = has_many_association && has_many_association.props && util.isObject(has_many_association.props) && Object.keys(has_many_association.props).length
+    const has_many_association = Helpers.getManyAssociationItemFromInstanceByExtname(instance, extend_name);
+    const has_extra_fields = has_many_association && has_many_association.props && util.isObject(has_many_association.props) && Object.keys(has_many_association.props).length
 
     return has_extra_fields ? has_many_association : false
 }
@@ -28,7 +28,7 @@ export function extra_save (instance: FxOrmInstance.Instance, rinstance: FxOrmIn
         instance[_many_assoc.addAccessor + 'Sync'](rinstance, extra)
 }
 
-export function getAccessorForPost (
+export function getSyncAccessorForPost (
     assoc_info: FxOrmModel.Model['associations'][any],
     assoc_host_instance: FxOrmInstance.Instance,
     opts: {
@@ -36,7 +36,7 @@ export function getAccessorForPost (
     }
 ) {
     const assoc = assoc_info.association;
-    let setterName: string;
+    let setterName: string | undefined;
 
     switch (assoc_info.type) {
         case 'hasOne':
@@ -53,7 +53,7 @@ export function getAccessorForPost (
 
     // when pass assoc_host_instance, check if setterName in it
     if (assoc_host_instance && typeof assoc_host_instance[setterName] === 'function')
-        return setterName;
+        return `${setterName}Sync`;
 
     return setterName;
 }
@@ -163,8 +163,8 @@ export function safeUpdateHasManyAssociatedInstanceWithExtra (
     delete associated_instance.$extra
 
     if (has_associated_instance_in_many) {
-        host_instance[assoc.delAccessor + 'Sync'](associated_instance)
+        host_instance[assoc.delSyncAccessor](associated_instance)
     }
     
-    host_instance[assoc.addAccessor + 'Sync'](associated_instance, extra)
+    host_instance[assoc.addSyncAccessor](associated_instance, extra)
 }

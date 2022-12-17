@@ -80,7 +80,7 @@ export function setup (app: FibApp.FibAppClass) {
                     }
                 } else {
                     linkers_after_host_save.push(() => {
-                        o[assoc_info.association.setAccessor + 'Sync'].call(o, dkdata)
+                        o[assoc_info.association.setSyncAccessor].call(o, dkdata)
                     })
                 }
             }

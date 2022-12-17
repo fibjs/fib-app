@@ -13,7 +13,7 @@ const App = require('../../../').default;
 const defs = require('../../defs');
 
 const runtimeTime = Date.now();
-function generateRandomConn () {
+function generateConnectionInfo () {
     const dbName = getStaticTestDBName();
 
     const dbType = getTestDbType();
@@ -76,10 +76,7 @@ const getUseUUID = exports.getUseUUID = function () {
 }
 
 const getStaticTestDBName = exports.getStaticTestDBName = function () {
-    if (getTestDbType() === 'postgres') {
-        return `fibapp_test_psql`;
-    }
-    return `fibapp-test-${getTestDbType()}-${runtimeTime}`;
+    return `fibapp-test-${getTestDbType()}`;
 }
 
 const dbBuilder = exports.dbBuilder = function (dbName = '') {
@@ -109,7 +106,7 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
 
                 var exists = driver.execute(`SELECT * FROM pg_database WHERE datname = '${dbName}'`);
                 if (!exists.length) {
-                    driver.execute(`CREATE DATABASE ${dbName} WITH ENCODING = 'UTF8'`);
+                    driver.execute(`CREATE DATABASE "${dbName}" WITH ENCODING = 'UTF8'`);
                 }
             }
             builder.drop = function () {
@@ -164,7 +161,7 @@ exports.getApp = function (conn = 'sqlite:test.db', ...args) {
  * @param {import('../../../typings/Typo/app').FibApp.GetTestServerOptions} options
  */
 const getRandomSqliteBasedApp = exports.getRandomSqliteBasedApp = function (...args) {
-    let {conn: connString, dbName, dbType = ''} = generateRandomConn();
+    let {conn: connString, dbName, dbType = ''} = generateConnectionInfo();
 
     let connName = connString;
     if (process.env.WEBX_TEST_DB_DEBUG) {
@@ -174,6 +171,7 @@ const getRandomSqliteBasedApp = exports.getRandomSqliteBasedApp = function (...a
 
     const app = exports.getApp(connName, ...args)
     const builder = dbBuilder(dbName)
+
     return {
         app,
         dbName,

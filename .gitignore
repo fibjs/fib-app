@@ -1,7 +1,8 @@
 node_modules
 test.db*
 test*.db*
-fibapp-test-sqlite-*
+fibapp-test-sqlite
+fibapp-test-sqlite*
 
 cov-out
 *.lcov

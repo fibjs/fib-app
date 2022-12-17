@@ -2,7 +2,7 @@ import { FxOrmInstance, FxOrmModel, FxOrmNS, FxOrmAssociation } from '@fxjs/orm'
 import { FibApp } from '../Typo/app';
 export declare function check_hasmanyassoc_with_extraprops(instance: FxOrmInstance.Instance, extend_name: string): FxOrmNS.InstanceAssociationItem_HasMany | false;
 export declare function extra_save(instance: FxOrmInstance.Instance, rinstance: FxOrmInstance.Instance, _many_assoc: FxOrmNS.InstanceAssociationItem_HasMany, extra: any, just_set?: boolean): void;
-export declare function getAccessorForPost(assoc_info: FxOrmModel.Model['associations'][any], assoc_host_instance: FxOrmInstance.Instance, opts: {
+export declare function getSyncAccessorForPost(assoc_info: FxOrmModel.Model['associations'][any], assoc_host_instance: FxOrmInstance.Instance, opts: {
     has_associated_instance_in_many?: boolean;
 }): string;
 export declare function isSingleLink(type: string, association: FxOrmAssociation.InstanceAssociationItem): boolean;

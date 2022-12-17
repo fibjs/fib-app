@@ -60,7 +60,14 @@ function wrap_error (err: FibApp.FibAppResponse) {
     }
 }
 
-export const _egetx = function (cls: FxOrmModel.Model, id: FibApp.IdPayloadVar | FxOrmInstance.Instance, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType, session: FibApp.FibAppSession, act: FibAppACL.ACLActString): {
+export const _egetx = function (
+    cls: FxOrmModel.Model,
+    id: FibApp.IdPayloadVar | FxOrmInstance.Instance,
+    extend: FibAppACL.ACLExtendModelNameType,
+    rid: FibApp.AppIdType,
+    session: FibApp.FibAppSession,
+    act: FibAppACL.ACLActString
+): {
     riobj: FibApp.FibAppInternalCommExtendObj,
     iobj: FibApp.FibAppInternalCommExtendObj
 } {
@@ -81,9 +88,7 @@ export const _egetx = function (cls: FxOrmModel.Model, id: FibApp.IdPayloadVar |
         id = (id as any).id;
     } else {
         iobj = {
-            inst: (cls as any).find().where({
-                id: id
-            }).firstSync()
+            inst: cls.find({ id: id }).firstSync()
         };
 
         if (iobj.inst === null)
