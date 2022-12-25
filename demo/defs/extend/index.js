@@ -1,3 +1,7 @@
+/**
+ * 
+ * @param {import('../../../').FibApp.FibAppORM} db 
+ */
 module.exports = db => {
     var People = db.models.people;
     var City = db.models.city;
@@ -58,5 +62,16 @@ module.exports = db => {
                 next()
             }
         }
+    })
+
+    var knex = db.driver.knex;
+    db.define('people_relations_statics', {
+        people_id: { type: People.allProperties.id.type },
+        childs_count: { type: 'number' },
+    }, {
+        virtualView: knex.table(People.associations.childs.association.mergeTable).select(
+            'people_id',
+            knex.raw('count(childs_id) as ??', ['childs_count']),
+        ).groupBy(['people_id'])
     })
 };

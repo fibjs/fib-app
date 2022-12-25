@@ -982,6 +982,73 @@ describe("graphql", () => {
             }
         });
     });
+
+    describe('virtual view', () => {
+        it('people_relations_statics', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    people_relations_statics: find_people_relations_statics(
+                        order: "people_id"
+                        limit: 1000
+                    ){
+                        people_id,
+                        childs_count
+                    }
+                }`
+            });
+    
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "data": {
+                    "people_relations_statics": [
+                        {
+                            "people_id": ids[0],
+                            "childs_count": 2
+                        },
+                        {
+                            "people_id": ids[1],
+                            "childs_count": 2
+                        }
+                    ]
+                }
+            });
+        });
+
+        it('where', () => {
+            var rep = http.post(tSrvInfo.appUrlBase + ``, {
+                headers: {
+                    'Content-Type': 'application/graphql'
+                },
+                body: `{
+                    people_relations_statics: find_people_relations_statics(
+                        order: "people_id"
+                        limit: 1000
+                        where: {
+                            people_id: "${ids[0]}"
+                        }
+                    ){
+                        people_id,
+                        childs_count
+                    }
+                }`
+            });
+    
+            assert.equal(rep.statusCode, 200);
+            assert.deepEqual(rep.json(), {
+                "data": {
+                    "people_relations_statics": [
+                        {
+                            "people_id": ids[0],
+                            "childs_count": 2
+                        }
+                    ]
+                }
+            });
+        });
+    });
 });
 
 if (require.main === module) {

@@ -13,6 +13,8 @@ export default function (
     let { enable: use_uuid = false } = plugin_opts || {};
     
 	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmModel.ModelDefineOptions) {
+        if (opts.virtualView) return ;
+
         use_uuid = use_uuid || opts.__webx_use_uuid
         
         if (!use_uuid)
