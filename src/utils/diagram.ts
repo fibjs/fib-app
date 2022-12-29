@@ -21,7 +21,7 @@ export = function () {
                 var ps;
 
                 if (m.properties[k].comment)
-                    ps = `+ ${m.properties[k].comment}(${k}) : ${m.properties[k].type}`;
+                    ps = `+ ${k}(${m.properties[k].comment}) : ${m.properties[k].type}`;
                 else
                     ps = `+ ${k} : ${m.properties[k].type}`;
                 ks.push(ps);
@@ -30,7 +30,7 @@ export = function () {
             const is_nographql = m.no_graphql
 
             if(m.comment)
-                models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.comment}(${m.model_name})|${ks.join('\\l')}\\l}"];`);
+                models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}(${m.comment})|${ks.join('\\l')}\\l}"];`);
             else
                 models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
         
