@@ -16,10 +16,10 @@
 <polygon fill="#ffffff" stroke="#000000" points="29.2915,-286.5 29.2915,-410.5 146.7005,-410.5 146.7005,-286.5 29.2915,-286.5"/>
 <text text-anchor="middle" x="87.996" y="-397.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">user</text>
 <polyline fill="none" stroke="#000000" points="29.2915,-390.5 146.7005,-390.5 "/>
-<text text-anchor="start" x="37.2915" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ 用户名(name) : text</text>
+<text text-anchor="start" x="37.2915" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name(用户名) : text</text>
 <text text-anchor="start" x="37.2915" y="-365.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sex : enum</text>
 <text text-anchor="start" x="37.2915" y="-353.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
-<text text-anchor="start" x="37.2915" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ 密码(password) : text</text>
+<text text-anchor="start" x="37.2915" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ password(密码) : text</text>
 <text text-anchor="start" x="37.2915" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ salt : text</text>
 <text text-anchor="start" x="37.2915" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="37.2915" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
