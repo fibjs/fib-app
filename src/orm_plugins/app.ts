@@ -49,7 +49,7 @@ export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.
         properties: Record<string, FxOrmModel.ComplexModelPropertyDefinition>,
         opts: FxOrmModel.ModelDefineOptions
     ) {
-        opts.timestamp = true
+        if (!opts.virtualView) opts.timestamp = true
 
         orm_definition_hash[name] = { name, properties, opts }
 
