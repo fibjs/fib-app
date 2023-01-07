@@ -1,7 +1,16 @@
 
-v1.16.3 / 2022-12-17
+v1.16.4 / 2023-01-07
 ==================
 
+  * chore: upgrade orm version.
+  * feat: support orm's virtualView (#54)
+  * chore: update digram (#55)
+  * chore: update doc.
+
+v1.16.3 / 2022-12-17
+====================
+
+  * Release v1.16.3
   * chore: cleanup code.
   * fix: test error on psql/mysql.
   * feat: allow put extra conditions in associations' `where`. (#53)
