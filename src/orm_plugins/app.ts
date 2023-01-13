@@ -43,6 +43,7 @@ export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.
         'viewFunctions',
         'viewServices',
         'no_graphql',
+        'tableComment'
     ]
     function beforeDefine (
         name: string,
@@ -85,7 +86,7 @@ export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.
             viewServices: webx_config_opts.viewServices || {},
             no_graphql: !(webx_config_opts.no_graphql === undefined || webx_config_opts.no_graphql === false),
             queryKeyWhiteList: webx_config_opts.queryKeyWhiteList || {},
-            
+            tableComment: webx_config_opts.tableComment,
             rpc: {...webx_config_opts.rpc},
         };
 
@@ -148,4 +149,5 @@ function compatSetup (m: FibApp.FibAppORMModel) {
     addReadonlyHiddenProperty(m, 'viewFunctions', () => m.$webx.viewFunctions)
     addReadonlyHiddenProperty(m, 'viewServices', () => m.$webx.viewServices)
     addReadonlyHiddenProperty(m, 'no_graphql', () => m.$webx.no_graphql)
+    addReadonlyHiddenProperty(m, 'tableComment', () => m.$webx.tableComment)
 }

@@ -128,7 +128,8 @@ module.exports = db => {
                     }
                 }
             }
-        }
+        },
+        tableComment: "用户表",
     });
 
     User.settings.set('rest.model.inject_rest_request_info', Math.random(0, 1) > 0.5)

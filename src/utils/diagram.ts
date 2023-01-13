@@ -28,12 +28,12 @@ export = function () {
             }
 
             const is_nographql = m.no_graphql
-
-            if(m.comment)
-                models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}(${m.comment})|${ks.join('\\l')}\\l}"];`);
+            
+            if (m.tableComment)
+                models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}(${m.tableComment})|${ks.join('\\l')}\\l}"];`);
             else
                 models.push(`${m.model_name} [tooltip="${m.model_name}", ${is_nographql ? `fillcolor="${NO_GRAPHQL_COLOR}",` : ''} label="{${m.model_name}|${ks.join('\\l')}\\l}"];`);
-        
+
             for (const e in m.associations) {
                 const assoc_info = m.associations[e];
                 const one = assoc_info.type === "hasOne" && !assoc_info.association.reversed;
