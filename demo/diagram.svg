@@ -14,7 +14,7 @@
 <title>user</title>
 <g id="a_node1"><a xlink:title="user">
 <polygon fill="#ffffff" stroke="#000000" points="29.2915,-286.5 29.2915,-410.5 146.7005,-410.5 146.7005,-286.5 29.2915,-286.5"/>
-<text text-anchor="middle" x="87.996" y="-397.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">user</text>
+<text text-anchor="middle" x="87.996" y="-397.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">user(用户表)</text>
 <polyline fill="none" stroke="#000000" points="29.2915,-390.5 146.7005,-390.5 "/>
 <text text-anchor="start" x="37.2915" y="-377.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name(用户名) : text</text>
 <text text-anchor="start" x="37.2915" y="-365.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sex : enum</text>
@@ -23,7 +23,7 @@
 <text text-anchor="start" x="37.2915" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ salt : text</text>
 <text text-anchor="start" x="37.2915" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="37.2915" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="37.2915" y="-293.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="37.2915" y="-293.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -61,7 +61,7 @@
 <text text-anchor="start" x="216" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="216" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="216" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="216" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="216" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -77,7 +77,7 @@
 <text text-anchor="start" x="342" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="342" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="342" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="342" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="342" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -91,7 +91,7 @@
 <text text-anchor="start" x="357" y="-353.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
 <text text-anchor="start" x="357" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="357" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="357" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="357" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -122,7 +122,7 @@
 <text text-anchor="start" x="463" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="463" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="463" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="463" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="463" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -137,7 +137,7 @@
 <text text-anchor="start" x="579" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="579" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="579" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="579" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="579" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -153,7 +153,7 @@
 <text text-anchor="start" x="473" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sex : text</text>
 <text text-anchor="start" x="473" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="473" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="473" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="473" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -184,7 +184,7 @@
 <text text-anchor="start" x="695" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
 <text text-anchor="start" x="695" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="695" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="695" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="695" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -200,7 +200,7 @@
 <text text-anchor="start" x="695" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ age : number</text>
 <text text-anchor="start" x="695" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="695" y="-317.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="695" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="695" y="-305.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -299,7 +299,7 @@
 <polygon fill="#ffffff" stroke="#000000" points="1302.371,-322.5 1302.371,-374.5 1425.621,-374.5 1425.621,-322.5 1302.371,-322.5"/>
 <text text-anchor="middle" x="1363.996" y="-361.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">people_relations_statics</text>
 <polyline fill="none" stroke="#000000" points="1302.371,-354.5 1425.621,-354.5 "/>
-<text text-anchor="start" x="1310.371" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ people_id : serial</text>
+<text text-anchor="start" x="1310.371" y="-341.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ people_id : text</text>
 <text text-anchor="start" x="1310.371" y="-329.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ childs_count : number</text>
 </a>
 </g>
@@ -315,7 +315,7 @@
 <text text-anchor="start" x="1452" y="-347.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_f : text</text>
 <text text-anchor="start" x="1452" y="-335.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1452" y="-323.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1452" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="1452" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -346,7 +346,7 @@
 <text text-anchor="start" x="1357" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ sublevel_f : text</text>
 <text text-anchor="start" x="1357" y="-174.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1357" y="-162.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1357" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="1357" y="-150.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>
@@ -375,7 +375,7 @@
 <polyline fill="none" stroke="#000000" points="1550,-217.5 1647.992,-217.5 "/>
 <text text-anchor="start" x="1558" y="-204.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ name : text</text>
 <text text-anchor="start" x="1558" y="-192.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ weight : integer</text>
-<text text-anchor="start" x="1558" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_id : integer</text>
+<text text-anchor="start" x="1558" y="-180.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ level_id : text</text>
 <text text-anchor="start" x="1558" y="-168.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1558" y="-156.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
 <text text-anchor="start" x="1558" y="-144.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
@@ -409,7 +409,7 @@
 <text text-anchor="start" x="1338.3875" y="-43.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ descendant_level_f : text</text>
 <text text-anchor="start" x="1338.3875" y="-31.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ createdAt : date</text>
 <text text-anchor="start" x="1338.3875" y="-19.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ updatedAt : date</text>
-<text text-anchor="start" x="1338.3875" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : serial</text>
+<text text-anchor="start" x="1338.3875" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">+ id : text</text>
 </a>
 </g>
 </g>

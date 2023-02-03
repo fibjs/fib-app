@@ -136,6 +136,7 @@ export namespace FibApp {
             viewServices?: FibAppORMModel<TProperties>['$webx']['viewServices']
             no_graphql?: FibAppORMModel<TProperties>['$webx']['no_graphql']
             rpc?: FibAppORMModel<TProperties>['$webx']['rpc']
+            tableComment?: FibAppORMModel<TProperties>['$webx']['tableComment']
 
             queryKeyWhiteList?: FibAppORMModel<TProperties>['$webx']['queryKeyWhiteList']
         }
@@ -185,6 +186,7 @@ export namespace FibApp {
                 findby?: string[]
             }
             rpc: FibRpcInvoke.FibRpcFnHash
+            tableComment: string
         }
         // @deprecated, use model $webx[xxx] instead
         readonly cid: FibAppORMModel['$webx']['cid']

@@ -102,6 +102,8 @@ export declare namespace FibApp {
             viewServices?: FibAppORMModel<TProperties>['$webx']['viewServices'];
             no_graphql?: FibAppORMModel<TProperties>['$webx']['no_graphql'];
             rpc?: FibAppORMModel<TProperties>['$webx']['rpc'];
+            tableComment?: FibAppORMModel<TProperties>['$webx']['tableComment'];
+            
             queryKeyWhiteList?: FibAppORMModel<TProperties>['$webx']['queryKeyWhiteList'];
         };
     }
@@ -141,6 +143,7 @@ export declare namespace FibApp {
                 findby?: string[];
             };
             rpc: FibRpcInvoke.FibRpcFnHash;
+            tableComment: string;
         };
         readonly cid: FibAppORMModel['$webx']['cid'];
         readonly model_name: FibAppORMModel['$webx']['model_name'];
