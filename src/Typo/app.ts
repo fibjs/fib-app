@@ -393,7 +393,7 @@ export namespace FibApp {
             name: string,
             properties: T,
             opts?: U
-        ) => FibAppORMModel<FxOrmModel.GetPropertiesType<T>, Exclude<U['methods'], void>>;
+        ) => FibAppORMModel<FxOrmModel.GetPropertiesType<T>, Exclude<U['methods'], void> & Record<string, (...args: any) => any>>;
     }
     // compatible
     export type FibAppDb = FibAppORM
