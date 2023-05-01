@@ -1,7 +1,14 @@
 
-v1.16.4 / 2023-01-07
+v1.16.5 / 2023-05-02
 ==================
 
+  * feat: support hook `afterOrmSyncFinished`
+  * feat: support tableComment (#56)
+
+v1.16.4 / 2023-01-07
+====================
+
+  * Release v1.16.4
   * chore: upgrade orm version.
   * feat: support orm's virtualView (#54)
   * chore: update digram (#55)
