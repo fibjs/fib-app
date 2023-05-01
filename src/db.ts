@@ -57,7 +57,7 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
                 function (err: orm.FxOrmError.ExtendedError) {
                     if (err) throw err;
                 },
-                // { app, orm: ormInstance },
+                { app, orm: ormInstance },
             );
 
             // only init graphql when models is not empty

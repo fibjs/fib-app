@@ -1,9 +1,7 @@
 const test = require('test');
 test.setup();
 
-const coroutine = require('coroutine');
-
-describe.only('Hooks', () => {
+describe('Hooks', () => {
     var tappInfo
     function setup(opts) {
         tappInfo = require('../support/spec_helper').getRandomSqliteBasedApp({
@@ -104,7 +102,7 @@ describe.only('Hooks', () => {
         it('triggered after app orm instanced', () => {
             setup({
                 hooks: {
-                    afterOrmSyncFinished () {
+                    afterOrmSyncFinished (ctx) {
                         assert.isFalse(triggered.afterOrmSyncFinished)
                         triggered.afterOrmSyncFinished = true;
     
@@ -127,7 +125,7 @@ describe.only('Hooks', () => {
         it('triggered after app orm instanced - next', () => {
             setup({
                 hooks: {
-                    afterOrmSyncFinished (next) {
+                    afterOrmSyncFinished (ctx, next) {
                         setTimeout(() => {
                             assert.isFalse(triggered.afterOrmSyncFinished)
                             triggered.afterOrmSyncFinished = true;
@@ -138,7 +136,6 @@ describe.only('Hooks', () => {
                             assert.isObject(this.api)
                             assert_apis_exist(this)
     
-                            // assert.isUndefined(next)
                             next()
                         }, 100)
                     }
@@ -147,7 +144,6 @@ describe.only('Hooks', () => {
     
             assert.isFalse(triggered.afterOrmSyncFinished);
             tappInfo.app.ormPool(orm => {})
-            coroutine.sleep(100);
             assert.isTrue(triggered.afterOrmSyncFinished);
             assert_apis_exist(tappInfo.app);
         });

@@ -103,7 +103,6 @@ export declare namespace FibApp {
             no_graphql?: FibAppORMModel<TProperties>['$webx']['no_graphql'];
             rpc?: FibAppORMModel<TProperties>['$webx']['rpc'];
             tableComment?: FibAppORMModel<TProperties>['$webx']['tableComment'];
-            
             queryKeyWhiteList?: FibAppORMModel<TProperties>['$webx']['queryKeyWhiteList'];
         };
     }
