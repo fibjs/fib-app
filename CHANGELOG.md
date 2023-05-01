@@ -1,7 +1,13 @@
 
-v1.16.5 / 2023-05-02
+v1.16.6 / 2023-05-02
 ==================
 
+  * chore: little fix.
+
+v1.16.5 / 2023-05-02
+====================
+
+  * Release v1.16.5
   * feat: support hook `afterOrmSyncFinished`
   * feat: support tableComment (#56)
 
