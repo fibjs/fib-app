@@ -5,6 +5,7 @@ import coroutine = require('coroutine');
 import Pool = require('fib-pool');
 
 import graphql = require('./http/graphql');
+import Hook = require('./http/hook');
 
 import orm_utils = require('./utils/orm')
 import orm_plugins = require('./orm_plugins')
@@ -49,6 +50,15 @@ export = (app: FibApp.FibAppClass, connStr: string, opts: FibApp.FibAppDbSetupOp
             } finally {
                 sync_info.lock.release();
             }
+
+            Hook.wait(
+                app as any,
+                app.__opts.hooks.afterOrmSyncFinished as any,
+                function (err: orm.FxOrmError.ExtendedError) {
+                    if (err) throw err;
+                },
+                // { app, orm: ormInstance },
+            );
 
             // only init graphql when models is not empty
             if (ormInstance.models && Object.keys(ormInstance.models).length)

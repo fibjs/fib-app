@@ -1,7 +1,9 @@
 const test = require('test');
 test.setup();
 
-describe('Hooks', () => {
+const coroutine = require('coroutine');
+
+describe.only('Hooks', () => {
     var tappInfo
     function setup(opts) {
         tappInfo = require('../support/spec_helper').getRandomSqliteBasedApp({
@@ -10,12 +12,13 @@ describe('Hooks', () => {
     }
 
     var triggered = {
-        beforeSetupRoute: false
+        beforeSetupRoute: false,
+        afterOrmSyncFinished: false
     };
 
-    afterEach(() => {
+    const resetTriggered = () => {
         Object.keys(triggered).forEach(k => triggered[k] = false)
-    })
+    }
 
     const apis = [
         'get',
@@ -42,49 +45,112 @@ describe('Hooks', () => {
 
         assert.isFunction(app.filterRequest)
     }
-          
-    it('[beforeSetupRoute] triggered after app instanced', () => {
-        setup({
-            hooks: {
-                beforeSetupRoute () {
-                    assert.isFalse(triggered.beforeSetupRoute)
-                    triggered.beforeSetupRoute = true;
 
-                    assert.exist(this)
-                    assert.isObject(this)
-
-                    assert.isObject(this.api)
-                    assert_apis_exist(this)
-                }
-            }
+    describe('beforeSetupRoute', () => {
+        afterEach(() => {
+            resetTriggered();
         })
 
-        assert.isTrue(triggered.beforeSetupRoute);
-        assert_apis_exist(tappInfo.app);
-    });        
-
-    it('[beforeSetupRoute] triggered after app instanced - next', () => {
-        setup({
-            hooks: {
-                beforeSetupRoute (next) {
-                    setTimeout(() => {
+        it('triggered after app instanced', () => {
+            setup({
+                hooks: {
+                    beforeSetupRoute () {
                         assert.isFalse(triggered.beforeSetupRoute)
                         triggered.beforeSetupRoute = true;
-
+    
                         assert.exist(this)
                         assert.isObject(this)
-
+    
                         assert.isObject(this.api)
                         assert_apis_exist(this)
-
-                        next()
-                    }, 100)
+                    }
                 }
-            }
+            })
+    
+            assert.isTrue(triggered.beforeSetupRoute);
+            assert_apis_exist(tappInfo.app);
+        });        
+    
+        it('triggered after app instanced - next', () => {
+            setup({
+                hooks: {
+                    beforeSetupRoute (next) {
+                        setTimeout(() => {
+                            assert.isFalse(triggered.beforeSetupRoute)
+                            triggered.beforeSetupRoute = true;
+    
+                            assert.exist(this)
+                            assert.isObject(this)
+    
+                            assert.isObject(this.api)
+                            assert_apis_exist(this)
+    
+                            next()
+                        }, 100)
+                    }
+                }
+            })
+    
+            assert.isTrue(triggered.beforeSetupRoute);
+            assert_apis_exist(tappInfo.app);
+        });
+    });
+
+    describe('afterOrmSyncFinished', () => {
+        afterEach(() => {
+            resetTriggered();
         })
 
-        assert.isTrue(triggered.beforeSetupRoute);
-        assert_apis_exist(tappInfo.app);
+        it('triggered after app orm instanced', () => {
+            setup({
+                hooks: {
+                    afterOrmSyncFinished () {
+                        assert.isFalse(triggered.afterOrmSyncFinished)
+                        triggered.afterOrmSyncFinished = true;
+    
+                        assert.exist(this)
+                        assert.isObject(this)
+    
+                        assert.isObject(this.api)
+                        assert_apis_exist(this)
+                    }
+                }
+            })
+    
+            assert.isFalse(triggered.afterOrmSyncFinished);
+            tappInfo.app.ormPool(orm => {
+            })
+            assert.isTrue(triggered.afterOrmSyncFinished);
+            assert_apis_exist(tappInfo.app);
+        });        
+    
+        it('triggered after app orm instanced - next', () => {
+            setup({
+                hooks: {
+                    afterOrmSyncFinished (next) {
+                        setTimeout(() => {
+                            assert.isFalse(triggered.afterOrmSyncFinished)
+                            triggered.afterOrmSyncFinished = true;
+    
+                            assert.exist(this)
+                            assert.isObject(this)
+    
+                            assert.isObject(this.api)
+                            assert_apis_exist(this)
+    
+                            // assert.isUndefined(next)
+                            next()
+                        }, 100)
+                    }
+                }
+            })
+    
+            assert.isFalse(triggered.afterOrmSyncFinished);
+            tappInfo.app.ormPool(orm => {})
+            coroutine.sleep(100);
+            assert.isTrue(triggered.afterOrmSyncFinished);
+            assert_apis_exist(tappInfo.app);
+        });
     });
 })
 

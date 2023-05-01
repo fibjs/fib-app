@@ -475,6 +475,7 @@ export declare namespace FibApp {
     }
     export interface Hooks {
         beforeSetupRoute?: FxOrmHook.HookActionCallback;
+        afterOrmSyncFinished?: FxOrmHook.HookActionCallback;
     }
     export interface GetTestRoutingOptions {
         initRouting?: {
