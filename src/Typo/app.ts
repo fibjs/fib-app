@@ -607,8 +607,8 @@ export namespace FibApp {
     }
     export interface Hooks {
         beforeSetupRoute?: FxOrmHook.HookActionCallback
-        afterOrmSyncFinished?: FxOrmHook.HookActionCallback
-        // afterOrmSyncFinished?: FxOrmHook.HookActionWithCtxCallback<any, { app: FibApp.FibAppClass, orm: FibApp.FibAppOrmInstance }>
+        // afterOrmSyncFinished?: FxOrmHook.HookActionCallback
+        afterOrmSyncFinished?: FxOrmHook.HookActionWithCtxCallback<any, { app: FibApp.FibAppClass, orm: FibApp.FibAppOrmInstance }>
     }
 
     export interface GetTestRoutingOptions {
