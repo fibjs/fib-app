@@ -62,9 +62,13 @@ describe("nographql", () => {
 
         assert.property(item, 'id');
         assert.property(item, 'foo');
-        assert.isTrue(util.isBuffer(item.bin));
 
-        assert.deepEqual(item.bin, testData.bin)
+        if (process.version < '0.36.0') {
+            assert.isTrue(util.isBuffer(item.bin)); 
+            assert.deepEqual(item.bin, testData.bin)
+        } else {
+            assert.isTrue(item.bin.type === 'Buffer');
+        }
     })
 });
 
