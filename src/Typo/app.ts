@@ -586,6 +586,8 @@ export namespace FibApp {
                 routeType: 'http-postfunc'
                 handler: (origReq: FibAppHttpRequest, classname: string, func_name: string) => void;
             })): ItOrArray<typeof context['handler']>
+        } & {
+            allowCustomizePostApiRoute?: boolean
         }
     }
 

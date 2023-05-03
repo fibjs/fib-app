@@ -46,8 +46,12 @@ export function bind (app: FibApp.FibAppClass) {
         const _handlers = _customizeApiRoute(ctx);
 
         const handlers = Array.isArray(_handlers) ? _handlers : [_handlers];
+        if (!handlers.includes(ctx.handler)) {
+            console.warn(`[fib-app] return of customizeApiRoute(ctx) must includes ctx.handler, but not found now. we will add it at the end of handlers automatically.`);
+            handlers.push(ctx.handler);
+        }
 
-        if (handlers[handlers.length - 1] !== ctx.handler) {
+        if (!_customizeApiRoute.allowCustomizePostApiRoute && handlers[handlers.length - 1] !== ctx.handler) {
             throw new Error(`[fib-app] customizeApiRoute should return the last handler as the final handler, but got ${handlers[handlers.length - 1].name} instead of ${ctx.handler.name}`);
         }
 
