@@ -1,7 +1,14 @@
 
-v1.16.7 / 2023-05-02
+v1.16.8 / 2023-05-04
 ==================
 
+  * feat: support `customizeApiRoute.allowCustomizePostApiRoute`
+  * fix: test case on fibjs = 0.36.0
+
+v1.16.7 / 2023-05-02
+====================
+
+  * Release v1.16.7
   * fix: type.
 
 v1.16.6 / 2023-05-02
