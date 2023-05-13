@@ -13,6 +13,11 @@ const http = require('http');
 
 var ids = [];
 
+var testData = {
+    binary1: Buffer.from('binary1'),
+    binary2: Buffer.from('binary2'),
+}
+
 function init_data () {
     // const safeLongValue = new BigNumber('9007199254740991');
     var rep = http.post(tSrvInfo.appUrlBase + '/test_fields_type', {
@@ -21,8 +26,11 @@ function init_data () {
                 name1: 'name1',
                 name2: 'name2',
                 profile: { foo: 'bar' },
-                binary1: Buffer.from('binary1'),
-                binary2: Buffer.from('binary2'),
+                // in real world, according to clients,
+                // binary data would be JSON-type, like `{ type: "Buffer", data: [...] }`
+                // or Array-type, like `[...]`
+                binary1: testData.binary1,
+                binary2: testData.binary2,
                 point: { x: 51.5177, y: -0.0968 },
                 longInSafeNumber: 9007199254740991,
             }
@@ -62,15 +70,16 @@ describe("graphql-types", () => {
 
         assert.equal(rep.statusCode, 200);
 
-        assert.deepEqual(rep.json(), {
+        const result = rep.json();
+        assert.deepEqual(result, {
             "data": {
                 "test_fields_type": {
                   "id": ids[0],
                   "name1": "name1",
                   "name2": "name2",
                   "profile": { foo: 'bar' },
-                  "binary1": "'{\"type\":\"Buffer\",\"data\":[98,105,110,97,114,121,49]}'",
-                  "binary2": "'{\"type\":\"Buffer\",\"data\":[98,105,110,97,114,121,50]}'",
+                  "binary1": testData.binary1.toArray(),
+                  "binary2": testData.binary2.toArray(),
                   "point": { x: 51.5177, y: -0.0968 },
                   "longInSafeNumber": 9007199254740991
                 }
@@ -105,7 +114,8 @@ describe("graphql-types", () => {
 
         assert.equal(rep.statusCode, 200);
 
-        assert.deepEqual(rep.json(), {
+        const result = rep.json();
+        assert.deepEqual(result, {
             "data": {
                 "find_test_fields_type": [
                     {
@@ -113,8 +123,8 @@ describe("graphql-types", () => {
                         "name1": "name1",
                         "name2": "name2",
                         "profile": { foo: 'bar' },
-                        "binary1": "'{\"type\":\"Buffer\",\"data\":[98,105,110,97,114,121,49]}'",
-                        "binary2": "'{\"type\":\"Buffer\",\"data\":[98,105,110,97,114,121,50]}'",
+                        "binary1": testData.binary1.toArray(),
+                        "binary2": testData.binary2.toArray(),
                         "point": { x: 51.5177, y: -0.0968 },
                         "longInSafeNumber": 9007199254740991
                     }

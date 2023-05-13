@@ -11,6 +11,7 @@ const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
 const GraphQLDATE = require('graphql-iso-date');
 import GraphQLLong from '../graphql/graphql-type-long';
+import GraphQLBufferJson from '../graphql/graphql-type-bufferjson';
 import GraphQLPoint from '../graphql/graphql-type-point';
 
 const TypeMap = {
@@ -22,7 +23,7 @@ const TypeMap = {
     "date": GraphQLDATE.GraphQLDateTime,
     "enum": graphql.GraphQLString,
     "object": GraphQLJSON,
-    "binary": graphql.GraphQLString,
+    "binary": GraphQLBufferJson,
     "point": GraphQLPoint,
 };
 
