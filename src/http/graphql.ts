@@ -1,4 +1,4 @@
-import type { FxOrmNS, FxOrmModel } from '@fxjs/orm';
+import type { FxOrmNS, FxOrmModel, FxOrmProperty } from '@fxjs/orm';
 
 import util = require('util')
 import { FibApp } from '../Typo/app';
@@ -10,6 +10,8 @@ import { check_hasmanyassoc_with_extraprops } from '../utils/orm-assoc';
 const graphql = require('fib-graphql');
 const GraphQLJSON = require('graphql-type-json');
 const GraphQLDATE = require('graphql-iso-date');
+import GraphQLLong from '../graphql/graphql-type-long';
+import GraphQLPoint from '../graphql/graphql-type-point';
 
 const TypeMap = {
     "serial": graphql.GraphQLInt,
@@ -20,8 +22,29 @@ const TypeMap = {
     "date": GraphQLDATE.GraphQLDateTime,
     "enum": graphql.GraphQLString,
     "object": GraphQLJSON,
-    "binary": graphql.GraphQLString
+    "binary": graphql.GraphQLString,
+    "point": GraphQLPoint,
 };
+
+function getGraphQLType(
+    property: FxOrmProperty.NormalizedProperty & { type: keyof typeof TypeMap },
+    appTypeMap: FibApp.FibAppGraphQLTypeMap & Partial<typeof TypeMap>
+) {
+    let gqlType = appTypeMap[property.type];
+
+    switch (property.type) {
+        case 'integer': {
+            // it's long int
+            if (property.big || property.size === 8) {
+                gqlType = GraphQLLong
+            }
+            break;
+        }
+        default: break;
+    }
+
+    return gqlType;
+}
 
 const hasManyArgs: FibApp.FibAppApiCommnPayload_hasManyArgs = {
     where: { type: GraphQLJSON },
@@ -43,13 +66,13 @@ interface FieldsResolveType {
 }
 
 export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
-    var types = <Fibjs.AnyObject>{};
-    var graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
+    const types = <Fibjs.AnyObject>{};
+    const graphqlTypeMap: FibApp.FibAppGraphQLTypeMap = app.__opts.graphqlTypeMap = util.extend(TypeMap, app.__opts.graphqlTypeMap)
 
     function get_resolve(m: FibApp.FibAppORMModel): FibApp.GraphQLResolverArgs[any]['type'] {
         return (
             function (parent: any, args: any, req: FibApp.FibAppHttpRequest) {
-                var res = debugFunctionWrapper(app.api.get)({
+                const res = debugFunctionWrapper(app.api.get)({
                     session: req.session,
                     query: {} as FibApp.FibAppReqQuery
                 }, ormInstance, m, args.id);
@@ -84,7 +107,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                         break
                 }
                 
-                var res = debugFunctionWrapper(app.api.find)({
+                const res = debugFunctionWrapper(app.api.find)({
                     session: req.session,
                     query: args
                 }, ormInstance, m);
@@ -102,7 +125,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     function eget_resolve(m: FibApp.FibAppORMModel, f: FibApp.FibAppModelExtendORMFuncName) {
         return (
             function (parent: FibApp.ObjectWithIdField, args: FibApp.FibAppReqQuery, req: FibApp.FibAppReq) {
-                var res = debugFunctionWrapper(app.api.eget)({
+                const res = debugFunctionWrapper(app.api.eget)({
                     session: req.session,
                     query: {} as FibApp.FibAppReqQuery
                 }, ormInstance, m, parent, f);
@@ -132,7 +155,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                     args.count_required = false
                 }
 
-                var res = debugFunctionWrapper(app.api.efind)({
+                const res = debugFunctionWrapper(app.api.efind)({
                     session: req.session,
                     query: args
                 }, ormInstance, m, parent, f);
@@ -159,20 +182,22 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     }
 
     function get_fields_hasmanyextra_alone(m: FibApp.FibAppORMModel, extend: string, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
-        var basic_fields = getter();
+        const basic_fields = getter();
 
         return (
             function () {
-                var extra_fields = <FieldsResolveType>{};
-                for (var extraf in many_association.props) {
-                    var orig_type = many_association.props[extraf].type
+                const extra_fields = <FieldsResolveType>{};
+                for (let extraf in many_association.props) {
+                    const property = many_association.props[extraf];
+
+                    const gqpType = getGraphQLType(property, graphqlTypeMap);
                     
-                    if (!graphqlTypeMap[orig_type]) {
+                    if (!gqpType) {
                         throw new Error(`valid type required for model ${m.model_name}'s extended extra field ${extraf}`)
                     }
 
                     extra_fields[extraf] = <FieldsResolveType[any]>{
-                        type: graphqlTypeMap[orig_type]
+                        type: gqpType
                     };
                 }
 
@@ -192,19 +217,20 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     }
 
     function get_fields_hasmanyextra_mixins(m: FibApp.FibAppORMModel, many_association: FxOrmNS.InstanceAssociationItem_HasMany, getter: Function) {
-        var basic_fields = getter();
+        const basic_fields = getter();
 
         return (
             function () {
-                for (var extraf in many_association.props) {
-                    var orig_type = many_association.props[extraf].type
+                for (let extraf in many_association.props) {
+                    const property = many_association.props[extraf];
+                    const gqlType = getGraphQLType(property, graphqlTypeMap);
                     
-                    if (!graphqlTypeMap[orig_type]) {
+                    if (!gqlType) {
                         throw new Error(`valid type required for model ${m.model_name}'s extended extra field ${extraf}`)
                     }
 
                     basic_fields[extraf] = {
-                        type: graphqlTypeMap[orig_type]
+                        type: gqlType
                     };
                 }
 
@@ -213,28 +239,28 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         )
     }
 
-    var extend_paging_types = <Fibjs.AnyObject>{}
+    const extend_paging_types = <Fibjs.AnyObject>{}
     function get_fields(m: FibApp.FibAppORMModel, no_extra_fields: boolean = false) {
         return (
             function () {
-                var fields = <FieldsResolveType>{}
+                const fields = <FieldsResolveType>{}
 
-                var properties = m.properties;
-                for (var p in properties) {
-                    var type = graphqlTypeMap[properties[p].type]
+                const properties = m.properties;
+                for (let p in properties) {
+                    const gqpType = getGraphQLType(properties[p], graphqlTypeMap);
 
-                    if (!type) {
+                    if (!gqpType) {
                         throw new Error(`valid type required for model ${m.model_name}'s field ${p}`)
                     }
 
                     fields[p] = <typeof fields[any]>{
-                        type: type
+                        type: gqpType
                     };
                 }
-                var _associations = m.associations;
+                const _associations = m.associations;
 
-                for (var f in _associations) {
-                    var rel_assoc_info = _associations[f];
+                for (let f in _associations) {
+                    const rel_assoc_info = _associations[f];
                     if (rel_assoc_info.type !== 'extendsTo' && !rel_assoc_info.association.model) {
                         throw new Error(`association ${f} defined for model ${m.model_name} but no valid related model, detailed information: \n ${JSON.stringify(rel_assoc_info, null, '\t')}`)
                     }
@@ -291,7 +317,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
                                 resolve: efind_many_resolve(m, f)
                             };
 
-                            var extend_paging_uname = get_extend_paging_unique_name(m, rel_assoc_info, f) 
+                            const extend_paging_uname = get_extend_paging_unique_name(m, rel_assoc_info, f) 
                             fields[`paging_${f}`] = {
                                 type: (
                                     /**
@@ -325,8 +351,8 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         );
     }
 
-    for (var k in ormInstance.models) {
-        var m = ormInstance.models[k];
+    for (let k in ormInstance.models) {
+        const m = ormInstance.models[k];
 
         if (m.no_graphql) {
             continue ;
@@ -369,7 +395,7 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
         };
     }
 
-    var Schema = new graphql.GraphQLSchema({
+    const Schema = new graphql.GraphQLSchema({
         query: new graphql.GraphQLObjectType({
             name: 'Query',
             fields: types
@@ -377,10 +403,10 @@ export = function (app: FibApp.FibAppClass, ormInstance: FibApp.FibAppORM) {
     });
 
     ormInstance.graphql = (query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest) => {
-        var res = graphql.graphqlSync(Schema, query, {}, req);
+        const res = graphql.graphqlSync(Schema, query, {}, req);
 
         if (req.error) {
-            var code = req.error.code;
+            const code = req.error.code;
             delete req.error;
 
             req.response.statusCode = payload_code_to_status_code(code as number);

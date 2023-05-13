@@ -34,6 +34,7 @@ describe('fib-app', function () {
         require('./reverse');
         
         require('./acl');
+        require('./graphql-types');
         require('./graphql');
         require('./nographql');
         require('./query-filter');
