@@ -17,7 +17,7 @@ describe('fib-app', function () {
     });
 
     after(() => {
-        builder.drop();
+        // builder.drop();
     });
 
     require('./app-apis');

@@ -15,15 +15,15 @@ function parseValue(entry: string, value: any) {
     if (maybeJsonText?.includes("`type` = 'Buffer'")) { // mysql without transform from @fxjs/orm <= 1.16.4
       const [, values] = maybeJsonText.match(/`data` = \((.*)\)/);
       const buf = Buffer.from(values.split(', ') as any);
-      return buf.toArray();
+      return buf;
     } else if (
       (bufObj = safeParseJson<any>(maybeJsonText))
       && bufObj?.type === 'Buffer'
       && Array.isArray(bufObj.data)
     ) { // sqlite, postgres
-      return bufObj.data;
+      return Buffer.from(bufObj.data);
     } else {
-      return value.toArray();
+      return value;
     }
   }
 

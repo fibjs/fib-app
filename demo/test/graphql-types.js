@@ -1,6 +1,9 @@
 const test = require('test');
 test.setup();
 
+const jsonModule = require('json');
+const util = require('util');
+
 // const BigNumber = require('bignumber.js');
 
 const { runServer } = require('../test/_utils');
@@ -70,7 +73,7 @@ describe("graphql-types", () => {
 
         assert.equal(rep.statusCode, 200);
 
-        const result = rep.json();
+        var result = rep.json();
         assert.deepEqual(result, {
             "data": {
                 "test_fields_type": {
@@ -78,12 +81,32 @@ describe("graphql-types", () => {
                   "name1": "name1",
                   "name2": "name2",
                   "profile": { foo: 'bar' },
-                  "binary1": testData.binary1.toArray(),
-                  "binary2": testData.binary2.toArray(),
+                  "binary1": jsonModule.decode(jsonModule.encode(testData.binary1)),
+                  "binary2": jsonModule.decode(jsonModule.encode(testData.binary2)),
                   "point": { x: 51.5177, y: -0.0968 },
                   "longInSafeNumber": 9007199254740991
                 }
             }
+        });
+    });
+
+    it('get by rest', () => {
+        var rep = http.get(tSrvInfo.appUrlBase + `/test_fields_type/${ids[0]}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        assert.equal(rep.statusCode, 200);
+        var result = util.omit(rep.json(), 'createdAt', 'updatedAt');
+        assert.deepEqual(result, {
+            "id": ids[0],
+            "name1": "name1",
+            "name2": "name2",
+            "profile": { foo: 'bar' },
+            "binary1": jsonModule.decode(jsonModule.encode(testData.binary1)),
+            "binary2": jsonModule.decode(jsonModule.encode(testData.binary2)),
+            "point": { x: 51.5177, y: -0.0968 },
+            "longInSafeNumber": 9007199254740991
         });
     });
     
@@ -123,14 +146,38 @@ describe("graphql-types", () => {
                         "name1": "name1",
                         "name2": "name2",
                         "profile": { foo: 'bar' },
-                        "binary1": testData.binary1.toArray(),
-                        "binary2": testData.binary2.toArray(),
+                        "binary1": jsonModule.decode(jsonModule.encode(testData.binary1)),
+                        "binary2": jsonModule.decode(jsonModule.encode(testData.binary2)),
                         "point": { x: 51.5177, y: -0.0968 },
                         "longInSafeNumber": 9007199254740991
                     }
                 ]
             }
         });
+    });
+
+    it('find by rest', () => {
+        var rep = http.get(tSrvInfo.appUrlBase + `/test_fields_type`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        assert.equal(rep.statusCode, 200);
+        var results = rep.json().map(item => {
+            return util.omit(item, 'createdAt', 'updatedAt')
+        });
+        assert.deepEqual(results, [
+            {
+                "id": ids[0],
+                "name1": "name1",
+                "name2": "name2",
+                "profile": { foo: 'bar' },
+                "binary1": jsonModule.decode(jsonModule.encode(testData.binary1)),
+                "binary2": jsonModule.decode(jsonModule.encode(testData.binary2)),
+                "point": { x: 51.5177, y: -0.0968 },
+                "longInSafeNumber": 9007199254740991
+            }
+        ]);
     });
 });
 
