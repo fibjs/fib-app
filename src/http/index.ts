@@ -3,7 +3,6 @@ import { err_info, fill_error } from '../utils/err_info';
 import _base = require('./base');
 import _extend = require('./extend');
 import _function = require('./function');
-import _view = require('./view');
 
 import { parse_req_resource_and_hdlr_type, filterRequest } from '../utils/filter_request'
 import { run_graphql, is_graphql_request } from '../utils/graphql';
@@ -24,15 +23,12 @@ export function bind (app: FibApp.FibAppClass) {
     app.filterRequest = filterRequest
 
     const api = app.api = {} as FibApp.FibAppInternalApis;
-    const viewApi = app.viewApi = {} as FibApp.FibAppInternalViewApis;
 
     _base.setup(app);
     _extend.setup(app);
     _function.setup(app);
-    _view.setup(app);
 
     const apiPathPrefix = app.__opts.apiPathPrefix
-    const viewPathPrefix = app.__opts.viewPathPrefix
     const graphQLPathPrefix = app.__opts.graphQLPathPrefix
     const batchPathPrefix = app.__opts.batchPathPrefix
     const _customizeApiRoute = app.__opts.customizeApiRoute || defaultCustomizeApiRoute;
@@ -58,8 +54,7 @@ export function bind (app: FibApp.FibAppClass) {
         return handlers;
     };
 
-    const enableFilterApiCollection = apiPathPrefix === viewPathPrefix
-    const filterApiCollection = enableFilterApiCollection ? select_api_collection : () => app.api
+    const filterApiCollection = () => app.api
     
     function setupApiRoute () {
         /* api base :start */
@@ -70,7 +65,7 @@ export function bind (app: FibApp.FibAppClass) {
 
         app.get(`${apiPathPrefix}/:classname/:id`, customizeApiRoute({
             app,  routeType: 'http-rest-get',
-            handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType) => app.filterRequest(req, classname, id, filterApiCollection(req, app).get),
+            handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType) => app.filterRequest(req, classname, id, app.api.get),
         }));
 
         app.put(`${apiPathPrefix}/:classname/:id`, customizeApiRoute({
@@ -85,7 +80,7 @@ export function bind (app: FibApp.FibAppClass) {
 
         app.get(`${apiPathPrefix}/:classname`, customizeApiRoute({
             app,  routeType: 'http-rest-find',
-            handler: (req: FibApp.FibAppHttpRequest, classname: string) => app.filterRequest(req, classname, filterApiCollection(req, app).find),
+            handler: (req: FibApp.FibAppHttpRequest, classname: string) => app.filterRequest(req, classname, app.api.find),
         }));
         /* api base :end */
 
@@ -107,12 +102,12 @@ export function bind (app: FibApp.FibAppClass) {
 
         app.get(`${apiPathPrefix}/:classname/:id/:extend`, customizeApiRoute({
             app,  routeType: 'http-rest-efind',
-            handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType) => app.filterRequest(req, classname, id, extend, filterApiCollection(req, app).efind),
+            handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType) => app.filterRequest(req, classname, id, extend, app.api.efind),
         }));
 
         app.get(`${apiPathPrefix}/:classname/:id/:extend/:rid`, customizeApiRoute({
             app,  routeType: 'http-rest-eget',
-            handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType) => app.filterRequest(req, classname, id, extend, rid, filterApiCollection(req, app).eget),
+            handler: (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType) => app.filterRequest(req, classname, id, extend, rid, app.api.eget),
         }));
 
         app.del(`${apiPathPrefix}/:classname/:id/:extend/:rid`, customizeApiRoute({
@@ -127,20 +122,6 @@ export function bind (app: FibApp.FibAppClass) {
                 app.filterRequest(req, classname, api.functionHandler(classname, func));
             },
         }));
-    }
-
-    function setupViewRoute () {
-        /* when `apiPathPrefix === viewPathPrefix`, you don't need set it because it's settled above */
-        if (!enableFilterApiCollection) {
-            /* view base :start */
-            app.get(`${viewPathPrefix}/:classname/:id`, (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType) => app.filterRequest(req, classname, id, viewApi.get));
-            app.get(`${viewPathPrefix}/:classname`, (req: FibApp.FibAppHttpRequest, classname: string) => app.filterRequest(req, classname, viewApi.find));
-            /* view base :end */
-            /* view extend :start */
-            app.get(`${viewPathPrefix}/:classname/:id/:extend`, (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType) => app.filterRequest(req, classname, id, extend, viewApi.efind));
-            app.get(`${viewPathPrefix}/:classname/:id/:extend/:rid`, (req: FibApp.FibAppHttpRequest, classname: string, id: FibApp.AppIdType, extend: FibAppACL.ACLExtendModelNameType, rid: FibApp.AppIdType) => app.filterRequest(req, classname, id, extend, rid, viewApi.eget));
-            /* view extend :end */
-        }
     }
 
     Hook.wait(app as any, app.__opts.hooks.beforeSetupRoute, function (err: FxOrmError.ExtendedError) {
@@ -161,14 +142,8 @@ export function bind (app: FibApp.FibAppClass) {
                 run_graphql(app, req)
             })
         /* setup graphql :end */
-
-        if (!apiPathPrefix && viewPathPrefix) {
-            setupViewRoute()
-            setupApiRoute()
-        } else {
-            setupApiRoute()
-            setupViewRoute()
-        }
+        
+        setupApiRoute()
     
         /* setup batch task :end */
         const mergeRootAndBatchRoot = !batchPathPrefix || batchPathPrefix === ROOT_PATH
@@ -186,14 +161,3 @@ export function bind (app: FibApp.FibAppClass) {
         });
     });
 };
-
-function select_api_collection (req: FibApp.FibAppHttpRequest, app: FibApp.FibAppClass): FibApp.FibAppHttpApiCollectionType {
-    switch (parse_req_resource_and_hdlr_type(req).requestedResultType) {
-        case 'css':
-        case 'js':
-        case 'html':
-            return app.viewApi
-        case 'json':
-            return app.api
-    }
-}

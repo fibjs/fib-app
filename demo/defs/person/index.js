@@ -44,40 +44,6 @@ module.exports = db => {
                 };
             }
         },
-        viewServices: {
-            staticUndefined: undefined,
-
-            staticNull: null,
-            staticNumber: 123,
-            staticNaN: NaN,
-            staticString: 'static person',
-            staticBoolean: true,
-            staticObject: {a: 1, b: function() {}},
-            staticSymbol: Symbol('symbol-string'),
-
-            test () {
-                return {
-                    success: null
-                }
-            },
-            testReqSession (req) {
-                return {
-                    success: req.session
-                }
-            },
-            testReqQuery (req) {
-                return {
-                    success: req.query
-                }
-            },
-            testCtxOrm (req) {
-                assert.isObject(db)
-
-                return {
-                    success: Object.keys(db.models)
-                }
-            }
-        },
         webx: {
             rpc: {
                 _getPersonByName ({ name, $session }) {

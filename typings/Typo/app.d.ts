@@ -64,29 +64,8 @@ export declare namespace FibApp {
     interface FibAppOrmModelFunction {
         (req: FibAppReq, data: FibAppReqData): FibAppModelFunctionResponse;
     }
-    interface FibAppOrmModelViewFunctionRequestInfo {
-        base: string;
-        id: AppIdType;
-        extend: string;
-        ext_id: AppIdType;
-    }
-    interface FibAppOrmModelViewFunction {
-        (result: null | FibAppApiFunctionResponse, req: FibAppReq, modelViewFunctionInfo: FibAppOrmModelViewFunctionRequestInfo): FibAppModelViewFunctionResponse;
-    }
     interface FibAppOrmModelFunctionHash {
         [fnName: string]: FibAppOrmModelFunction;
-    }
-    interface FibAppOrmModelViewFunctionDefOptions {
-        static?: boolean;
-        handler: FibAppOrmModelViewFunction;
-        response_headers?: object;
-    }
-    type FibAppOrmModelViewFunctionDefinition = FibAppOrmModelViewFunction | FibAppOrmModelViewFunctionDefOptions;
-    interface FibAppOrmModelViewServiceCallback {
-        (req: FibAppReq, data: FibAppReqData): FibAppModelFunctionResponse;
-    }
-    interface FibAppOrmModelViewServiceHash {
-        [fnName: string]: FibAppOrmModelViewServiceCallback;
     }
     type FibAppOrmInstance = FxOrmInstance.Instance;
     interface AppSpecialDateProperty extends FxOrmModel.ModelPropertyDefinition {
@@ -98,8 +77,6 @@ export declare namespace FibApp {
             ACL?: FibAppORMModel<TProperties>['$webx']['ACL'];
             OACL?: FibAppORMModel<TProperties>['$webx']['OACL'];
             functions?: FibAppORMModel<TProperties>['$webx']['functions'];
-            viewFunctions?: FibAppORMModel<TProperties>['$webx']['viewFunctions'];
-            viewServices?: FibAppORMModel<TProperties>['$webx']['viewServices'];
             no_graphql?: FibAppORMModel<TProperties>['$webx']['no_graphql'];
             rpc?: FibAppORMModel<TProperties>['$webx']['rpc'];
             tableComment?: FibAppORMModel<TProperties>['$webx']['tableComment'];
@@ -128,14 +105,6 @@ export declare namespace FibApp {
             ACL: FibAppACL.FibACLDef;
             OACL: FibAppACL.FibOACLDef;
             functions: FibAppOrmModelFunctionHash;
-            viewFunctions: {
-                get?: FibAppOrmModelViewFunctionDefinition;
-                find?: FibAppOrmModelViewFunctionDefinition;
-                eget?: FibAppOrmModelViewFunctionDefinition;
-                efind?: FibAppOrmModelViewFunctionDefinition;
-                [fnName: string]: FibAppOrmModelViewFunctionDefinition | undefined;
-            };
-            viewServices: FibAppOrmModelViewServiceHash;
             no_graphql: boolean;
             queryKeyWhiteList: {
                 where?: string[];
@@ -149,8 +118,6 @@ export declare namespace FibApp {
         readonly ACL: FibAppORMModel['$webx']['ACL'];
         readonly OACL: FibAppORMModel['$webx']['OACL'];
         readonly functions: FibAppORMModel['$webx']['functions'];
-        readonly viewFunctions: FibAppORMModel['$webx']['viewFunctions'];
-        readonly viewServices: FibAppORMModel['$webx']['viewServices'];
         readonly no_graphql: FibAppORMModel['$webx']['no_graphql'];
     }
     interface FibAppOrmSettings {
@@ -280,16 +247,7 @@ export declare namespace FibApp {
         count: number;
         results: ReponseT[];
     }
-    export interface FibAppInternalViewApis {
-        get?: FibAppInternalTypedApi__Get<FibAppModelViewFunctionResponse>;
-        find?: FibAppInternalTypedApi__Find<FibAppModelViewFunctionResponse>;
-        eget?: FibAppInternalTypedApi__Eget<FibAppModelViewFunctionResponse>;
-        efind?: FibAppInternalTypedApi__Efind<FibAppModelViewFunctionResponse>;
-    }
-    export interface FibAppModelViewServiceApis {
-        [view_service_api: string]: FibAppOrmModelViewServiceHash;
-    }
-    export type FibAppHttpApiCollectionType = FibAppInternalApis | FibAppInternalViewApis;
+    export type FibAppHttpApiCollectionType = FibAppInternalApis;
     export interface AppInternalCommunicationObj {
         inst?: FxOrmInstance.Instance | null;
         acl?: FibAppACL.RoleActDescriptor;
@@ -390,10 +348,6 @@ export declare namespace FibApp {
          * @default '/'
          */
         apiPathPrefix?: string;
-        /**
-         * @default '/'
-         */
-        viewPathPrefix?: string;
         /**
          * @default '/'
          */
@@ -533,7 +487,6 @@ export declare namespace FibApp {
     }
     export class FibAppClass extends Class_Routing {
         api: FibAppInternalApis;
-        viewApi: FibAppInternalViewApis;
         ormPool: AppORMPool<FibAppORM>;
         readonly dbPool: AppORMPool<FibAppORM>;
         readonly db: AppORMPool<FibAppORM>;

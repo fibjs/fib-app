@@ -87,8 +87,6 @@ extend:cls: delete
     - [ ] app.api.edel
         - [ ] sample
 
-- [ ] app view-service-api
-
 ## use cases
 
 * [x] 重写用例，用例独立运行, uuid

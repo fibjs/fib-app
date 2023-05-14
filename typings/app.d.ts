@@ -4,7 +4,6 @@ import { FibApp } from './Typo/app';
 declare class App extends mq.Routing implements FibApp.FibAppClass {
     static ORM: typeof ORM;
     api: FibApp.FibAppInternalApis;
-    viewApi: FibApp.FibAppInternalViewApis;
     ormPool: FibApp.AppORMPool<FibApp.FibAppORM>;
     get dbPool(): FibApp.AppORMPool<FibApp.FibAppORM>;
     get db(): FibApp.AppORMPool<FibApp.FibAppORM>;

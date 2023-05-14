@@ -9,19 +9,9 @@ const cheerio = require('cheerio');
 [
     {
         apiPathPrefix: '',
-        viewPathPrefix: ''
     },
     {
         apiPathPrefix: '/api',
-        viewPathPrefix: '/view'
-    },
-    {
-        apiPathPrefix: '/api',
-        viewPathPrefix: ''
-    },
-    {
-        apiPathPrefix: '',
-        viewPathPrefix: '/view'
     }
 ].forEach((appOptions) => {
     const appPath = !appOptions.apiPathPrefix ? '/api' : ''
@@ -134,126 +124,6 @@ const cheerio = require('cheerio');
                 });
             });
         });
-
-        describe("viewFunctions", () => {
-            it('get', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/${id}`, {
-                    headers: {
-                        Accept: 'text/html'
-                    }
-                });
-
-                assert.equal(rep.firstHeader('Content-Type'), 'text/html; charset=utf8');
-                assert.equal(rep.statusCode, 200);
-                var html = rep.body.readAll().toString();
-
-                assert.equal(cheerio(html).find('.user-info').length, 0)
-                assert.equal(cheerio(`<div>${html}</div>`).find('.user-info').length, 1)
-                assert.equal(cheerio(html).find('.user-info > h2').length, 1)
-                assert.equal(cheerio(html).find('.user-info > ul').length, 1)
-            })
-
-            it('find', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user`, {
-                    headers: {
-                        Accept: 'text/html'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                var html = rep.body.readAll().toString();
-
-                assert.equal(cheerio(html).find('.user-info-table').length, 0)
-                assert.equal(cheerio(`<div>${html}</div>`).find('.user-info-table').length, 1)
-
-                assert.equal(cheerio(html).find('.user-info-table > table').length, 1)
-                assert.equal(cheerio(html).find('.user-info-table > table > thead').length, 1)
-                assert.equal(cheerio(html).find('.user-info-table > table > tbody').length, 1)
-
-                assert.notLessThan(cheerio(html).find('.user-info-table > table > tbody > tr > td a[href*="/1.0/app/user"]').length, 1)
-
-                assert.notLessThan(cheerio(html).find('.user-info-table > table > tbody > tr > td[data-field="name"]').length, 1)
-                assert.notLessThan(cheerio(html).find('.user-info-table > table > tbody > tr > td[data-field="sex"]').length, 1)
-                assert.notLessThan(cheerio(html).find('.user-info-table > table > tbody > tr > td[data-field="age"]').length, 1)
-                assert.notLessThan(cheerio(html).find('.user-info-table > table > tbody > tr > td[data-field="password"]').length, 1)
-                assert.notLessThan(cheerio(html).find('.user-info-table > table > tbody > tr > td[data-field="salt"]').length, 1)
-            })
-
-            it('custom: profile page', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/profile`, {
-                    headers: {
-                        Accept: 'text/html'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                var html = rep.body.readAll().toString();
-
-                var xdoc = require('xml').parse(html, 'text/html');
-                var body = xdoc.body.toString();
-
-                assert.equal(cheerio(body).text().trim(), 'user profile');
-            })
-
-            it('custom: css1', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/css1`, {
-                    headers: {
-                        Accept: 'text/css'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                assert.equal(rep.firstHeader('Content-Type'), 'text/css; charset=utf16');
-            })
-
-            it('custom: css2', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/css2`, {
-                    headers: {
-                        Accept: 'text/css'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                assert.equal(rep.firstHeader('Content-Type'), 'text/css; charset=gbk');
-            })
-
-            it('custom: javascript1', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/javascript1`, {
-                    headers: {
-                        Accept: 'text/javascript'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                assert.equal(rep.firstHeader('Content-Type'), 'application/javascript; charset=utf8');
-            })
-
-            it('custom: javascript2', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/javascript2`, {
-                    headers: {
-                        Accept: 'text/javascript'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                assert.equal(rep.firstHeader('Content-Type'), 'application/javascript; charset=gbk');
-            })
-
-            ;(appOptions.apiPathPrefix !== appOptions.viewPathPrefix || appOptions.viewPathPrefix !== '') && it('custom: json1', () => {
-                var rep = http.get(tSrvInfo.serverBase + `${appOptions.viewPathPrefix}/user/json1`, {
-                    headers: {
-                        Accept: 'application/json'
-                    }
-                });
-
-                assert.equal(rep.statusCode, 200);
-                assert.equal(rep.firstHeader('Content-Type'), 'application/json; charset=utf8');
-
-                assert.deepEqual(rep.json(), {
-                    foo: 'bar'
-                })
-            })
-        })
     });
 })
 

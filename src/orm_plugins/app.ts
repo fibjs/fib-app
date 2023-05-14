@@ -40,8 +40,6 @@ export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.
         'ACL',
         'OACL',
         'functions',
-        'viewFunctions',
-        'viewServices',
         'no_graphql',
         'tableComment'
     ]
@@ -82,8 +80,6 @@ export default function (ormInstance: FibApp.FibAppORM, plugin_opts: FxOrmModel.
             ACL: webx_config_opts.ACL,
             OACL: webx_config_opts.OACL,
             functions: webx_config_opts.functions || {},
-            viewFunctions: webx_config_opts.viewFunctions || {},
-            viewServices: webx_config_opts.viewServices || {},
             no_graphql: !(webx_config_opts.no_graphql === undefined || webx_config_opts.no_graphql === false),
             queryKeyWhiteList: webx_config_opts.queryKeyWhiteList || {},
             tableComment: webx_config_opts.tableComment,
@@ -146,8 +142,6 @@ function compatSetup (m: FibApp.FibAppORMModel) {
     addReadonlyHiddenProperty(m, 'ACL', () => m.$webx.ACL)
     addReadonlyHiddenProperty(m, 'OACL', () => m.$webx.OACL)
     addReadonlyHiddenProperty(m, 'functions', () => m.$webx.functions)
-    addReadonlyHiddenProperty(m, 'viewFunctions', () => m.$webx.viewFunctions)
-    addReadonlyHiddenProperty(m, 'viewServices', () => m.$webx.viewServices)
     addReadonlyHiddenProperty(m, 'no_graphql', () => m.$webx.no_graphql)
     addReadonlyHiddenProperty(m, 'tableComment', () => m.$webx.tableComment)
 }

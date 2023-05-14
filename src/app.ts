@@ -15,7 +15,6 @@ class App extends mq.Routing implements FibApp.FibAppClass {
     static ORM = ORM;
 
     api: FibApp.FibAppInternalApis;
-    viewApi: FibApp.FibAppInternalViewApis;
 
     ormPool: FibApp.AppORMPool<FibApp.FibAppORM>;
     get dbPool (): FibApp.AppORMPool<FibApp.FibAppORM> { return this.ormPool }
@@ -81,7 +80,6 @@ export default App;
 
 function filterFibAppOptions (__opts: FibApp.FibAppOpts) {
     __opts.apiPathPrefix = __opts.apiPathPrefix || ''
-    __opts.viewPathPrefix = __opts.viewPathPrefix || ''
 
     __opts.graphQLPathPrefix = __opts.graphQLPathPrefix || '/'
     __opts.rpcPathPrefix = __opts.rpcPathPrefix || '/rpc'
