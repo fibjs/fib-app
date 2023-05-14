@@ -1,7 +1,13 @@
 
-v1.16.8 / 2023-05-04
+v1.16.9 / 2023-05-14
 ==================
 
+  * feat: support read long type integer. (#59)
+
+v1.16.8 / 2023-05-04
+====================
+
+  * Release v1.16.8
   * feat: support `customizeApiRoute.allowCustomizePostApiRoute`
   * fix: test case on fibjs = 0.36.0
 
