@@ -15,7 +15,7 @@ export default function (
 	function beforeDefine (name: string, properties: Record<string, FxOrmModel.ModelPropertyDefinition>, opts: FxOrmModel.ModelDefineOptions) {
         if (opts.virtualView) return ;
 
-        use_uuid = use_uuid || opts.__webx_use_uuid
+        use_uuid = opts.__webx_use_uuid ?? use_uuid;
         
         if (!use_uuid)
             return ;

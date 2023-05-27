@@ -1,5 +1,6 @@
 import { FxOrmNS, FxOrmModel } from "@fxjs/orm";
 
+// TODO: allow developer customize what is `id` on fib-app's rest model
 export default function (
     orm: FxOrmNS.ORM,
     plugin_opts: {
@@ -10,8 +11,13 @@ export default function (
         properties: Record<string, FxOrmModel.ModelPropertyDefinition>,
         opts: FxOrmModel.ModelDefineOptions
     ) {
-        if ((opts.extension || opts.__for_extension) && !properties.id) {
-            opts.__webx_use_uuid = true;
+        if (typeof opts.__webx_use_uuid === 'boolean') return ;
+
+        if (opts.extension || opts.__for_extension) {
+            // for those extension models, we should enforce add id property to it
+            if (!properties.id) {
+                opts.__webx_use_uuid = true;
+            }
         }
     }
 
