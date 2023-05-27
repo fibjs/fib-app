@@ -1,7 +1,14 @@
 
-v1.16.9 / 2023-05-14
-==================
+v1.16.10 / 2023-05-27
+=====================
 
+  * build: add prerelease script.
+  * fix: allow model dont use uuid.
+
+v1.16.9 / 2023-05-14
+====================
+
+  * Release v1.16.9
   * feat: support read long type integer. (#59)
 
 v1.16.8 / 2023-05-04
