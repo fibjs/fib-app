@@ -34,7 +34,7 @@ module.exports = db => {
             beforeCreate: function () {
                 var salt = crypto.pseudoRandomBytes(64);
                 this.salt = salt.hex();
-                this.password = crypto.pbkdf2(this.password, salt, 256, 64, 'sha1').hex();
+                this.password = crypto.pbkdf2(this.password || "", salt, 256, 64, 'sha1').hex();
             }
         },
         viewFunctions: {
