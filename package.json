@@ -47,7 +47,7 @@
     "@fibjs/detect-port": "^1.0.1",
     "cheerio": "1.0.0-rc.3",
     "cross-env": "^5.2.0",
-    "ejs": "^2.6.2",
+    "ejs": "^3.1.7",
     "faker": "^4.1.0",
     "fib-pug": "0.0.2",
     "fib-push": "^1.4.2",
