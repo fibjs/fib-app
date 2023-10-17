@@ -156,8 +156,8 @@ export namespace FibApp {
     
     export interface FibAppORMModel<
         PropertyTypes extends Record<string, FxOrmInstance.FieldRuntimeType> = Record<string, FxOrmInstance.FieldRuntimeType>,
-        Methods extends Record<string, (...args: any) => any> = Record<string, (...args: any) => any>
-    > extends FxOrmModel.Model<PropertyTypes, Methods> {
+        Methods extends Record<string, (...args: any) => any> | unknown = Record<string, (...args: any) => any>
+    > extends FxOrmModel.Model<PropertyTypes, Methods extends unknown ? any : Methods> {
         $webx: {
             // globally unique class id
             readonly cid: number

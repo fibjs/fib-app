@@ -117,7 +117,7 @@ export declare namespace FibApp {
             };
         };
     };
-    interface FibAppORMModel<PropertyTypes extends Record<string, FxOrmInstance.FieldRuntimeType> = Record<string, FxOrmInstance.FieldRuntimeType>, Methods extends Record<string, (...args: any) => any> = Record<string, (...args: any) => any>> extends FxOrmModel.Model<PropertyTypes, Methods> {
+    interface FibAppORMModel<PropertyTypes extends Record<string, FxOrmInstance.FieldRuntimeType> = Record<string, FxOrmInstance.FieldRuntimeType>, Methods extends Record<string, (...args: any) => any> | unknown = Record<string, (...args: any) => any>> extends FxOrmModel.Model<PropertyTypes, Methods extends unknown ? any : Methods> {
         $webx: {
             readonly cid: number;
             readonly model_name: string;
@@ -311,7 +311,7 @@ export declare namespace FibApp {
         app: FibAppClass;
         models: GlobalAppModels;
         graphql<T = any>(query: FibApp.GraphQLQueryString, req: FibApp.FibAppHttpRequest): T;
-        define: <T extends Record<string, FxOrmModel.ComplexModelPropertyDefinition>, U extends FibAppOrmModelDefOptions<FxOrmModel.GetPropertiesType<T>>>(name: string, properties: T, opts?: U) => FibAppORMModel<FxOrmModel.GetPropertiesType<T>, Exclude<U['methods'], void>>;
+        define: <T extends Record<string, FxOrmModel.ComplexModelPropertyDefinition>, U extends FibAppOrmModelDefOptions<FxOrmModel.GetPropertiesType<T>>>(name: string, properties: T, opts?: U) => FibAppORMModel<FxOrmModel.GetPropertiesType<T>, Exclude<U['methods'], void> & Record<string, (...args: any) => any>>;
     }
     export type FibAppDb = FibAppORM;
     export type FibAppFunctionToBeFilter = (FibAppFilterableApiFunction__WithModel | FibAppFilterableApiFunction__NullModel | FibAppOrmModelFunction | FibAppInternalApiFunction);
