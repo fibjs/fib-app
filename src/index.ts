@@ -12,3 +12,5 @@ export { FibApp };
 export function defineAppModel<T = any>(definition: FibApp.FibAppOrmDefineFn<T>) {
     return definition;
 };
+
+export { makeCustomizeApiRoute } from './http/customize';
