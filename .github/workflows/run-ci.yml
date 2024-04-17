@@ -24,14 +24,38 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2019, macos-10.15]
-        version: [0.33.0, 0.34.0]
-        arch: [amd64, i386]
-        exclude:
-          - os: windows-2019
-            arch: i386
-          - os: macos-10.15
-            arch: i386
+        include:
+        - os: windows-2019
+          arch: x64
+          fibjs: 0.36.0
+        - os: windows-2019
+          arch: x64
+          fibjs: 0.37.0
+        - os: windows-2019
+          arch: x86
+          fibjs: 0.36.0
+        - os: windows-2019
+          arch: x86
+          fibjs: 0.37.0
+        - os: ubuntu-20.04
+          arch: x64
+          fibjs: 0.36.0
+        - os: ubuntu-20.04
+          arch: x64
+          fibjs: 0.37.0
+        - os: ubuntu-20.04
+          arch: x86
+          fibjs: 0.36.0
+        - os: ubuntu-20.04
+          arch: x86
+          fibjs: 0.37.0
+        - os: macos-11
+          arch: x64
+          fibjs: 0.36.0
+        - os: macos-11
+          arch: x64
+          fibjs: 0.37.0
+        
 
     steps:
       - name: Check out Git repository
@@ -41,7 +65,7 @@ jobs:
 
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
 
       - name: Set Env Variables
         id: set-env-vars
@@ -51,26 +75,20 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}
           OS: ${{ matrix.os }}
+          FIBJS_VERSION: ${{ matrix.fibjs }}
 
       - name: Install FIBJS
         shell: bash
         run: |
           mkdir -p ./node_modules/.bin;
           rm -rf ./node_modules/.bin/fibjs;
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            curl -SL "https://github.com/fibjs/fibjs/releases/download/v${FIBJS_VERSION}/fibjs-v${FIBJS_VERSION}-${FIBJS_OS}-${FIBJS_ARCH}.xz" -o ./node_modules/.bin/fibjs.xz;
-            xz -d ./node_modules/.bin/fibjs.xz;
-            chmod a+x ./node_modules/.bin/fibjs;
-          elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            curl -SL "https://github.com/fibjs/fibjs/releases/download/v${FIBJS_VERSION}/fibjs-v${FIBJS_VERSION}-${FIBJS_OS}-${FIBJS_ARCH}" -o ./node_modules/.bin/fibjs;
-            chmod a+x ./node_modules/.bin/fibjs;
-          else
-            curl -SL "https://github.com/fibjs/fibjs/releases/download/v${FIBJS_VERSION}/fibjs-v${FIBJS_VERSION}-${FIBJS_OS}-${FIBJS_ARCH}.exe" -o ./node_modules/.bin/fibjs.exe;
-          fi
+          . ./.github/workflows/fns.sh --source-only
+          install_fibjs $FIBJS_VERSION $FIBJS_OS $FIBJS_ARCH;
         env:
           FIBJS_OS: ${{ steps.set-env-vars.outputs.FIBJS_OS }}
           FIBJS_ARCH: ${{ steps.set-env-vars.outputs.FIBJS_ARCH }}
-          FIBJS_VERSION: ${{ matrix.version }}
+          lower_than_0_37_0: ${{ steps.set-env-vars.outputs.lower_than_0_37_0 }}
+          FIBJS_VERSION: ${{ matrix.fibjs }}
 
       - name: Run CI
         shell: bash
