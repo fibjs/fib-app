@@ -32,7 +32,8 @@ module.exports = db => {
                 }
             },
             beforeCreate: function () {
-                var salt = crypto.randomBytes(64);
+                const randomBytes = crypto.pseudoRandomBytes || crypto.randomBytes;
+                var salt = randomBytes(64);
                 this.salt = salt.hex();
                 this.password = crypto.pbkdf2(this.password || "", salt, 256, 64, 'sha1').hex();
             }
