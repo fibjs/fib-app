@@ -2,6 +2,7 @@ import http = require('http')
 import util = require('util')
 import mq = require('mq')
 import { FibApp } from '../Typo/app'
+const fc = require("fib-cache");
 
 export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRoutingOptions) {
     const {
@@ -56,7 +57,7 @@ export function mountAppToSessionServer (
 
     const port = detectPort(options.port)
     
-    const session = new Session(new util.LruCache(20000), {
+    const session = new Session(new fc.LRU({ max: 20000 }), {
         timeout: 60 * 1000
     });
 
