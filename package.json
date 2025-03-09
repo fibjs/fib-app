@@ -1,8 +1,8 @@
 {
   "name": "fib-app",
-  "version": "1.16.13",
+  "version": "1.16.14",
   "description": "",
-  "main": "lib",
+  "main": "./lib/",
   "types": "typings/index.d.ts",
   "repository": "git://github.com/fibjs/fib-app.git",
   "scripts": {
@@ -34,7 +34,7 @@
   "dependencies": {
     "@fibjs/types": "^0.35.0",
     "@fxjs/orm": "^1.16.10",
-    "fib-cache": "^1.1.0",
+    "fib-cache": "^1.2.0",
     "fib-graphql": "^1.0.0",
     "fib-pool": "^1.6.0",
     "fib-rpc": "^0.5.3",
