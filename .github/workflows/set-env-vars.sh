@@ -1,3 +1,5 @@
+. ./.github/workflows/fns.sh --source-only
+
 export GIT_BRANCH=${GITHUB_REF#refs/heads/}
 echo "::set-output name=GIT_BRANCH::$GIT_BRANCH"
 export GIT_TAG=$(git tag | grep $(git describe --tags HEAD))
@@ -25,9 +27,23 @@ if [ -z "$IS_GIT_TAG_MATCH_SEMVER" ]; then
 fi
 echo "::set-output name=RELEASE_TAG::$RELEASE_TAG";
 
+vercomp "${FIBJS_VERSION}" "0.37.0"
+if [[ "$vercomp_last_result" -eq "2" ]]; then
+    export lower_than_0_37_0="true"
+else
+    export lower_than_0_37_0="false"
+fi
+
+echo "::set-output name=lower_than_0_37_0::$lower_than_0_37_0";
+
 case "${RUNNER_OS}" in
     Windows)
-        export FIBJS_OS=windows
+        # lower than 0.37.0
+        if [[ "$lower_than_0_37_0" == "true" ]]; then
+            export FIBJS_OS=windows
+        else
+            export FIBJS_OS=win32
+        fi
         ;;
     macOS)
         export FIBJS_OS=darwin
@@ -43,10 +59,14 @@ esac
 echo "::set-output name=FIBJS_OS::$FIBJS_OS";
 
 case "${ARCH}" in
-    i386)
-        export FIBJS_ARCH=x86
+    i386|ia32|x86)
+        if [[ "$lower_than_0_37_0" == "true" ]]; then
+            export FIBJS_ARCH=x86
+        else
+            export FIBJS_ARCH=ia32
+        fi
         ;;
-    amd64)
+    amd64|x64)
         export FIBJS_ARCH=x64
         ;;
     *)
