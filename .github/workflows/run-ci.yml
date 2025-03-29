@@ -49,10 +49,10 @@ jobs:
         - os: ubuntu-20.04
           arch: x86
           fibjs: 0.37.0
-        - os: macos-11
+        - os: macos-13
           arch: x64
           fibjs: 0.36.0
-        - os: macos-11
+        - os: macos-13
           arch: x64
           fibjs: 0.37.0
         
