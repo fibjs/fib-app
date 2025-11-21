@@ -10,10 +10,10 @@
         "declaration": true,
         "declarationDir": "typings",
         "types": [
-            "@fibjs/types"
-        ],
-        "typeRoots": [
-            "typings/index.d.ts"
+            "@fibjs/types",
+            "fib-pool",
+            "fib-session",
+            "fib-rpc"
         ]
     },
     "include": [

@@ -1,21 +1,21 @@
 import { FibApp } from '../Typo/app';
-declare type ApiRouteContext = Parameters<FibApp.FibAppOpts['customizeApiRoute']>[0];
-declare type GetHandlerType<T, K extends ApiRouteContext['routeType']> = T extends {
+type ApiRouteContext = Parameters<FibApp.FibAppOpts['customizeApiRoute']>[0];
+type GetHandlerType<T, K extends ApiRouteContext['routeType']> = T extends {
     routeType: K;
     handler: infer H;
 } ? {
     [P in K]: H;
 }[K] : never;
-declare type FibAppApiHandlers = {
+type FibAppApiHandlers = {
     [K in ApiRouteContext['routeType']]: GetHandlerType<ApiRouteContext, K>;
 };
-declare type BaseFilter = {
+type BaseFilter = {
     basecls: string;
     extend?: string;
     id?: string;
     rid?: string;
 };
-declare type PostFuncFilter = {
+type PostFuncFilter = {
     func: string | string[];
 };
 declare function onApiRoute<T extends ApiRouteContext['routeType']>(ctx: ApiRouteContext, routeType: T, _filters: T extends 'http-postfunc' ? (BaseFilter & PostFuncFilter) : (string | BaseFilter), userDefineHandler: FibAppApiHandlers[T]): (...args: Parameters<typeof userDefineHandler>) => any;

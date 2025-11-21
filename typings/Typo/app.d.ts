@@ -1,7 +1,16 @@
 /// <reference types="fib-rpc" />
-/// <reference types="fib-pool" />
 /// <reference types="@fibjs/types" />
 /// <reference types="fib-session" />
+/// <reference types="fib-rpc" />
+/// <reference types="@fibjs/types" />
+/// <reference types="@fibjs/types" />
+/// <reference types="@fibjs/types" />
+/// <reference types="@fibjs/types" />
+/// <reference types="@fibjs/types" />
+/// <reference types="@fibjs/types" />
+/// <reference types="@fibjs/types" />
+/// <reference types="fib-rpc" />
+/// <reference types="@fibjs/types" />
 import type { FxOrmNS, FxOrmModel, FxOrmInstance, FxOrmHook, FxOrmProperty, FxOrmQuery } from '@fxjs/orm';
 import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
 import type { FibAppACL } from './acl';
@@ -166,12 +175,23 @@ export declare namespace FibApp {
     export interface FibAppOrmDefineFn<T = any> {
         (orm: FibAppORM): T;
     }
-    export interface AppORMPool<T1> extends FibPoolNS.FibPool<T1> {
+    export type AppORMPool<T1> = {
+        <T_RETURN = any>(name: string, func: (o: T1) => T_RETURN): T_RETURN;
+        <T_RETURN = any>(func: (o: T1) => T_RETURN): T_RETURN;
+        connections?(): number;
+        info?(): {
+            maxsize: number;
+            count: number;
+            running: number;
+            wait: number;
+            timeout: number;
+        };
+        clear?(): void;
         app: FibAppClass;
         use(defs?: FibAppOrmDefineFn | FibAppOrmDefineFn[], opts?: {
             reload?: boolean;
         }): FibAppOrmDefineFn[];
-    }
+    };
     export type AppDBPool<T1> = AppORMPool<T1>;
     export interface GraphQLResolverArgs {
         [k: string]: {

@@ -20,7 +20,7 @@ declare const infos: {
     "5000002": string;
     "5000003": string;
 };
-declare type TInfos = typeof infos;
+type TInfos = typeof infos;
 export declare class APPError extends Error implements FibApp.FibAppFinalError {
     name: string;
     code: FibApp.FibAppFinalError['code'];
