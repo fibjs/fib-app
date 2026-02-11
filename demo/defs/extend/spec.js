@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const util = require('util');
 const http = require('http');
@@ -608,10 +609,6 @@ describe("extend", () => {
     })
 });
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}
 
 function gettime(m) {
     let ms = m

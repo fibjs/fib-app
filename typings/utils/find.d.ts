@@ -1,4 +1,4 @@
-import { FxOrmInstance, FxOrmModel, FxOrmQuery } from '@fxjs/orm';
+import { FxOrmInstance, FxOrmModel, FxOrmQuery } from 'fib-orm';
 import { FibAppACL } from '../Typo/acl';
 import { FibApp } from '../Typo/app';
 declare const _default: (req: FibApp.FibAppReq, finder: FxOrmQuery.IChainFind['find'], finder_model: FxOrmModel.Model, ext_info?: {

@@ -1,4 +1,4 @@
-import { FxOrmInstance, FxOrmModel } from '@fxjs/orm';
+import { FxOrmInstance, FxOrmModel } from 'fib-orm';
 import * as util from 'util';
 import { FibAppACL } from '../Typo/acl';
 

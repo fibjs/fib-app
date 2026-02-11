@@ -1,5 +1,5 @@
 import util = require('util');
-import ORM = require('@fxjs/orm');
+import ORM = require('fib-orm');
 const Helpers = ORM.Helpers;
 
 import _find = require('../utils/find');
@@ -29,7 +29,7 @@ import { addHiddenProperty } from '../utils/obj';
 
 import type { FibApp } from '../Typo/app';
 import type { FibAppACL } from '../Typo/acl';
-import type { FxOrmNS, FxOrmAssociation, FxOrmInstance } from '@fxjs/orm';
+import type { FxOrmNS, FxOrmAssociation, FxOrmInstance } from 'fib-orm';
 
 export function setup(app: FibApp.FibAppClass) {
     const api = app.api;

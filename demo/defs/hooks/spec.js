@@ -1,5 +1,5 @@
 const test = require('test');
-test.setup();
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const http = require('http');
 
@@ -42,7 +42,3 @@ describe("hook_test", () => {
     });
 });
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

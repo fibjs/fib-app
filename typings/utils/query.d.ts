@@ -1,5 +1,5 @@
 /// <reference lib="es2017" />
-import type { FxOrmModel, FxOrmQuery } from '@fxjs/orm';
+import type { FxOrmModel, FxOrmQuery } from 'fib-orm';
 import { FibApp } from '../Typo/app';
 export declare function query_filter_where<T extends FibApp.FibAppReqQuery['where'] = any>(req: FibApp.FibAppReq): T;
 export declare function query_filter_join_where(req: FibApp.FibAppReq): {};

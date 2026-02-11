@@ -1,6 +1,6 @@
 import util = require('util');
-import ORM = require('@fxjs/orm');
-import { FxOrmModel, FxOrmInstance } from '@fxjs/orm';
+import ORM = require('fib-orm');
+import { FxOrmModel, FxOrmInstance } from 'fib-orm';
 
 import { err_info } from '../utils/err_info';
 import { checkout_obj_acl, checkout_robj_acl } from './checkout_acl';

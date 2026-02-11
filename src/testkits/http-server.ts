@@ -12,6 +12,11 @@ export function getTestRouting (app: FibApp.FibAppClass, opts: FibApp.GetTestRou
     const routingObj = <any>{
         '/set_session': (req: FibApp.FibAppHttpRequest) => {
             var data = req.json();
+            if (!data) {
+                req.session.id = null;
+                req.session.roles = null;
+                return;
+            }
             req.session.id = data.id;
             req.session.roles = data.roles;
         },
@@ -76,7 +81,10 @@ export function mountAppToSessionServer (
 
     function sessionAs (sessionInfo: Fibjs.AnyObject) {
         httpClient.post(httpHost + '/set_session', {
-            json: sessionInfo
+            json: sessionInfo,
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
     }
 

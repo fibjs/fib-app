@@ -14,7 +14,7 @@ import {
 import { ouputMap } from './mimes';
 import { default_session_for_acl } from './checkout_acl';
 import { FibApp } from '../Typo/app';
-import { Helpers } from '@fxjs/orm';
+import { Helpers } from 'fib-orm';
 
 const _slice = Array.prototype.slice;
 

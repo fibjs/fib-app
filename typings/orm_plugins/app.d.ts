@@ -1,6 +1,6 @@
-import type { FxOrmModel } from '@fxjs/orm';
+import type { FxOrmModel } from 'fib-orm';
 import type { FibApp } from '../Typo/app';
-import ORM = require('@fxjs/orm');
+import ORM = require('fib-orm');
 /**
  * @description first initial plugin before all other plugins
  */

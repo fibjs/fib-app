@@ -2,8 +2,20 @@ const fs = require('fs');
 const path = require('path');
 const db = require('db');
 const http = require('http');
+const { before, after } = require('test');
 
-const { Driver } = require('@fxjs/db-driver')
+function withAdminConn(connStr, fn) {
+    const conn = db.open(connStr);
+    try {
+        return fn(conn);
+    } finally {
+        try {
+            conn.close();
+        } catch (e) {
+            // Ignore close errors.
+        }
+    }
+}
 
 const ws = require('ws');
 const push = require('fib-push');
@@ -91,27 +103,30 @@ const dbBuilder = exports.dbBuilder = function (dbName = '') {
     switch (getTestDbType()) {
         case 'mysql': {
             builder.create = function () {
-                var driver = Driver.create(`mysql://root:@127.0.0.1:3306`);
-                driver.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8 COLLATE utf8_general_ci`)
+                withAdminConn(`mysql://root:@127.0.0.1:3306`, (conn) => {
+                    conn.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8 COLLATE utf8_general_ci`)
+                });
             }
             builder.drop = function () {
-                var driver = Driver.create(`mysql://root:@127.0.0.1:3306`);
-                driver.execute(`DROP DATABASE IF EXISTS  \`${dbName}\``);
+                withAdminConn(`mysql://root:@127.0.0.1:3306`, (conn) => {
+                    conn.execute(`DROP DATABASE IF EXISTS  \`${dbName}\``);
+                });
             }
             break;
         }
         case 'postgres': {
             builder.create = function () {
-                var driver = Driver.create(`psql://postgres@127.0.0.1:5432`);
-
-                var exists = driver.execute(`SELECT * FROM pg_database WHERE datname = '${dbName}'`);
-                if (!exists.length) {
-                    driver.execute(`CREATE DATABASE "${dbName}" WITH ENCODING = 'UTF8'`);
-                }
+                withAdminConn(`psql://postgres@127.0.0.1:5432`, (conn) => {
+                    var exists = conn.execute(`SELECT * FROM pg_database WHERE datname = '${dbName}'`);
+                    if (!exists.length) {
+                        conn.execute(`CREATE DATABASE "${dbName}" WITH ENCODING = 'UTF8'`);
+                    }
+                });
             }
             builder.drop = function () {
-                var driver = Driver.create(`psql://postgres@127.0.0.1:5432`);
-                driver.execute(`SELECT 'DROP DATABASE ${dbName}' WHERE EXISTS (SELECT * FROM pg_database WHERE datname = '${dbName}');`);
+                withAdminConn(`psql://postgres@127.0.0.1:5432`, (conn) => {
+                    conn.execute(`SELECT 'DROP DATABASE ${dbName}' WHERE EXISTS (SELECT * FROM pg_database WHERE datname = '${dbName}');`);
+                });
             }
             break;
         }

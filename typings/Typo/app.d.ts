@@ -11,8 +11,8 @@
 /// <reference types="@fibjs/types" />
 /// <reference types="fib-rpc" />
 /// <reference types="@fibjs/types" />
-import type { FxOrmNS, FxOrmModel, FxOrmInstance, FxOrmHook, FxOrmProperty, FxOrmQuery } from '@fxjs/orm';
-import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
+import type { FxOrmNS, FxOrmModel, FxOrmInstance, FxOrmHook, FxOrmProperty, FxOrmQuery } from 'fib-orm';
+import type { FxSqlQuerySubQuery } from 'fib-orm/lib/sql-query/Typo/SubQuery';
 import type { FibAppACL } from './acl';
 import { FibAppTest } from './test';
 export declare namespace FibApp {

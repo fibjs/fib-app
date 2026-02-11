@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const { check_result, runServer } = require('../test/_utils');
 
@@ -323,7 +324,7 @@ describe("save-operation", () => {
             });
 
             /**
-             * we cannot do this due to design of @fxjs/orm: 
+             * we cannot do this due to design of fib-orm: 
              * 
              * it's RULE that reversed association cannot delete
              * its releated association in hasOne association,
@@ -364,7 +365,7 @@ describe("save-operation", () => {
         })();
     });
 
-    xit('graphql query', () => {
+    it.skip('graphql query', () => {
         var rep = http.post(tSrvInfo.appUrlBase + ``, {
             headers: {
                 'Content-Type': 'application/graphql'
@@ -379,7 +380,3 @@ describe("save-operation", () => {
     });
 });
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

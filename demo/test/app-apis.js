@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const fs = require('fs');
 const path = require('path');
@@ -204,7 +205,3 @@ describe('app apis', () => {
     })
 })
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

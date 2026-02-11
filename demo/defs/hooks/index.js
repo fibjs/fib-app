@@ -1,6 +1,6 @@
 const assert = require('assert')
 
-const prependHook = require('@fxjs/orm').Helpers.prependHook
+const prependHook = require('fib-orm').Helpers.prependHook
 
 var model_hook_wrapper = {}
 

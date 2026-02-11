@@ -1,4 +1,4 @@
-import { FxOrmInstance } from '@fxjs/orm'
+import { FxOrmInstance } from 'fib-orm'
 import util = require('util')
 
 export function filterInstanceAsItsOwnShape<T = any, T2 = T> (

@@ -1,5 +1,5 @@
 import * as mq from 'mq';
-import ORM = require('@fxjs/orm');
+import ORM = require('fib-orm');
 import { FibApp } from './Typo/app';
 declare class App extends mq.Routing implements FibApp.FibAppClass {
     static ORM: typeof ORM;

@@ -13,7 +13,7 @@ import * as Hook from './hook';
 import { ROOT_PATH } from './_ctx';
 import { FibApp } from '../Typo/app';
 import { FibAppACL } from '../Typo/acl';
-import { FxOrmError } from '@fxjs/orm';
+import { FxOrmError } from 'fib-orm';
 
 const defaultCustomizeApiRoute: FibApp.FibAppOpts['customizeApiRoute'] = (ctx) => {
     return ctx.handler;

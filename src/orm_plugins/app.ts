@@ -1,10 +1,10 @@
-import type { FxOrmNS, FxOrmModel } from '@fxjs/orm';
+import type { FxOrmNS, FxOrmModel } from 'fib-orm';
 import type { FibApp } from '../Typo/app';
 
 import util = require('util')
 import { addReadonlyHiddenProperty } from "../utils/obj";
 
-import ORM = require('@fxjs/orm');
+import ORM = require('fib-orm');
 const Helpers = ORM.Helpers;
 
 const error_reasons = [

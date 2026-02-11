@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const http = require('http');
 const util = require('util');
@@ -291,7 +292,3 @@ describe('customize api route', () => {
     });
 })
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

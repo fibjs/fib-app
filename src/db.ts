@@ -1,4 +1,4 @@
-import orm = require('@fxjs/orm');
+import orm = require('fib-orm');
 
 import coroutine = require('coroutine');
 

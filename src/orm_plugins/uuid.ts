@@ -1,6 +1,6 @@
 import uuid = require('uuid')
-import ORM = require('@fxjs/orm')
-import { FxOrmNS, FxOrmModel } from '@fxjs/orm';
+import ORM = require('fib-orm')
+import { FxOrmNS, FxOrmModel } from 'fib-orm';
 const Helpers = ORM.Helpers;
 const { prependHook } = Helpers;
 

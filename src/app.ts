@@ -7,7 +7,7 @@ import setupTest = require('./testkits')
 import setupDb = require('./db');
 import setupUtils = require('./utils')
 import diagram = require('./utils/diagram');
-import ORM = require('@fxjs/orm');
+import ORM = require('fib-orm');
 import { EventEmitter } from 'events';
 import { FibApp } from './Typo/app';
 

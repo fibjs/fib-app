@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const querystring = require('querystring');
 const coroutine = require('coroutine');
@@ -89,7 +90,7 @@ describe("classes - person", () => {
             assert.isArray(rep.json());
         });
 
-        xit("error: bad field", () => {
+        it.skip("error: bad field", () => {
             var rep = http.post(tSrvInfo.appUrlBase + '/person', {
                 json: {
                     name: 'lion1',
@@ -1365,7 +1366,3 @@ describe("classes - person", () => {
     });
 });
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

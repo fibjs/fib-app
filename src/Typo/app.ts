@@ -11,8 +11,8 @@ import type {
     FxOrmProperty,
     FxOrmQuery,
     FxOrmAssociation
-} from '@fxjs/orm'
-import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
+} from 'fib-orm'
+import type { FxSqlQuerySubQuery } from 'fib-orm/lib/sql-query/Typo/SubQuery';
 
 import type { FibAppACL } from './acl';
 import { FibAppTest } from './test';
@@ -119,7 +119,7 @@ export namespace FibApp {
     /* model view service :end */
     export type FibAppOrmInstance = FxOrmInstance.Instance
 
-    // keep compatible with definition in '@fxjs/orm'
+    // keep compatible with definition in 'fib-orm'
     export interface AppSpecialDateProperty extends FxOrmModel.ModelPropertyDefinition {
         type: 'date'
         time?: true

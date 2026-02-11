@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const { check_result, runServer } = require('../test/_utils');
 
@@ -103,7 +104,7 @@ describe("reverse", () => {
             });
         });
 
-        xit("delete", () => {
+        it.skip("delete", () => {
             var rep = http.del(tSrvInfo.appUrlBase + `/chatroom/${room_id}/messages/${msg_id}`);
             assert.equal(rep.statusCode, 200);
 
@@ -225,7 +226,3 @@ describe("reverse", () => {
     });
 });
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const { check_result, runServer } = require('../../test/_utils');
 
@@ -883,7 +884,3 @@ describe("classes - person_query", () => {
     });
 });
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

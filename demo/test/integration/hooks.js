@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 describe('Hooks', () => {
     var tappInfo
@@ -150,7 +151,3 @@ describe('Hooks', () => {
     });
 })
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

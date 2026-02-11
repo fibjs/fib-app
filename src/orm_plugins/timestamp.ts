@@ -1,6 +1,6 @@
 import util = require('util')
-import ORM = require('@fxjs/orm')
-import { FxOrmNS, FxOrmModel, FxOrmProperty } from '@fxjs/orm';
+import ORM = require('fib-orm')
+import { FxOrmNS, FxOrmModel, FxOrmProperty } from 'fib-orm';
 const Helpers = ORM.Helpers;
 
 interface PluginOptions__Timestamp {

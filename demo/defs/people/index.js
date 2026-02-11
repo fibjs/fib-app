@@ -1,4 +1,4 @@
-const orm = require('@fxjs/orm');
+const orm = require('fib-orm');
 
 module.exports = db => {
     var People = db.define('people', {

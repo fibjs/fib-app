@@ -1,14 +1,14 @@
 /// <reference lib="es2017" />
 
 import util = require('util');
-import ORM = require('@fxjs/orm');
+import ORM = require('fib-orm');
 const Helpers = ORM.Helpers;
 
 import { checkout_acl } from './checkout_acl';
 import { ucfirst } from './str';
 
-import type { FxOrmAssociation, FxOrmModel, FxOrmQuery, FxOrmNS } from '@fxjs/orm';
-import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
+import type { FxOrmAssociation, FxOrmModel, FxOrmQuery, FxOrmNS } from 'fib-orm';
+import type { FxSqlQuerySubQuery } from 'fib-orm/lib/sql-query/Typo/SubQuery';
 // import type { FxSqlQuerySubQuery } from '@fxjs/sql-query';
 
 import { FibApp } from '../Typo/app';

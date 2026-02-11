@@ -1,5 +1,6 @@
 const test = require('test');
-test.setup();
+const assert = require('assert');
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const { check_result, runServer } = require('../../test/_utils');
 
@@ -84,7 +85,7 @@ const cheerio = require('cheerio');
                 id = rep.json().id;
             });
 
-            xit("error: bad field", () => {
+            it.skip("error: bad field", () => {
                 var rep = http.post(tSrvInfo.serverBase + `${appOptions.apiPathPrefix}/user`, {
                     json: {
                         name: 'lion1',
@@ -257,7 +258,3 @@ const cheerio = require('cheerio');
     });
 })
 
-if (require.main === module) {
-    test.run(console.DEBUG);
-    process.exit();
-}

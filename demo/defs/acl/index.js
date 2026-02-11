@@ -1,4 +1,5 @@
-const orm = require('@fxjs/orm');
+const orm = require('fib-orm');
+const assert = require('assert');
 
 module.exports = db => {
     var ext = db.define('ext_acl', {

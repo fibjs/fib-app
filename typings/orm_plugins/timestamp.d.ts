@@ -1,4 +1,4 @@
-import { FxOrmNS, FxOrmModel, FxOrmProperty } from '@fxjs/orm';
+import { FxOrmNS, FxOrmModel, FxOrmProperty } from 'fib-orm';
 interface PluginOptions__Timestamp {
     createdPropertyName?: string | false;
     createdProperty?: FxOrmProperty.NormalizedProperty;

@@ -1,5 +1,5 @@
-import ORM = require('@fxjs/orm');
-import { FxOrmInstance } from '@fxjs/orm';
+import ORM = require('fib-orm');
+import { FxOrmInstance } from 'fib-orm';
 
 const Helpers = ORM.Helpers;
 

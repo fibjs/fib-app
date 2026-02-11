@@ -1,4 +1,4 @@
-import { Helpers } from '@fxjs/orm'
+import { Helpers } from 'fib-orm'
 
 export const wait = Helpers.hookWait
 export const trigger = Helpers.hookTrigger

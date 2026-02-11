@@ -1,4 +1,4 @@
-import { FxOrmNS, FxOrmModel } from "@fxjs/orm";
+import { FxOrmNS, FxOrmModel } from "fib-orm";
 
 // TODO: allow developer customize what is `id` on fib-app's rest model
 export default function (

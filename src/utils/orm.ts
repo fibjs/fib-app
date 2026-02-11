@@ -1,4 +1,4 @@
-import { FxOrmNS, FxOrmModel, FxOrmInstance } from "@fxjs/orm";
+import { FxOrmNS, FxOrmModel, FxOrmInstance } from "fib-orm";
 import { FibApp } from "../Typo/app";
 import { buildCleanInstance, getValidDataFieldsFromModel } from "./orm-assoc";
 

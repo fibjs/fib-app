@@ -1,4 +1,4 @@
-import { FxOrmModel, FxOrmInstance } from '@fxjs/orm';
+import { FxOrmModel, FxOrmInstance } from 'fib-orm';
 import { FibApp } from '../Typo/app';
 import { FibAppACL } from '../Typo/acl';
 export declare const _get: (cls: FxOrmModel.Model, id: FibApp.AppIdType, session: FibApp.FibAppSession, act?: FibAppACL.ACLActString) => FibApp.FibAppInternalCommObj;

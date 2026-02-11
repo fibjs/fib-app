@@ -12,7 +12,7 @@ function parseValue(entry: string, value: any) {
     const maybeJsonText = value.toString('utf8');
     let bufObj: any;
 
-    if (maybeJsonText?.includes("`type` = 'Buffer'")) { // mysql without transform from @fxjs/orm <= 1.16.4
+    if (maybeJsonText?.includes("`type` = 'Buffer'")) { // mysql without transform from fib-orm <= 1.16.4
       const [, values] = maybeJsonText.match(/`data` = \((.*)\)/);
       const buf = Buffer.from(values.split(', ') as any);
       return buf;

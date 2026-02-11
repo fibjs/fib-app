@@ -1,5 +1,5 @@
 const test = require('test');
-test.setup();
+const { describe, it, before, after, beforeEach, afterEach } = test;
 
 const FIBJS_LTE_21 = require('util').buildInfo().fibjs <= '0.21.0'
 if (FIBJS_LTE_21) {
@@ -50,11 +50,3 @@ describe('fib-app', function () {
     }
 })
 
-if (require.main === module) {
-    try {
-        test.run(console.DEBUG);
-    } catch (error) {
-        console.error(error)
-    }
-    process.exit();
-}

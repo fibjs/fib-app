@@ -1,4 +1,4 @@
-import type { FxOrmNS, FxOrmModel, FxOrmProperty } from '@fxjs/orm';
+import type { FxOrmNS, FxOrmModel, FxOrmProperty } from 'fib-orm';
 
 import util = require('util')
 import { FibApp } from '../Typo/app';

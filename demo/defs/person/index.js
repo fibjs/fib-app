@@ -1,4 +1,4 @@
-const orm = require('@fxjs/orm');
+const orm = require('fib-orm');
 const util = require('util')
 
 const assert = require('assert')
